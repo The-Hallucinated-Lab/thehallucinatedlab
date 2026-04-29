@@ -161,7 +161,7 @@ async function loadGitHubRepos() {
 function initTypingEffect() {
   const el = document.getElementById('typing-text');
   if (!el) return;
-  const texts = ['AI & Machine Learning', 'Quantum Computing', 'Web3 & Blockchain', 'Developer Tools', 'Open Source'];
+  const texts = ['Machine Learning', 'Deep Learning', 'Quantum Computing', 'Quantum Machine Learning', 'Explainable AI'];
   let textIdx = 0, charIdx = 0, deleting = false;
 
   function type() {
