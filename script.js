@@ -112,56 +112,13 @@ function initScrollAnimations() {
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 }
 
-/* ============ GITHUB REPOS ============ */
-async function loadGitHubRepos() {
-  const grid = document.getElementById('github-grid');
-  if (!grid) return;
-
-  const users = ['06pratyush', 'TheQMLGuy'];
-  let allRepos = [];
-
-  for (const user of users) {
-    try {
-      const res = await fetch(`https://api.github.com/users/${user}/repos?sort=updated&per_page=6`);
-      const repos = await res.json();
-      if (Array.isArray(repos)) {
-        allRepos = allRepos.concat(repos.map(r => ({ ...r, ownerLogin: user })));
-      }
-    } catch (e) { console.warn(`Failed to fetch repos for ${user}`, e); }
-  }
-
-  // Sort by most recently updated
-  allRepos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
-  allRepos = allRepos.slice(0, 8);
-
-  const langColors = {
-    'Python': '#3572A5', 'JavaScript': '#f1e05a', 'TypeScript': '#3178c6',
-    'HTML': '#e34c26', 'Clarity': '#5546ff', 'Jupyter Notebook': '#DA5B0B',
-    'CSS': '#563d7c', 'Java': '#b07219', 'C++': '#f34b7d'
-  };
-
-  grid.innerHTML = allRepos.map(repo => `
-    <a href="${repo.html_url}" target="_blank" rel="noopener" class="repo-card fade-in" id="repo-${repo.name}">
-      <div class="repo-owner">@${repo.ownerLogin}</div>
-      <div class="repo-name">${repo.name}</div>
-      <div class="repo-desc">${repo.description || 'No description available'}</div>
-      <div class="repo-footer">
-        ${repo.language ? `<span class="project-lang"><span class="lang-dot" style="background:${langColors[repo.language] || '#ccc'}"></span>${repo.language}</span>` : ''}
-        <span class="project-stat">⭐ ${repo.stargazers_count}</span>
-        <span class="project-stat">🍴 ${repo.forks_count}</span>
-      </div>
-    </a>
-  `).join('');
-
-  // Re-observe new elements
-  initScrollAnimations();
-}
+/* ============ (GitHub section removed) ============ */
 
 /* ============ TYPING EFFECT ============ */
 function initTypingEffect() {
   const el = document.getElementById('typing-text');
   if (!el) return;
-  const texts = ['Machine Learning', 'Deep Learning', 'Quantum Computing', 'Quantum Machine Learning', 'Explainable AI'];
+  const texts = ['No cloud lock-ins.', 'No paywalls. No ceilings.', 'Your data stays yours.', 'Fully local AI pipelines.', 'Open source. Always.'];
   let textIdx = 0, charIdx = 0, deleting = false;
 
   function type() {
@@ -191,5 +148,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initScrollAnimations();
   initTypingEffect();
-  loadGitHubRepos();
 });
