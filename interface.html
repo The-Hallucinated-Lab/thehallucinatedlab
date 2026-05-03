@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Assistant — The Hallucinated Lab</title>
+  <meta name="description" content="AI-powered local assistant by The Hallucinated Lab. Chat with Ollama running on your machine — no cloud, no API keys, fully private.">
+  <meta property="og:title" content="Assistant — The Hallucinated Lab">
+  <meta property="og:description" content="AI-powered local assistant. Chat with Ollama running on your machine — fully private.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/interface.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Assistant — The Hallucinated Lab">
+  <meta name="twitter:description" content="AI-powered local assistant. Chat with Ollama on your machine.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="utilities.html">Utilities</a></li>
+        <li><a href="interface.html" class="active">Assistant</a></li>
+        <li><a href="certificate.html">Certificate</a></li>
+        <li><a href="/#contact">Contact</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="interface-section" id="interface-section">
+
+      <!-- Setup Panel (shown when Ollama is not detected) -->
+      <div class="chat-setup-panel" id="chat-setup">
+        <div class="setup-status checking" id="setup-status">
+          <span class="status-dot"></span>
+          <span id="setup-status-text">Checking connection...</span>
+        </div>
+        <h2>Local AI Assistant</h2>
+        <p>This interface connects to <strong style="color:var(--gold-primary);">Ollama</strong> running on your machine. No API keys, no cloud, no data leaves your device. Completely local.</p>
+
+        <div class="setup-steps" id="setup-steps" style="display:none;">
+          <div class="setup-step">
+            <div class="setup-step-num">1</div>
+            <div class="setup-step-text">
+              Install Ollama from <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" style="color:var(--gold-primary);">ollama.com</a>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="setup-step-num">2</div>
+            <div class="setup-step-text">
+              Pull the model: <code>ollama pull gemma4:e2b</code>
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="setup-step-num">3</div>
+            <div class="setup-step-text">
+              If accessing from thehallucinatedlab.space, set the CORS origin:<br>
+              <code>set OLLAMA_ORIGINS=https://thehallucinatedlab.space</code><br>
+              Then restart Ollama.
+            </div>
+          </div>
+          <div class="setup-step">
+            <div class="setup-step-num">4</div>
+            <div class="setup-step-text">
+              Make sure Ollama is running, then click Retry below.
+            </div>
+          </div>
+        </div>
+
+        <button class="setup-retry-btn" id="setup-retry" style="display:none;">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+          Retry Connection
+        </button>
+      </div>
+
+      <!-- Chat Container (shown when Ollama is connected) -->
+      <div class="chat-container hidden" id="chat-container">
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty" id="chat-empty">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+            <p>Start a conversation. Your AI runs locally via Ollama.</p>
+          </div>
+        </div>
+
+        <div class="chat-input-bar">
+          <button class="chat-attach-btn" id="chat-attach" aria-label="Attach file">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg>
+          </button>
+          <input type="file" id="chat-file-input" class="sr-only">
+          <textarea class="chat-input" id="chat-input" placeholder="Type a message..." rows="1"></textarea>
+          <button class="chat-send-btn" id="chat-send" disabled aria-label="Send message">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="tools.js" defer></script>
+  <script src="script.js" defer></script>
+  <script>
+  /* ============ INTERFACE CHAT ENGINE ============ */
+  (function() {
+    'use strict';
+
+    const OLLAMA_BASE = 'http://localhost:11434';
+    const MODEL = 'gemma4:e2b';
+    let chatHistory = [];
+    let toolsCatalog = [];
+    let attachedFile = null;
+    let isStreaming = false;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadToolsCatalog();
+      checkOllamaConnection();
+      initChatUI();
+    });
+
+    /* ---- Tool Catalog ---- */
+    async function loadToolsCatalog() {
+      try {
+        const res = await fetch('tools-registry.json');
+        const data = await res.json();
+        toolsCatalog = data.tools || [];
+      } catch (e) {
+        toolsCatalog = [];
+      }
+    }
+
+    function buildSystemPrompt() {
+      let prompt = `You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user's machine via Ollama. Be helpful, concise, and technical when needed.\n\n`;
+
+      if (toolsCatalog.length > 0) {
+        prompt += `You have access to the following tools that can process files locally:\n\n`;
+        toolsCatalog.forEach(t => {
+          prompt += `- **${t.name}** (id: "${t.id}"): ${t.description}. Tags: ${t.tags.join(', ')}.\n`;
+        });
+        prompt += `\nWhen the user asks you to process a file and a tool is appropriate, respond with a JSON action block on its own line:\n{"tool": "<tool-id>", "options": {}}\n\nThe system will detect this, run the tool, and provide the result. Only suggest a tool when a file has been attached.\n`;
+      }
+
+      return prompt;
+    }
+
+    /* ---- Connection Check ---- */
+    async function checkOllamaConnection() {
+      const statusEl = document.getElementById('setup-status');
+      const statusText = document.getElementById('setup-status-text');
+      const setupSteps = document.getElementById('setup-steps');
+      const retryBtn = document.getElementById('setup-retry');
+      const setupPanel = document.getElementById('chat-setup');
+      const chatContainer = document.getElementById('chat-container');
+
+      statusEl.className = 'setup-status checking';
+      statusText.textContent = 'Checking connection...';
+      setupSteps.style.display = 'none';
+      retryBtn.style.display = 'none';
+
+      try {
+        const res = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(5000) });
+        if (!res.ok) throw new Error('Not OK');
+        const data = await res.json();
+
+        // Check if gemma4:e2b is available
+        const models = data.models || [];
+        const hasModel = models.some(m => m.name && m.name.startsWith('gemma4'));
+
+        if (hasModel) {
+          statusEl.className = 'setup-status online';
+          statusText.textContent = 'Connected — ' + MODEL;
+          setTimeout(() => {
+            setupPanel.classList.add('hidden');
+            chatContainer.classList.remove('hidden');
+          }, 800);
+        } else {
+          statusEl.className = 'setup-status offline';
+          statusText.textContent = 'Model not found';
+          setupSteps.style.display = 'block';
+          retryBtn.style.display = 'inline-flex';
+        }
+      } catch (e) {
+        statusEl.className = 'setup-status offline';
+        statusText.textContent = 'Ollama not detected';
+        setupSteps.style.display = 'block';
+        retryBtn.style.display = 'inline-flex';
+      }
+
+      retryBtn.addEventListener('click', () => checkOllamaConnection());
+    }
+
+    /* ---- Chat UI ---- */
+    function initChatUI() {
+      const input = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('chat-send');
+      const attachBtn = document.getElementById('chat-attach');
+      const fileInput = document.getElementById('chat-file-input');
+
+      // Auto-resize textarea
+      input.addEventListener('input', () => {
+        input.style.height = 'auto';
+        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+        sendBtn.disabled = !input.value.trim() && !attachedFile;
+      });
+
+      // Send on Enter (Shift+Enter for newline)
+      input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          if (!sendBtn.disabled && !isStreaming) sendMessage();
+        }
+      });
+
+      sendBtn.addEventListener('click', () => {
+        if (!isStreaming) sendMessage();
+      });
+
+      // File attachment
+      attachBtn.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+          attachedFile = fileInput.files[0];
+          input.placeholder = `📎 ${attachedFile.name} attached. Type a message...`;
+        }
+      });
+    }
+
+    /* ---- Send Message ---- */
+    async function sendMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text && !attachedFile) return;
+
+      // Remove empty state
+      const emptyEl = document.getElementById('chat-empty');
+      if (emptyEl) emptyEl.remove();
+
+      // Display user message
+      let userContent = text;
+      if (attachedFile) {
+        userContent += `\n📎 ${attachedFile.name}`;
+      }
+      addBubble('user', userContent);
+
+      // Build message for API
+      const userMsg = { role: 'user', content: text + (attachedFile ? `\n[Attached file: ${attachedFile.name}, type: ${attachedFile.type}, size: ${attachedFile.size} bytes]` : '') };
+      chatHistory.push(userMsg);
+
+      // Clear input
+      input.value = '';
+      input.style.height = 'auto';
+      document.getElementById('chat-send').disabled = true;
+
+      // Show typing indicator
+      const typingEl = showTyping();
+
+      isStreaming = true;
+
+      try {
+        const systemMsg = { role: 'system', content: buildSystemPrompt() };
+        const messages = [systemMsg, ...chatHistory];
+
+        const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ model: MODEL, messages, stream: true }),
+        });
+
+        if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
+
+        // Remove typing indicator
+        typingEl.remove();
+
+        // Stream response
+        const aiBubble = addBubble('ai', '');
+        const contentEl = aiBubble.querySelector('.bubble-content') || aiBubble;
+        let fullResponse = '';
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (!line.trim()) continue;
+            try {
+              const json = JSON.parse(line);
+              if (json.message && json.message.content) {
+                fullResponse += json.message.content;
+                contentEl.innerHTML = formatMarkdown(fullResponse);
+                scrollToBottom();
+              }
+            } catch (e) { /* skip malformed line */ }
+          }
+        }
+
+        chatHistory.push({ role: 'assistant', content: fullResponse });
+
+        // Check for tool action in response
+        const toolMatch = fullResponse.match(/\{"tool":\s*"([^"]+)".*?\}/);
+        if (toolMatch && attachedFile) {
+          await executeToolAction(toolMatch[0], attachedFile);
+        }
+
+      } catch (err) {
+        typingEl.remove();
+        addBubble('ai', `⚠️ Error: ${err.message}`);
+      }
+
+      isStreaming = false;
+      attachedFile = null;
+      document.getElementById('chat-file-input').value = '';
+      document.getElementById('chat-input').placeholder = 'Type a message...';
+    }
+
+    /* ---- Tool Execution ---- */
+    async function executeToolAction(actionJson, file) {
+      try {
+        const action = JSON.parse(actionJson);
+        const toolInfo = toolsCatalog.find(t => t.id === action.tool);
+        if (!toolInfo) return;
+
+        addBubble('ai', `⚙️ Running **${toolInfo.name}**...`);
+
+        // Load tool from GitHub via tools.js engine
+        if (!window.HallucinatedLab.tools[action.tool]) {
+          await loadTool(toolInfo.repo, action.tool);
+        }
+
+        const tool = window.HallucinatedLab.tools[action.tool];
+        if (!tool) throw new Error('Tool failed to register');
+
+        const result = await tool.process(file, action.options || {});
+        const downloadUrl = URL.createObjectURL(result.blob);
+
+        // Show result in chat
+        const resultBubble = addBubble('ai', `✅ Processing complete.`);
+        const resultDiv = document.createElement('div');
+        resultDiv.className = 'chat-tool-result';
+        const link = document.createElement('a');
+        link.href = downloadUrl;
+        link.download = result.filename;
+        link.textContent = `📥 Download ${result.filename}`;
+        resultDiv.appendChild(link);
+        resultBubble.appendChild(resultDiv);
+
+        // Unload tool
+        unloadTool(action.tool);
+      } catch (e) {
+        addBubble('ai', `⚠️ Tool error: ${e.message}`);
+      }
+    }
+
+    /* ---- UI Helpers ---- */
+    function addBubble(role, content) {
+      const messages = document.getElementById('chat-messages');
+      const bubble = document.createElement('div');
+      bubble.className = `chat-bubble chat-bubble-${role}`;
+
+      const contentSpan = document.createElement('span');
+      contentSpan.className = 'bubble-content';
+      contentSpan.innerHTML = role === 'ai' ? formatMarkdown(content) : escapeHtml(content);
+      bubble.appendChild(contentSpan);
+
+      messages.appendChild(bubble);
+      scrollToBottom();
+      return bubble;
+    }
+
+    function showTyping() {
+      const messages = document.getElementById('chat-messages');
+      const typing = document.createElement('div');
+      typing.className = 'chat-typing';
+      typing.innerHTML = '<span></span><span></span><span></span>';
+      messages.appendChild(typing);
+      scrollToBottom();
+      return typing;
+    }
+
+    function scrollToBottom() {
+      const messages = document.getElementById('chat-messages');
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML.replace(/\n/g, '<br>');
+    }
+
+    function formatMarkdown(text) {
+      // Basic markdown: bold, italic, code blocks, inline code, line breaks
+      let html = escapeHtml(text);
+      // Code blocks
+      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
+      // Inline code
+      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+      // Bold
+      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+      // Italic
+      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+      return html;
+    }
+
+  })();
+  </script>
+
+</body>
+</html>

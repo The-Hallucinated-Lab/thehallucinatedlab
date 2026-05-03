@@ -179,6 +179,14 @@ function initTypingEffect() {
   let charIdx = 0;
   let deleting = false;
 
+  const srOnly = document.createElement('span');
+  srOnly.className = 'sr-only';
+  srOnly.setAttribute('aria-live', 'polite');
+  srOnly.setAttribute('aria-atomic', 'true');
+  el.parentNode.appendChild(srOnly);
+  el.removeAttribute('aria-live');
+  el.removeAttribute('aria-atomic');
+
   function type() {
     const current = texts[textIdx];
     el.textContent = current.substring(0, charIdx);
@@ -187,6 +195,7 @@ function initTypingEffect() {
       charIdx++;
       setTimeout(type, typeSpeed);
     } else if (!deleting && charIdx === current.length) {
+      srOnly.textContent = current;
       setTimeout(() => { deleting = true; type(); }, pauseAfterType);
     } else if (deleting && charIdx > 0) {
       charIdx--;

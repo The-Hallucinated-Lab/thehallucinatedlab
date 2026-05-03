@@ -41,7 +41,7 @@ This is a **zero-dependency static website** — no frameworks, no build tools, 
 | **Structure** | HTML5 with semantic elements |
 | **Styling** | Vanilla CSS with CSS custom properties (design tokens) |
 | **Interactivity** | Vanilla JavaScript (ES6+) |
-| **Fonts** | [Inter](https://fonts.google.com/specimen/Inter), [Space Grotesk](https://fonts.google.com/specimen/Space+Grotesk), [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) via Google Fonts |
+| **Fonts** | [Outfit](https://fonts.google.com/specimen/Outfit) (headings), [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (body) via Google Fonts |
 | **Hosting** | GitHub Pages |
 | **Domain** | [thehallucinatedlab.space](https://thehallucinatedlab.space) (custom domain via CNAME) |
 
@@ -51,16 +51,23 @@ This is a **zero-dependency static website** — no frameworks, no build tools, 
 
 ```
 thehallucinatedlab/
-├── index.html          # Main HTML — all sections (hero, about, contact, footer)
-├── styles.css          # Complete stylesheet — design tokens, components, responsive
-├── script.js           # Particles animation, navbar, scroll effects, typing effect
-├── CNAME               # Custom domain configuration for GitHub Pages
-├── .gitattributes      # Git config
+├── index.html            # Home — hero, about, contact, footer
+├── utilities.html        # Utilities page — tool cards, workspace
+├── certificate.html      # Certification page — criteria, submission
+├── interface.html        # AI chat assistant — local Ollama integration
+├── styles.css            # Core stylesheet — design tokens, components, responsive
+├── pages.css             # Shared styles for utilities, certificate, interface pages
+├── script.js             # Particles animation, navbar, scroll effects, typing effect
+├── tools.js              # On-demand tool loading engine (Blob URL approach)
+├── tools-registry.json   # Central tool catalog
+├── .nojekyll             # Disables Jekyll on GitHub Pages
+├── CNAME                 # Custom domain configuration
+├── .gitattributes        # Git config
 └── assets/
     └── images/
-        ├── logo.jpeg       # Lab logo (used in navbar and favicon)
-        ├── pratyush.jpeg   # Team member avatar
-        └── divyansh.jpeg   # Team member avatar
+        ├── logo.jpeg         # Lab logo (navbar + favicon)
+        ├── pratyush.jpeg     # Team member avatar
+        └── divyansh.jpeg     # Team member avatar
 ```
 
 ---
@@ -77,11 +84,17 @@ thehallucinatedlab/
 ### Design System
 - **Dark theme** with a gold accent palette (`#c9a84c` primary)
 - **CSS custom properties** for consistent theming across all components
-- **Three font families** — Inter (body), Space Grotesk (headings), JetBrains Mono (contact links)
+- **Two font families** — Outfit (headings), JetBrains Mono (body/code)
 - **Smooth transitions** using a custom cubic-bezier easing curve
 
+### Tool Infrastructure
+- **On-demand loading** — tools load from GitHub repos via Blob URL injection, execute in-browser, and unload cleanly
+- **Tool workspace** — drag-and-drop file processing with progress indicators and download output
+- **Tool registry** — central `tools-registry.json` catalog of certified tools
+- **AI Assistant** — local Ollama chat (gemma4:e2b) with streaming responses and tool integration
+
 ### SEO
-- Open Graph meta tags for social sharing
+- Open Graph + Twitter Card meta tags on all pages
 - Canonical URL
 - Semantic HTML5 structure with proper heading hierarchy
 - Descriptive `alt` attributes on all images
@@ -123,13 +136,13 @@ The site is deployed automatically via **GitHub Pages** from the `main` branch. 
 
 ## 🧩 Page Sections
 
-| Section | Description |
+| Page | Description |
 |---|---|
-| **Navbar** | Fixed top bar with logo, nav links (About, Contact), and mobile hamburger menu |
-| **Hero** | Full-viewport landing with particle canvas, title, ideology subtitle, and typing animation |
-| **About Us** | Two-column grid showcasing team member cards with avatars, bios, and social links |
-| **Contact** | Visible clickable links — email, GitHub profiles, and LinkedIn |
-| **Footer** | Minimal copyright bar |
+| **Home** | Hero with particle canvas, typing animation, about section, contact links |
+| **Utilities** | Tool cards with hover-reveal, on-demand workspace for file processing |
+| **Assistant** | AI chat powered by local Ollama — streaming responses, tool integration |
+| **Certificate** | Certification criteria, submission process, CTA |
+| **Navbar** | Fixed top bar — Home, Utilities, Assistant, Certificate, Contact + mobile hamburger |
 
 ---
 
