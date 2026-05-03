@@ -177,6 +177,107 @@
   box-shadow: 0 8px 30px rgba(201, 168, 76, 0.15);
 }
 
+/* ============ UTILITY LIST (compact rows) ============ */
+.utility-list { list-style: none; display: flex; flex-direction: column; gap: 1rem; margin-bottom: 4rem; }
+.utility-list-item {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1.5rem; padding: 1.5rem 1.8rem;
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: var(--transition); cursor: pointer; position: relative;
+  overflow: hidden;
+}
+.utility-list-item::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--gradient-gold);
+  opacity: 0; transition: var(--transition);
+}
+.utility-list-item:not(.utility-list-soon):hover {
+  border-color: var(--border-gold);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-gold);
+}
+.utility-list-item:not(.utility-list-soon):hover::before { opacity: 1; }
+.utility-list-soon { cursor: default; border-style: dashed; }
+
+.utility-list-left {
+  display: flex; align-items: center; gap: 1rem;
+  flex: 1; min-width: 0;
+}
+.utility-list-icon {
+  flex-shrink: 0;
+  width: 44px; height: 44px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gold-glow); border: 1px solid var(--border-subtle);
+  color: var(--gold-primary);
+}
+.utility-list-info { min-width: 0; flex: 1; }
+.utility-list-name {
+  font-family: var(--font-heading); font-size: 1.05rem;
+  font-weight: 700; margin-bottom: 0.3rem;
+}
+.utility-list-desc {
+  color: var(--text-secondary); font-size: 0.8rem;
+  line-height: 1.6; margin-bottom: 0.6rem;
+  display: none;
+}
+.utility-list-item:hover .utility-list-desc,
+.utility-list-item:focus-within .utility-list-desc { display: block; }
+.utility-list-tags {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+}
+.utility-tag-badge {
+  padding: 3px 10px; border-radius: 50px;
+  background: rgba(201, 168, 76, 0.12);
+  border: 1px solid var(--border-gold);
+  font-size: 0.65rem; color: var(--gold-primary);
+  font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+}
+
+.utility-list-right {
+  display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+}
+.utility-launch-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; border-radius: 50px;
+  background: var(--gold-glow); border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  font-family: var(--font-body); font-size: 0.78rem;
+  font-weight: 600; cursor: pointer;
+  transition: var(--transition);
+}
+.utility-launch-btn:hover {
+  background: var(--gold-primary); color: var(--bg-primary);
+  transform: translateX(2px);
+}
+.utility-launch-btn svg { transition: var(--transition); }
+.utility-launch-btn:hover svg { transform: translateX(2px); }
+.utility-gh-btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; border-radius: 50%;
+  background: transparent; border: 1px solid var(--border-subtle);
+  color: var(--text-muted); text-decoration: none;
+  transition: var(--transition); position: relative;
+}
+.utility-gh-btn:hover {
+  border-color: var(--gold-primary); color: var(--gold-primary);
+  background: var(--gold-glow);
+}
+.utility-gh-btn::after {
+  content: attr(data-tooltip);
+  position: absolute; bottom: calc(100% + 8px); left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  padding: 5px 10px; border-radius: var(--radius-sm);
+  background: rgba(201, 168, 76, 0.12); border: 1px solid var(--border-gold);
+  color: var(--gold-light); font-size: 0.7rem; font-weight: 500;
+  white-space: nowrap; opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  backdrop-filter: blur(12px);
+}
+.utility-gh-btn:hover::after {
+  opacity: 1; transform: translateX(-50%) translateY(0);
+}
+
 /* ============ CARD HOVER-REVEAL ============ */
 .utility-card-header {
   display: flex; align-items: center; gap: 0.8rem;

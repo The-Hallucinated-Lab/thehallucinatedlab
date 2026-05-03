@@ -136,8 +136,8 @@ function initWorkspace() {
   const params = new URLSearchParams(window.location.search);
   const toolParam = params.get('tool');
   if (toolParam) {
-    const card = document.querySelector(`.utility-card[data-tool="${toolParam}"]`);
-    if (card) openWorkspace(card);
+    const item = document.querySelector('[data-tool="' + toolParam + '"]');
+    if (item) openWorkspace(item);
   }
 
   function handleFile(file) {
@@ -151,17 +151,22 @@ function initWorkspace() {
   }
 }
 
-function openWorkspace(card) {
-  const toolId = card.dataset.tool;
-  const toolName = card.querySelector('.utility-name').textContent;
+function openWorkspace(item) {
+  const toolId = item.dataset.tool;
+  const nameEl = item.querySelector('.utility-list-name') || item.querySelector('.utility-name');
+  const toolName = nameEl ? nameEl.textContent : toolId;
   currentToolId = toolId;
 
-  document.querySelector('.utilities-section').classList.add('hidden');
+  const utilityList = document.getElementById('utility-list');
+  const howItWorks = document.querySelector('.how-it-works');
+  if (utilityList) utilityList.classList.add('hidden');
+  if (howItWorks) howItWorks.classList.add('hidden');
+
   const workspace = document.getElementById('tool-workspace');
   workspace.classList.remove('hidden');
   document.getElementById('workspace-title').textContent = toolName;
 
-  const isCertified = card.querySelector('.utility-badge');
+  const isCertified = item.querySelector('.utility-tag-badge') || item.querySelector('.utility-badge');
   const badge = workspace.querySelector('.workspace-badge');
   if (badge) badge.classList.toggle('hidden', !isCertified);
 
@@ -193,7 +198,11 @@ function closeWorkspace(e, skipHistory) {
     if (output) { output.classList.add('hidden'); clearElement(output); }
   }
 
-  document.querySelector('.utilities-section').classList.remove('hidden');
+  const utilityList = document.getElementById('utility-list');
+  const howItWorks = document.querySelector('.how-it-works');
+  if (utilityList) utilityList.classList.remove('hidden');
+  if (howItWorks) howItWorks.classList.remove('hidden');
+
   if (!skipHistory) history.pushState({}, '', 'utilities.html');
 }
 
@@ -217,8 +226,15 @@ async function processTool() {
       registerMockTool();
     } else {
       progressText.textContent = 'Loading tool from GitHub...';
-      const card = document.querySelector('.utility-card[data-tool="' + currentToolId + '"]');
-      const repo = card.dataset.repo;
+      const item = document.querySelector('[data-tool="' + currentToolId + '"]');
+      let repo = item && item.dataset.repo;
+      if (!repo) {
+        const registryRes = await fetch('tools-registry.json');
+        const registry = await registryRes.json();
+        const entry = (registry.tools || []).find(t => t.id === currentToolId);
+        repo = entry && entry.repo;
+      }
+      if (!repo) throw new Error('Tool repo not found in registry');
       await loadTool(repo, currentToolId);
     }
 
@@ -279,14 +295,27 @@ function formatSize(bytes) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  // If utilities.js is providing its own tool-panel UI, defer to it.
+  // This file then acts purely as the on-demand GitHub loading engine.
+  if (document.getElementById('tool-panel')) return;
+
   initWorkspace();
 
-  document.querySelectorAll('.utility-card:not(.utility-card-soon)').forEach(card => {
-    card.addEventListener('click', (e) => {
-      if (e.target.closest('.utility-github-link')) return;
+  document.querySelectorAll('.utility-list-item:not(.utility-list-soon)').forEach(item => {
+    item.addEventListener('click', (e) => {
+      if (e.target.closest('.utility-gh-btn')) return;
       e.preventDefault();
-      openWorkspace(card);
+      openWorkspace(item);
     });
-    card.style.cursor = 'pointer';
+  });
+
+  document.querySelectorAll('.utility-launch-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const toolId = btn.dataset.tool;
+      const item = document.querySelector('.utility-list-item[data-tool="' + toolId + '"]');
+      if (item) openWorkspace(item);
+    });
   });
 });
