@@ -1,10 +1,48 @@
+/* ============ CONFIG ============ */
+const CONFIG = {
+  particles: {
+    color: [201, 168, 76],      // RGB gold
+    maxCount: 80,
+    densityFactor: 15000,
+    connectionDistance: 150,
+    connectionOpacity: 0.06,
+    sizeRange: [0.5, 2.0],
+    speedRange: 0.3,
+    opacityRange: [0.1, 0.5],
+  },
+  typing: {
+    texts: [
+      'No cloud lock-ins.',
+      'No paywalls. No ceilings.',
+      'Your data stays yours.',
+      'Fully local AI pipelines.',
+      'Open source. Always.',
+    ],
+    typeSpeed: 80,
+    deleteSpeed: 40,
+    pauseAfterType: 2000,
+    pauseAfterDelete: 500,
+  },
+  navbar: {
+    scrollThreshold: 50,
+    sectionOffset: 100,
+  },
+};
+
 /* ============ PARTICLES ============ */
 function initParticles() {
   const canvas = document.getElementById('particles-canvas');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
-  let particles = [];
-  const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
+  if (!ctx) return;
+
+  const particles = [];
+  const { color, maxCount, densityFactor, connectionDistance, connectionOpacity, sizeRange, speedRange, opacityRange } = CONFIG.particles;
+
+  const resize = () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  };
   resize();
   window.addEventListener('resize', resize);
 
@@ -13,24 +51,25 @@ function initParticles() {
     reset() {
       this.x = Math.random() * canvas.width;
       this.y = Math.random() * canvas.height;
-      this.size = Math.random() * 1.5 + 0.5;
-      this.speedX = (Math.random() - 0.5) * 0.3;
-      this.speedY = (Math.random() - 0.5) * 0.3;
-      this.opacity = Math.random() * 0.4 + 0.1;
+      this.size = Math.random() * (sizeRange[1] - sizeRange[0]) + sizeRange[0];
+      this.speedX = (Math.random() - 0.5) * speedRange;
+      this.speedY = (Math.random() - 0.5) * speedRange;
+      this.opacity = Math.random() * (opacityRange[1] - opacityRange[0]) + opacityRange[0];
     }
     update() {
-      this.x += this.speedX; this.y += this.speedY;
+      this.x += this.speedX;
+      this.y += this.speedY;
       if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
     }
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(201, 168, 76, ${this.opacity})`;
+      ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${this.opacity})`;
       ctx.fill();
     }
   }
 
-  const count = Math.min(80, Math.floor(canvas.width * canvas.height / 15000));
+  const count = Math.min(maxCount, Math.floor(canvas.width * canvas.height / densityFactor));
   for (let i = 0; i < count; i++) particles.push(new Particle());
 
   function connectParticles() {
@@ -39,9 +78,9 @@ function initParticles() {
         const dx = particles[i].x - particles[j].x;
         const dy = particles[i].y - particles[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < 150) {
+        if (dist < connectionDistance) {
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(201, 168, 76, ${0.06 * (1 - dist / 150)})`;
+          ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${connectionOpacity * (1 - dist / connectionDistance)})`;
           ctx.lineWidth = 0.5;
           ctx.moveTo(particles[i].x, particles[i].y);
           ctx.lineTo(particles[j].x, particles[j].y);
@@ -67,36 +106,54 @@ function initNavbar() {
   const navLinks = document.querySelector('.nav-links');
   const links = document.querySelectorAll('.nav-links a');
 
+  if (!navbar) return;
+
+  // Scroll-aware background
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > 50);
+    navbar.classList.toggle('scrolled', window.scrollY > CONFIG.navbar.scrollThreshold);
   });
 
-  if (hamburger) {
+  // Hamburger toggle with ARIA
+  if (hamburger && navLinks) {
     hamburger.addEventListener('click', () => {
-      navLinks.classList.toggle('open');
+      const isOpen = navLinks.classList.toggle('open');
       hamburger.classList.toggle('active');
+      hamburger.setAttribute('aria-expanded', String(isOpen));
     });
+
     links.forEach(link => link.addEventListener('click', () => {
       navLinks.classList.remove('open');
       hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
     }));
-  }
 
-  // Active section highlighting
-  const sections = document.querySelectorAll('section[id]');
-  window.addEventListener('scroll', () => {
-    const scrollY = window.scrollY + 100;
-    sections.forEach(sec => {
-      const top = sec.offsetTop;
-      const height = sec.offsetHeight;
-      const id = sec.getAttribute('id');
-      const link = document.querySelector(`.nav-links a[href="#${id}"]`);
-      if (link) {
-        if (scrollY >= top && scrollY < top + height) link.classList.add('active');
-        else link.classList.remove('active');
+    // Close menu on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navLinks.classList.contains('open')) {
+        navLinks.classList.remove('open');
+        hamburger.classList.remove('active');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.focus();
       }
     });
-  });
+  }
+
+  // Active section highlighting via IntersectionObserver (replaces scroll-based detection)
+  const sections = document.querySelectorAll('section[id]');
+  const sectionObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const id = entry.target.getAttribute('id');
+      const link = document.querySelector(`.nav-links a[href="#${id}"]`);
+      if (link) {
+        if (entry.isIntersecting) {
+          links.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+        }
+      }
+    });
+  }, { threshold: 0.3, rootMargin: '-10% 0px -60% 0px' });
+
+  sections.forEach(sec => sectionObserver.observe(sec));
 }
 
 /* ============ SCROLL ANIMATIONS ============ */
@@ -112,13 +169,15 @@ function initScrollAnimations() {
   document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
 }
 
-
 /* ============ TYPING EFFECT ============ */
 function initTypingEffect() {
   const el = document.getElementById('typing-text');
   if (!el) return;
-  const texts = ['Machine Learning', 'Deep Learning', 'Quantum Computing', 'Quantum Machine Learning', 'Explainable AI'];
-  let textIdx = 0, charIdx = 0, deleting = false;
+
+  const { texts, typeSpeed, deleteSpeed, pauseAfterType, pauseAfterDelete } = CONFIG.typing;
+  let textIdx = 0;
+  let charIdx = 0;
+  let deleting = false;
 
   function type() {
     const current = texts[textIdx];
@@ -126,16 +185,16 @@ function initTypingEffect() {
 
     if (!deleting && charIdx < current.length) {
       charIdx++;
-      setTimeout(type, 80);
+      setTimeout(type, typeSpeed);
     } else if (!deleting && charIdx === current.length) {
-      setTimeout(() => { deleting = true; type(); }, 2000);
+      setTimeout(() => { deleting = true; type(); }, pauseAfterType);
     } else if (deleting && charIdx > 0) {
       charIdx--;
-      setTimeout(type, 40);
+      setTimeout(type, deleteSpeed);
     } else {
       deleting = false;
       textIdx = (textIdx + 1) % texts.length;
-      setTimeout(type, 500);
+      setTimeout(type, pauseAfterDelete);
     }
   }
   type();
@@ -147,5 +206,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initNavbar();
   initScrollAnimations();
   initTypingEffect();
-
 });
