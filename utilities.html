@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utilities — The Hallucinated Lab</title>
+  <meta name="description" content="Local-first utilities by The Hallucinated Lab. Every tool runs entirely in your browser — no cloud, no uploads, no tracking.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="menubar">
+        <li role="none"><a href="/#about" role="menuitem">About</a></li>
+        <li role="none"><a href="utilities.html" role="menuitem" class="active">Utilities</a></li>
+        <li role="none"><a href="certificate.html" role="menuitem">Certificate</a></li>
+        <li role="none"><a href="/#contact" role="menuitem">Contact</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Local-First Tools</span>
+      <h1 class="page-title">Utilities</h1>
+      <p class="page-subtitle">Every utility runs entirely on your machine. No uploads, no cloud processing, no data leaving your browser. Tools load on demand and unload when you're done.</p>
+    </section>
+
+    <section class="utilities-section">
+      <div class="container">
+        <div class="utilities-grid">
+
+          <!-- File Converter -->
+          <a href="https://github.com/The-Hallucinated-Lab/File-Converter" target="_blank" rel="noopener noreferrer" class="utility-card fade-in" id="utility-file-converter">
+            <div class="utility-badge">Certified</div>
+            <div class="utility-icon">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14zM10 17l1.41-1.41L13 17.17l3.59-3.58L18 15l-5 5-3-3z"/></svg>
+            </div>
+            <h3 class="utility-name">File Converter</h3>
+            <p class="utility-desc">Convert images, documents, data files — all locally in your browser. Supports PNG, JPG, WebP, CSV, JSON, XML, YAML, Markdown, and more.</p>
+            <div class="utility-tags">
+              <span class="utility-tag">Images</span>
+              <span class="utility-tag">Documents</span>
+              <span class="utility-tag">Data</span>
+            </div>
+            <span class="utility-cta">View on GitHub →</span>
+          </a>
+
+          <!-- Coming Soon -->
+          <div class="utility-card utility-card-soon fade-in">
+            <div class="utility-icon" style="opacity:0.3;">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            </div>
+            <h3 class="utility-name" style="opacity:0.3;">Coming Soon</h3>
+            <p class="utility-desc" style="opacity:0.2;">More local-first utilities are in development. Submit yours via the Certificate page.</p>
+          </div>
+
+        </div>
+
+        <div class="how-it-works fade-in">
+          <h2 class="how-title">How It Works</h2>
+          <div class="how-steps">
+            <div class="how-step">
+              <div class="how-step-num">1</div>
+              <h4>Select a Utility</h4>
+              <p>Choose the tool you need. Each one is a self-contained module.</p>
+            </div>
+            <div class="how-step">
+              <div class="how-step-num">2</div>
+              <h4>Loads On Demand</h4>
+              <p>The tool loads into your browser only when you use it. Nothing is pre-loaded.</p>
+            </div>
+            <div class="how-step">
+              <div class="how-step-num">3</div>
+              <h4>Auto-Unloads</h4>
+              <p>Once you're done, the tool unloads from memory. Clean, efficient, private.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

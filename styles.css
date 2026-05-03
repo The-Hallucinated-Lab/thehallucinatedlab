@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap');
 
 :root {
   --bg-primary: #050505;
@@ -22,6 +22,8 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
   --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --font-heading: 'Outfit', sans-serif;
+  --font-body: 'JetBrains Mono', 'Courier New', monospace;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -32,14 +34,14 @@ html::-webkit-scrollbar-track { background: var(--bg-primary); }
 html::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
 
 body {
-  font-family: 'JetBrains Mono', 'Courier New', monospace;
+  font-family: var(--font-body);
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow-x: hidden;
   line-height: 1.6;
 }
 
-/* ============ SKIP LINK (Accessibility) ============ */
+/* ============ SKIP LINK ============ */
 .skip-link {
   position: absolute; top: -100%; left: 50%; transform: translateX(-50%);
   padding: 12px 24px; background: var(--gold-primary); color: var(--bg-primary);
@@ -48,11 +50,8 @@ body {
 }
 .skip-link:focus { top: 0; }
 
-/* ============ FOCUS STATES (Accessibility) ============ */
-*:focus-visible {
-  outline: 2px solid var(--gold-primary);
-  outline-offset: 3px;
-}
+/* ============ FOCUS STATES ============ */
+*:focus-visible { outline: 2px solid var(--gold-primary); outline-offset: 3px; }
 *:focus:not(:focus-visible) { outline: none; }
 
 /* ============ NAVBAR ============ */
@@ -68,17 +67,15 @@ body {
 .navbar.scrolled { border-bottom-color: var(--border-subtle); background: rgba(5, 5, 5, 0.95); }
 .nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .nav-logo img { height: 36px; width: 36px; border-radius: 50%; }
-.nav-logo span { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5px; }
+.nav-logo span { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5px; }
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; transition: var(--transition); position: relative; }
 .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--gold-primary); transition: var(--transition); }
 .nav-links a:hover, .nav-links a.active { color: var(--gold-primary); }
 .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
-/* Hamburger base */
 .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
 .nav-hamburger span { width: 24px; height: 2px; background: var(--gold-primary); transition: var(--transition); transform-origin: center; }
-/* Hamburger active animation (X shape) */
 .nav-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 .nav-hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .nav-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -107,7 +104,7 @@ body {
 .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-primary); animation: pulse-dot 2s infinite; }
 @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 .hero-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-heading);
   font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 800;
   line-height: 1.05; margin-bottom: 1.5rem;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
@@ -119,7 +116,7 @@ body {
 section { padding: 6rem 2rem; position: relative; }
 .section-header { text-align: center; margin-bottom: 4rem; }
 .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 1rem; display: block; }
-.section-title { font-family: 'Space Grotesk', sans-serif; font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
+.section-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
 .section-line { width: 60px; height: 2px; background: var(--gradient-gold); margin: 0 auto; border-radius: 2px; }
 .container { max-width: 1200px; margin: 0 auto; }
 
@@ -138,12 +135,12 @@ section { padding: 6rem 2rem; position: relative; }
 .member-card:hover { border-color: var(--border-gold); transform: translateY(-4px); box-shadow: var(--shadow-gold); }
 .member-card:hover::before { opacity: 1; }
 .member-avatar { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem; border: 2px solid var(--border-gold); object-fit: cover; }
-.member-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
+.member-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
 .member-handle { color: var(--gold-primary); font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; }
 .member-bio { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.5rem; }
 .member-links { display: flex; gap: 12px; justify-content: center; }
 
-/* ============ HOVER BUTTONS (icon with tooltip reveal) ============ */
+/* ============ HOVER BUTTONS ============ */
 .hover-btn {
   position: relative;
   width: 42px; height: 42px; border-radius: 50%;
@@ -156,7 +153,6 @@ section { padding: 6rem 2rem; position: relative; }
   border-color: var(--gold-primary); color: var(--gold-primary);
   background: var(--gold-glow);
 }
-/* Tooltip */
 .hover-btn::after {
   content: attr(data-tooltip);
   position: absolute; bottom: calc(100% + 10px); left: 50%;
@@ -164,7 +160,7 @@ section { padding: 6rem 2rem; position: relative; }
   padding: 6px 14px; border-radius: var(--radius-sm);
   background: rgba(201, 168, 76, 0.12); border: 1px solid var(--border-gold);
   color: var(--gold-light); font-size: 0.72rem; font-weight: 500;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-body);
   white-space: nowrap;
   opacity: 0; pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -174,7 +170,6 @@ section { padding: 6rem 2rem; position: relative; }
   opacity: 1;
   transform: translateX(-50%) translateY(0);
 }
-/* Arrow for tooltip */
 .hover-btn::before {
   content: '';
   position: absolute; bottom: calc(100% + 4px); left: 50%;
@@ -186,16 +181,13 @@ section { padding: 6rem 2rem; position: relative; }
 }
 .hover-btn:hover::before { opacity: 1; }
 
-/* Large hover buttons for contact section */
-.hover-btn-lg {
-  width: 52px; height: 52px;
-}
+.hover-btn-lg { width: 52px; height: 52px; }
 
 /* ============ CONTACT ============ */
-#contact { background: var(--bg-secondary); }
+#contact { background: var(--bg-primary); }
 .contact-wrapper { text-align: center; max-width: 600px; margin: 0 auto; }
 .contact-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 2.5rem; }
-.contact-buttons { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
+.contact-links-row { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
 
 /* ============ FOOTER ============ */
 .footer {
