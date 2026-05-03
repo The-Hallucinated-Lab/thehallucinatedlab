@@ -5,7 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Utilities — The Hallucinated Lab</title>
   <meta name="description" content="Local-first utilities by The Hallucinated Lab. Every tool runs entirely in your browser — no cloud, no uploads, no tracking.">
+  <meta property="og:title" content="Utilities — The Hallucinated Lab">
+  <meta property="og:description" content="Local-first utilities running entirely in your browser. No cloud, no uploads, no tracking.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/utilities.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Utilities — The Hallucinated Lab">
+  <meta name="twitter:description" content="Local-first utilities running entirely in your browser.">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
 </head>
@@ -19,11 +27,12 @@
         <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
         <span>THE HALLUCINATED LAB</span>
       </a>
-      <ul class="nav-links" id="nav-links" role="menubar">
-        <li role="none"><a href="/#about" role="menuitem">About</a></li>
-        <li role="none"><a href="utilities.html" role="menuitem" class="active">Utilities</a></li>
-        <li role="none"><a href="certificate.html" role="menuitem">Certificate</a></li>
-        <li role="none"><a href="/#contact" role="menuitem">Contact</a></li>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="utilities.html" class="active">Utilities</a></li>
+        <li><a href="interface.html">Assistant</a></li>
+        <li><a href="certificate.html">Certificate</a></li>
+        <li><a href="/#contact">Contact</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -44,28 +53,32 @@
         <div class="utilities-grid">
 
           <!-- File Converter -->
-          <a href="https://github.com/The-Hallucinated-Lab/File-Converter" target="_blank" rel="noopener noreferrer" class="utility-card fade-in" id="utility-file-converter">
-            <div class="utility-badge">Certified</div>
-            <div class="utility-icon">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14zM10 17l1.41-1.41L13 17.17l3.59-3.58L18 15l-5 5-3-3z"/></svg>
+          <div class="utility-card fade-in" id="utility-file-converter" data-tool="file-converter" data-repo="The-Hallucinated-Lab/File-Converter">
+            <div class="utility-card-header">
+              <div class="utility-badge">Certified</div>
+              <h3 class="utility-name">File Converter</h3>
+              <a href="https://github.com/The-Hallucinated-Lab/File-Converter" target="_blank" rel="noopener noreferrer" class="utility-github-link" aria-label="File Converter on GitHub" title="View on GitHub">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+              </a>
             </div>
-            <h3 class="utility-name">File Converter</h3>
-            <p class="utility-desc">Convert images, documents, data files — all locally in your browser. Supports PNG, JPG, WebP, CSV, JSON, XML, YAML, Markdown, and more.</p>
-            <div class="utility-tags">
-              <span class="utility-tag">Images</span>
-              <span class="utility-tag">Documents</span>
-              <span class="utility-tag">Data</span>
+            <div class="utility-card-details">
+              <p class="utility-desc">Convert images, documents, data files — all locally in your browser. Supports PNG, JPG, WebP, CSV, JSON, XML, YAML, Markdown, and more.</p>
+              <div class="utility-tags">
+                <span class="utility-tag">Images</span>
+                <span class="utility-tag">Documents</span>
+                <span class="utility-tag">Data</span>
+              </div>
             </div>
-            <span class="utility-cta">View on GitHub →</span>
-          </a>
+          </div>
 
           <!-- Coming Soon -->
           <div class="utility-card utility-card-soon fade-in">
-            <div class="utility-icon" style="opacity:0.3;">
-              <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <div class="utility-card-header">
+              <h3 class="utility-name" style="opacity:0.3;">Coming Soon</h3>
             </div>
-            <h3 class="utility-name" style="opacity:0.3;">Coming Soon</h3>
-            <p class="utility-desc" style="opacity:0.2;">More local-first utilities are in development. Submit yours via the Certificate page.</p>
+            <div class="utility-card-details">
+              <p class="utility-desc" style="opacity:0.2;">More local-first utilities are in development. Submit yours via the Certificate page.</p>
+            </div>
           </div>
 
         </div>
@@ -89,6 +102,35 @@
               <p>Once you're done, the tool unloads from memory. Clean, efficient, private.</p>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tool-workspace" class="tool-workspace hidden" aria-label="Tool workspace">
+      <div class="container">
+        <div class="workspace-header">
+          <button class="workspace-back" aria-label="Back to utilities">&larr; Back</button>
+          <h2 class="workspace-title" id="workspace-title"></h2>
+          <span class="workspace-badge utility-badge">Certified</span>
+        </div>
+        <div class="workspace-body">
+          <div class="workspace-input">
+            <div class="workspace-dropzone" id="workspace-dropzone">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true" style="opacity:0.3;margin-bottom:1rem;"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+              <p>Drag &amp; drop your file here, or <button class="workspace-browse">browse</button></p>
+              <input type="file" id="workspace-file-input" class="sr-only">
+            </div>
+            <div class="workspace-file-info hidden" id="workspace-file-info">
+              <span id="workspace-file-name"></span>
+              <button class="workspace-remove-file" aria-label="Remove file">&times;</button>
+            </div>
+          </div>
+          <button class="workspace-process-btn" id="workspace-process" disabled>Process</button>
+          <div class="workspace-progress hidden" id="workspace-progress">
+            <div class="workspace-progress-bar"></div>
+            <span class="workspace-progress-text">Loading tool...</span>
+          </div>
+          <div class="workspace-output hidden" id="workspace-output"></div>
         </div>
       </div>
     </section>

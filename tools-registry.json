@@ -1,0 +1,13 @@
+{
+  "tools": [
+    {
+      "id": "file-converter",
+      "name": "File Converter",
+      "repo": "The-Hallucinated-Lab/File-Converter",
+      "certified": true,
+      "description": "Convert images, documents, data files — all locally in your browser. Supports PNG, JPG, WebP, CSV, JSON, XML, YAML, Markdown, and more.",
+      "tags": ["Images", "Documents", "Data"],
+      "accepts": ".png,.jpg,.jpeg,.webp,.csv,.json,.xml,.yaml,.yml,.md"
+    }
+  ]
+}
