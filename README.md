@@ -52,14 +52,11 @@ This is a **zero-dependency static website** — no frameworks, no build tools, 
 ```
 thehallucinatedlab/
 ├── index.html            # Home — hero, about, contact, footer
-├── utilities.html        # Utilities page — tool cards, workspace
-├── certificate.html      # Certification page — criteria, submission
+├── utilities.html        # Utilities page — placeholder while tools are rebuilt
 ├── interface.html        # AI chat assistant — local Ollama integration
 ├── styles.css            # Core stylesheet — design tokens, components, responsive
-├── pages.css             # Shared styles for utilities, certificate, interface pages
+├── pages.css             # Shared styles for utilities and interface pages
 ├── script.js             # Particles animation, navbar, scroll effects, typing effect
-├── tools.js              # On-demand tool loading engine (Blob URL approach)
-├── tools-registry.json   # Central tool catalog
 ├── .nojekyll             # Disables Jekyll on GitHub Pages
 ├── CNAME                 # Custom domain configuration
 ├── .gitattributes        # Git config
@@ -87,11 +84,13 @@ thehallucinatedlab/
 - **Two font families** — Outfit (headings), JetBrains Mono (body/code)
 - **Smooth transitions** using a custom cubic-bezier easing curve
 
-### Tool Infrastructure
-- **On-demand loading** — tools load from GitHub repos via Blob URL injection, execute in-browser, and unload cleanly
-- **Tool workspace** — drag-and-drop file processing with progress indicators and download output
-- **Tool registry** — central `tools-registry.json` catalog of certified tools
-- **AI Assistant** — local Ollama chat (gemma4:e2b) with streaming responses and tool integration
+### Assistant
+- **Local-only chat** — talks to Ollama running on your machine; no API keys, no cloud, no data leaves your device
+- **Auto-detects installed model** (recommended: `gemma4:e4b`); falls back through `gemma4:e2b → gemma3:4b → gemma2:2b → llama3.2:*` and finally any installed model
+- **Streaming responses** rendered token-by-token, with a setup panel that surfaces install/CORS instructions when Ollama isn't reachable
+
+### Utilities
+- Currently a placeholder while the tool platform is being rebuilt
 
 ### SEO
 - Open Graph + Twitter Card meta tags on all pages
@@ -139,10 +138,9 @@ The site is deployed automatically via **GitHub Pages** from the `main` branch. 
 | Page | Description |
 |---|---|
 | **Home** | Hero with particle canvas, typing animation, about section, contact links |
-| **Utilities** | Tool cards with hover-reveal, on-demand workspace for file processing |
-| **Assistant** | AI chat powered by local Ollama — streaming responses, tool integration |
-| **Certificate** | Certification criteria, submission process, CTA |
-| **Navbar** | Fixed top bar — Home, Utilities, Assistant, Certificate, Contact + mobile hamburger |
+| **Utilities** | Placeholder page — tools are being rebuilt from scratch |
+| **Assistant** | AI chat powered by local Ollama — auto-detects installed model, streaming responses |
+| **Navbar** | Fixed top bar — Home, Utilities, Assistant, Contact + mobile hamburger |
 
 ---
 
