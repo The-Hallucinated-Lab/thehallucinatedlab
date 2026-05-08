@@ -31,7 +31,6 @@
         <li><a href="/">Home</a></li>
         <li><a href="utilities.html">Utilities</a></li>
         <li><a href="interface.html" class="active">Assistant</a></li>
-        <li><a href="certificate.html">Certificate</a></li>
         <li><a href="/#contact">Contact</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
@@ -63,14 +62,19 @@
           <div class="setup-step">
             <div class="setup-step-num">2</div>
             <div class="setup-step-text">
-              Pull the model: <code>ollama pull gemma4:e2b</code>
+              Pull a model — recommended: <code>ollama pull gemma4:e4b</code><br>
+              <span style="opacity:0.7;font-size:0.8rem;">Any installed model works; the page picks the first one it finds.</span>
             </div>
           </div>
           <div class="setup-step">
             <div class="setup-step-num">3</div>
             <div class="setup-step-text">
-              If accessing from thehallucinatedlab.space, set the CORS origin:<br>
-              <code>set OLLAMA_ORIGINS=https://thehallucinatedlab.space</code><br>
+              Allow the page to talk to Ollama (CORS). Set this <strong>before</strong> starting Ollama:<br>
+              <strong>Local dev (file:// or localhost):</strong><br>
+              <code>setx OLLAMA_ORIGINS "*"</code> &nbsp;<em>(Windows)</em><br>
+              <code>export OLLAMA_ORIGINS="*"</code> &nbsp;<em>(macOS / Linux)</em><br>
+              <strong>Production site:</strong><br>
+              <code>OLLAMA_ORIGINS=https://thehallucinatedlab.space</code><br>
               Then restart Ollama.
             </div>
           </div>
@@ -117,7 +121,6 @@
     <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
   </footer>
 
-  <script src="tools.js" defer></script>
   <script src="script.js" defer></script>
   <script>
   /* ============ INTERFACE CHAT ENGINE ============ */
@@ -125,41 +128,19 @@
     'use strict';
 
     const OLLAMA_BASE = 'http://localhost:11434';
-    const MODEL = 'gemma4:e2b';
+    const PREFERRED_MODELS = ['gemma4:e4b', 'gemma4:e2b', 'gemma3:4b', 'gemma2:2b', 'llama3.2:3b', 'llama3.2:1b'];
+    let MODEL = null; // resolved at connection time from /api/tags
     let chatHistory = [];
-    let toolsCatalog = [];
     let attachedFile = null;
     let isStreaming = false;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await loadToolsCatalog();
+    document.addEventListener('DOMContentLoaded', () => {
       checkOllamaConnection();
       initChatUI();
     });
 
-    /* ---- Tool Catalog ---- */
-    async function loadToolsCatalog() {
-      try {
-        const res = await fetch('tools-registry.json');
-        const data = await res.json();
-        toolsCatalog = data.tools || [];
-      } catch (e) {
-        toolsCatalog = [];
-      }
-    }
-
     function buildSystemPrompt() {
-      let prompt = `You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user's machine via Ollama. Be helpful, concise, and technical when needed.\n\n`;
-
-      if (toolsCatalog.length > 0) {
-        prompt += `You have access to the following tools that can process files locally:\n\n`;
-        toolsCatalog.forEach(t => {
-          prompt += `- **${t.name}** (id: "${t.id}"): ${t.description}. Tags: ${t.tags.join(', ')}.\n`;
-        });
-        prompt += `\nWhen the user asks you to process a file and a tool is appropriate, respond with a JSON action block on its own line:\n{"tool": "<tool-id>", "options": {}}\n\nThe system will detect this, run the tool, and provide the result. Only suggest a tool when a file has been attached.\n`;
-      }
-
-      return prompt;
+      return `You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user's machine via Ollama. Be helpful, concise, and technical when needed.`;
     }
 
     /* ---- Connection Check ---- */
@@ -181,31 +162,35 @@
         if (!res.ok) throw new Error('Not OK');
         const data = await res.json();
 
-        // Check if gemma4:e2b is available
-        const models = data.models || [];
-        const hasModel = models.some(m => m.name && m.name.startsWith('gemma4'));
-
-        if (hasModel) {
+        const installed = (data.models || []).map(m => m.name).filter(Boolean);
+        if (installed.length === 0) {
+          statusEl.className = 'setup-status offline';
+          statusText.textContent = 'No models installed';
+          setupSteps.style.display = 'block';
+          retryBtn.style.display = 'inline-flex';
+        } else {
+          // Prefer one of our recommended models if installed; otherwise use the first one available.
+          MODEL = PREFERRED_MODELS.find(p => installed.includes(p)) || installed[0];
           statusEl.className = 'setup-status online';
           statusText.textContent = 'Connected — ' + MODEL;
           setTimeout(() => {
             setupPanel.classList.add('hidden');
             chatContainer.classList.remove('hidden');
           }, 800);
-        } else {
-          statusEl.className = 'setup-status offline';
-          statusText.textContent = 'Model not found';
-          setupSteps.style.display = 'block';
-          retryBtn.style.display = 'inline-flex';
         }
       } catch (e) {
+        console.warn('[Ollama] connection failed:', e);
         statusEl.className = 'setup-status offline';
-        statusText.textContent = 'Ollama not detected';
+        statusText.textContent = 'Ollama not detected (or CORS blocked)';
         setupSteps.style.display = 'block';
         retryBtn.style.display = 'inline-flex';
       }
 
-      retryBtn.addEventListener('click', () => checkOllamaConnection());
+      // Bind retry once
+      if (!retryBtn.dataset.bound) {
+        retryBtn.addEventListener('click', () => checkOllamaConnection());
+        retryBtn.dataset.bound = '1';
+      }
     }
 
     /* ---- Chat UI ---- */
@@ -322,12 +307,6 @@
 
         chatHistory.push({ role: 'assistant', content: fullResponse });
 
-        // Check for tool action in response
-        const toolMatch = fullResponse.match(/\{"tool":\s*"([^"]+)".*?\}/);
-        if (toolMatch && attachedFile) {
-          await executeToolAction(toolMatch[0], attachedFile);
-        }
-
       } catch (err) {
         typingEl.remove();
         addBubble('ai', `⚠️ Error: ${err.message}`);
@@ -337,44 +316,6 @@
       attachedFile = null;
       document.getElementById('chat-file-input').value = '';
       document.getElementById('chat-input').placeholder = 'Type a message...';
-    }
-
-    /* ---- Tool Execution ---- */
-    async function executeToolAction(actionJson, file) {
-      try {
-        const action = JSON.parse(actionJson);
-        const toolInfo = toolsCatalog.find(t => t.id === action.tool);
-        if (!toolInfo) return;
-
-        addBubble('ai', `⚙️ Running **${toolInfo.name}**...`);
-
-        // Load tool from GitHub via tools.js engine
-        if (!window.HallucinatedLab.tools[action.tool]) {
-          await loadTool(toolInfo.repo, action.tool);
-        }
-
-        const tool = window.HallucinatedLab.tools[action.tool];
-        if (!tool) throw new Error('Tool failed to register');
-
-        const result = await tool.process(file, action.options || {});
-        const downloadUrl = URL.createObjectURL(result.blob);
-
-        // Show result in chat
-        const resultBubble = addBubble('ai', `✅ Processing complete.`);
-        const resultDiv = document.createElement('div');
-        resultDiv.className = 'chat-tool-result';
-        const link = document.createElement('a');
-        link.href = downloadUrl;
-        link.download = result.filename;
-        link.textContent = `📥 Download ${result.filename}`;
-        resultDiv.appendChild(link);
-        resultBubble.appendChild(resultDiv);
-
-        // Unload tool
-        unloadTool(action.tool);
-      } catch (e) {
-        addBubble('ai', `⚠️ Tool error: ${e.message}`);
-      }
     }
 
     /* ---- UI Helpers ---- */
