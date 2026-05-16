@@ -204,8 +204,86 @@ function ChannelHeader({ channel, tagline }) {
   );
 }
 
+// ─── Calendar View ───
+function CalendarView({ onClose, onSelect }) {
+  const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const emptyDays = [1, 2, 3]; // Apr 2026 starts Wed
+  const totalDays = 30;
+
+  return (
+    <div style={{
+      position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+      background: "rgba(0,0,0,0.1)", backdropFilter: "blur(2px)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      zIndex: 100, padding: 20
+    }}>
+      <div className="fade-in" style={{
+        background: "var(--paper)", border: "1px solid var(--rule-soft)",
+        borderRadius: 12, padding: "20px", width: "100%", maxWidth: 320,
+        boxShadow: "0 10px 30px rgba(0,0,0,0.05)"
+      }}>
+        <div style={{
+          display: "flex", justifyContent: "space-between", alignItems: "center",
+          marginBottom: 16
+        }}>
+          <span style={{ fontFamily: "var(--serif)", fontSize: 16, fontWeight: 500, color: "var(--ink-strong)" }}>April 2026</span>
+          <button onClick={onClose} style={{
+            background: "transparent", border: "none", cursor: "pointer",
+            fontFamily: "var(--mono)", fontSize: 10, color: "var(--ink-muted)",
+            textTransform: "uppercase", letterSpacing: "0.06em"
+          }}>close</button>
+        </div>
+        
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4, marginBottom: 8 }}>
+          {days.map(d => (
+            <div key={d} style={{
+              textAlign: "center", fontFamily: "var(--mono)", fontSize: 9,
+              color: "var(--ink-soft)", textTransform: "uppercase"
+            }}>{d}</div>
+          ))}
+        </div>
+        
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 4 }}>
+          {emptyDays.map(i => <div key={`empty-${i}`} />)}
+          {Array.from({ length: totalDays }).map((_, i) => {
+            const date = i + 1;
+            const fullDate = `2026-04-${date.toString().padStart(2, "0")}`;
+            const hasData = date === 30 || date === 29 || date === 28;
+            return (
+              <button key={date} onClick={() => { 
+                  if(hasData) {
+                    onSelect(date === 30 ? "today" : fullDate);
+                    onClose();
+                  }
+                }}
+                style={{
+                  aspectRatio: "1", borderRadius: "50%",
+                  border: hasData ? "1px solid var(--rule)" : "1px solid transparent",
+                  background: date === 30 ? "var(--ink-strong)" : (hasData ? "var(--paper-soft)" : "transparent"),
+                  color: date === 30 ? "var(--paper)" : (hasData ? "var(--ink-strong)" : "var(--ink-muted)"),
+                  fontFamily: "var(--mono)", fontSize: 11,
+                  cursor: hasData ? "pointer" : "not-allowed",
+                  opacity: hasData ? 1 : 0.4,
+                  display: "flex", alignItems: "center", justifyContent: "center"
+                }}>
+                {date}
+              </button>
+            );
+          })}
+        </div>
+        <div style={{
+          marginTop: 16, fontFamily: "var(--mono)", fontSize: 9,
+          color: "var(--ink-soft)", textAlign: "center", letterSpacing: "0.04em"
+        }}>
+          only highlighted days have history
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Day strip ───
-function DayStrip({ currentDay, setCurrentDay }) {
+function DayStrip({ currentDay, setCurrentDay, onOpenCalendar }) {
   // today and the most recent 2 past days
   const days = [
     { id: "today", label: "today", date: "Apr 30", hasSummary: false },
@@ -250,7 +328,7 @@ function DayStrip({ currentDay, setCurrentDay }) {
           </button>
         );
       })}
-      <button style={{
+      <button onClick={onOpenCalendar} style={{
         padding: "5px 10px",
         border: "1px dashed var(--rule)",
         background: "transparent",
@@ -470,6 +548,7 @@ function Composer({ onSend }) {
 // ─── Chat screen ───
 function ChatScreen({ onOpenDiscussion, channelName = "duochat-shift", tagline = "features & protocol decisions for our move to duochat", projectData }) {
   const [currentDay, setCurrentDay] = React.useState("today");
+  const [calendarOpen, setCalendarOpen] = React.useState(false);
   const defaultMessagesToday = projectData ? (projectData.messages_today || []) : D.messages_today;
   const [todayMessages, setTodayMessages] = React.useState(defaultMessagesToday);
   const [merged, setMerged] = React.useState(new Set());
@@ -526,9 +605,10 @@ function ChatScreen({ onOpenDiscussion, channelName = "duochat-shift", tagline =
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative" }}>
+      {calendarOpen && <CalendarView onClose={() => setCalendarOpen(false)} onSelect={setCurrentDay} />}
       <ChannelHeader channel={channelName} tagline={tagline} />
-      <DayStrip currentDay={currentDay} setCurrentDay={setCurrentDay} />
+      <DayStrip currentDay={currentDay} setCurrentDay={setCurrentDay} onOpenCalendar={() => setCalendarOpen(true)} />
 
       <div style={{ flex: 1, overflow: "auto" }} className="no-scrollbar">
         {summary && <DaySummaryCard summary={summary} />}
