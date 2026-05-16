@@ -205,10 +205,13 @@ function ChannelHeader({ channel, tagline }) {
 }
 
 // ─── Calendar View ───
-function CalendarView({ onClose, onSelect }) {
+function CalendarView({ onClose, onSelect, summaries = [] }) {
   const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
   const emptyDays = [1, 2, 3]; // Apr 2026 starts Wed
   const totalDays = 30;
+
+  const [previewDate, setPreviewDate] = React.useState(null);
+  const previewSummary = previewDate ? summaries.find(s => s.iso === previewDate) : null;
 
   return (
     <div style={{
@@ -248,19 +251,24 @@ function CalendarView({ onClose, onSelect }) {
           {Array.from({ length: totalDays }).map((_, i) => {
             const date = i + 1;
             const fullDate = `2026-04-${date.toString().padStart(2, "0")}`;
-            const hasData = date === 30 || date === 29 || date === 28;
+            const hasData = date >= 26 && date <= 30;
+            const isPreview = previewDate === fullDate;
             return (
               <button key={date} onClick={() => { 
                   if(hasData) {
-                    onSelect(date === 30 ? "today" : fullDate);
-                    onClose();
+                    if (previewDate === fullDate) {
+                      onSelect(date === 30 ? "today" : fullDate);
+                      onClose();
+                    } else {
+                      setPreviewDate(fullDate);
+                    }
                   }
                 }}
                 style={{
                   aspectRatio: "1", borderRadius: "50%",
                   border: hasData ? "1px solid var(--rule)" : "1px solid transparent",
-                  background: date === 30 ? "var(--ink-strong)" : (hasData ? "var(--paper-soft)" : "transparent"),
-                  color: date === 30 ? "var(--paper)" : (hasData ? "var(--ink-strong)" : "var(--ink-muted)"),
+                  background: isPreview ? "var(--ink-strong)" : (hasData ? "var(--paper-soft)" : "transparent"),
+                  color: isPreview ? "var(--paper)" : (hasData ? "var(--ink-strong)" : "var(--ink-muted)"),
                   fontFamily: "var(--mono)", fontSize: 11,
                   cursor: hasData ? "pointer" : "not-allowed",
                   opacity: hasData ? 1 : 0.4,
@@ -271,12 +279,34 @@ function CalendarView({ onClose, onSelect }) {
             );
           })}
         </div>
-        <div style={{
-          marginTop: 16, fontFamily: "var(--mono)", fontSize: 9,
-          color: "var(--ink-soft)", textAlign: "center", letterSpacing: "0.04em"
-        }}>
-          only highlighted days have history
-        </div>
+        
+        {previewSummary ? (
+          <div className="fade-in" style={{
+            marginTop: 16, padding: "12px", background: "var(--paper-soft)",
+            border: "1px dashed var(--rule)", borderRadius: 8,
+          }}>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 13, fontWeight: 500, marginBottom: 4, color: "var(--ink-strong)", lineHeight: 1.3 }}>
+              {previewSummary.headline}
+            </div>
+            <div style={{ fontFamily: "var(--serif)", fontSize: 11, color: "var(--ink-muted)", lineHeight: 1.4, marginBottom: 8, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
+              {previewSummary.body}
+            </div>
+            <button onClick={() => { onSelect(previewDate === "2026-04-30" ? "today" : previewDate); onClose(); }} style={{
+              width: "100%", padding: "6px", background: "transparent",
+              border: "1px solid var(--ink)", borderRadius: 6, cursor: "pointer",
+              fontFamily: "var(--mono)", fontSize: 9.5, textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--ink-strong)"
+            }}>
+              enter chat →
+            </button>
+          </div>
+        ) : (
+          <div style={{
+            marginTop: 16, fontFamily: "var(--mono)", fontSize: 9,
+            color: "var(--ink-soft)", textAlign: "center", letterSpacing: "0.04em"
+          }}>
+            click a day to preview summary, click again to enter chat.
+          </div>
+        )}
       </div>
     </div>
   );
@@ -589,24 +619,22 @@ function ChatScreen({ onOpenDiscussion, channelName = "duochat-shift", tagline =
     });
   };
 
-  let messages, summary = null;
-  if (currentDay === "today") {
+  let messages = [];
+  let summary = null;
+  const summaries = projectData ? (projectData.daily_summaries || []) : (D.daily_summaries || []);
+
+  if (currentDay === "today" || currentDay === "2026-04-30") {
     messages = todayMessages;
-  } else if (currentDay === "2026-04-29") {
-    messages = projectData ? (projectData.messages || []) : D.messages;
-    const summaries = projectData ? (projectData.daily_summaries || []) : D.daily_summaries;
-    summary = summaries.find(s => s.iso === "2026-04-29");
-  } else if (currentDay === "2026-04-28") {
-    messages = [];   // demo: 2 days ago is summarised but messages compacted away
-    const summaries = projectData ? (projectData.daily_summaries || []) : D.daily_summaries;
-    summary = summaries.find(s => s.iso === "2026-04-28");
+    summary = summaries.find(s => s.iso === "2026-04-30") || null;
   } else {
-    messages = [];
+    // For past days, demo gives full messages only to Apr 29, otherwise empty (compacted)
+    messages = currentDay === "2026-04-29" ? (projectData ? (projectData.messages || []) : D.messages) : [];
+    summary = summaries.find(s => s.iso === currentDay) || null;
   }
 
   return (
     <div style={{ display: "flex", flexDirection: "column", height: "100%", position: "relative" }}>
-      {calendarOpen && <CalendarView onClose={() => setCalendarOpen(false)} onSelect={setCurrentDay} />}
+      {calendarOpen && <CalendarView onClose={() => setCalendarOpen(false)} onSelect={setCurrentDay} summaries={summaries} />}
       <ChannelHeader channel={channelName} tagline={tagline} />
       <DayStrip currentDay={currentDay} setCurrentDay={setCurrentDay} onOpenCalendar={() => setCalendarOpen(true)} />
 
