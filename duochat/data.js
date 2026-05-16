@@ -321,6 +321,12 @@ window.DUOCHAT_DATA = {
   // Daily AI end-of-day summaries (written at 23:59 before the day rolls over)
   daily_summaries: [
     {
+      date: "Apr 30", iso: "2026-04-30",
+      headline: "resolving the UI state for tag animations",
+      body: "three messages this morning. rohan asked how tag switching should animate, ananya proposed a 150ms crossfade, and kabir suggested haptic feedback on mobile. ollama chimed in supporting haptics based on the 'tactile writing' principle. two ideas entered incubation. the focus remains on keeping the chat interface calm but responsive.",
+      writes: 3, hatched: 2, openQs: 1,
+    },
+    {
       date: "Apr 29", iso: "2026-04-29",
       headline: "the team converged on duochat as a real shift, not just a venue",
       body: "twelve messages across the morning and evening. rohan opened with the migration urgency and ananya pushed back on the threading model — both lines of thought are unresolved and worth carrying forward. ollama responded first on two ideas (channel migration, podcast-on-this) at a combined 1010 words; both are now active in incubation. the standout question came from ananya: how deep should default nesting go. nobody answered it yet. tomorrow's work probably starts there.",
@@ -331,6 +337,18 @@ window.DUOCHAT_DATA = {
       headline: "scoping the space — five rough sketches, no commitments",
       body: "an exploratory day. kabir surfaced the calmness-by-design framing for media. ananya tied that to read and explore. you posted the first sketch of the incubation lab. ollama suggested margin-notes as a primitive that links read + chat + lab. nothing was decided. nothing needed to be.",
       writes: 8, hatched: 0, openQs: 1,
+    },
+    {
+      date: "Apr 27", iso: "2026-04-27",
+      headline: "a debate on privacy versus shared context",
+      body: "the team debated whether personal drafts should be visible to ollama before being committed. ananya argued for total privacy until send; rohan argued that early AI feedback prevents getting stuck. ollama synthesized the debate into the 'opt-in draft' protocol. the concept of 'incubation' started to form.",
+      writes: 15, hatched: 1, openQs: 2,
+    },
+    {
+      date: "Apr 26", iso: "2026-04-26",
+      headline: "kickoff — defining the hallucinated lab principles",
+      body: "first day in the new workspace. the team agreed on the core tenets: local-first, privacy-by-default, and AI as a peer rather than an oracle. we moved the old repositories into the lab structure. ollama helped map the initial architecture for the new modular system.",
+      writes: 22, hatched: 3, openQs: 0,
     },
   ],
 
@@ -413,6 +431,38 @@ window.DUOCHAT_DATA = {
         { id: "dc-i4", kind: "explore", title: "inline markdown in tagged text", source: "#duochat · rohan",
           ai_words: 412, age: "2d", status: "incubating",
           preview: "can you bold/italic inside a tag segment? probably yes but rendering gets tricky." },
+      ],
+      daily_summaries: [
+        {
+          date: "Apr 30", iso: "2026-04-30",
+          headline: "resolving the UI state for tag animations",
+          body: "three messages this morning. rohan asked how tag switching should animate, ananya proposed a 150ms crossfade, and kabir suggested haptic feedback on mobile. ollama chimed in supporting haptics based on the 'tactile writing' principle. two ideas entered incubation. the focus remains on keeping the chat interface calm but responsive.",
+          writes: 3, hatched: 2, openQs: 1,
+        },
+        {
+          date: "Apr 29", iso: "2026-04-29",
+          headline: "the team converged on duochat as a real shift, not just a venue",
+          body: "twelve messages across the morning and evening. rohan opened with the migration urgency and ananya pushed back on the threading model — both lines of thought are unresolved and worth carrying forward. ollama responded first on two ideas (channel migration, podcast-on-this) at a combined 1010 words; both are now active in incubation. the standout question came from ananya: how deep should default nesting go. nobody answered it yet. tomorrow's work probably starts there.",
+          writes: 12, hatched: 2, openQs: 3,
+        },
+        {
+          date: "Apr 28", iso: "2026-04-28",
+          headline: "scoping the space — five rough sketches, no commitments",
+          body: "an exploratory day. kabir surfaced the calmness-by-design framing for media. ananya tied that to read and explore. you posted the first sketch of the incubation lab. ollama suggested margin-notes as a primitive that links read + chat + lab. nothing was decided. nothing needed to be.",
+          writes: 8, hatched: 0, openQs: 1,
+        },
+        {
+          date: "Apr 27", iso: "2026-04-27",
+          headline: "a debate on privacy versus shared context",
+          body: "the team debated whether personal drafts should be visible to ollama before being committed. ananya argued for total privacy until send; rohan argued that early AI feedback prevents getting stuck. ollama synthesized the debate into the 'opt-in draft' protocol. the concept of 'incubation' started to form.",
+          writes: 15, hatched: 1, openQs: 2,
+        },
+        {
+          date: "Apr 26", iso: "2026-04-26",
+          headline: "kickoff — defining the hallucinated lab principles",
+          body: "first day in the new workspace. the team agreed on the core tenets: local-first, privacy-by-default, and AI as a peer rather than an oracle. we moved the old repositories into the lab structure. ollama helped map the initial architecture for the new modular system.",
+          writes: 22, hatched: 3, openQs: 0,
+        },
       ],
       media_today: [
         { id: "dc-m1", category: "video", title: "Designing Chat Interfaces That Scale", source: "youtube · 14 min",
