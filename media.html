@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Media — The Hallucinated Lab</title>
+  <meta name="description" content="Articles, research, and community insights from The Hallucinated Lab. Explore featured pieces, browse the archive, and submit your own ideas.">
+  <meta property="og:title" content="Media — The Hallucinated Lab">
+  <meta property="og:description" content="Articles, research, and community insights from The Hallucinated Lab.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/media.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/media.html">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links" role="menubar">
+        <li role="none"><a href="/#about" role="menuitem">About</a></li>
+        <li role="none"><a href="utilities.html" role="menuitem">Utilities</a></li>
+        <li role="none"><a href="media.html" role="menuitem" class="active">Media</a></li>
+        <li role="none"><a href="certificate.html" role="menuitem">Certificate</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <!-- ====== HERO ====== -->
+    <section class="page-hero">
+      <span class="section-label">Publications & Ideas</span>
+      <h1 class="page-title">Media</h1>
+      <p class="page-subtitle">Dive into our articles, research pieces, and community-driven ideas. Every article is a fully interactive reading experience — not just text on a page.</p>
+    </section>
+
+    <!-- ====== SECTION 1: FEATURED ====== -->
+    <section class="media-section" id="media-featured">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Spotlight</span>
+          <h2 class="section-title">Featured</h2>
+          <div class="section-line" aria-hidden="true"></div>
+        </div>
+        <div class="featured-grid" id="featured-grid">
+          <!-- JS renders featured article cards here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SECTION 2: THE ARCHIVE ====== -->
+    <section class="media-section media-section-alt" id="media-archive">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">All Publications</span>
+          <h2 class="section-title">The Archive</h2>
+          <div class="section-line" aria-hidden="true"></div>
+        </div>
+
+        <!-- Filters -->
+        <div class="archive-controls fade-in" id="archive-controls">
+          <div class="archive-search-wrap">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+            <input type="text" class="archive-search" id="archive-search" placeholder="Search articles..." autocomplete="off">
+          </div>
+          <div class="archive-filters" id="archive-filters">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <!-- Category buttons rendered by JS -->
+          </div>
+        </div>
+
+        <div class="archive-grid" id="archive-grid">
+          <!-- JS renders article cards here -->
+        </div>
+        <div class="archive-empty" id="archive-empty" style="display:none;">
+          <p>No articles match your search.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SECTION 3: ON THE HORIZON ====== -->
+    <section class="media-section" id="media-horizon">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Coming Soon</span>
+          <h2 class="section-title">On the Horizon</h2>
+          <div class="section-line" aria-hidden="true"></div>
+        </div>
+        <div class="horizon-grid" id="horizon-grid">
+          <!-- JS renders upcoming article cards here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SECTION 4: COMMUNITY SPOTLIGHT ====== -->
+    <section class="media-section media-section-alt" id="media-community">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">From Our Readers</span>
+          <h2 class="section-title">Community Spotlight</h2>
+          <div class="section-line" aria-hidden="true"></div>
+        </div>
+        <div class="community-grid" id="community-grid">
+          <!-- JS renders community submissions here -->
+        </div>
+        <div class="community-empty" id="community-empty">
+          <div class="community-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM11 5h2v4h-2zm0 6h2v2h-2z"/></svg>
+          </div>
+          <p>No community posts yet. Be the first to share your ideas below!</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SECTION 5: SUBMIT YOUR PIECE ====== -->
+    <section class="media-section" id="media-submit">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Contribute</span>
+          <h2 class="section-title">Submit Your Piece</h2>
+          <div class="section-line" aria-hidden="true"></div>
+        </div>
+        <div class="submit-wrapper fade-in">
+          <p class="submit-intro">Have an idea, a draft, or a fully-formed article? Share it with the community. Your submission will appear in the Community Spotlight, and outstanding pieces may be featured or published as full interactive articles.</p>
+          <form class="submit-form" id="submit-form" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="submit-name" class="form-label">Name <span class="form-required">*</span></label>
+                <input type="text" id="submit-name" class="form-input" placeholder="Your name" required>
+              </div>
+              <div class="form-group">
+                <label for="submit-email" class="form-label">Email <span class="form-optional">(optional)</span></label>
+                <input type="email" id="submit-email" class="form-input" placeholder="your@email.com">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="submit-title" class="form-label">Title <span class="form-required">*</span></label>
+                <input type="text" id="submit-title" class="form-input" placeholder="Article title or idea" required>
+              </div>
+              <div class="form-group">
+                <label for="submit-category" class="form-label">Category</label>
+                <select id="submit-category" class="form-select">
+                  <option value="General">General</option>
+                  <option value="AI & ML">AI & ML</option>
+                  <option value="Quantum Computing">Quantum Computing</option>
+                  <option value="Open Source">Open Source</option>
+                  <option value="Privacy & Security">Privacy & Security</option>
+                  <option value="Dev Tools">Dev Tools</option>
+                  <option value="Research">Research</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="submit-body" class="form-label">Your Piece <span class="form-required">*</span></label>
+              <textarea id="submit-body" class="form-textarea" placeholder="Write your article, idea, pitch, or whatever's on your mind..." rows="8" required></textarea>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="submit-btn" id="submit-btn">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+                <span>Submit</span>
+              </button>
+              <p class="form-note">Submissions are stored locally in your browser. Outstanding pieces may be published as full articles.</p>
+            </div>
+          </form>
+          <!-- Success toast -->
+          <div class="submit-toast" id="submit-toast" aria-live="polite">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+            <span>Your piece has been submitted! Check the Community Spotlight above.</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="media.js" defer></script>
+</body>
+</html>
