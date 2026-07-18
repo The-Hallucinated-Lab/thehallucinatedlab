@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Time & Space Complexity — Full Teaching Session</title>
+<style>
+  :root {
+    --bg: #0f1116;
+    --panel: #171a22;
+    --panel-2: #1e222c;
+    --border: #262a35;
+    --text: #e6e8ee;
+    --muted: #9aa0ac;
+    --accent: #7cc4ff;
+    --accent-2: #b78dff;
+    --good: #6ee7a1;
+    --warn: #ffb86b;
+    --bad: #ff8080;
+    --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
+    --serif: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--serif);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+  header.hero {
+    padding: 24px 0 12px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 24px;
+  }
+  h1 {
+    font-size: 32px;
+    margin: 0 0 6px;
+    letter-spacing: -0.02em;
+  }
+  .sub {
+    color: var(--muted);
+    font-size: 15px;
+  }
+  nav.tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 24px 0 28px;
+    padding: 6px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+  }
+  nav.tabs button {
+    flex: 1 1 auto;
+    background: transparent;
+    color: var(--muted);
+    border: none;
+    padding: 10px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+  }
+  nav.tabs button:hover { color: var(--text); }
+  nav.tabs button.active {
+    background: var(--panel-2);
+    color: var(--accent);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-bottom: 20px;
+  }
+  section { display: none; }
+  section.active { display: block; }
+  h2 {
+    font-size: 22px;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+  }
+  h3 {
+    font-size: 17px;
+    margin: 26px 0 8px;
+    color: var(--accent-2);
+  }
+  h4 {
+    font-size: 15px;
+    margin: 18px 0 6px;
+    color: var(--text);
+  }
+  p { margin: 8px 0 14px; }
+  code, .mono {
+    font-family: var(--mono);
+    font-size: 0.92em;
+  }
+  code {
+    background: var(--panel-2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--warn);
+  }
+  pre {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    border-radius: 8px;
+    overflow-x: auto;
+    margin: 12px 0;
+    font-family: var(--mono);
+    font-size: 13px;
+    line-height: 1.55;
+    color: #e6e8ee;
+  }
+  pre .kw { color: #ff92c4; }
+  pre .fn { color: #7cc4ff; }
+  pre .cm { color: #6d7383; font-style: italic; }
+  pre .n  { color: #ffb86b; }
+  .callout {
+    background: rgba(124, 196, 255, 0.06);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+    font-size: 14.5px;
+  }
+  .callout.warn {
+    background: rgba(255, 184, 107, 0.06);
+    border-left-color: var(--warn);
+  }
+  .callout.good {
+    background: rgba(110, 231, 161, 0.06);
+    border-left-color: var(--good);
+  }
+  .callout strong { color: var(--accent); }
+  .callout.warn strong { color: var(--warn); }
+  .callout.good strong { color: var(--good); }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  th, td {
+    border: 1px solid var(--border);
+    padding: 8px 12px;
+    text-align: left;
+  }
+  th {
+    background: var(--panel-2);
+    font-weight: 600;
+    color: var(--accent);
+  }
+  td.mono, th.mono { font-family: var(--mono); font-size: 13px; }
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 700px) {
+    .grid-2 { grid-template-columns: 1fr; }
+    h1 { font-size: 26px; }
+  }
+  /* Growth explorer */
+  .chart-wrap {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin: 16px 0;
+  }
+  svg.chart {
+    width: 100%;
+    height: 420px;
+    display: block;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    font-size: 13px;
+    font-family: var(--mono);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .toggle:hover { border-color: var(--muted); }
+  .toggle.on { color: var(--bg); font-weight: 600; }
+  .toggle .dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: currentColor;
+    display: inline-block;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+    font-size: 14px;
+  }
+  .slider-row input[type=range] {
+    flex: 1;
+    accent-color: var(--accent);
+  }
+  .slider-row .val {
+    font-family: var(--mono);
+    color: var(--accent);
+    min-width: 60px;
+    text-align: right;
+  }
+  /* Example cards */
+  .example {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    margin: 14px 0;
+    overflow: hidden;
+  }
+  .example summary {
+    padding: 14px 18px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: 500;
+    user-select: none;
+  }
+  .example summary::-webkit-details-marker { display: none; }
+  .example summary::after {
+    content: "▸";
+    color: var(--muted);
+    transition: transform 0.2s;
+  }
+  .example[open] summary::after { transform: rotate(90deg); }
+  .example summary:hover { background: rgba(255,255,255,0.02); }
+  .example .body { padding: 0 18px 18px; border-top: 1px solid var(--border); }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-family: var(--mono);
+    font-weight: 600;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .badge.easy { background: rgba(110, 231, 161, 0.15); color: var(--good); }
+  .badge.med  { background: rgba(255, 184, 107, 0.15); color: var(--warn); }
+  .badge.hard { background: rgba(255, 128, 128, 0.15); color: var(--bad); }
+  .answer {
+    background: rgba(124, 196, 255, 0.06);
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--accent);
+  }
+  /* Master theorem calc */
+  .mt-calc {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  @media (max-width: 600px) { .mt-calc { grid-template-columns: 1fr; } }
+  .mt-calc label {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .mt-calc input {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 10px 12px;
+    border-radius: 8px;
+  }
+  .mt-calc input:focus { outline: none; border-color: var(--accent); }
+  .mt-result {
+    background: var(--panel-2);
+    padding: 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 14px;
+  }
+  .mt-result .verdict {
+    color: var(--good);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .mt-result .case { color: var(--accent-2); }
+  /* Formula sheet */
+  .sheet {
+    background: linear-gradient(135deg, var(--panel-2), var(--panel));
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin: 14px 0;
+  }
+  .sheet h4 {
+    margin-top: 0;
+    color: var(--accent);
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .sheet ul { padding-left: 20px; margin: 8px 0; }
+  .sheet li { margin: 4px 0; font-size: 14px; }
+  .print-btn {
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-family: inherit;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  .print-btn:hover { filter: brightness(1.1); }
+  @media print {
+    body { background: white; color: black; }
+    nav.tabs, .print-btn { display: none; }
+    section { display: block !important; page-break-after: always; }
+    .panel { border-color: #ccc; background: white; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <h1>Time &amp; Space Complexity</h1>
+  <div class="sub">A first-principles teaching session — theory, worked examples, and a reference sheet you'll actually use.</div>
+</header>
+
+<nav class="tabs" id="tabs">
+  <button data-tab="theory" class="active">1. Theory</button>
+  <button data-tab="growth">2. Growth Explorer</button>
+  <button data-tab="examples">3. Worked Examples</button>
+  <button data-tab="master">4. Master Theorem</button>
+  <button data-tab="sheet">5. Formula Sheet</button>
+</nav>
+
+<!-- ============ THEORY ============ -->
+<section id="theory" class="active">
+<div class="panel">
+  <h2>1. Theory — why we count, and how</h2>
+
+  <h3>The motivation</h3>
+  <p>Two algorithms solve the same problem. One takes 2 seconds on your laptop; the other takes 8 seconds. Is the first "better"? Not necessarily. Run them on a different machine, or a bigger input, and the answer can flip.</p>
+  <p>We need a measurement that is <strong>machine-independent</strong> and <strong>scales with input size</strong>. That's what complexity analysis gives us: not "how many milliseconds," but "how does the work grow as <code>n</code> grows?"</p>
+
+  <div class="callout">
+    <strong>Core idea.</strong> We count <em>elementary operations</em> as a function of input size <code>n</code>, then describe how that function grows. Constants and low-order terms don't matter for large <code>n</code> — only the shape of the growth does.
+  </div>
+
+  <h3>Asymptotic notations — the formal definitions</h3>
+  <p>These aren't hand-wavy. Each one is a precise statement about how one function behaves relative to another for large enough <code>n</code>.</p>
+
+  <h4>Big-O — <em>upper bound</em></h4>
+  <p><code>f(n) = O(g(n))</code> means: there exist positive constants <code>c</code> and <code>n₀</code> such that <code>0 ≤ f(n) ≤ c·g(n)</code> for all <code>n ≥ n₀</code>.</p>
+  <p>Read it as: <em>past some point, f grows no faster than a constant multiple of g.</em></p>
+
+  <h4>Big-Ω (Omega) — <em>lower bound</em></h4>
+  <p><code>f(n) = Ω(g(n))</code> means: there exist positive <code>c, n₀</code> such that <code>0 ≤ c·g(n) ≤ f(n)</code> for all <code>n ≥ n₀</code>.</p>
+  <p>Read as: <em>past some point, f grows at least as fast as a constant multiple of g.</em></p>
+
+  <h4>Big-Θ (Theta) — <em>tight bound</em></h4>
+  <p><code>f(n) = Θ(g(n))</code> iff <code>f(n) = O(g(n))</code> and <code>f(n) = Ω(g(n))</code>. Same growth rate, up to constants.</p>
+
+  <h4>little-o and little-ω — <em>strict bounds</em></h4>
+  <p><code>f(n) = o(g(n))</code> means f grows <em>strictly slower</em>: for <strong>every</strong> <code>c &gt; 0</code>, eventually <code>f(n) &lt; c·g(n)</code>. Equivalently, <code>lim f/g = 0</code>.</p>
+  <p><code>f(n) = ω(g(n))</code> is the strict lower version: <code>lim f/g = ∞</code>.</p>
+
+  <div class="callout warn">
+    <strong>Common trap.</strong> "Big-O" is an <em>upper bound</em>, not "the exact growth." Saying insertion sort is <code>O(n²)</code> is technically also correct if you say <code>O(n³)</code> — but useless. In interviews, always give the <strong>tightest</strong> bound you can (Θ), even if you write it as O.
+  </div>
+
+  <h3>The growth rate hierarchy</h3>
+  <p>Memorize this ordering — it's the ladder you'll climb every time you analyze code:</p>
+  <pre>O(1) &lt; O(log log n) &lt; O(log n) &lt; O(√n) &lt; O(n)
+     &lt; O(n log n) &lt; O(n²) &lt; O(n³) &lt; O(2ⁿ) &lt; O(n!) &lt; O(nⁿ)</pre>
+
+  <h3>The rules of simplification</h3>
+  <p>When you count operations, you'll get messy expressions like <code>3n² + 7n + 42</code>. Then you apply the rules:</p>
+
+  <h4>Drop constant factors</h4>
+  <p><code>O(3n)</code> = <code>O(n)</code>. The machine's clock speed is a constant multiplier; we don't care.</p>
+
+  <h4>Drop lower-order terms</h4>
+  <p><code>O(n² + n + 100)</code> = <code>O(n²)</code>. For large <code>n</code>, <code>n²</code> dominates.</p>
+
+  <h4>Sum rule (sequential blocks)</h4>
+  <p>If block A is <code>O(f)</code> and block B is <code>O(g)</code>, running them one after another is <code>O(f + g)</code> = <code>O(max(f, g))</code>.</p>
+
+  <h4>Product rule (nested blocks)</h4>
+  <p>If block A runs <code>f(n)</code> times and each run does <code>g(n)</code> work, the total is <code>O(f · g)</code>. This is the nested-loop rule.</p>
+
+  <h3>Best, average, and worst case</h3>
+  <p>Same algorithm can behave very differently depending on input:</p>
+  <ul>
+    <li><strong>Worst case</strong> — maximum work over any input of size <code>n</code>. What we usually mean by "the complexity."</li>
+    <li><strong>Best case</strong> — minimum work. Rarely interesting alone.</li>
+    <li><strong>Average case</strong> — expected work, assuming some distribution over inputs. Needs a probabilistic argument.</li>
+  </ul>
+  <p>Example: <strong>quicksort</strong> is <code>Θ(n log n)</code> on average, but <code>Θ(n²)</code> in the worst case (already-sorted input with bad pivot).</p>
+
+  <h3>Amortized analysis — the honest average</h3>
+  <p>Sometimes a single operation is expensive, but it can only be expensive rarely. Amortized analysis pays attention to that.</p>
+  <p><strong>Classic example: dynamic array push (Python list, C++ vector).</strong> Most pushes are <code>O(1)</code>. But when the array is full, we allocate a new one twice as big and copy everything — <code>O(n)</code>. Over any sequence of <code>n</code> pushes, total work is <code>O(n)</code>, so <em>amortized</em> cost per push is <code>O(1)</code>.</p>
+
+  <div class="callout good">
+    <strong>Three methods to prove amortized bounds:</strong> aggregate (total work / number of ops), accounting (charge extra to cheap ops as credit), potential (define a potential function that "pays" for expensive ops).
+  </div>
+
+  <h3>Space complexity — two flavors</h3>
+  <ul>
+    <li><strong>Total space</strong> — input + auxiliary. Everything the algorithm touches.</li>
+    <li><strong>Auxiliary space</strong> — extra memory used beyond the input. Usually what interviewers mean by "space complexity."</li>
+  </ul>
+  <p><strong>Recursion counts.</strong> A recursive function with depth <code>d</code> uses at least <code>O(d)</code> auxiliary space for the call stack, even if it stores nothing else.</p>
+
+  <h4>Common space patterns</h4>
+  <ul>
+    <li>Two-pointer / in-place — <code>O(1)</code></li>
+    <li>Linear scan with hash set — <code>O(n)</code></li>
+    <li>Recursion on a balanced tree — <code>O(log n)</code> stack</li>
+    <li>Recursion on a linked list / skewed tree — <code>O(n)</code> stack</li>
+    <li>Dynamic programming table — <code>O(state space)</code></li>
+  </ul>
+
+  <h3>Recursion complexity — three methods</h3>
+  <p>When your algorithm calls itself, you get a <em>recurrence relation</em> like <code>T(n) = 2T(n/2) + n</code>. Three tools to solve it:</p>
+  <ol>
+    <li><strong>Substitution method</strong> — guess the answer, prove by induction.</li>
+    <li><strong>Recursion tree</strong> — draw the tree of calls, sum work at each level, sum levels.</li>
+    <li><strong>Master Theorem</strong> — a formula for the common case <code>T(n) = aT(n/b) + f(n)</code>. See tab 4.</li>
+  </ol>
+
+</div>
+</section>
+
+<!-- ============ GROWTH EXPLORER ============ -->
+<section id="growth">
+<div class="panel">
+  <h2>2. Growth Explorer — see the ladder</h2>
+  <p>Toggle complexity classes on and off. Move the slider to change <code>n</code>. You'll see why an <code>O(n²)</code> algorithm that beats an <code>O(n log n)</code> one at <code>n = 10</code> loses badly at <code>n = 1000</code>.</p>
+
+  <div class="chart-wrap">
+    <svg class="chart" id="chart" viewBox="0 0 800 420" preserveAspectRatio="xMidYMid meet"></svg>
+    <div class="controls" id="controls"></div>
+    <div class="slider-row">
+      <span>Max <code>n</code>:</span>
+      <input type="range" id="nSlider" min="10" max="200" value="50" step="1" />
+      <span class="val" id="nVal">50</span>
+    </div>
+    <div class="slider-row">
+      <span>Y-axis:</span>
+      <label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer;">
+        <input type="radio" name="yscale" value="linear" checked /> linear
+      </label>
+      <label style="display:inline-flex;gap:6px;align-items:center;cursor:pointer;">
+        <input type="radio" name="yscale" value="log" /> log
+      </label>
+    </div>
+  </div>
+
+  <h3>Concrete impact</h3>
+  <p>Assume 10<sup>8</sup> operations per second. Here's how long an algorithm takes at various input sizes:</p>
+  <table>
+    <thead><tr><th>Complexity</th><th>n=10</th><th>n=100</th><th>n=1,000</th><th>n=10⁶</th></tr></thead>
+    <tbody>
+      <tr><td class="mono">O(log n)</td><td>~0</td><td>~0</td><td>~0</td><td>0.2 μs</td></tr>
+      <tr><td class="mono">O(n)</td><td>0.1 μs</td><td>1 μs</td><td>10 μs</td><td>10 ms</td></tr>
+      <tr><td class="mono">O(n log n)</td><td>0.3 μs</td><td>7 μs</td><td>100 μs</td><td>200 ms</td></tr>
+      <tr><td class="mono">O(n²)</td><td>1 μs</td><td>100 μs</td><td>10 ms</td><td>~3 hours</td></tr>
+      <tr><td class="mono">O(n³)</td><td>10 μs</td><td>10 ms</td><td>10 s</td><td>32k years</td></tr>
+      <tr><td class="mono">O(2ⁿ)</td><td>10 μs</td><td>10¹³ years</td><td>—</td><td>—</td></tr>
+      <tr><td class="mono">O(n!)</td><td>36 ms</td><td>—</td><td>—</td><td>—</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>The lesson.</strong> Constant factors matter for small <code>n</code>. Growth rate matters for anything real. The gap between <code>O(n log n)</code> and <code>O(n²)</code> is the difference between "solves in a second" and "solves overnight."
+  </div>
+</div>
+</section>
+
+<!-- ============ EXAMPLES ============ -->
+<section id="examples">
+<div class="panel">
+  <h2>3. Worked Examples — graded</h2>
+  <p>Try to derive the complexity yourself before opening the answer. The point isn't to memorize; it's to build the muscle of counting.</p>
+
+  <h3>Level 1 — foundations</h3>
+
+  <details class="example">
+    <summary>E1. Sum an array<span class="badge easy">easy</span></summary>
+    <div class="body">
+<pre><span class="kw">def</span> <span class="fn">total</span>(arr):
+    s = <span class="n">0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> arr:
+        s += x
+    <span class="kw">return</span> s</pre>
+      <p><strong>Analyze:</strong> The loop runs <code>n</code> times, each iteration does <code>O(1)</code> work.</p>
+      <div class="answer">Time: Θ(n) &nbsp;•&nbsp; Space: Θ(1) auxiliary</div>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E2. Two independent loops<span class="badge easy">easy</span></summary>
+    <div class="body">
+<pre><span class="kw">for</span> i <span class="kw">in</span> range(n):
+    do_work()
+
+<span class="kw">for</span> j <span class="kw">in</span> range(n):
+    do_work()</pre>
+      <p><strong>Analyze:</strong> Sum rule — <code>n + n = 2n</code>. Drop the constant.</p>
+      <div class="answer">Time: Θ(n)</div>
+      <p><em>Note:</em> Even if the second loop had size <code>m</code> instead of <code>n</code>, we'd write <code>O(n + m)</code>, not <code>O(max)</code>, unless we know their relationship.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E3. Nested loops<span class="badge easy">easy</span></summary>
+    <div class="body">
+<pre><span class="kw">for</span> i <span class="kw">in</span> range(n):
+    <span class="kw">for</span> j <span class="kw">in</span> range(n):
+        do_work()</pre>
+      <p><strong>Analyze:</strong> Product rule — <code>n × n</code> iterations.</p>
+      <div class="answer">Time: Θ(n²)</div>
+    </div>
+  </details>
+
+  <h3>Level 2 — patterns that fool people</h3>
+
+  <details class="example">
+    <summary>E4. Doubling loop<span class="badge med">medium</span></summary>
+    <div class="body">
+<pre>i = <span class="n">1</span>
+<span class="kw">while</span> i &lt; n:
+    do_work()
+    i *= <span class="n">2</span></pre>
+      <p><strong>Analyze:</strong> After <code>k</code> iterations, <code>i = 2ᵏ</code>. Loop stops when <code>2ᵏ ≥ n</code>, i.e. <code>k = ⌈log₂ n⌉</code>.</p>
+      <div class="answer">Time: Θ(log n)</div>
+      <p>Any time you see <em>multiplicative</em> progress toward a bound, think logarithm.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E5. Triangular nested loop<span class="badge med">medium</span></summary>
+    <div class="body">
+<pre><span class="kw">for</span> i <span class="kw">in</span> range(n):
+    <span class="kw">for</span> j <span class="kw">in</span> range(i):
+        do_work()</pre>
+      <p><strong>Analyze:</strong> Total iterations = <code>0 + 1 + 2 + ... + (n-1)</code> = <code>n(n-1)/2</code>.</p>
+      <div class="answer">Time: Θ(n²) — same as full nested despite doing "half the work."</div>
+      <p>Constant factors — even the "half" — vanish in Big-O.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E6. Outer linear, inner logarithmic<span class="badge med">medium</span></summary>
+    <div class="body">
+<pre><span class="kw">for</span> i <span class="kw">in</span> range(n):
+    j = <span class="n">1</span>
+    <span class="kw">while</span> j &lt; n:
+        j *= <span class="n">2</span></pre>
+      <p><strong>Analyze:</strong> Outer loop: <code>n</code>. Inner loop: <code>log n</code> (per E4).</p>
+      <div class="answer">Time: Θ(n log n)</div>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E7. Harmonic loop (surprises)<span class="badge med">medium</span></summary>
+    <div class="body">
+<pre><span class="kw">for</span> i <span class="kw">in</span> range(<span class="n">1</span>, n+<span class="n">1</span>):
+    <span class="kw">for</span> j <span class="kw">in</span> range(<span class="n">0</span>, n, i):
+        do_work()</pre>
+      <p><strong>Analyze:</strong> Inner loop runs <code>⌈n/i⌉</code> times. Total: <code>n/1 + n/2 + n/3 + ... + n/n = n·H(n)</code> where <code>H(n)</code> is the harmonic number, <code>≈ ln n</code>.</p>
+      <div class="answer">Time: Θ(n log n)</div>
+      <p>This shows up in sieve-of-Eratosthenes analysis.</p>
+    </div>
+  </details>
+
+  <h3>Level 3 — recursion and the tricky ones</h3>
+
+  <details class="example">
+    <summary>E8. Binary search<span class="badge hard">hard</span></summary>
+    <div class="body">
+<pre><span class="kw">def</span> <span class="fn">bsearch</span>(arr, lo, hi, target):
+    <span class="kw">if</span> lo &gt; hi: <span class="kw">return</span> -<span class="n">1</span>
+    mid = (lo + hi) // <span class="n">2</span>
+    <span class="kw">if</span> arr[mid] == target: <span class="kw">return</span> mid
+    <span class="kw">if</span> arr[mid] &lt; target:
+        <span class="kw">return</span> bsearch(arr, mid+<span class="n">1</span>, hi, target)
+    <span class="kw">return</span> bsearch(arr, lo, mid-<span class="n">1</span>, target)</pre>
+      <p><strong>Recurrence:</strong> <code>T(n) = T(n/2) + O(1)</code></p>
+      <p><strong>Solve:</strong> Halving <code>n</code> until it hits 1 takes <code>log₂ n</code> steps.</p>
+      <div class="answer">Time: Θ(log n) &nbsp;•&nbsp; Space: Θ(log n) recursive stack, Θ(1) iterative</div>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E9. Merge sort<span class="badge hard">hard</span></summary>
+    <div class="body">
+<pre><span class="kw">def</span> <span class="fn">msort</span>(a):
+    <span class="kw">if</span> len(a) &lt;= <span class="n">1</span>: <span class="kw">return</span> a
+    m = len(a) // <span class="n">2</span>
+    left  = msort(a[:m])
+    right = msort(a[m:])
+    <span class="kw">return</span> merge(left, right)   <span class="cm"># O(n)</span></pre>
+      <p><strong>Recurrence:</strong> <code>T(n) = 2T(n/2) + Θ(n)</code></p>
+      <p><strong>Recursion tree:</strong> depth = <code>log n</code>, work at each level = <code>n</code> (splitting/merging), total = <code>n log n</code>.</p>
+      <div class="answer">Time: Θ(n log n) &nbsp;•&nbsp; Space: Θ(n) auxiliary for the merge buffer + Θ(log n) stack</div>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E10. Fibonacci — naive recursion<span class="badge hard">hard</span></summary>
+    <div class="body">
+<pre><span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n &lt; <span class="n">2</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> fib(n-<span class="n">1</span>) + fib(n-<span class="n">2</span>)</pre>
+      <p><strong>Recurrence:</strong> <code>T(n) = T(n-1) + T(n-2) + O(1)</code></p>
+      <p><strong>Solve:</strong> This solves to <code>Θ(φⁿ)</code> where <code>φ = (1+√5)/2 ≈ 1.618</code>. Loosely, <code>O(2ⁿ)</code>.</p>
+      <div class="answer">Time: Θ(φⁿ) ≈ O(2ⁿ) &nbsp;•&nbsp; Space: Θ(n) call stack depth</div>
+      <p>With memoization: <code>Θ(n)</code> time, <code>Θ(n)</code> space. With iterative rolling variables: <code>Θ(n)</code> time, <code>Θ(1)</code> space.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E11. Repeated square-root shrink<span class="badge hard">hard</span></summary>
+    <div class="body">
+<pre>i = n
+<span class="kw">while</span> i &gt; <span class="n">1</span>:
+    do_work()
+    i = int(i ** <span class="n">0.5</span>)</pre>
+      <p><strong>Analyze:</strong> Let <code>i_k</code> be the value after <code>k</code> iterations. <code>i_k = n^(1/2ᵏ)</code>. Loop stops when <code>i_k ≤ 1</code>, i.e. when <code>n^(1/2ᵏ) ≤ 2</code>, i.e. <code>2ᵏ ≥ log₂ n</code>, i.e. <code>k ≥ log₂ log₂ n</code>.</p>
+      <div class="answer">Time: Θ(log log n)</div>
+      <p>This shows up in van Emde Boas trees. Absurdly fast — <code>log log 10⁹ ≈ 5</code>.</p>
+    </div>
+  </details>
+
+  <details class="example">
+    <summary>E12. Dynamic array push (amortized)<span class="badge hard">hard</span></summary>
+    <div class="body">
+      <p><strong>Setup:</strong> Array doubles when full. Push is <code>O(1)</code> normally but <code>O(size)</code> when it triggers a resize.</p>
+      <p><strong>Aggregate analysis:</strong> After <code>n</code> pushes, resizes happened at sizes <code>1, 2, 4, 8, ..., n</code>. Total resize work = <code>1 + 2 + 4 + ... + n ≈ 2n</code>. Plus <code>n</code> normal pushes = <code>3n</code> total work.</p>
+      <p>Cost per push, amortized = <code>3n / n = 3</code>.</p>
+      <div class="answer">Amortized Time per push: Θ(1) &nbsp;•&nbsp; Worst-case single push: Θ(n)</div>
+    </div>
+  </details>
+</div>
+</section>
+
+<!-- ============ MASTER THEOREM ============ -->
+<section id="master">
+<div class="panel">
+  <h2>4. Master Theorem</h2>
+
+  <p>For divide-and-conquer recurrences of the form:</p>
+  <pre>T(n) = a · T(n/b) + f(n)</pre>
+  <p>where <code>a ≥ 1</code> and <code>b &gt; 1</code> are constants and <code>f(n)</code> is asymptotically positive.</p>
+
+  <p>Define the critical exponent <code>c* = log_b(a)</code>. Then compare <code>f(n)</code> with <code>n^(c*)</code>:</p>
+
+  <table>
+    <thead><tr><th>Case</th><th>Condition</th><th>Solution</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>1</td>
+        <td class="mono">f(n) = O(n^(c* − ε)) for some ε &gt; 0</td>
+        <td class="mono">T(n) = Θ(n^(c*))</td>
+      </tr>
+      <tr>
+        <td>2</td>
+        <td class="mono">f(n) = Θ(n^(c*) · log^k n), k ≥ 0</td>
+        <td class="mono">T(n) = Θ(n^(c*) · log^(k+1) n)</td>
+      </tr>
+      <tr>
+        <td>3</td>
+        <td class="mono">f(n) = Ω(n^(c* + ε)) &amp; regularity holds</td>
+        <td class="mono">T(n) = Θ(f(n))</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout">
+    <strong>Intuition.</strong> The recursion tree has <code>a^(log_b n) = n^(c*)</code> leaves. Case 1: leaves dominate (work at the bottom). Case 2: every level does equal work (<code>log n</code> levels of equal cost). Case 3: root dominates (work at the top).
+  </div>
+
+  <h3>Interactive calculator</h3>
+  <p>Enter <code>a</code>, <code>b</code>, and the exponent <code>d</code> in <code>f(n) = Θ(n^d)</code>. (Sticking to polynomial <code>f</code> for simplicity.)</p>
+
+  <div class="mt-calc">
+    <label>a (subproblem count)
+      <input type="number" id="mt-a" value="2" min="1" step="1" />
+    </label>
+    <label>b (shrink factor)
+      <input type="number" id="mt-b" value="2" min="1.01" step="0.5" />
+    </label>
+    <label>d (exponent in f(n) = n^d)
+      <input type="number" id="mt-d" value="1" step="0.5" />
+    </label>
+  </div>
+
+  <div class="mt-result" id="mt-result"></div>
+
+  <h3>Classic worked examples</h3>
+
+  <table>
+    <thead><tr><th>Recurrence</th><th>a, b, c*</th><th>Case</th><th>Solution</th><th>Algorithm</th></tr></thead>
+    <tbody>
+      <tr>
+        <td class="mono">T(n) = 2T(n/2) + n</td>
+        <td class="mono">2, 2, 1</td>
+        <td>2 (k=0)</td>
+        <td class="mono">Θ(n log n)</td>
+        <td>merge sort</td>
+      </tr>
+      <tr>
+        <td class="mono">T(n) = T(n/2) + O(1)</td>
+        <td class="mono">1, 2, 0</td>
+        <td>2 (k=0)</td>
+        <td class="mono">Θ(log n)</td>
+        <td>binary search</td>
+      </tr>
+      <tr>
+        <td class="mono">T(n) = 2T(n/2) + O(1)</td>
+        <td class="mono">2, 2, 1</td>
+        <td>1</td>
+        <td class="mono">Θ(n)</td>
+        <td>tree traversal</td>
+      </tr>
+      <tr>
+        <td class="mono">T(n) = 3T(n/2) + n</td>
+        <td class="mono">3, 2, log₂3≈1.58</td>
+        <td>1</td>
+        <td class="mono">Θ(n^log₂3)</td>
+        <td>Karatsuba multiplication</td>
+      </tr>
+      <tr>
+        <td class="mono">T(n) = 8T(n/2) + n²</td>
+        <td class="mono">8, 2, 3</td>
+        <td>1</td>
+        <td class="mono">Θ(n³)</td>
+        <td>naive matrix mult</td>
+      </tr>
+      <tr>
+        <td class="mono">T(n) = 7T(n/2) + n²</td>
+        <td class="mono">7, 2, log₂7≈2.81</td>
+        <td>1</td>
+        <td class="mono">Θ(n^log₂7)</td>
+        <td>Strassen's matrix mult</td>
+      </tr>
+      <tr>
+        <td class="mono">T(n) = 2T(n/2) + n²</td>
+        <td class="mono">2, 2, 1</td>
+        <td>3</td>
+        <td class="mono">Θ(n²)</td>
+        <td>work concentrated at top</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <strong>Master Theorem doesn't cover everything.</strong> It fails when <code>f(n)</code> is not polynomial (e.g. <code>n / log n</code>), when the recurrence has non-constant <code>a</code> or <code>b</code>, or when subproblems are of different sizes (e.g. <code>T(n) = T(n/3) + T(2n/3) + n</code>). Fall back on recursion trees.
+  </div>
+</div>
+</section>
+
+<!-- ============ FORMULA SHEET ============ -->
+<section id="sheet">
+<div class="panel">
+  <h2>5. Formula Sheet</h2>
+  <p style="margin-bottom:20px;">
+    <button class="print-btn" onclick="window.print()">🖨 Print / Save as PDF</button>
+  </p>
+
+  <div class="sheet">
+    <h4>Notation cheatsheet</h4>
+    <ul>
+      <li><code>O(g)</code> — upper bound &nbsp;•&nbsp; <code>f ≤ c·g</code> eventually</li>
+      <li><code>Ω(g)</code> — lower bound &nbsp;•&nbsp; <code>f ≥ c·g</code> eventually</li>
+      <li><code>Θ(g)</code> — tight bound &nbsp;•&nbsp; both O and Ω</li>
+      <li><code>o(g)</code> — strictly smaller &nbsp;•&nbsp; <code>lim f/g = 0</code></li>
+      <li><code>ω(g)</code> — strictly larger &nbsp;•&nbsp; <code>lim f/g = ∞</code></li>
+    </ul>
+  </div>
+
+  <div class="sheet">
+    <h4>Growth rate hierarchy (memorize)</h4>
+    <p class="mono" style="text-align:center;font-size:15px;">
+      1 &lt; log log n &lt; log n &lt; √n &lt; n &lt; n log n &lt; n² &lt; n³ &lt; 2ⁿ &lt; n! &lt; nⁿ
+    </p>
+  </div>
+
+  <div class="sheet">
+    <h4>Common sums</h4>
+    <ul>
+      <li>Arithmetic: <code>1 + 2 + ... + n = n(n+1)/2 = Θ(n²)</code></li>
+      <li>Squares: <code>1² + 2² + ... + n² = n(n+1)(2n+1)/6 = Θ(n³)</code></li>
+      <li>Geometric (r &gt; 1): <code>1 + r + r² + ... + rⁿ = (rⁿ⁺¹ − 1)/(r − 1) = Θ(rⁿ)</code></li>
+      <li>Geometric (r &lt; 1): converges to <code>1/(1−r) = Θ(1)</code></li>
+      <li>Harmonic: <code>1 + 1/2 + 1/3 + ... + 1/n = H(n) = Θ(log n)</code></li>
+      <li>Log-of-factorial: <code>log(n!) = Θ(n log n)</code> (Stirling)</li>
+    </ul>
+  </div>
+
+  <div class="sheet">
+    <h4>Master Theorem — T(n) = a·T(n/b) + f(n), c* = log_b(a)</h4>
+    <ul>
+      <li>Case 1: <code>f(n) = O(n^(c* − ε))</code> → <code>Θ(n^(c*))</code></li>
+      <li>Case 2: <code>f(n) = Θ(n^(c*) log^k n)</code> → <code>Θ(n^(c*) log^(k+1) n)</code></li>
+      <li>Case 3: <code>f(n) = Ω(n^(c* + ε))</code> &amp; regularity → <code>Θ(f(n))</code></li>
+    </ul>
+  </div>
+
+  <div class="sheet">
+    <h4>Standard algorithm complexities</h4>
+    <table style="font-size:13px;">
+      <thead><tr><th>Algorithm</th><th>Time (avg)</th><th>Time (worst)</th><th>Space</th></tr></thead>
+      <tbody>
+        <tr><td>Linear search</td><td class="mono">Θ(n)</td><td class="mono">Θ(n)</td><td class="mono">Θ(1)</td></tr>
+        <tr><td>Binary search</td><td class="mono">Θ(log n)</td><td class="mono">Θ(log n)</td><td class="mono">Θ(1)</td></tr>
+        <tr><td>Bubble / Insertion / Selection sort</td><td class="mono">Θ(n²)</td><td class="mono">Θ(n²)</td><td class="mono">Θ(1)</td></tr>
+        <tr><td>Merge sort</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n)</td></tr>
+        <tr><td>Quick sort</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n²)</td><td class="mono">Θ(log n)</td></tr>
+        <tr><td>Heap sort</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(n log n)</td><td class="mono">Θ(1)</td></tr>
+        <tr><td>Counting / Radix sort</td><td class="mono">Θ(n + k)</td><td class="mono">Θ(n + k)</td><td class="mono">Θ(n + k)</td></tr>
+        <tr><td>BFS / DFS</td><td class="mono">Θ(V + E)</td><td class="mono">Θ(V + E)</td><td class="mono">Θ(V)</td></tr>
+        <tr><td>Dijkstra (binary heap)</td><td class="mono">Θ((V+E) log V)</td><td class="mono">Θ((V+E) log V)</td><td class="mono">Θ(V)</td></tr>
+        <tr><td>Bellman-Ford</td><td class="mono">Θ(V·E)</td><td class="mono">Θ(V·E)</td><td class="mono">Θ(V)</td></tr>
+        <tr><td>Floyd-Warshall</td><td class="mono">Θ(V³)</td><td class="mono">Θ(V³)</td><td class="mono">Θ(V²)</td></tr>
+        <tr><td>Hash table lookup</td><td class="mono">Θ(1)</td><td class="mono">Θ(n)</td><td class="mono">Θ(n)</td></tr>
+        <tr><td>Balanced BST ops</td><td class="mono">Θ(log n)</td><td class="mono">Θ(log n)</td><td class="mono">Θ(n)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="sheet">
+    <h4>Pattern-spotting shortcuts</h4>
+    <ul>
+      <li>Halving / doubling → <code>log n</code></li>
+      <li>Halving repeatedly, each step is linear → <code>n log n</code></li>
+      <li>Two nested loops over n → <code>n²</code></li>
+      <li>Try all subsets → <code>2ⁿ</code></li>
+      <li>Try all permutations → <code>n!</code></li>
+      <li>Divide-and-conquer, merge in linear time → often <code>n log n</code></li>
+      <li>Square-root-shrink → <code>log log n</code></li>
+      <li>Amortized over a doubling structure → constant per op</li>
+    </ul>
+  </div>
+
+  <div class="sheet">
+    <h4>Interview red flags to avoid</h4>
+    <ul>
+      <li>Saying "O(n)" when you mean average case but worst case is O(n²) — always clarify.</li>
+      <li>Forgetting recursion stack in space analysis.</li>
+      <li>Assuming hash operations are always O(1) without acknowledging worst case.</li>
+      <li>Using O when you can prove Θ — it makes you look less rigorous.</li>
+      <li>Missing that <code>log(n!) = Θ(n log n)</code>, a classic gotcha.</li>
+    </ul>
+  </div>
+</div>
+</section>
+
+</div>
+
+<script>
+// ============ TAB SWITCHING ============
+const tabs = document.querySelectorAll('#tabs button');
+const sections = document.querySelectorAll('section');
+tabs.forEach(btn => {
+  btn.addEventListener('click', () => {
+    tabs.forEach(b => b.classList.remove('active'));
+    sections.forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+});
+
+// ============ GROWTH EXPLORER ============
+const funcs = [
+  {name: 'O(1)',        f: n => 1,             color: '#6ee7a1', on: true},
+  {name: 'O(log n)',    f: n => Math.log2(n+1),color: '#7cc4ff', on: true},
+  {name: 'O(√n)',       f: n => Math.sqrt(n),  color: '#b78dff', on: false},
+  {name: 'O(n)',        f: n => n,             color: '#ffb86b', on: true},
+  {name: 'O(n log n)',  f: n => n*Math.log2(n+1),color: '#ff92c4', on: true},
+  {name: 'O(n²)',       f: n => n*n,           color: '#ff8080', on: true},
+  {name: 'O(n³)',       f: n => n*n*n,         color: '#ff5555', on: false},
+  {name: 'O(2ⁿ)',       f: n => Math.pow(2,n), color: '#e0d000', on: false},
+];
+
+const chart = document.getElementById('chart');
+const controls = document.getElementById('controls');
+const nSlider = document.getElementById('nSlider');
+const nVal = document.getElementById('nVal');
+
+function renderControls() {
+  controls.innerHTML = '';
+  funcs.forEach((f, i) => {
+    const el = document.createElement('span');
+    el.className = 'toggle' + (f.on ? ' on' : '');
+    el.style.background = f.on ? f.color : 'var(--panel)';
+    el.style.color = f.on ? 'var(--bg)' : 'var(--muted)';
+    el.innerHTML = '<span class="dot" style="background:' + f.color + '"></span>' + f.name;
+    el.addEventListener('click', () => {
+      funcs[i].on = !funcs[i].on;
+      renderControls();
+      drawChart();
+    });
+    controls.appendChild(el);
+  });
+}
+
+function drawChart() {
+  const maxN = parseInt(nSlider.value);
+  const yscale = document.querySelector('input[name=yscale]:checked').value;
+  const W = 800, H = 420;
+  const PAD_L = 55, PAD_R = 20, PAD_T = 20, PAD_B = 40;
+  const plotW = W - PAD_L - PAD_R;
+  const plotH = H - PAD_T - PAD_B;
+
+  const active = funcs.filter(f => f.on);
+  const values = [];
+  const step = Math.max(1, Math.floor(maxN / 200));
+  for (let n = 1; n <= maxN; n += step) {
+    active.forEach(f => values.push(f.f(n)));
+  }
+  let ymax = Math.max(...values, 1);
+  let ymin = yscale === 'log' ? 0.5 : 0;
+
+  function scaleX(n) { return PAD_L + (n / maxN) * plotW; }
+  function scaleY(y) {
+    if (yscale === 'log') {
+      const ly = Math.log10(Math.max(y, 0.5));
+      const lymax = Math.log10(ymax);
+      const lymin = Math.log10(ymin);
+      return PAD_T + plotH - ((ly - lymin) / (lymax - lymin)) * plotH;
+    }
+    return PAD_T + plotH - (y / ymax) * plotH;
+  }
+
+  let svg = '';
+  // Background grid
+  svg += '<rect x="'+PAD_L+'" y="'+PAD_T+'" width="'+plotW+'" height="'+plotH+'" fill="#0f1116" stroke="#262a35"/>';
+  // Gridlines
+  for (let i = 0; i <= 5; i++) {
+    const y = PAD_T + (plotH * i / 5);
+    svg += '<line x1="'+PAD_L+'" x2="'+(PAD_L+plotW)+'" y1="'+y+'" y2="'+y+'" stroke="#262a35" stroke-dasharray="2,4"/>';
+  }
+  for (let i = 0; i <= 5; i++) {
+    const x = PAD_L + (plotW * i / 5);
+    svg += '<line x1="'+x+'" x2="'+x+'" y1="'+PAD_T+'" y2="'+(PAD_T+plotH)+'" stroke="#262a35" stroke-dasharray="2,4"/>';
+    const nVal = Math.round(maxN * i / 5);
+    svg += '<text x="'+x+'" y="'+(H-PAD_B+18)+'" fill="#9aa0ac" font-size="11" text-anchor="middle" font-family="ui-monospace,monospace">'+nVal+'</text>';
+  }
+  // Y-axis labels
+  for (let i = 0; i <= 5; i++) {
+    const y = PAD_T + (plotH * i / 5);
+    let val;
+    if (yscale === 'log') {
+      const ly = Math.log10(ymax) - (Math.log10(ymax) - Math.log10(ymin)) * i / 5;
+      val = Math.pow(10, ly);
+    } else {
+      val = ymax * (1 - i/5);
+    }
+    let label;
+    if (val >= 1e9) label = (val/1e9).toFixed(1) + 'B';
+    else if (val >= 1e6) label = (val/1e6).toFixed(1) + 'M';
+    else if (val >= 1e3) label = (val/1e3).toFixed(1) + 'K';
+    else if (val >= 1) label = Math.round(val);
+    else label = val.toFixed(2);
+    svg += '<text x="'+(PAD_L-8)+'" y="'+(y+4)+'" fill="#9aa0ac" font-size="11" text-anchor="end" font-family="ui-monospace,monospace">'+label+'</text>';
+  }
+
+  // Axis labels
+  svg += '<text x="'+(PAD_L+plotW/2)+'" y="'+(H-5)+'" fill="#e6e8ee" font-size="12" text-anchor="middle">input size n</text>';
+  svg += '<text x="15" y="'+(PAD_T+plotH/2)+'" fill="#e6e8ee" font-size="12" text-anchor="middle" transform="rotate(-90 15 '+(PAD_T+plotH/2)+')">operations</text>';
+
+  // Draw each curve
+  active.forEach(fn => {
+    let path = '';
+    let first = true;
+    for (let n = 1; n <= maxN; n += step) {
+      const y = fn.f(n);
+      if (yscale === 'linear' && y > ymax * 1.1) continue;
+      const px = scaleX(n);
+      const py = scaleY(y);
+      if (isFinite(py) && py >= PAD_T && py <= PAD_T + plotH) {
+        path += (first ? 'M' : 'L') + px.toFixed(1) + ' ' + py.toFixed(1) + ' ';
+        first = false;
+      }
+    }
+    svg += '<path d="'+path+'" fill="none" stroke="'+fn.color+'" stroke-width="2.2" stroke-linejoin="round"/>';
+  });
+
+  chart.innerHTML = svg;
+}
+
+nSlider.addEventListener('input', () => {
+  nVal.textContent = nSlider.value;
+  drawChart();
+});
+document.querySelectorAll('input[name=yscale]').forEach(r => r.addEventListener('change', drawChart));
+
+renderControls();
+drawChart();
+
+// ============ MASTER THEOREM CALCULATOR ============
+const mtA = document.getElementById('mt-a');
+const mtB = document.getElementById('mt-b');
+const mtD = document.getElementById('mt-d');
+const mtResult = document.getElementById('mt-result');
+
+function computeMT() {
+  const a = parseFloat(mtA.value);
+  const b = parseFloat(mtB.value);
+  const d = parseFloat(mtD.value);
+
+  if (!isFinite(a) || !isFinite(b) || !isFinite(d) || a < 1 || b <= 1) {
+    mtResult.innerHTML = '<div class="verdict" style="color:var(--warn)">Enter valid values (a ≥ 1, b > 1).</div>';
+    return;
+  }
+
+  const cStar = Math.log(a) / Math.log(b);
+  let caseNum, solution, explanation;
+  const eps = 1e-9;
+
+  if (d < cStar - eps) {
+    caseNum = 1;
+    solution = 'Θ(n^' + cStar.toFixed(3) + ')';
+    if (Math.abs(cStar - Math.round(cStar)) < 1e-6) solution = 'Θ(n^' + Math.round(cStar) + ')';
+    explanation = 'f(n) grows slower than n^(c*). Leaves of the recursion tree dominate the work.';
+  } else if (Math.abs(d - cStar) < eps) {
+    caseNum = 2;
+    if (Math.abs(cStar - Math.round(cStar)) < 1e-6) {
+      const p = Math.round(cStar);
+      solution = p === 0 ? 'Θ(log n)' : (p === 1 ? 'Θ(n log n)' : 'Θ(n^' + p + ' log n)');
+    } else {
+      solution = 'Θ(n^' + cStar.toFixed(3) + ' · log n)';
+    }
+    explanation = 'f(n) = Θ(n^(c*)). Every level of the recursion tree does equal work. There are log n levels.';
+  } else {
+    caseNum = 3;
+    if (Math.abs(d - Math.round(d)) < 1e-6) {
+      const p = Math.round(d);
+      solution = p === 0 ? 'Θ(1)' : (p === 1 ? 'Θ(n)' : 'Θ(n^' + p + ')');
+    } else {
+      solution = 'Θ(n^' + d + ')';
+    }
+    explanation = 'f(n) grows faster than n^(c*). The root of the recursion tree dominates the work.';
+  }
+
+  mtResult.innerHTML =
+    '<div class="verdict">T(n) = ' + solution + '</div>' +
+    '<div>a = ' + a + ', b = ' + b + ', so <span class="case">c* = log_' + b + '(' + a + ') ≈ ' + cStar.toFixed(3) + '</span></div>' +
+    '<div>f(n) = Θ(n^' + d + '), comparing d = ' + d + ' with c* ≈ ' + cStar.toFixed(3) + '</div>' +
+    '<div style="margin-top:8px;color:var(--muted)">→ <strong style="color:var(--accent-2)">Case ' + caseNum + '</strong>: ' + explanation + '</div>';
+}
+
+[mtA, mtB, mtD].forEach(el => el.addEventListener('input', computeMT));
+computeMT();
+</script>
+
+</body>
+</html>

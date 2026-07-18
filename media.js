@@ -6,6 +6,19 @@
 /* ============ ARTICLE DATA STORE ============ */
 const ARTICLES = [
   {
+    id: 'time-space-complexity',
+    title: 'Time & Space Complexity — A Full Teaching Session',
+    author: 'Pratyush',
+    date: '2026-07-18',
+    category: 'Research',
+    excerpt: 'A first-principles teaching session on asymptotic analysis — Big-O through the Master Theorem, with an interactive growth explorer, twelve graded worked examples, and a printable formula sheet.',
+    coverImage: null,
+    coverGradient: 'linear-gradient(135deg, #0f1116 0%, #1b2740 50%, #2c3e6b 100%)',
+    status: 'published',
+    featured: true,
+    articleUrl: 'articles/complexity.html',
+  },
+  {
     id: 'local-first-ai',
     title: 'The Future of Local-First AI',
     author: 'Pratyush',
