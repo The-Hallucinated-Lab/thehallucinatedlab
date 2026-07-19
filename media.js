@@ -193,6 +193,8 @@ function renderFeatured() {
       </div>
     </a>
   `).join('');
+
+  observeNewFadeIns(grid);
 }
 
 /* ============ RENDER: ARCHIVE ============ */
@@ -296,6 +298,8 @@ function renderHorizon() {
       </div>
     </div>
   `).join('');
+
+  observeNewFadeIns(grid);
 }
 
 /* ============ RENDER: COMMUNITY SPOTLIGHT ============ */
