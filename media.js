@@ -6,6 +6,19 @@
 /* ============ ARTICLE DATA STORE ============ */
 const ARTICLES = [
   {
+    id: 'ai-orchestration',
+    title: 'The Model Is No Longer the Product',
+    author: 'Pratyush',
+    date: '2026-07-19',
+    category: 'AI & ML',
+    excerpt: 'AI engineering is a discipline of orchestration, not training. Explore the application stack, run a RAG pipeline with retrieval on and off, and play the iteration-loop game where you diagnose six real-world failures.',
+    coverImage: null,
+    coverGradient: 'linear-gradient(135deg, #0a0f1a 0%, #16213a 50%, #26365c 100%)',
+    status: 'published',
+    featured: true,
+    articleUrl: 'articles/ai-orchestration.html',
+  },
+  {
     id: 'time-space-complexity',
     title: 'Time & Space Complexity — A Full Teaching Session',
     author: 'Pratyush',
