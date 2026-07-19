@@ -359,6 +359,23 @@
     section { display: block !important; page-break-after: always; }
     .panel { border-color: #ccc; background: white; }
   }
+
+  /* ============ MOBILE ============ */
+  @media (max-width: 700px) {
+    .wrap { padding: 24px 14px 60px; }
+    .panel { padding: 18px 14px; }
+    h1 { font-size: 24px; }
+    h2 { font-size: 19px; }
+    nav.tabs button { padding: 9px 8px; font-size: 12.5px; flex: 1 1 45%; }
+    /* Wide tables scroll inside their own box instead of breaking the page */
+    table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+    svg.chart { height: 300px; }
+    .example summary { padding: 12px 14px; font-size: 14px; }
+    .example .body { padding: 0 14px 14px; }
+    pre { font-size: 12px; padding: 12px; }
+    .slider-row { flex-wrap: wrap; }
+    .sheet { padding: 14px; }
+  }
 </style>
 </head>
 <body>

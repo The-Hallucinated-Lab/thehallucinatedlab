@@ -455,19 +455,6 @@
     max-width: 95%;
   }
 
-  /* Media page responsive */
-  .featured-grid { grid-template-columns: 1fr; }
-  .archive-grid { grid-template-columns: 1fr; }
-  .horizon-grid { grid-template-columns: 1fr; }
-  .community-grid { grid-template-columns: 1fr; }
-  .archive-controls { flex-direction: column; gap: 1rem; }
-  .archive-search-wrap { width: 100%; }
-  .archive-filters { justify-content: flex-start; }
-  .form-row { grid-template-columns: 1fr; }
-  .featured-card { flex-direction: column; }
-  .featured-card-cover { min-height: 160px; }
-  .featured-card-arrow { display: none; }
-
   .articles-grid { grid-template-columns: 1fr; }
   .visualiser-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .visualiser-body { min-height: 240px; }
@@ -1195,5 +1182,30 @@
   color: var(--text-muted);
   font-size: 0.88rem;
   padding: 2rem;
+}
+
+/* ============================================================
+   MEDIA PAGE RESPONSIVE
+   Must stay at the END of this file — these rules override the
+   base grid definitions above, which have equal specificity.
+   ============================================================ */
+@media (max-width: 1024px) {
+  .archive-grid { grid-template-columns: repeat(2, 1fr); }
+  .horizon-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .media-section { padding: 3rem 1.2rem; }
+  .featured-grid { grid-template-columns: 1fr; }
+  .archive-grid { grid-template-columns: 1fr; }
+  .horizon-grid { grid-template-columns: 1fr; }
+  .community-grid { grid-template-columns: 1fr; }
+  .featured-card-cover { min-height: 160px; }
+  .featured-card-arrow { display: none; }
+  .archive-controls { flex-direction: column; align-items: stretch; gap: 1rem; }
+  .archive-search-wrap { min-width: 0; width: 100%; }
+  .archive-filters { justify-content: flex-start; }
+  .form-row { grid-template-columns: 1fr; }
+  .submit-btn { width: 100%; justify-content: center; }
 }
 

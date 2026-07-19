@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Model Is No Longer the Product — The Hallucinated Lab</title>
+  <meta name="description" content="The hardest part of modern AI is no longer training the model — it's orchestration. An interactive tour of the AI engineer's stack: prompting, RAG, and finetuning, with playable simulations.">
+  <meta property="og:title" content="The Model Is No Longer the Product">
+  <meta property="og:description" content="AI engineering is a discipline of orchestration, not training. Explore the stack, run the RAG pipeline, and play the iteration loop.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://thehallucinatedlab.space/articles/ai-orchestration.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/articles/ai-orchestration.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="The Model Is No Longer the Product">
+  <meta name="twitter:description" content="AI engineering is a discipline of orchestration, not training. An interactive essay from The Hallucinated Lab.">
+  <link rel="icon" type="image/jpeg" href="../assets/images/logo.jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="article.css">
+  <style>
+    /* ============ ARTICLE-SCOPED: INTERACTIVE WIDGETS ============ */
+    .orch-widget {
+      margin: 2.5rem 0;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+    .orch-widget-head {
+      padding: 1.2rem 1.5rem 0.8rem;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 0.6rem 1rem;
+      padding-bottom: 1rem;
+    }
+    .orch-widget-label {
+      font-size: 0.62rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .orch-widget-label .orch-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold-primary);
+      animation: pulse-dot 2s infinite;
+    }
+    .orch-widget-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin: 0;
+      width: 100%;
+    }
+    .orch-widget-hint {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+    .orch-widget-body { padding: 1.5rem; }
+
+    /* ---- Widget A: stack explorer ---- */
+    .orch-stack { display: flex; flex-direction: column; gap: 8px; }
+    .orch-layer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      width: 100%;
+      text-align: left;
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .orch-layer:hover { border-color: var(--border-gold); color: var(--text-primary); }
+    .orch-layer.active {
+      border-color: var(--gold-primary);
+      background: rgba(201, 168, 76, 0.07);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-gold);
+    }
+    .orch-layer-name {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+    .orch-layer-sub {
+      display: block;
+      font-family: var(--font-body);
+      font-weight: 400;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+    .orch-layer-tag {
+      font-size: 0.68rem;
+      color: var(--gold-primary);
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .orch-stack-detail {
+      margin-top: 1.1rem;
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--gold-primary);
+      background: rgba(201, 168, 76, 0.04);
+      font-size: 0.82rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      min-height: 4.5em;
+    }
+    .orch-stack-detail strong { color: var(--gold-light); }
+    .orch-stack-axis {
+      margin-top: 0.9rem;
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.62rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    /* ---- Widget B: adaptation lab ---- */
+    .orch-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.3rem; }
+    .orch-tab {
+      padding: 8px 20px;
+      border-radius: 50px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .orch-tab:hover { border-color: var(--border-gold); color: var(--gold-primary); }
+    .orch-tab.active {
+      background: rgba(201, 168, 76, 0.12);
+      border-color: var(--border-gold);
+      color: var(--gold-primary);
+    }
+    .orch-lab-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: start;
+    }
+    .orch-lab-viz { display: flex; flex-direction: column; gap: 8px; position: relative; }
+    .orch-lab-box {
+      padding: 0.8rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border-subtle);
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      transition: var(--transition);
+      position: relative;
+    }
+    .orch-lab-box .orch-lab-box-sub {
+      display: block;
+      font-size: 0.6rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 2px;
+      opacity: 0.7;
+    }
+    .orch-lab-box.lit {
+      border-style: solid;
+      border-color: var(--gold-primary);
+      background: rgba(201, 168, 76, 0.08);
+      color: var(--gold-light);
+      box-shadow: 0 0 24px rgba(201, 168, 76, 0.1);
+    }
+    .orch-lab-db {
+      align-self: flex-start;
+      margin-top: 2px;
+      padding: 5px 12px;
+      border-radius: 50px;
+      border: 1px solid var(--border-subtle);
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      transition: var(--transition);
+      opacity: 0.45;
+    }
+    .orch-lab-db.lit {
+      opacity: 1;
+      border-color: var(--gold-primary);
+      color: var(--gold-primary);
+    }
+    .orch-lab-weights { letter-spacing: 4px; font-size: 0.65rem; color: inherit; }
+    .orch-meters { display: flex; flex-direction: column; gap: 0.9rem; }
+    .orch-meter-row { display: grid; grid-template-columns: 62px 1fr 86px; gap: 10px; align-items: center; }
+    .orch-meter-name {
+      font-size: 0.62rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .orch-meter-track {
+      height: 6px;
+      border-radius: 4px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      overflow: hidden;
+    }
+    .orch-meter-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 4px;
+      background: var(--gradient-gold);
+      transition: width 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+    .orch-meter-val {
+      font-size: 0.62rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      text-align: right;
+    }
+    .orch-lab-verdict {
+      margin-top: 1.2rem;
+      padding: 0.8rem 1.1rem;
+      border-radius: var(--radius-md);
+      background: rgba(201, 168, 76, 0.05);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      grid-column: 1 / -1;
+    }
+    .orch-lab-verdict strong { color: var(--gold-primary); }
+
+    /* ---- Widget C: RAG pipeline ---- */
+    .orch-rag-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 1.3rem;
+    }
+    .orch-chip {
+      padding: 7px 14px;
+      border-radius: 50px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: left;
+    }
+    .orch-chip:hover { border-color: var(--border-gold); color: var(--gold-primary); }
+    .orch-chip.active {
+      background: rgba(201, 168, 76, 0.12);
+      border-color: var(--border-gold);
+      color: var(--gold-primary);
+      font-weight: 600;
+    }
+    .orch-switch {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 14px;
+      border-radius: 50px;
+      border: 1px solid var(--border-gold);
+      background: transparent;
+      color: var(--gold-primary);
+      font-family: var(--font-body);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-left: auto;
+    }
+    .orch-switch[aria-pressed="false"] {
+      border-color: rgba(184, 92, 92, 0.5);
+      color: #c98080;
+    }
+    .orch-run {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 24px;
+      border-radius: 50px;
+      border: 1px solid var(--border-gold);
+      background: rgba(201, 168, 76, 0.1);
+      color: var(--gold-primary);
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .orch-run:hover:not(:disabled) {
+      background: rgba(201, 168, 76, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(201, 168, 76, 0.15);
+    }
+    .orch-run:disabled { opacity: 0.4; cursor: wait; }
+    .orch-stages {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 1.2rem;
+    }
+    .orch-stage {
+      padding: 0.8rem 0.9rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      min-height: 108px;
+      transition: var(--transition);
+    }
+    .orch-stage.lit {
+      border-color: var(--gold-primary);
+      box-shadow: 0 0 20px rgba(201, 168, 76, 0.1);
+    }
+    .orch-stage.skipped { opacity: 0.35; }
+    .orch-stage-num {
+      font-size: 0.6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .orch-stage-name {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.82rem;
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 6px;
+    }
+    .orch-stage-body {
+      font-size: 0.68rem;
+      line-height: 1.55;
+      color: var(--text-muted);
+      word-break: break-word;
+    }
+    .orch-stage-body .orch-chunk {
+      display: block;
+      padding: 3px 6px;
+      margin-top: 4px;
+      border-radius: 4px;
+      background: rgba(201, 168, 76, 0.07);
+      color: var(--gold-light);
+      border: 1px solid var(--border-subtle);
+    }
+    .orch-rag-out {
+      padding: 1rem 1.2rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      font-size: 0.82rem;
+      line-height: 1.75;
+      color: var(--text-secondary);
+      min-height: 4.2em;
+      transition: var(--transition);
+    }
+    .orch-rag-out.grounded { border-color: var(--border-gold); }
+    .orch-rag-out.ungrounded { border-color: rgba(184, 92, 92, 0.55); }
+    .orch-out-tag {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .orch-out-tag.ok {
+      background: rgba(201, 168, 76, 0.12);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-primary);
+    }
+    .orch-out-tag.bad {
+      background: rgba(184, 92, 92, 0.12);
+      border: 1px solid rgba(184, 92, 92, 0.5);
+      color: #c98080;
+    }
+    .orch-cursor {
+      display: inline-block;
+      width: 7px;
+      color: var(--gold-primary);
+      animation: pulse-dot 1s infinite;
+    }
+
+    /* ---- Widget D: iteration game ---- */
+    .orch-scoreboard {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 1rem 1.5rem;
+      margin-bottom: 1.3rem;
+    }
+    .orch-score-item { flex: 1; min-width: 150px; }
+    .orch-score-label {
+      font-size: 0.6rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .orch-score-label span:last-child { color: var(--gold-light); }
+    .orch-round-chip {
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--gold-primary);
+      border: 1px solid var(--border-subtle);
+      border-radius: 50px;
+      padding: 5px 14px;
+      white-space: nowrap;
+    }
+    .orch-scenario {
+      padding: 1.1rem 1.3rem;
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--gold-primary);
+      background: rgba(201, 168, 76, 0.04);
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin-bottom: 1.2rem;
+      min-height: 3.4em;
+    }
+    .orch-scenario em { color: var(--gold-light); font-style: italic; }
+    .orch-levers { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 1.1rem; }
+    .orch-lever {
+      padding: 0.9rem 1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      text-align: center;
+    }
+    .orch-lever small {
+      display: block;
+      font-weight: 400;
+      font-size: 0.62rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      letter-spacing: 0.5px;
+    }
+    .orch-lever:hover:not(:disabled) {
+      border-color: var(--border-gold);
+      color: var(--gold-primary);
+      transform: translateY(-2px);
+    }
+    .orch-lever:disabled { cursor: default; opacity: 0.55; }
+    .orch-lever.good { border-color: var(--gold-primary); background: rgba(201, 168, 76, 0.1); color: var(--gold-light); opacity: 1; }
+    .orch-lever.bad { border-color: rgba(184, 92, 92, 0.55); color: #c98080; opacity: 1; }
+    .orch-feedback {
+      font-size: 0.78rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
+      padding: 0.9rem 1.1rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      margin-bottom: 1.1rem;
+      display: none;
+    }
+    .orch-feedback.show { display: block; }
+    .orch-feedback strong { color: var(--gold-primary); }
+    .orch-feedback.miss strong { color: #c98080; }
+    .orch-game-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    /* ---- Widget E: modality mixer ---- */
+    .orch-modes { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .orch-mode {
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-muted);
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .orch-mode[aria-pressed="true"] {
+      border-color: var(--border-gold);
+      background: rgba(201, 168, 76, 0.1);
+      color: var(--gold-primary);
+    }
+    .orch-caps { display: flex; flex-direction: column; gap: 6px; min-height: 7em; }
+    .orch-cap {
+      font-size: 0.76rem;
+      color: var(--text-secondary);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .orch-cap::before { content: '◆'; color: var(--gold-dark); font-size: 0.55rem; }
+    .orch-cap.fused { border-color: var(--border-gold); color: var(--gold-light); }
+    .orch-cap.fused::before { color: var(--gold-primary); }
+    .orch-caps-empty { font-size: 0.76rem; color: var(--text-muted); font-style: italic; padding: 6px 0; }
+
+    /* ---- Responsive: widgets ---- */
+    @media (max-width: 768px) {
+      .orch-widget-body { padding: 1.1rem; }
+      .orch-lab-grid { grid-template-columns: 1fr; }
+      .orch-stages { grid-template-columns: 1fr 1fr; }
+      .orch-levers { grid-template-columns: 1fr; }
+      .orch-switch { margin-left: 0; }
+      .orch-layer { flex-direction: column; align-items: flex-start; gap: 0.4rem; }
+      .orch-meter-row { grid-template-columns: 56px 1fr 76px; }
+    }
+    @media (max-width: 480px) {
+      .orch-stages { grid-template-columns: 1fr; }
+      .orch-stage { min-height: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Reading Progress Bar -->
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="../" class="nav-logo">
+        <img src="../assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../">Home</a></li>
+        <li><a href="../utilities.html">Utilities</a></li>
+        <li><a href="../interface.html">Assistant</a></li>
+        <li><a href="../media.html" class="active">Media</a></li>
+        <li><a href="../solutions.html">Solutions</a></li>
+        <li><a href="../#contact">Contact</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- ====== PARALLAX HERO ====== -->
+  <div class="article-hero">
+    <div class="article-hero-bg" style="background: linear-gradient(135deg, #0a0f1a 0%, #16213a 45%, #26365c 100%);"></div>
+    <div class="article-hero-overlay"></div>
+    <div class="article-hero-content">
+      <div class="article-meta-top gsap-reveal">
+        <span class="article-category-badge">AI &amp; ML</span>
+        <span class="article-read-time">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+          9 min read · interactive
+        </span>
+      </div>
+      <h1 class="article-hero-title gsap-reveal">The Model Is No Longer the Product</h1>
+      <p class="article-hero-subtitle gsap-reveal">The hardest part of modern AI is no longer creating the giant language model itself. It's figuring out how to connect it to your data and your business logic. AI engineering is a discipline of orchestration, not training.</p>
+      <div class="article-author-row gsap-reveal">
+        <img src="../assets/images/pratyush.jpeg" alt="Pratyush" class="article-author-avatar" width="40" height="40">
+        <div class="article-author-info">
+          <span class="article-author-name">Pratyush</span>
+          <span class="article-date">July 19, 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content" class="article-page">
+    <div class="article-layout">
+
+      <!-- ====== STICKY TABLE OF CONTENTS ====== -->
+      <aside class="article-toc" aria-label="Table of Contents">
+        <span class="toc-label">Contents</span>
+        <ul class="toc-list">
+          <li><a href="#the-noise-and-the-signal" class="toc-link active">The Noise and the Signal</a></li>
+          <li><a href="#from-builder-to-architect" class="toc-link">From Builder to Architect</a></li>
+          <li><a href="#the-three-pillars" class="toc-link">The Three Pillars</a></li>
+          <li><a href="#run-the-pipeline" class="toc-link">Run the Pipeline</a></li>
+          <li><a href="#from-text-to-the-world" class="toc-link">From Text to the World</a></li>
+          <li><a href="#the-engineers-mindset" class="toc-link">The Engineer's Mindset</a></li>
+          <li><a href="#the-last-mile" class="toc-link">The Last Mile</a></li>
+          <li><a href="#the-craft-of-adaptation" class="toc-link">The Craft of Adaptation</a></li>
+        </ul>
+        <a href="../media.html" class="toc-back">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Back to Media
+        </a>
+      </aside>
+
+      <!-- ====== ARTICLE CONTENT ====== -->
+      <article class="article-content">
+
+        <h2 id="the-noise-and-the-signal" class="gsap-reveal">The Noise and the Signal</h2>
+        <p class="gsap-reveal">The conversation around AI often feels like it's happening in three extremes: the hyper-excitement of new capabilities, the fear of economic disruption, and the deep technical rabbit holes of GPU clusters and gradient descent. It's noisy, overwhelming, and frankly, exhausting.</p>
+
+        <p class="gsap-reveal">But if you stand back from the hype, the actual, profound shift is surprisingly simple. For the first two decades of modern tech, if a company wanted an AI capability — say, a model to predict customer churn — it had to do three massive things: gather data, train a model from scratch, and maintain complex infrastructure. That was the deep, arcane work of the ML engineer.</p>
+
+        <p class="gsap-reveal">Today, most of that heavy lifting is done by a handful of mega-corporations. They don't just release models; they release APIs. Suddenly, the most valuable skill isn't training a model, but figuring out how to compose an application around one that already exists. <span class="highlight">The focus has shifted from model development to model adaptation.</span></p>
+
+        <hr class="article-divider">
+
+        <h2 id="from-builder-to-architect" class="gsap-reveal">From Model Builder to Application Architect</h2>
+
+        <p class="gsap-reveal">Before the rise of <span class="tooltip-term" data-tooltip="A large, general-purpose model trained on broad data (text, images, code) that can be adapted to many downstream tasks without retraining from scratch.">foundation models</span>, an organization wanting an AI feature was essentially an engineering company that also happened to require a PhD in mathematics. Models were narrowly focused — a spam detector couldn't write poetry; a fraud model couldn't summarize documents.</p>
+
+        <p class="gsap-reveal">Today, that barrier is gone. A foundation model is treated more like a utility — like electricity, or an API call — than a bespoke piece of hardware. This fundamental difference created a new role: the <strong>AI Engineer</strong>. The core job is stitching together three pieces: the Model, the Data, and the Interface.</p>
+
+        <!-- ======== WIDGET A: THE STACK EXPLORER ======== -->
+        <div class="orch-widget gsap-reveal" id="stack-widget">
+          <div class="orch-widget-head">
+            <span class="orch-widget-label"><span class="orch-dot" aria-hidden="true"></span>Interactive · Fig. 01</span>
+            <h3 class="orch-widget-title">The Application Stack</h3>
+            <p class="orch-widget-hint">Tap a layer to see what lives there — and who works on it.</p>
+          </div>
+          <div class="orch-widget-body">
+            <div class="orch-stack" role="group" aria-label="Application stack layers">
+              <button class="orch-layer" data-layer="l4" type="button">
+                <span><span class="orch-layer-name">Application Interface</span><span class="orch-layer-sub">User-facing product</span></span>
+                <span class="orch-layer-tag">L4</span>
+              </button>
+              <button class="orch-layer" data-layer="l3" type="button">
+                <span><span class="orch-layer-name">Prompt Engineering</span><span class="orch-layer-sub">Instructions · constraints · examples</span></span>
+                <span class="orch-layer-tag">L3</span>
+              </button>
+              <button class="orch-layer" data-layer="l2" type="button">
+                <span><span class="orch-layer-name">Data Retrieval (RAG)</span><span class="orch-layer-sub">Proprietary knowledge · context injection</span></span>
+                <span class="orch-layer-tag">L2</span>
+              </button>
+              <button class="orch-layer active" data-layer="l1" type="button">
+                <span><span class="orch-layer-name">Foundation Model</span><span class="orch-layer-sub">LLM · general reasoning · world knowledge</span></span>
+                <span class="orch-layer-tag">L1</span>
+              </button>
+            </div>
+            <div class="orch-stack-detail" id="stack-detail" aria-live="polite"></div>
+            <div class="orch-stack-axis" aria-hidden="true"><span>◆ Foundation</span><span>User value ◆</span></div>
+          </div>
+        </div>
+
+        <p class="gsap-reveal">The base capability sits at the bottom, fixed. Everything above it adapts that capability to a specific job — and those adaptation layers are where the engineering now happens.</p>
+
+        <hr class="article-divider">
+
+        <h2 id="the-three-pillars" class="gsap-reveal">Orchestrating the Model — the Three Pillars of Adaptation</h2>
+
+        <p class="gsap-reveal">How do you take a giant, general-purpose black box and make it reliably solve a problem specific to your company's 20-year-old contract filing system? You don't retrain it. You adapt it, using techniques that are surprisingly simple but profoundly powerful.</p>
+
+        <h3 class="gsap-reveal">1 · Context retrieval (RAG)</h3>
+        <p class="gsap-reveal">When a foundation model generates text, it is powerful, but it has a knowledge cutoff — it only knows what it was trained on, and it can sometimes <span class="tooltip-term" data-tooltip="When a model confidently generates plausible-sounding but false information — a fabricated policy, citation, or fact.">hallucinate</span>. Your internal company policy document, the one that hasn't been digitized yet, is useless to it by default. <strong>Retrieval-Augmented Generation</strong> solves this: instead of asking the model to magically remember an internal document, you give it the document first. It's not guessing; it's synthesizing facts. Reliable, auditable, and grounded in your truth.</p>
+
+        <h3 class="gsap-reveal">2 · Prompt engineering</h3>
+        <p class="gsap-reveal">The "art of asking" — highly specific instructions, constraints, and examples that coax the desired behavior. If you want the model to sound like your brand, you can't just say <em>"be witty."</em> You provide examples, tone guides, and formats. You are building an instruction manual that sits right before the prompt. It's the easiest and fastest form of adaptation.</p>
+
+        <h3 class="gsap-reveal">3 · Finetuning</h3>
+        <p class="gsap-reveal">Finetuning changes the <span class="tooltip-term" data-tooltip="The billions of learned parameters inside a neural network. Finetuning nudges these numbers with additional training on your own data.">model weights</span> themselves — actually re-training the model on your specific dataset. It's necessary when the model's <em>format</em> or <em>behavior</em> must be fundamentally altered — like perfectly parsing a non-standard industry code. A deeper, more expensive commitment, but sometimes the only way to reach maximum performance.</p>
+
+        <!-- ======== WIDGET B: ADAPTATION LAB ======== -->
+        <div class="orch-widget gsap-reveal" id="lab-widget">
+          <div class="orch-widget-head">
+            <span class="orch-widget-label"><span class="orch-dot" aria-hidden="true"></span>Interactive · Fig. 02</span>
+            <h3 class="orch-widget-title">The Adaptation Lab</h3>
+            <p class="orch-widget-hint">Switch technique. Watch which part of the system it actually touches.</p>
+          </div>
+          <div class="orch-widget-body">
+            <div class="orch-tabs" role="group" aria-label="Adaptation technique">
+              <button class="orch-tab active" data-tech="prompt" type="button">Prompting</button>
+              <button class="orch-tab" data-tech="rag" type="button">RAG</button>
+              <button class="orch-tab" data-tech="ft" type="button">Finetuning</button>
+            </div>
+            <div class="orch-lab-grid">
+              <div class="orch-lab-viz" aria-hidden="true">
+                <div class="orch-lab-box" id="lab-box-instr">Instructions<span class="orch-lab-box-sub">system prompt · examples</span></div>
+                <div class="orch-lab-box" id="lab-box-ctx">Context window<span class="orch-lab-box-sub">what the model reads per request</span></div>
+                <div class="orch-lab-box" id="lab-box-model">Model weights <span class="orch-lab-weights" id="lab-weights">● ● ● ● ●</span><span class="orch-lab-box-sub">frozen unless finetuned</span></div>
+                <div class="orch-lab-db" id="lab-db">⇢ vector database</div>
+              </div>
+              <div class="orch-meters">
+                <div class="orch-meter-row">
+                  <span class="orch-meter-name">Cost</span>
+                  <div class="orch-meter-track"><div class="orch-meter-fill" id="meter-cost"></div></div>
+                  <span class="orch-meter-val" id="meter-cost-val"></span>
+                </div>
+                <div class="orch-meter-row">
+                  <span class="orch-meter-name">Effort</span>
+                  <div class="orch-meter-track"><div class="orch-meter-fill" id="meter-effort"></div></div>
+                  <span class="orch-meter-val" id="meter-effort-val"></span>
+                </div>
+                <div class="orch-meter-row">
+                  <span class="orch-meter-name">Depth</span>
+                  <div class="orch-meter-track"><div class="orch-meter-fill" id="meter-depth"></div></div>
+                  <span class="orch-meter-val" id="meter-depth-val"></span>
+                </div>
+              </div>
+              <div class="orch-lab-verdict" id="lab-verdict" aria-live="polite"></div>
+            </div>
+          </div>
+        </div>
+
+        <hr class="article-divider">
+
+        <h2 id="run-the-pipeline" class="gsap-reveal">Run the Pipeline Yourself</h2>
+
+        <p class="gsap-reveal">Reading about RAG is one thing. Watching it work — and watching what happens when you turn it off — is another. Pick a question, and run it through the pipeline. Then flip retrieval off and run it again.</p>
+
+        <!-- ======== WIDGET C: RAG PLAYGROUND ======== -->
+        <div class="orch-widget gsap-reveal" id="rag-widget">
+          <div class="orch-widget-head">
+            <span class="orch-widget-label"><span class="orch-dot" aria-hidden="true"></span>Playable · Simulation</span>
+            <h3 class="orch-widget-title">The RAG Pipeline</h3>
+            <p class="orch-widget-hint">Choose a question, toggle retrieval, and press Run.</p>
+          </div>
+          <div class="orch-widget-body">
+            <div class="orch-rag-controls">
+              <button class="orch-chip active" data-q="0" type="button">"What is the PTO policy for remote employees?"</button>
+              <button class="orch-chip" data-q="1" type="button">"Which cloud vendor did we sign with in Q2?"</button>
+              <button class="orch-switch" id="rag-toggle" type="button" aria-pressed="true">Retrieval: ON</button>
+            </div>
+            <div class="orch-stages">
+              <div class="orch-stage" id="rag-s1">
+                <span class="orch-stage-num">01 · Query</span>
+                <span class="orch-stage-name">User asks</span>
+                <span class="orch-stage-body" id="rag-s1-body">Waiting…</span>
+              </div>
+              <div class="orch-stage" id="rag-s2">
+                <span class="orch-stage-num">02 · Search</span>
+                <span class="orch-stage-name">Index lookup</span>
+                <span class="orch-stage-body" id="rag-s2-body">Waiting…</span>
+              </div>
+              <div class="orch-stage" id="rag-s3">
+                <span class="orch-stage-num">03 · Inject</span>
+                <span class="orch-stage-name">Context built</span>
+                <span class="orch-stage-body" id="rag-s3-body">Waiting…</span>
+              </div>
+              <div class="orch-stage" id="rag-s4">
+                <span class="orch-stage-num">04 · Generate</span>
+                <span class="orch-stage-name">Model answers</span>
+                <span class="orch-stage-body" id="rag-s4-body">Waiting…</span>
+              </div>
+            </div>
+            <div class="orch-rag-out" id="rag-out" aria-live="polite">Press <strong style="color:var(--gold-primary)">Run pipeline</strong> to start the simulation.</div>
+            <div style="margin-top:1rem;">
+              <button class="orch-run" id="rag-run" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                Run pipeline
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <p class="gsap-reveal">With retrieval on, the model synthesizes an answer <em>based only on the provided context</em>. With retrieval off, it improvises from stale training data — fluently, confidently, and wrongly. <span class="highlight">Privacy isn't the only thing architecture buys you. Truth is architectural too.</span></p>
+
+        <hr class="article-divider">
+
+        <h2 id="from-text-to-the-world" class="gsap-reveal">The New Frontier — From Text to the World</h2>
+
+        <p class="gsap-reveal">Early AI models, including the first LLMs, were text-only. They could decode a message or write an email. But they couldn't see the world. The major evolution leading to foundation models was the shift to <strong>multimodality</strong> — incorporating text, images, audio, video, and sometimes even protein structures into a single model.</p>
+
+        <p class="gsap-reveal">When a model is multimodal, it's not just completing a sentence; it's completing an understanding. Toggle the senses below and watch the capability space grow — the interesting abilities appear <em>between</em> the modalities.</p>
+
+        <!-- ======== WIDGET E: MODALITY MIXER ======== -->
+        <div class="orch-widget gsap-reveal" id="modality-widget">
+          <div class="orch-widget-head">
+            <span class="orch-widget-label"><span class="orch-dot" aria-hidden="true"></span>Interactive · Toy</span>
+            <h3 class="orch-widget-title">The Modality Mixer</h3>
+            <p class="orch-widget-hint">Give the model senses. Fused abilities light up in gold.</p>
+          </div>
+          <div class="orch-widget-body">
+            <div class="orch-modes" role="group" aria-label="Model input modalities">
+              <button class="orch-mode" data-mode="text" type="button" aria-pressed="true">✎ Text</button>
+              <button class="orch-mode" data-mode="vision" type="button" aria-pressed="false">◉ Vision</button>
+              <button class="orch-mode" data-mode="audio" type="button" aria-pressed="false">♪ Audio</button>
+            </div>
+            <div class="orch-caps" id="modality-caps" aria-live="polite"></div>
+          </div>
+        </div>
+
+        <hr class="article-divider">
+
+        <h2 id="the-engineers-mindset" class="gsap-reveal">The AI Engineer's Mindset</h2>
+
+        <p class="gsap-reveal">The professional who thrives in this new environment is not necessarily a PhD in deep learning. They are the <strong>AI Application Architect</strong>. The biggest change in mindset is shifting from <em>"How do I build a model?"</em> to <em>"How do I solve this business problem — and which lever, prompting, RAG, or finetuning, solves it best?"</em></p>
+
+        <p class="gsap-reveal">This involves a radical change in workflow. Instead of the old <em>data collection → model training → application build</em> linear pipeline, the modern workflow is iterative, fast, and product-focused. You can build a working, valuable prototype in a weekend, using only off-the-shelf APIs and clever prompting. It turns AI development into a software engineering challenge — cheaper and faster to market than ever before.</p>
+
+        <hr class="article-divider">
+
+        <h2 id="the-last-mile" class="gsap-reveal">Building the Product — the Last Mile</h2>
+
+        <p class="gsap-reveal">While the capability is breathtaking, the process is fraught with challenges. First, <strong>evaluation</strong>: foundation models are open-ended. If a chatbot generates a wrong answer — was it the prompt, missing data in RAG, a hallucination, or a poor retrieval index? It's a multi-layered diagnostic puzzle. Second, <strong>the last mile</strong>: a cool demo is easy; a robust product that survives messy contracts and ambiguous requests is the hard part. Third, <strong>maintenance and risk</strong>: today's powerful API might be eclipsed next year, and the legal landscape is still being hammered out in courtrooms.</p>
+
+        <p class="gsap-reveal">That diagnostic puzzle is a skill you can practice. So practice it — right here.</p>
+
+        <!-- ======== WIDGET D: THE ITERATION LOOP GAME ======== -->
+        <div class="orch-widget gsap-reveal" id="game-widget">
+          <div class="orch-widget-head">
+            <span class="orch-widget-label"><span class="orch-dot" aria-hidden="true"></span>Playable · Game</span>
+            <h3 class="orch-widget-title">Ship It — The Iteration Loop</h3>
+            <p class="orch-widget-hint">You're the AI engineer. Six failures ship to your desk. Diagnose each one and pull the right lever.</p>
+          </div>
+          <div class="orch-widget-body">
+            <div class="orch-scoreboard">
+              <div class="orch-score-item">
+                <span class="orch-score-label"><span>Reliability</span><span id="game-rel-val">40%</span></span>
+                <div class="orch-meter-track"><div class="orch-meter-fill" id="game-rel" style="width:40%"></div></div>
+              </div>
+              <span class="orch-round-chip" id="game-round">Round 1 / 6</span>
+            </div>
+            <div class="orch-scenario" id="game-scenario"></div>
+            <div class="orch-levers" id="game-levers">
+              <button class="orch-lever" data-lever="prompt" type="button">Fix the Prompt<small>rewrite instructions &amp; examples</small></button>
+              <button class="orch-lever" data-lever="rag" type="button">Wire up RAG<small>retrieve the real documents</small></button>
+              <button class="orch-lever" data-lever="ft" type="button">Finetune<small>retrain on your own data</small></button>
+            </div>
+            <div class="orch-feedback" id="game-feedback"></div>
+            <div class="orch-game-actions">
+              <button class="orch-run" id="game-next" type="button" style="display:none;">Next failure →</button>
+              <button class="orch-run" id="game-restart" type="button" style="display:none;">↻ Play again</button>
+            </div>
+          </div>
+        </div>
+
+        <blockquote class="gsap-reveal">
+          <p>The race is no longer about who has the biggest clusters; it's about who can architect the most elegant and reliable application on top of the models everyone already has access to.</p>
+        </blockquote>
+
+        <hr class="article-divider">
+
+        <h2 id="the-craft-of-adaptation" class="gsap-reveal">The Craft of Adaptation</h2>
+
+        <p class="gsap-reveal">AI engineering isn't a replacement for good software engineering. It's a <em>refinement</em> of it. The discipline demands fluency in three things: the mechanics of the foundation model (when to prompt vs. when to retrieve), the messy reality of corporate data (how to structure the unstructured), and the critical art of evaluation (how to prove the product is right, every single time).</p>
+
+        <p class="gsap-reveal">For the curious builder, the message is clear: don't get lost in the deep theory of transformers. <span class="highlight">Master the art of the connection.</span> Learn to build the plumbing that makes the model useful — the plumbing that directs the data, constrains the output, and keeps the product accountable. That's where the immediate value is, and it's what defines the next generation of AI builders.</p>
+
+        <div class="deep-dive gsap-reveal">
+          <details class="deep-dive">
+            <summary>Deep dive · Multimodal vs. unimodal models</summary>
+            <div class="deep-dive-content">
+              <p>A <strong>unimodal</strong> model handles one input type — classic LLMs read and write only text. A <strong>multimodal</strong> model embeds several input types (text, images, audio) into a shared representation space, so it can reason <em>across</em> them: describe a photo, read a chart, answer a spoken question about a document. The fusion is the feature — capabilities emerge between modalities that neither possesses alone, which is exactly what the Modality Mixer above demonstrates.</p>
+            </div>
+          </details>
+        </div>
+
+        <!-- ====== FOOTER ====== -->
+        <div class="article-footer">
+          <div class="article-footer-tags">
+            <span class="article-tag">AI Engineering</span>
+            <span class="article-tag">RAG</span>
+            <span class="article-tag">Prompting</span>
+            <span class="article-tag">Finetuning</span>
+            <span class="article-tag">Interactive</span>
+          </div>
+          <a href="../media.html" class="article-back-link">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back to Media
+          </a>
+        </div>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+  <script src="../script.js" defer></script>
+  <script src="article.js" defer></script>
+  <script>
+  /* ============================================================
+     Article-scoped interactivity — vanilla JS, no dependencies.
+     ============================================================ */
+  document.addEventListener('DOMContentLoaded', () => {
+
+    /* ---------- WIDGET A: Stack explorer ---------- */
+    const stackData = {
+      l4: { who: 'Product engineers', text: '<strong>Application Interface.</strong> The chat window, the editor plugin, the API your users actually touch. This is where model capability becomes user value — and where latency, cost, and UX constraints are felt first.' },
+      l3: { who: 'AI engineers', text: '<strong>Prompt Engineering.</strong> The instruction manual that sits in front of every request: role, constraints, tone, worked examples. The fastest, cheapest lever — change a sentence, change the behavior.' },
+      l2: { who: 'AI + data engineers', text: '<strong>Data Retrieval (RAG).</strong> Your proprietary knowledge — wikis, PDFs, emails — indexed and searched per request, then injected into the context window. This layer grounds the model in <strong>your</strong> truth.' },
+      l1: { who: 'A handful of labs', text: '<strong>Foundation Model.</strong> The fixed utility at the bottom: general reasoning and world knowledge served over an API. You don\'t rebuild the power plant — you build on top of it.' },
+    };
+    const stackDetail = document.getElementById('stack-detail');
+    const stackLayers = document.querySelectorAll('.orch-layer');
+    function showLayer(key) {
+      stackLayers.forEach(b => b.classList.toggle('active', b.dataset.layer === key));
+      const d = stackData[key];
+      if (d && stackDetail) {
+        stackDetail.innerHTML = d.text + '<br><span style="font-size:0.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);">Built by · ' + d.who + '</span>';
+      }
+    }
+    stackLayers.forEach(b => b.addEventListener('click', () => showLayer(b.dataset.layer)));
+    if (stackLayers.length) showLayer('l1');
+
+    /* ---------- WIDGET B: Adaptation lab ---------- */
+    const labData = {
+      prompt: {
+        lit: ['instr'], db: false, weights: '● ● ● ● ●',
+        cost: [18, 'Low'], effort: [15, 'Fastest'], depth: [25, 'Shallow'],
+        verdict: '<strong>Use when:</strong> you need to change tone, format, or behavior quickly. Touches only the instructions — the model and your data stay exactly as they are.',
+      },
+      rag: {
+        lit: ['instr', 'ctx'], db: true, weights: '● ● ● ● ●',
+        cost: [45, 'Medium'], effort: [50, 'Fast'], depth: [70, 'Grounded'],
+        verdict: '<strong>Use when:</strong> the model needs facts it was never trained on — your policies, your contracts, last month\'s launch. The model is unchanged; the context is supplied fresh every request.',
+      },
+      ft: {
+        lit: ['model'], db: false, weights: '◆ ◆ ● ◆ ●',
+        cost: [88, 'High'], effort: [85, 'Slow'], depth: [95, 'Deepest'],
+        verdict: '<strong>Use when:</strong> the model\'s fundamental behavior or format must change — parsing a non-standard industry code, or a structure no amount of prompting fixes. The weights themselves shift.',
+      },
+    };
+    const labTabs = document.querySelectorAll('.orch-tab');
+    const labBoxes = { instr: document.getElementById('lab-box-instr'), ctx: document.getElementById('lab-box-ctx'), model: document.getElementById('lab-box-model') };
+    const labDb = document.getElementById('lab-db');
+    const labWeights = document.getElementById('lab-weights');
+    const labVerdict = document.getElementById('lab-verdict');
+    function setTech(key) {
+      labTabs.forEach(t => t.classList.toggle('active', t.dataset.tech === key));
+      const d = labData[key];
+      if (!d) return;
+      Object.keys(labBoxes).forEach(k => labBoxes[k] && labBoxes[k].classList.toggle('lit', d.lit.includes(k)));
+      if (labDb) labDb.classList.toggle('lit', d.db);
+      if (labWeights) labWeights.textContent = d.weights;
+      [['cost', d.cost], ['effort', d.effort], ['depth', d.depth]].forEach(([m, [pct, label]]) => {
+        const fill = document.getElementById('meter-' + m);
+        const val = document.getElementById('meter-' + m + '-val');
+        if (fill) fill.style.width = pct + '%';
+        if (val) val.textContent = label;
+      });
+      if (labVerdict) labVerdict.innerHTML = d.verdict;
+    }
+    labTabs.forEach(t => t.addEventListener('click', () => setTech(t.dataset.tech)));
+    if (labTabs.length) setTech('prompt');
+
+    /* ---------- WIDGET C: RAG playground ---------- */
+    const ragQuestions = [
+      {
+        q: 'What is the PTO policy for remote employees?',
+        chunks: ['handbook.pdf · §4.2 "Remote staff accrue 18 PTO days…"', 'policy-2026.md · "Carry-over capped at 5 days…"'],
+        grounded: 'Remote employees accrue 18 PTO days per year, with carry-over capped at 5 days (handbook §4.2, policy-2026). Both retrieved sources agree.',
+        hallucinated: 'Remote employees receive unlimited PTO after their first year, subject to manager approval. (Sounds plausible. Appears nowhere in your handbook.)',
+      },
+      {
+        q: 'Which cloud vendor did we sign with in Q2?',
+        chunks: ['contracts/q2-vendor.pdf · "Master agreement — NimbusStack Inc."', 'finance-note.txt · "NimbusStack invoice #0027, June"'],
+        grounded: 'In Q2 the company signed a master agreement with NimbusStack Inc. — confirmed by the contract file and a matching June invoice.',
+        hallucinated: 'You signed with one of the major providers — most likely AWS, since most companies your size choose it. (Pure statistics. Your actual contract says otherwise.)',
+      },
+    ];
+    let ragQ = 0, ragOn = true, ragBusy = false;
+    const ragChips = document.querySelectorAll('#rag-widget .orch-chip');
+    const ragToggle = document.getElementById('rag-toggle');
+    const ragRun = document.getElementById('rag-run');
+    const ragOut = document.getElementById('rag-out');
+    const stages = [1, 2, 3, 4].map(i => ({ box: document.getElementById('rag-s' + i), body: document.getElementById('rag-s' + i + '-body') }));
+
+    ragChips.forEach(c => c.addEventListener('click', () => {
+      if (ragBusy) return;
+      ragQ = parseInt(c.dataset.q, 10);
+      ragChips.forEach(x => x.classList.toggle('active', x === c));
+    }));
+    if (ragToggle) ragToggle.addEventListener('click', () => {
+      if (ragBusy) return;
+      ragOn = !ragOn;
+      ragToggle.setAttribute('aria-pressed', String(ragOn));
+      ragToggle.textContent = 'Retrieval: ' + (ragOn ? 'ON' : 'OFF');
+    });
+
+    function typeInto(el, text, cls, done) {
+      let i = 0;
+      el.classList.remove('grounded', 'ungrounded');
+      el.classList.add(cls);
+      const tag = cls === 'grounded'
+        ? '<span class="orch-out-tag ok">Grounded answer</span><br>'
+        : '<span class="orch-out-tag bad">Ungrounded · hallucination risk</span><br>';
+      function step() {
+        el.innerHTML = tag + text.slice(0, i) + '<span class="orch-cursor">▌</span>';
+        i += 2;
+        if (i <= text.length + 1) { setTimeout(step, 14); }
+        else { el.innerHTML = tag + text; if (done) done(); }
+      }
+      step();
+    }
+
+    if (ragRun) ragRun.addEventListener('click', () => {
+      if (ragBusy) return;
+      ragBusy = true;
+      ragRun.disabled = true;
+      const data = ragQuestions[ragQ];
+      stages.forEach(s => { s.box.classList.remove('lit', 'skipped'); s.body.textContent = 'Waiting…'; });
+      ragOut.classList.remove('grounded', 'ungrounded');
+      ragOut.innerHTML = 'Running…';
+
+      const seq = [];
+      seq.push(() => { stages[0].box.classList.add('lit'); stages[0].body.textContent = '"' + data.q + '"'; });
+      if (ragOn) {
+        seq.push(() => { stages[1].box.classList.add('lit'); stages[1].body.innerHTML = 'Searching the index…' + data.chunks.map(c => '<span class="orch-chunk">' + c + '</span>').join(''); });
+        seq.push(() => { stages[2].box.classList.add('lit'); stages[2].body.textContent = '[retrieved chunks] + [question] packed into the context window.'; });
+      } else {
+        seq.push(() => { stages[1].box.classList.add('skipped'); stages[1].body.textContent = 'Skipped — retrieval is off.'; });
+        seq.push(() => { stages[2].box.classList.add('skipped'); stages[2].body.textContent = 'Nothing injected. The model is on its own.'; });
+      }
+      seq.push(() => {
+        stages[3].box.classList.add('lit');
+        stages[3].body.textContent = ragOn ? 'Synthesizing from provided context only.' : 'Improvising from stale training data.';
+        typeInto(ragOut, ragOn ? data.grounded : data.hallucinated, ragOn ? 'grounded' : 'ungrounded', () => {
+          ragBusy = false;
+          ragRun.disabled = false;
+        });
+      });
+      seq.forEach((fn, i) => setTimeout(fn, 500 + i * 850));
+    });
+
+    /* ---------- WIDGET D: Iteration loop game ---------- */
+    const rounds = [
+      { s: 'The support bot answers in a stiff, corporate tone. Brand wants <em>witty and warm</em>. Content is accurate.', a: 'prompt',
+        why: { prompt: 'Tone and voice live in the instructions. Add a voice guide and two worked examples — shipped in an afternoon.', rag: 'Retrieval feeds the model facts, not personality. The answers were already accurate.', ft: 'You could finetune for tone, but you\'d burn weeks and budget on what a prompt fixes today.' } },
+      { s: 'The bot confidently cites a PTO policy that <em>does not exist</em> in your employee handbook.', a: 'rag',
+        why: { rag: 'A classic hallucination on internal facts. Ground the bot: retrieve the real handbook and instruct it to answer only from context.', prompt: '"Don\'t make things up" reduces confidence, not ignorance. The model has never seen your handbook.', ft: 'Finetuning bakes today\'s policy into the weights — and next quarter\'s policy update breaks it again.' } },
+      { s: 'Output must follow your industry\'s non-standard claim-code format. Even with five examples in the prompt, it keeps malforming the codes.', a: 'ft',
+        why: { ft: 'When format examples are maxed out and the structure still breaks, the behavior needs to move into the weights. This is the finetuning case.', prompt: 'You\'ve already maxed the examples — the ceiling of prompting has been reached.', rag: 'Retrieval supplies knowledge, not formatting discipline. The codes would still come out malformed.' } },
+      { s: 'Customers ask about the product you launched <em>last month</em>. The bot has never heard of it.', a: 'rag',
+        why: { rag: 'A knowledge-cutoff problem. Index the launch docs; every answer stays current without touching the model.', prompt: 'You can\'t instruct a model into knowing facts it was never given.', ft: 'Retraining for every launch is the slowest, priciest way to stay current — and it\'s stale by the next release.' } },
+      { s: 'Answers are factually right, but the bot ignores the required JSON schema roughly half the time — downstream parsing keeps crashing.', a: 'prompt',
+        why: { prompt: 'Half-right means the model <em>can</em> do it — the instructions are under-specified. Pin the schema, show one strict example, forbid prose.', rag: 'The facts are already right. More context won\'t fix structure.', ft: 'Premature. Finetuning is for when a well-specified prompt still fails — you haven\'t tightened the prompt yet.' } },
+      { s: 'A clever user asks the bot to "repeat everything above" — and it leaks its internal system notes.', a: 'prompt',
+        why: { prompt: 'A guardrail problem. Add explicit refusal rules for prompt-extraction and re-test with the known attack patterns.', rag: 'Retrieval has nothing to do with what the bot reveals about its own instructions.', ft: 'Heavy machinery for a policy rule — and you\'d still keep the guardrail text in the prompt anyway.' } },
+    ];
+    let round = 0, rel = 40;
+    const gEls = {
+      rel: document.getElementById('game-rel'), relVal: document.getElementById('game-rel-val'),
+      round: document.getElementById('game-round'), scenario: document.getElementById('game-scenario'),
+      feedback: document.getElementById('game-feedback'), next: document.getElementById('game-next'),
+      restart: document.getElementById('game-restart'),
+    };
+    const levers = document.querySelectorAll('.orch-lever');
+    const leverNames = { prompt: 'Fix the Prompt', rag: 'Wire up RAG', ft: 'Finetune' };
+
+    function setRel(v) {
+      rel = Math.max(0, Math.min(100, v));
+      if (gEls.rel) gEls.rel.style.width = rel + '%';
+      if (gEls.relVal) gEls.relVal.textContent = rel + '%';
+    }
+    function loadRound() {
+      const r = rounds[round];
+      if (gEls.round) gEls.round.textContent = 'Round ' + (round + 1) + ' / ' + rounds.length;
+      if (gEls.scenario) gEls.scenario.innerHTML = '⚠ Failure report: ' + r.s;
+      levers.forEach(b => { b.disabled = false; b.classList.remove('good', 'bad'); });
+      gEls.feedback.classList.remove('show', 'miss');
+      gEls.next.style.display = 'none';
+      gEls.restart.style.display = 'none';
+    }
+    function finishGame() {
+      let verdict;
+      if (rel >= 90) verdict = 'Flawless diagnosis. Your product ships — and stays shipped. This is the orchestration instinct the article is about.';
+      else if (rel >= 70) verdict = 'Solid. The product ships with a few scars. Each wrong lever cost a sprint — but you found the right one eventually.';
+      else verdict = 'The demo was cool; the product wobbled. Re-read the three pillars and try again — diagnosis is a learnable skill.';
+      gEls.scenario.innerHTML = '<strong style="color:var(--gold-light)">Post-mortem.</strong> Final reliability: <strong style="color:var(--gold-primary)">' + rel + '%</strong>. ' + verdict;
+      levers.forEach(b => { b.disabled = true; b.classList.remove('good', 'bad'); });
+      gEls.feedback.classList.remove('show', 'miss');
+      gEls.next.style.display = 'none';
+      gEls.restart.style.display = 'inline-flex';
+    }
+    levers.forEach(b => b.addEventListener('click', () => {
+      const pick = b.dataset.lever;
+      const r = rounds[round];
+      const hit = pick === r.a;
+      levers.forEach(x => { x.disabled = true; x.classList.toggle('good', x.dataset.lever === r.a); });
+      if (!hit) b.classList.add('bad');
+      setRel(rel + (hit ? 10 : -5));
+      gEls.feedback.classList.add('show');
+      gEls.feedback.classList.toggle('miss', !hit);
+      gEls.feedback.innerHTML = (hit
+        ? '<strong>✓ Right lever.</strong> ' + r.why[pick]
+        : '<strong>✗ Not this one.</strong> ' + r.why[pick] + '<br><span style="color:var(--gold-light)">The fix: ' + leverNames[r.a] + ' — ' + r.why[r.a] + '</span>');
+      gEls.next.style.display = round < rounds.length - 1 ? 'inline-flex' : 'none';
+      if (round === rounds.length - 1) {
+        gEls.next.style.display = 'inline-flex';
+        gEls.next.textContent = 'See post-mortem →';
+      }
+    }));
+    if (gEls.next) gEls.next.addEventListener('click', () => {
+      if (round < rounds.length - 1) { round++; loadRound(); }
+      else finishGame();
+    });
+    if (gEls.restart) gEls.restart.addEventListener('click', () => {
+      round = 0; setRel(40);
+      gEls.next.textContent = 'Next failure →';
+      loadRound();
+    });
+    if (gEls.scenario) loadRound();
+
+    /* ---------- WIDGET E: Modality mixer ---------- */
+    const modeState = { text: true, vision: false, audio: false };
+    const baseCaps = {
+      text: ['Draft an email in your brand voice', 'Summarize a 40-page contract'],
+      vision: ['Describe what\'s in a photo', 'Spot the defect in a product image'],
+      audio: ['Transcribe a meeting recording', 'Detect tone in a support call'],
+    };
+    const fusedCaps = [
+      { needs: ['text', 'vision'], cap: 'Answer questions about a chart or diagram' },
+      { needs: ['text', 'audio'], cap: 'Turn a rambling voice note into a clean action list' },
+      { needs: ['vision', 'audio'], cap: 'Watch a video and flag the moment things go wrong' },
+      { needs: ['text', 'vision', 'audio'], cap: 'Sit in a screen-share call and write the incident report' },
+    ];
+    const modeBtns = document.querySelectorAll('.orch-mode');
+    const capsEl = document.getElementById('modality-caps');
+    function renderCaps() {
+      if (!capsEl) return;
+      const active = Object.keys(modeState).filter(k => modeState[k]);
+      let html = '';
+      active.forEach(m => baseCaps[m].forEach(c => { html += '<div class="orch-cap">' + c + '</div>'; }));
+      fusedCaps.forEach(f => {
+        if (f.needs.every(n => modeState[n])) html += '<div class="orch-cap fused">' + f.cap + ' <span style="margin-left:auto;font-size:0.58rem;letter-spacing:1px;color:var(--gold-primary);text-transform:uppercase;">fused</span></div>';
+      });
+      capsEl.innerHTML = html || '<div class="orch-caps-empty">No senses enabled. The model is a very expensive paperweight.</div>';
+    }
+    modeBtns.forEach(b => b.addEventListener('click', () => {
+      const m = b.dataset.mode;
+      modeState[m] = !modeState[m];
+      b.setAttribute('aria-pressed', String(modeState[m]));
+      renderCaps();
+    }));
+    renderCaps();
+  });
+  </script>
+</body>
+</html>
