@@ -4,15 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Library — The Hallucinated Lab</title>
-  <meta name="description" content="The Hallucinated Lab Library — a pip-style registry of programs, features, and drop-in code. Install the library, pick a capability, and wire it straight into your own project from the terminal.">
+  <meta name="description" content="A library of programs, SDKs, and drop-in code by The Hallucinated Lab — pip-installable packages, embeddable engines, and open-source building blocks for your own projects.">
   <meta property="og:title" content="Library — The Hallucinated Lab">
-  <meta property="og:description" content="A pip-style registry of drop-in capabilities: install, pick a feature, and wire it into your project from the terminal.">
+  <meta property="og:description" content="Programs, SDKs, and drop-in code you can pull into your own projects — pip-installable, embeddable, open source.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/library.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/library.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Library — The Hallucinated Lab">
-  <meta name="twitter:description" content="A pip-style registry of drop-in capabilities for your own projects.">
+  <meta name="twitter:description" content="Programs, SDKs, and drop-in code for your own projects.">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
@@ -46,117 +46,80 @@
   <main id="main-content" class="page-main">
 
     <section class="page-hero">
-      <span class="section-label">pip install thehallucinatedlab</span>
+      <span class="section-label">Drop-In Code</span>
       <h1 class="page-title">Library</h1>
-      <p class="page-subtitle">A registry of drop-in capabilities for your own projects. Need face recognition in your app? Local OCR? Peer-to-peer networking? Install the library, pick the feature from your terminal, and wire it straight in — no cloud APIs, no keys, no boilerplate.</p>
+      <p class="page-subtitle">Programs, SDKs, and code you can pull straight into your own projects — pip-installable packages, embeddable engines, and open-source building blocks. Take what you need, wire it in, ship.</p>
     </section>
 
-    <!-- ====== HOW IT WORKS ====== -->
-    <section class="media-section" id="how-it-works">
+    <!-- ====== PROJECT SPOTLIGHT ====== -->
+    <section class="media-section" id="spotlight">
       <div class="container">
         <div class="section-header fade-in">
-          <span class="section-label">From Your Terminal</span>
-          <h2 class="section-title">How It Works</h2>
+          <span class="section-label">Open Source</span>
+          <h2 class="section-title">Project Spotlight</h2>
           <div class="section-line" aria-hidden="true"></div>
         </div>
-
-        <div class="lib-term fade-in" aria-label="Terminal demo of the library workflow">
-          <div class="lib-term-bar">
-            <span class="sb-dots" aria-hidden="true"><span></span><span></span><span></span></span>
-            <span class="lib-term-name">terminal — your-project</span>
+        <div class="spotlight-panel fade-in">
+          <div class="spotlight-head">
+            <span class="article-tag">SDK · Rust Core</span>
+            <span class="spotlight-status"><span class="dot" aria-hidden="true"></span>Foundation Build</span>
           </div>
-          <div class="lib-term-body" id="lib-term">
-            <span class="tl"><span class="prompt">$</span> <span class="cmd">pip install thehallucinatedlab</span></span>
-            <span class="tl dim">Successfully installed thehallucinatedlab</span>
-            <span class="tl"><span class="prompt">$</span> <span class="cmd">thl list</span></span>
-            <span class="tl dim">  nexuslink          p2p networking · available</span>
-            <span class="tl dim">  face-recognition   planned</span>
-            <span class="tl dim">  local-ocr          planned</span>
-            <span class="tl"><span class="prompt">$</span> <span class="cmd">thl add face-recognition</span></span>
-            <span class="tl ok">✓ face-recognition wired into ./your-project</span>
+          <h3 class="spotlight-title">NexusLink Engine</h3>
+          <p class="spotlight-tagline">The networking backbone for local-first, peer-to-peer apps — build the UI, not the plumbing.</p>
+          <p class="spotlight-desc">A headless LAN/WAN communication SDK that gives your app secure peer discovery, end-to-end-encrypted sessions, reliable messaging, verified file transfer, and encrypted storage — behind one clean API. No cloud server anywhere in the loop.</p>
+          <div class="spotlight-points">
+            <div class="spotlight-point">
+              <strong>Zero-server by design</strong>
+              Peers talk directly over LAN or WAN. No hosting bills, no added latency, no single point of failure.
+            </div>
+            <div class="spotlight-point">
+              <strong>Batteries-included encryption</strong>
+              X25519 key agreement with per-direction ChaCha20-Poly1305 and perfect forward secrecy — you never touch the crypto.
+            </div>
+            <div class="spotlight-point">
+              <strong>Reliability you don't have to build</strong>
+              Ordered, replay-protected messaging and chunked, SHA-256-verified file transfer out of the box.
+            </div>
+            <div class="spotlight-point">
+              <strong>Private at rest</strong>
+              Local message history is encrypted with Argon2id-derived keys — sensitive data is never a liability.
+            </div>
+            <div class="spotlight-point">
+              <strong>Embed it anywhere</strong>
+              A Rust crate, a stable C ABI header, and a pip-installable Python SDK — with interop paths for Node, Flutter, and Go.
+            </div>
+            <div class="spotlight-point">
+              <strong>Headless &amp; cross-platform</strong>
+              Windows, Linux, and macOS. The engine handles the plumbing; your app owns the experience.
+            </div>
           </div>
-        </div>
-
-        <div class="lib-steps">
-          <div class="lib-step fade-in fade-in-delay-1">
-            <div class="lib-step-num" aria-hidden="true">1</div>
-            <div class="lib-step-title">Install the library</div>
-            <p class="lib-step-text">One package, one command: <code>pip install thehallucinatedlab</code>. That's the whole toolchain — no accounts, no API keys.</p>
-          </div>
-          <div class="lib-step fade-in fade-in-delay-2">
-            <div class="lib-step-num" aria-hidden="true">2</div>
-            <div class="lib-step-title">Pick a capability</div>
-            <p class="lib-step-text">Browse the registry from your terminal with <code>thl list</code> and pull exactly the feature your project needs — nothing more.</p>
-          </div>
-          <div class="lib-step fade-in fade-in-delay-3">
-            <div class="lib-step-num" aria-hidden="true">3</div>
-            <div class="lib-step-title">Wire it in</div>
-            <p class="lib-step-text"><code>thl add &lt;feature&gt;</code> drops the code and models into your project, ready to import. Everything runs locally.</p>
+          <div class="spotlight-actions">
+            <a class="article-cta" href="https://github.com/06pratyush/NexusLinkEngine" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              View on GitHub
+            </a>
+            <code class="spotlight-code">pip install nexuslink</code>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ====== THE REGISTRY ====== -->
-    <section class="media-section media-section-alt" id="registry">
+    <!-- ====== MORE ON THE SHELF ====== -->
+    <section class="utilities-section">
       <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">On the Shelf</span>
-          <h2 class="section-title">The Registry</h2>
-          <div class="section-line" aria-hidden="true"></div>
+        <div class="utilities-empty fade-in">
+          <div class="utilities-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+              <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
+            </svg>
+          </div>
+          <h2 class="utilities-empty-title">More on the Shelf Soon</h2>
+          <p class="utilities-empty-text">The Library grows as we extract the reusable parts of everything we build — packages, engines, and snippets designed to bolt straight onto your project.</p>
+          <a href="/#contact" class="utilities-empty-cta">
+            <span>Request a package</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+          </a>
         </div>
-
-        <div class="pkg-list">
-
-          <div class="pkg-row fade-in">
-            <div class="pkg-info">
-              <div class="pkg-name-row">
-                <span class="pkg-name">nexuslink</span>
-                <span class="pkg-status ok">Available</span>
-              </div>
-              <p class="pkg-desc">Secure peer-to-peer networking for local-first apps: LAN/WAN peer discovery, end-to-end-encrypted sessions, reliable messaging, SHA-256-verified file transfer, and encrypted storage — behind one clean API.</p>
-              <span class="pkg-tags">Python · Rust · C ABI · Windows / Linux / macOS</span>
-            </div>
-            <div class="pkg-actions">
-              <code class="pkg-install">pip install nexuslink</code>
-              <a class="pkg-gh" href="https://github.com/06pratyush/NexusLinkEngine" target="_blank" rel="noopener">
-                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                GitHub
-              </a>
-            </div>
-          </div>
-
-          <div class="pkg-row planned fade-in">
-            <div class="pkg-info">
-              <div class="pkg-name-row">
-                <span class="pkg-name">face-recognition</span>
-                <span class="pkg-status soon">Planned</span>
-              </div>
-              <p class="pkg-desc">Drop-in face detection and matching for websites and applications — local models, no cloud API, no keys. The "how do I even integrate this?" problem, solved with one command.</p>
-              <span class="pkg-tags">Python · Local Models · Vision</span>
-            </div>
-            <div class="pkg-actions">
-              <code class="pkg-install">thl add face-recognition</code>
-            </div>
-          </div>
-
-          <div class="pkg-row planned fade-in">
-            <div class="pkg-info">
-              <div class="pkg-name-row">
-                <span class="pkg-name">local-ocr</span>
-                <span class="pkg-status soon">Planned</span>
-              </div>
-              <p class="pkg-desc">Extract text from images and PDFs entirely offline — a single call for documents, screenshots, and scans, with layout-aware output.</p>
-              <span class="pkg-tags">Python · Local Models · Documents</span>
-            </div>
-            <div class="pkg-actions">
-              <code class="pkg-install">thl add local-ocr</code>
-            </div>
-          </div>
-
-        </div>
-
-        <p class="lib-note">The unified <code style="color:var(--gold-light)">thl</code> CLI is in development — today, available packages install individually (e.g. <code style="color:var(--gold-light)">pip install nexuslink</code>). Every capability that ships lands on this shelf. <a href="/#contact" style="color:var(--gold-primary)">Request a capability →</a></p>
       </div>
     </section>
 
@@ -167,24 +130,5 @@
   </footer>
 
   <script src="script.js" defer></script>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    // Type the terminal demo line by line when it scrolls into view
-    const term = document.getElementById('lib-term');
-    if (!term) return;
-    const lines = term.querySelectorAll('.tl');
-    let played = false;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting && !played) {
-          played = true;
-          lines.forEach((line, i) => setTimeout(() => line.classList.add('shown'), 350 + i * 420));
-          io.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    io.observe(term);
-  });
-  </script>
 </body>
 </html>
