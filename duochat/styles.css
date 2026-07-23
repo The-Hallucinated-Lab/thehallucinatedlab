@@ -326,3 +326,11 @@ button { font: inherit; color: inherit; }
   width: 11px; height: 11px; border-radius: 50%;
   background: var(--ink-soft);
 }
+
+/* ============ MOBILE ============
+   The iOS device frame is a fixed 402px wide; scale the app down
+   so it fits narrow phone viewports without horizontal scroll. */
+@media (max-width: 430px) { #root { zoom: 0.93; } }
+@media (max-width: 385px) { #root { zoom: 0.88; } }
+@media (max-width: 360px) { #root { zoom: 0.82; } }
+body { overflow-x: hidden; }
