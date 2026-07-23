@@ -212,10 +212,15 @@ section { padding: 6rem 2rem; position: relative; }
 .fade-in-delay-3 { transition-delay: 0.3s; }
 
 /* ============ RESPONSIVE ============ */
-@media (max-width: 768px) {
+/* Nav collapses at 1024px: with 7 items the inline links overflow on
+   tablet widths well before the 768px phone breakpoint. */
+@media (max-width: 1024px) {
   .nav-links { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5,5,5,0.98); flex-direction: column; align-items: center; justify-content: center; gap: 2rem; z-index: 999; }
   .nav-links.open { display: flex; }
   .nav-hamburger { display: flex; z-index: 1001; }
+}
+
+@media (max-width: 768px) {
   .about-grid { grid-template-columns: 1fr; }
   section { padding: 4rem 1.2rem; }
 }

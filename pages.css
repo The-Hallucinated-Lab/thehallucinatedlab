@@ -1560,3 +1560,18 @@
   .sb-tab { flex: 1 1 40%; text-align: center; }
 }
 
+/* ============================================================
+   ASSISTANT PAGE MOBILE
+   The setup panel's long shell commands are unbreakable inline
+   code, which forces the panel wider than the phone viewport.
+   ============================================================ */
+@media (max-width: 700px) {
+  .chat-setup-panel { padding: 2rem 1.2rem; margin: 2rem 1.2rem auto; }
+  .chat-setup-panel h2 { font-size: 1.3rem; }
+  .setup-step-text { overflow-wrap: anywhere; }
+  .setup-step-text code { white-space: normal; word-break: break-all; }
+  .chat-bubble { max-width: 90%; }
+  .chat-messages { padding: 1.2rem; }
+  .chat-input-bar { padding: 0.8rem 1rem; }
+}
+
