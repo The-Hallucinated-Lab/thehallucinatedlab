@@ -215,8 +215,33 @@ section { padding: 6rem 2rem; position: relative; }
 /* Nav collapses at 1024px: with 7 items the inline links overflow on
    tablet widths well before the 768px phone breakpoint. */
 @media (max-width: 1024px) {
-  .nav-links { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(5,5,5,0.98); flex-direction: column; align-items: center; justify-content: center; gap: 2rem; z-index: 999; }
+  /* The navbar's backdrop-filter makes it the containing block for the
+     fixed menu, trapping the overlay inside the ~68px navbar strip and
+     cutting off menu items. Drop it while the menu is open so the
+     overlay can span the real viewport. */
+  .navbar:has(.nav-links.open) {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+  .nav-links {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    height: 100dvh;
+    background: rgba(5, 5, 5, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    justify-content: safe center;
+    gap: 1.8rem;
+    overflow-y: auto;
+    padding: 4.5rem 2rem 3rem;
+    z-index: 999;
+  }
   .nav-links.open { display: flex; }
+  .nav-links a { font-size: 1rem; }
   .nav-hamburger { display: flex; z-index: 1001; }
 }
 
