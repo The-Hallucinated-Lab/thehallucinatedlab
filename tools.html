@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tools — The Hallucinated Lab</title>
+  <meta name="description" content="Tools by The Hallucinated Lab — a prompt library for real use cases, fine-tuned LoRA adapters for your locally running LLM, and the THL Library of drop-in packages and SDKs.">
+  <meta property="og:title" content="Tools — The Hallucinated Lab">
+  <meta property="og:description" content="Prompts, LoRA adapters, and the THL Library — everything you need to take away and run on your own machine.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/tools.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/tools.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Tools — The Hallucinated Lab">
+  <meta name="twitter:description" content="Prompts, LoRA adapters, and the THL Library.">
+  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="interface.html">Assistant</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Take It And Run</span>
+      <h1 class="page-title">Tools</h1>
+      <p class="page-subtitle">Everything on this page is meant to leave with you. Copy a prompt, load an adapter onto the model already running on your machine, or pull a package straight into your project.</p>
+      <nav class="page-jump" aria-label="Sections on this page">
+        <a href="#prompts">Prompts</a>
+        <a href="#adapters">LoRA Adapters</a>
+        <a href="#library">THL Library</a>
+      </nav>
+    </section>
+
+    <!-- ====== SECTION 1: PROMPTS ====== -->
+    <section class="media-section" id="prompts">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Section 01</span>
+          <h2 class="section-title">Prompts</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Prompts we actually use, written for specific jobs rather than general chat. Each one is model-agnostic — paste it into the <a href="interface.html" class="inline-link">Assistant</a>, your local runtime, or any hosted model.</p>
+        </div>
+
+        <div class="archive-filters prompt-filters fade-in" id="prompt-filters">
+          <button class="filter-btn active" data-filter="all" type="button">All</button>
+          <button class="filter-btn" data-filter="engineering" type="button">Engineering</button>
+          <button class="filter-btn" data-filter="data" type="button">Data</button>
+          <button class="filter-btn" data-filter="learning" type="button">Learning</button>
+          <button class="filter-btn" data-filter="writing" type="button">Writing</button>
+          <button class="filter-btn" data-filter="agents" type="button">Agents</button>
+        </div>
+
+        <div class="prompt-grid" id="prompt-grid">
+
+          <!-- 1 -->
+          <article class="prompt-card fade-in" data-category="engineering">
+            <div class="prompt-head">
+              <span class="article-tag">Engineering</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Adversarial Code Reviewer</h3>
+            <p class="prompt-desc">Stops the model from telling you your code is great. Forces ranked, evidence-backed findings with a concrete failure case for each one.</p>
+            <pre class="prompt-body"><code>You are reviewing code as a hostile senior engineer whose job is to find
+what breaks in production. Praise is not useful output.
+
+Review the code below and return findings ONLY. For each finding give:
+1. Severity: critical / major / minor
+2. Location: file and line
+3. The defect in one sentence
+4. A concrete failure case — specific inputs or state that trigger it
+5. The minimal fix
+
+Rules:
+- Rank findings most severe first.
+- If you cannot construct a concrete failure case, drop the finding.
+- Do not comment on formatting or naming unless it causes a real bug.
+- If the code is genuinely sound, say "No defects found" and stop.
+
+CODE:
+&lt;paste code here&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 2 -->
+          <article class="prompt-card fade-in" data-category="engineering">
+            <div class="prompt-head">
+              <span class="article-tag">Engineering</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Root-Cause Debugger</h3>
+            <p class="prompt-desc">Turns "here's my error" into a disciplined differential diagnosis instead of a guess-and-patch loop.</p>
+            <pre class="prompt-body"><code>Act as a debugging partner running a differential diagnosis. Do not
+suggest a fix until you have ranked the causes.
+
+Step 1 — Restate the failure in one sentence, separating the symptom
+        from what I assumed the cause was.
+Step 2 — List every hypothesis that could produce this exact symptom,
+        ranked by prior probability given the stack described.
+Step 3 — For each hypothesis, give the single cheapest experiment that
+        would confirm or eliminate it, and say what result means what.
+Step 4 — Stop. Wait for my experiment results before proposing a fix.
+
+If the information given is not enough to form hypotheses, ask for the
+specific missing signal — nothing else.
+
+SYSTEM: &lt;language, runtime, versions, deployment&gt;
+SYMPTOM: &lt;exact error text or observed behaviour&gt;
+WHAT CHANGED: &lt;last known-good state, recent changes&gt;
+ALREADY TRIED: &lt;list&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 3 -->
+          <article class="prompt-card fade-in" data-category="engineering">
+            <div class="prompt-head">
+              <span class="article-tag">Engineering</span>
+              <span class="prompt-meta">Works on 3B+</span>
+            </div>
+            <h3 class="prompt-title">Refactor Without Rewrites</h3>
+            <p class="prompt-desc">Keeps a model from "improving" your code into something unrecognisable. Behaviour-preserving changes only, one at a time.</p>
+            <pre class="prompt-body"><code>Refactor the code below under a strict contract:
+
+HARD RULES
+- Public behaviour must not change. Same inputs, same outputs, same
+  errors, same side effects.
+- No new dependencies. No new files. No renamed public symbols.
+- Match the surrounding style — comment density, naming, and idiom.
+- Every change must be justified by one of: duplication removed,
+  dead code removed, a real complexity reduction, or a fixed bug.
+
+OUTPUT FORMAT
+1. A numbered list of the changes you intend to make, each with its
+   one-line justification.
+2. Wait for me to approve or cut items from that list.
+3. Only then output the refactored code.
+
+Anything you want to change but cannot justify, list separately under
+"Out of scope" and leave the code alone.
+
+CODE:
+&lt;paste code here&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 4 -->
+          <article class="prompt-card fade-in" data-category="data">
+            <div class="prompt-head">
+              <span class="article-tag">Data</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Dataset Triage</h3>
+            <p class="prompt-desc">Point it at a schema and a sample before you model anything. It finds the leakage, the label noise, and the column that's secretly a duplicate of the target.</p>
+            <pre class="prompt-body"><code>You are auditing a dataset before any modelling begins. Assume the data
+is broken until proven otherwise.
+
+Given the schema and sample rows below, report:
+
+1. LEAKAGE — any column that could encode the target, directly or via
+   collection order, timestamps, or IDs. Explain the mechanism.
+2. INTEGRITY — nulls, impossible values, unit mismatches, duplicated
+   rows, and inconsistent categorical spellings.
+3. DISTRIBUTION RISK — class imbalance, rare categories that will not
+   survive a split, and columns with near-zero variance.
+4. SPLIT STRATEGY — how this data must be split (random / grouped /
+   temporal) and why the other options would inflate scores.
+5. THE THREE THINGS to fix before anything else, in order.
+
+Be specific about columns by name. Do not suggest models.
+
+SCHEMA:
+&lt;column: type, description&gt;
+
+SAMPLE ROWS:
+&lt;paste 10-20 rows&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 5 -->
+          <article class="prompt-card fade-in" data-category="data">
+            <div class="prompt-head">
+              <span class="article-tag">Data</span>
+              <span class="prompt-meta">Works on 3B+</span>
+            </div>
+            <h3 class="prompt-title">Plain English → SQL</h3>
+            <p class="prompt-desc">Schema-grounded query generation that refuses to invent columns — and tells you when your question is ambiguous instead of guessing.</p>
+            <pre class="prompt-body"><code>You write SQL against the schema below and nothing else.
+
+CONSTRAINTS
+- Use only tables and columns that appear in the schema. If the question
+  needs something that is not there, say exactly what is missing and stop.
+- If the question is ambiguous (which date? which status counts as
+  active?), list the interpretations and ask — do not pick one silently.
+- Dialect: &lt;postgres / mysql / sqlite / duckdb&gt;
+- Prefer explicit JOINs and CTEs over nested subqueries.
+
+OUTPUT
+1. The query.
+2. One line per CTE explaining what it produces.
+3. A note on what would make this query slow at 100x the current row
+   count, and the index that would fix it.
+
+SCHEMA:
+&lt;CREATE TABLE statements or column listing&gt;
+
+QUESTION:
+&lt;your question in plain English&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 6 -->
+          <article class="prompt-card fade-in" data-category="learning">
+            <div class="prompt-head">
+              <span class="article-tag">Learning</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Socratic Tutor</h3>
+            <p class="prompt-desc">Teaches by finding the exact edge of what you know and pushing one step past it — instead of dumping a lecture you'll forget by Thursday.</p>
+            <pre class="prompt-body"><code>Teach me &lt;topic&gt;. You are a tutor, not a lecturer.
+
+PROTOCOL
+1. Open with one diagnostic question that reveals what I already
+   understand. Do not explain anything yet.
+2. Based on my answer, find the single closest gap and address only
+   that. One idea per turn.
+3. After each explanation, give me a problem I can only solve if I
+   actually understood it — not a definition recall question.
+4. If I get it wrong, do not give the answer. Give a smaller version of
+   the same problem.
+5. Every 4 turns, ask me to explain the concept back in my own words,
+   and correct only what is actually wrong.
+
+CONSTRAINTS
+- Never more than 150 words per turn.
+- Use one concrete example before any formal notation.
+- If I ask you to just tell me the answer, ask once whether I want to
+  switch out of tutor mode before complying.
+
+MY BACKGROUND: &lt;what you already know&gt;
+MY GOAL: &lt;what you want to be able to do&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 7 -->
+          <article class="prompt-card fade-in" data-category="writing">
+            <div class="prompt-head">
+              <span class="article-tag">Writing</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Paper Distiller</h3>
+            <p class="prompt-desc">Reads a paper the way a reviewer does: what's claimed, what's actually shown, and where the gap between the two is.</p>
+            <pre class="prompt-body"><code>Summarise the paper below as a skeptical reviewer, not a press release.
+
+Produce exactly these sections:
+
+CLAIM — what the authors say they achieved, in one sentence.
+EVIDENCE — what they actually measured, on what data, against what
+  baselines. Name the numbers.
+THE GAP — where the claim outruns the evidence. Look for: cherry-picked
+  baselines, missing ablations, benchmark contamination, results that
+  only hold at one scale, and "significant" without variance reported.
+NOVELTY — what is genuinely new versus what is a known idea rebranded.
+  Name the prior work it most resembles.
+IF TRUE — what changes downstream if the result holds up.
+REPRODUCIBILITY — code, data, seeds, compute. What is missing to run it.
+
+Say "not reported" rather than inferring anything the paper does not state.
+
+PAPER:
+&lt;paste abstract + method + results, or the full text&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 8 -->
+          <article class="prompt-card fade-in" data-category="agents">
+            <div class="prompt-head">
+              <span class="article-tag">Agents</span>
+              <span class="prompt-meta">Works on 8B+</span>
+            </div>
+            <h3 class="prompt-title">Local Model Router</h3>
+            <p class="prompt-desc">A system prompt for the small model that sits in front of your stack and decides which model — or none — should handle each request.</p>
+            <pre class="prompt-body"><code>You are a router. You never answer the user's question yourself.
+
+Classify the incoming request and emit ONLY this JSON:
+
+{
+  "route": "small" | "large" | "code" | "retrieval" | "refuse",
+  "reason": "&lt;one clause&gt;",
+  "rewritten_query": "&lt;the request, made self-contained&gt;",
+  "needs_context": true | false
+}
+
+ROUTING RULES
+- "small"     — chit-chat, formatting, extraction, short rewrites.
+- "large"     — multi-step reasoning, ambiguity, anything where being
+                wrong is expensive.
+- "code"      — writing, reading, or debugging source code.
+- "retrieval" — the answer depends on documents, dates, or private data
+                the model cannot know. Set needs_context true.
+- "refuse"    — the request is outside this system's scope.
+
+Default to "large" when genuinely torn. Never emit prose, never emit
+markdown fences, never explain. JSON only.</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="archive-empty" id="prompt-empty" style="display:none;">
+          <p>No prompts in that category yet.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SECTION 2: LORA ADAPTERS ====== -->
+    <section class="media-section media-section-alt" id="adapters">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Section 02</span>
+          <h2 class="section-title">LoRA Adapters</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Small fine-tuned adapters you load on top of a model you already run locally. A few dozen megabytes each — no new base model to download, no cloud inference, and you can unload one the moment you're done with it.</p>
+        </div>
+
+        <div class="adapter-grid">
+
+          <div class="adapter-card fade-in fade-in-delay-1">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-review-8b</h3>
+              <span class="adapter-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+            </div>
+            <p class="adapter-desc">Teaches a general instruct model to produce structured code review output — severity, location, failure case, fix — instead of prose commentary.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Llama 3.1 8B Instruct</dd></div>
+              <div><dt>Rank / α</dt><dd>16 / 32</dd></div>
+              <div><dt>Target</dt><dd>q, k, v, o projections</dd></div>
+              <div><dt>Size</dt><dd>~42 MB</dd></div>
+            </dl>
+          </div>
+
+          <div class="adapter-card fade-in fade-in-delay-2">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-sql-3b</h3>
+              <span class="adapter-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+            </div>
+            <p class="adapter-desc">Schema-grounded SQL generation for small models. Tuned to refuse rather than hallucinate a column that isn't in the schema you passed.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Qwen 2.5 3B Instruct</dd></div>
+              <div><dt>Rank / α</dt><dd>8 / 16</dd></div>
+              <div><dt>Target</dt><dd>attention + MLP</dd></div>
+              <div><dt>Size</dt><dd>~18 MB</dd></div>
+            </dl>
+          </div>
+
+          <div class="adapter-card fade-in fade-in-delay-3">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-router-1b</h3>
+              <span class="adapter-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
+            </div>
+            <p class="adapter-desc">A tiny classifier adapter for the routing prompt above — emits strict JSON at a fraction of the latency of asking a large model to triage.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Llama 3.2 1B Instruct</dd></div>
+              <div><dt>Rank / α</dt><dd>8 / 16</dd></div>
+              <div><dt>Target</dt><dd>q, v projections</dd></div>
+              <div><dt>Size</dt><dd>~9 MB</dd></div>
+            </dl>
+          </div>
+
+          <div class="adapter-card fade-in fade-in-delay-1">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-notes-7b</h3>
+              <span class="adapter-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
+            </div>
+            <p class="adapter-desc">Turns lecture transcripts and meeting recordings into structured notes with claims, open questions, and action items kept separate.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Mistral 7B Instruct v0.3</dd></div>
+              <div><dt>Rank / α</dt><dd>16 / 32</dd></div>
+              <div><dt>Target</dt><dd>attention</dd></div>
+              <div><dt>Size</dt><dd>~38 MB</dd></div>
+            </dl>
+          </div>
+
+        </div>
+
+        <div class="adapter-note fade-in">
+          <p><strong>Nothing here is downloadable yet.</strong> These are the adapters currently on the bench — the cards go live with weights, an evaluation card, and a licence the moment each one clears its benchmark. Want one of them first, or have a use case we haven't listed? <a href="consultancy.html" class="inline-link">Tell us</a>.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">How you'll use them</h3>
+          <p class="how-panel-text">An adapter is a delta, not a model. You keep the base weights you already pulled and stack the adapter on top at load time — which is why swapping behaviour costs megabytes instead of gigabytes.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Ollama — bake it into a local model</span>
+            <pre class="how-code"><code># Modelfile
+FROM llama3.1:8b-instruct-q4_K_M
+ADAPTER ./thl-review-8b.gguf
+
+ollama create thl-review -f Modelfile
+ollama run thl-review</code></pre>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Python — load it with PEFT at runtime</span>
+            <pre class="how-code"><code>from peft import PeftModel
+from transformers import AutoModelForCausalLM
+
+base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
+model = PeftModel.from_pretrained(base, "./thl-review-8b")
+
+# swap behaviour without reloading the base model
+model.load_adapter("./thl-sql-3b", adapter_name="sql")
+model.set_adapter("sql")</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SECTION 3: THL LIBRARY ====== -->
+    <section class="media-section" id="library">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Section 03</span>
+          <h2 class="section-title">THL Library</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">The reusable parts of everything we build, extracted and packaged — pip-installable libraries, embeddable engines, and open-source building blocks you can bolt straight onto your own project.</p>
+        </div>
+
+        <div class="spotlight-panel fade-in">
+          <div class="spotlight-head">
+            <span class="article-tag">SDK · Rust Core</span>
+            <span class="spotlight-status"><span class="dot" aria-hidden="true"></span>Foundation Build</span>
+          </div>
+          <h3 class="spotlight-title">NexusLink Engine</h3>
+          <p class="spotlight-tagline">The networking backbone for local-first, peer-to-peer apps — build the UI, not the plumbing.</p>
+          <p class="spotlight-desc">A headless LAN/WAN communication SDK that gives your app secure peer discovery, end-to-end-encrypted sessions, reliable messaging, verified file transfer, and encrypted storage — behind one clean API. No cloud server anywhere in the loop.</p>
+          <div class="spotlight-points">
+            <div class="spotlight-point">
+              <strong>Zero-server by design</strong>
+              Peers talk directly over LAN or WAN. No hosting bills, no added latency, no single point of failure.
+            </div>
+            <div class="spotlight-point">
+              <strong>Batteries-included encryption</strong>
+              X25519 key agreement with per-direction ChaCha20-Poly1305 and perfect forward secrecy — you never touch the crypto.
+            </div>
+            <div class="spotlight-point">
+              <strong>Reliability you don't have to build</strong>
+              Ordered, replay-protected messaging and chunked, SHA-256-verified file transfer out of the box.
+            </div>
+            <div class="spotlight-point">
+              <strong>Embed it anywhere</strong>
+              A Rust crate, a stable C ABI header, and a pip-installable Python SDK — with interop paths for Node, Flutter, and Go.
+            </div>
+          </div>
+          <div class="spotlight-actions">
+            <a class="article-cta" href="https://github.com/06pratyush/NexusLinkEngine" target="_blank" rel="noopener">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+              View on GitHub
+            </a>
+            <code class="spotlight-code">pip install nexuslink</code>
+          </div>
+        </div>
+
+        <div class="utilities-empty fade-in">
+          <div class="utilities-empty-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="48" height="48" fill="currentColor">
+              <path d="M4 6H2v14c0 1.1.9 2 2 2h14v-2H4V6zm16-4H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 9H9V9h10v2zm-4 4H9v-2h6v2zm4-8H9V5h10v2z"/>
+            </svg>
+          </div>
+          <h3 class="utilities-empty-title">More on the Shelf Soon</h3>
+          <p class="utilities-empty-text">The Library grows every time we finish something worth extracting. See the full shelf, or tell us what you'd want packaged next.</p>
+          <a href="library.html" class="utilities-empty-cta">
+            <span>Open the full Library</span>
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+</body>
+</html>

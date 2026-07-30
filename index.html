@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Hallucinated Lab — Where Ideas Come Alive</title>
-  <meta name="description" content="The Hallucinated Lab builds tools that give you unrestricted access to cutting-edge technology — running entirely on your machine. No cloud lock-ins, no paywalls.">
+  <meta name="description" content="The Hallucinated Lab builds tools that give you unrestricted access to cutting-edge technology — running entirely on your machine. Explore our tools, assistant, solutions, media, certification courses, and AI consultancy.">
   <meta property="og:title" content="The Hallucinated Lab">
   <meta property="og:description" content="We build tools that give you unrestricted access to cutting-edge technology — running entirely on your machine.">
   <meta property="og:type" content="website">
@@ -16,6 +16,7 @@
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -52,12 +53,12 @@
       </a>
       <ul class="nav-links" id="nav-links">
         <li><a href="/" class="active">Home</a></li>
-        <li><a href="media.html">Media</a></li>
-        <li><a href="livelab.html">LiveLab</a></li>
-        <li><a href="solutions.html">Solutions</a></li>
-        <li><a href="library.html">Library</a></li>
+        <li><a href="tools.html">Tools</a></li>
         <li><a href="interface.html">Assistant</a></li>
-        <li><a href="#contact">Contact</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -77,6 +78,172 @@
         <div class="hero-badge"><span class="dot" aria-hidden="true"></span> Open for Collaboration</div>
         <h1 class="hero-title">The Hallucinated<br>Lab</h1>
         <p class="hero-subtitle">We build tools that give you unrestricted access to cutting-edge technology — running entirely on your machine. <span id="typing-text" aria-live="polite" aria-atomic="true" style="color:var(--gold-primary);font-weight:600;"></span><span aria-hidden="true" style="color:var(--gold-primary);animation:pulse-dot 1s infinite;">|</span></p>
+        <div class="hero-actions">
+          <a href="#explore" class="hero-btn hero-btn-primary">Explore the Lab</a>
+          <a href="consultancy.html" class="hero-btn">Work With Us</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== EXPLORE: EVERY TAB, EXPLAINED ====== -->
+    <section id="explore">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Start Here</span>
+          <h2 class="section-title">Explore the Lab</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Six doors, one lab. Here's exactly what lives behind each tab in the menu above — so you know where to go before you click.</p>
+        </div>
+
+        <div class="explore-grid">
+
+          <!-- Tools -->
+          <a href="tools.html" class="explore-card fade-in fade-in-delay-1">
+            <div class="explore-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+            </div>
+            <h3 class="explore-card-title">Tools</h3>
+            <p class="explore-card-desc">The working end of the lab — things you can take away and use today on your own machine.</p>
+            <ul class="explore-card-list">
+              <li>Prompts tuned for real use cases</li>
+              <li>LoRA adapters for your local LLM</li>
+              <li>THL Library — drop-in packages &amp; SDKs</li>
+            </ul>
+            <span class="explore-card-cta">Open Tools
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </span>
+          </a>
+
+          <!-- Assistant -->
+          <a href="interface.html" class="explore-card fade-in fade-in-delay-2">
+            <div class="explore-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+            </div>
+            <h3 class="explore-card-title">Assistant</h3>
+            <p class="explore-card-desc">A chat interface that talks to a model running on <em>your</em> hardware. Nothing leaves the machine.</p>
+            <ul class="explore-card-list">
+              <li>Connects to your local Ollama runtime</li>
+              <li>No API keys, no accounts, no logging</li>
+              <li>Guided setup if the runtime isn't up yet</li>
+            </ul>
+            <span class="explore-card-cta">Open Assistant
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </span>
+          </a>
+
+          <!-- Solutions -->
+          <a href="solutions.html" class="explore-card fade-in fade-in-delay-3">
+            <div class="explore-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            </div>
+            <h3 class="explore-card-title">Solutions</h3>
+            <p class="explore-card-desc">Finished products we've shipped — full applications, not snippets.</p>
+            <ul class="explore-card-list">
+              <li>ScoobyBench — AI hardware benchmarking</li>
+              <li>Local-first pipelines &amp; deployment tooling</li>
+              <li>Everything runs on your infrastructure</li>
+            </ul>
+            <span class="explore-card-cta">See Solutions
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </span>
+          </a>
+
+          <!-- Media -->
+          <a href="media.html" class="explore-card fade-in fade-in-delay-1">
+            <div class="explore-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+            </div>
+            <h3 class="explore-card-title">Media</h3>
+            <p class="explore-card-desc">What we write, build to be played with, and think out loud about.</p>
+            <ul class="explore-card-list">
+              <li>Articles — featured, archive &amp; community</li>
+              <li>Artifacts — interactive, playable explainers</li>
+              <li>Notebooks — runnable research, landing soon</li>
+            </ul>
+            <span class="explore-card-cta">Browse Media
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </span>
+          </a>
+
+          <!-- Certification -->
+          <a href="certification.html" class="explore-card fade-in fade-in-delay-2">
+            <div class="explore-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+            </div>
+            <h3 class="explore-card-title">Certification</h3>
+            <p class="explore-card-desc">Courses that take you from "I've heard of it" to "I've shipped it" — then certify that you did.</p>
+            <ul class="explore-card-list">
+              <li>Project-graded, not quiz-graded</li>
+              <li>Local-first AI, RAG, fine-tuning, agents</li>
+              <li>Verifiable certificate on completion</li>
+            </ul>
+            <span class="explore-card-cta">View Courses
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </span>
+          </a>
+
+          <!-- Consultancy -->
+          <a href="consultancy.html" class="explore-card fade-in fade-in-delay-3">
+            <div class="explore-card-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+            </div>
+            <h3 class="explore-card-title">Consultancy</h3>
+            <p class="explore-card-desc">We work directly with individuals and businesses on their AI problems — from first idea to running system.</p>
+            <ul class="explore-card-list">
+              <li>Individuals: mentoring, reviews, career work</li>
+              <li>Businesses: audits, builds, private deployment</li>
+              <li>Start with a free scoping conversation</li>
+            </ul>
+            <span class="explore-card-cta">Talk To Us
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </span>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== SERVICES + CERTIFICATION BAND ====== -->
+    <section id="offer" class="section-alt">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Beyond The Downloads</span>
+          <h2 class="section-title">Services &amp; Certification</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Two things here aren't files you download — they're work we do with you.</p>
+        </div>
+
+        <div class="offer-grid">
+
+          <div class="offer-panel fade-in fade-in-delay-1">
+            <span class="article-tag">Services</span>
+            <h3 class="offer-title">We build the AI, you keep the keys</h3>
+            <p class="offer-desc">Most teams don't need a bigger model — they need the right architecture around a smaller one. We help individuals and businesses design, build, and deploy AI systems that stay under their own control.</p>
+            <div class="offer-points">
+              <div class="offer-point"><strong>For individuals</strong> Project mentoring, code and architecture reviews, and a hand getting your first real AI system past the demo stage.</div>
+              <div class="offer-point"><strong>For businesses</strong> Feasibility audits, RAG and agent pipelines, fine-tuning, and on-prem deployment with no vendor lock-in.</div>
+            </div>
+            <a href="consultancy.html" class="article-cta">
+              Explore consultancy
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </a>
+          </div>
+
+          <div class="offer-panel fade-in fade-in-delay-2">
+            <span class="article-tag">Certification</span>
+            <h3 class="offer-title">Learn it properly, then prove it</h3>
+            <p class="offer-desc">Our courses are built the way we work: you ship something real at the end of every module. Finish the track, pass the project review, and get a certificate that points at actual work — not attendance.</p>
+            <div class="offer-points">
+              <div class="offer-point"><strong>Course tracks</strong> Local-first AI foundations, retrieval systems, fine-tuning and LoRA, agent orchestration, and deployment.</div>
+              <div class="offer-point"><strong>How it's graded</strong> Every track ends in a build. We review the repo, you get written feedback, and the certificate follows the result.</div>
+            </div>
+            <a href="certification.html" class="article-cta">
+              Browse courses
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </a>
+          </div>
+
+        </div>
       </div>
     </section>
 
@@ -87,6 +254,7 @@
           <span class="section-label">The Team</span>
           <h2 class="section-title">About Us</h2>
           <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Two engineering students who got tired of renting access to their own ideas — so we started building the alternative in the open.</p>
         </div>
         <div class="about-grid">
           <!-- Pratyush -->
@@ -123,24 +291,14 @@
             </div>
           </div>
         </div>
-      </div>
-    </section>
 
-    <!-- ====== CONTACT ====== -->
-    <section id="contact">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Get in Touch</span>
-          <h2 class="section-title">Let's Build Together</h2>
-          <div class="section-line" aria-hidden="true"></div>
-        </div>
-        <div class="contact-wrapper fade-in">
-          <p class="contact-text">We're always looking for exciting collaborations, open source projects, or just a good conversation about AI, quantum computing, and the future of tech.</p>
+        <div class="contact-inline fade-in">
+          <p class="contact-text">Collaborations, open source, or just a good conversation about AI and the future of tech — the door's open. For project work, head to <a href="consultancy.html" class="inline-link">Consultancy</a>.</p>
           <div class="contact-links-row">
-            <a href="mailto:thehallucinatedlab@gmail.com" class="hover-btn hover-btn-lg" id="contact-email" data-tooltip="thehallucinatedlab@gmail.com">
+            <a href="mailto:thehallucinatedlab@gmail.com" class="hover-btn hover-btn-lg" id="contact-email" data-tooltip="thehallucinatedlab@gmail.com" aria-label="Email The Hallucinated Lab">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
             </a>
-            <a href="https://github.com/The-Hallucinated-Lab" target="_blank" rel="noopener noreferrer" class="hover-btn hover-btn-lg" id="contact-org-gh" data-tooltip="github.com/The-Hallucinated-Lab">
+            <a href="https://github.com/The-Hallucinated-Lab" target="_blank" rel="noopener noreferrer" class="hover-btn hover-btn-lg" id="contact-org-gh" data-tooltip="github.com/The-Hallucinated-Lab" aria-label="The Hallucinated Lab on GitHub">
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
             </a>
           </div>
