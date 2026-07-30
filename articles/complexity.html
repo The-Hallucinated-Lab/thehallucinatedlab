@@ -4,6 +4,23 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Time & Space Complexity — Full Teaching Session</title>
+<meta name="description" content="An interactive teaching session on time and space complexity — Big-O through the Master Theorem, with a live growth-rate explorer, twelve graded worked examples, and a printable formula sheet.">
+<meta property="og:title" content="Time &amp; Space Complexity — An Interactive Teaching Session">
+<meta property="og:description" content="Asymptotic analysis from first principles: Big-O, Big-Omega, Big-Theta, amortized analysis, and the Master Theorem — with a growth explorer you can drive yourself.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://thehallucinatedlab.space/articles/complexity.html">
+<meta property="og:site_name" content="The Hallucinated Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+<meta property="og:image:width" content="1024">
+<meta property="og:image:height" content="1024">
+<meta property="og:image:alt" content="The Hallucinated Lab logo">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Time &amp; Space Complexity — An Interactive Teaching Session">
+<meta name="twitter:description" content="Asymptotic analysis from first principles, with a growth explorer you can drive yourself.">
+<meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+<link rel="canonical" href="https://thehallucinatedlab.space/articles/complexity.html">
+<link rel="icon" type="image/jpeg" href="../assets/images/logo.jpeg">
 <style>
   :root {
     --bg: #0f1116;
@@ -332,8 +349,9 @@
     border: 1px solid var(--border);
     margin: 14px 0;
   }
+  .sheet h3,
   .sheet h4 {
-    margin-top: 0;
+    margin: 0 0 6px;
     color: var(--accent);
     font-size: 14px;
     text-transform: uppercase;
@@ -377,6 +395,64 @@
     .sheet { padding: 14px; }
   }
 </style>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Media",
+          "item": "https://thehallucinatedlab.space/media.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Artifacts",
+          "item": "https://thehallucinatedlab.space/artifacts.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Time & Space Complexity",
+          "item": "https://thehallucinatedlab.space/articles/complexity.html"
+        }
+      ]
+    },
+    {
+      "@type": "LearningResource",
+      "@id": "https://thehallucinatedlab.space/articles/complexity.html#article",
+      "headline": "Time & Space Complexity - A Full Teaching Session",
+      "description": "A first-principles teaching session on asymptotic analysis - Big-O through the Master Theorem, with an interactive growth explorer, twelve graded worked examples, and a printable formula sheet.",
+      "url": "https://thehallucinatedlab.space/articles/complexity.html",
+      "mainEntityOfPage": "https://thehallucinatedlab.space/articles/complexity.html",
+      "author": {
+        "@id": "https://thehallucinatedlab.space/#pratyush"
+      },
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "datePublished": "2026-07-18",
+      "dateModified": "2026-07-30",
+      "articleSection": "Research",
+      "keywords": "Big-O notation, asymptotic analysis, time complexity, space complexity, Master Theorem, amortized analysis, algorithms",
+      "inLanguage": "en",
+      "image": "https://thehallucinatedlab.space/assets/images/logo.jpeg",
+      "isAccessibleForFree": true,
+      "learningResourceType": "Interactive explainer"
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 <div class="wrap">
@@ -832,7 +908,7 @@
   </p>
 
   <div class="sheet">
-    <h4>Notation cheatsheet</h4>
+    <h3>Notation cheatsheet</h3>
     <ul>
       <li><code>O(g)</code> — upper bound &nbsp;•&nbsp; <code>f ≤ c·g</code> eventually</li>
       <li><code>Ω(g)</code> — lower bound &nbsp;•&nbsp; <code>f ≥ c·g</code> eventually</li>
@@ -843,14 +919,14 @@
   </div>
 
   <div class="sheet">
-    <h4>Growth rate hierarchy (memorize)</h4>
+    <h3>Growth rate hierarchy (memorize)</h3>
     <p class="mono" style="text-align:center;font-size:15px;">
       1 &lt; log log n &lt; log n &lt; √n &lt; n &lt; n log n &lt; n² &lt; n³ &lt; 2ⁿ &lt; n! &lt; nⁿ
     </p>
   </div>
 
   <div class="sheet">
-    <h4>Common sums</h4>
+    <h3>Common sums</h3>
     <ul>
       <li>Arithmetic: <code>1 + 2 + ... + n = n(n+1)/2 = Θ(n²)</code></li>
       <li>Squares: <code>1² + 2² + ... + n² = n(n+1)(2n+1)/6 = Θ(n³)</code></li>
@@ -862,7 +938,7 @@
   </div>
 
   <div class="sheet">
-    <h4>Master Theorem — T(n) = a·T(n/b) + f(n), c* = log_b(a)</h4>
+    <h3>Master Theorem — T(n) = a·T(n/b) + f(n), c* = log_b(a)</h3>
     <ul>
       <li>Case 1: <code>f(n) = O(n^(c* − ε))</code> → <code>Θ(n^(c*))</code></li>
       <li>Case 2: <code>f(n) = Θ(n^(c*) log^k n)</code> → <code>Θ(n^(c*) log^(k+1) n)</code></li>
@@ -871,7 +947,7 @@
   </div>
 
   <div class="sheet">
-    <h4>Standard algorithm complexities</h4>
+    <h3>Standard algorithm complexities</h3>
     <table style="font-size:13px;">
       <thead><tr><th>Algorithm</th><th>Time (avg)</th><th>Time (worst)</th><th>Space</th></tr></thead>
       <tbody>
@@ -893,7 +969,7 @@
   </div>
 
   <div class="sheet">
-    <h4>Pattern-spotting shortcuts</h4>
+    <h3>Pattern-spotting shortcuts</h3>
     <ul>
       <li>Halving / doubling → <code>log n</code></li>
       <li>Halving repeatedly, each step is linear → <code>n log n</code></li>
@@ -907,7 +983,7 @@
   </div>
 
   <div class="sheet">
-    <h4>Interview red flags to avoid</h4>
+    <h3>Interview red flags to avoid</h3>
     <ul>
       <li>Saying "O(n)" when you mean average case but worst case is O(n²) — always clarify.</li>
       <li>Forgetting recursion stack in space analysis.</li>

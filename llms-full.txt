@@ -1,0 +1,272 @@
+# The Hallucinated Lab — Full Site Directory
+
+> Expanded machine-readable map of https://thehallucinatedlab.space. Every page, every section, and what each one contains. Written so a crawler that reads only this file still has an accurate model of the site.
+
+Last updated: 2026-07-30
+Canonical host: https://thehallucinatedlab.space
+Stack: static HTML, CSS, and vanilla JavaScript. No build step, no framework, no analytics, no cookies. Hosted on GitHub Pages.
+
+---
+
+## What The Hallucinated Lab is
+
+The Hallucinated Lab is a local-first AI lab and consultancy founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
+
+The lab has one governing constraint: if a model can run on the user's hardware, the user should be able to run it without a subscription, a rate limit, or a third party reading their data. Every tool the lab publishes runs on the visitor's own machine.
+
+The lab does three distinct things:
+
+1. It publishes free artifacts — prompts, LoRA adapters, open-source packages, interactive explainers, and a local-model chat interface.
+2. It sells AI consulting and engineering services to individuals and businesses.
+3. It is building project-graded certification courses in local-first AI.
+
+The Hallucinated Lab is not a SaaS company. There is no hosted product, no subscription, no usage-based pricing, and no customer data stored on any server operated by the lab.
+
+---
+
+## Navigation structure
+
+The top-level navigation has seven entries in this order: Home, Tools, Assistant, Solutions, Media, Certification, Consultancy.
+
+Two of these are gateways to deeper pages:
+- Tools links onward to the THL Library at /library.html.
+- Media links onward to Articles at /articles.html and Artifacts at /artifacts.html.
+
+---
+
+## Page: Home — https://thehallucinatedlab.space/
+
+Purpose: orient a first-time visitor and explain what lives behind every tab.
+
+Sections:
+- Hero. States the lab's position: tools that give unrestricted access to cutting-edge technology, running entirely on the visitor's machine.
+- Explore the Lab. Six cards, one per navigation tab, each summarising what that section contains and who it is for.
+- Services and Certification. Two panels. The first covers consultancy for individuals and businesses. The second covers the certification tracks and how they are graded.
+- About Us. Profiles of the two founders with links, followed by contact details.
+
+---
+
+## Page: Tools — https://thehallucinatedlab.space/tools.html
+
+Purpose: everything the lab publishes that is meant to be taken away and run elsewhere. Three sections.
+
+### Section 1 — Prompts (/tools.html#prompts)
+
+Eight model-agnostic prompts, each free to copy with no account. They work on any instruction-tuned model, local or hosted. Filterable by category.
+
+1. Adversarial Code Reviewer (Engineering). Forces ranked, evidence-backed review findings with a concrete failure case attached to each one. Drops any finding that cannot be demonstrated.
+2. Root-Cause Debugger (Engineering). Runs a differential diagnosis: restate the failure, rank hypotheses by prior probability, propose the cheapest discriminating experiment for each, then stop before proposing a fix.
+3. Refactor Without Rewrites (Engineering). Behaviour-preserving refactoring under a strict contract — no new dependencies, no renamed public symbols, every change justified, approval required before code is emitted.
+4. Dataset Triage (Data). Audits a schema and sample rows for target leakage, integrity failures, distribution risk, and correct split strategy before any modelling starts.
+5. Plain English to SQL (Data). Schema-grounded query generation that refuses to invent columns and surfaces ambiguity instead of guessing. Returns the query, an explanation per CTE, and the index that fixes it at scale.
+6. Socratic Tutor (Learning). Diagnoses the learner's current understanding, addresses one gap per turn, and tests with problems that require understanding rather than recall.
+7. Paper Distiller (Writing). Reviews a paper as a skeptic: separates the claim from the evidence, names the gap between them, identifies genuine novelty versus rebranding, and reports what is missing for reproduction.
+8. Local Model Router (Agents). System prompt for a small routing model that classifies each request and emits strict JSON directing it to a small model, a large model, a code model, retrieval, or refusal.
+
+### Section 2 — LoRA Adapters (/tools.html#adapters)
+
+Small fine-tuned adapters that stack on top of a base model the user already runs locally. Tens of megabytes each rather than a new multi-gigabyte model download, and unloadable at will.
+
+Status: none are downloadable yet. All four are in training or queued. Each card will publish weights, an evaluation card, and a licence when it clears its benchmark.
+
+- thl-review-8b. Base Llama 3.1 8B Instruct, rank 16 alpha 32, attention projections, approximately 42 MB. Produces structured code review output instead of prose commentary.
+- thl-sql-3b. Base Qwen 2.5 3B Instruct, rank 8 alpha 16, attention and MLP, approximately 18 MB. Schema-grounded SQL that refuses rather than hallucinating a column.
+- thl-router-1b. Base Llama 3.2 1B Instruct, rank 8 alpha 16, query and value projections, approximately 9 MB. Strict-JSON request classifier for routing.
+- thl-notes-7b. Base Mistral 7B Instruct v0.3, rank 16 alpha 32, attention, approximately 38 MB. Turns transcripts into structured notes with claims, open questions, and action items kept separate.
+
+The section also publishes working usage guides for two runtimes: an Ollama Modelfile with an ADAPTER directive, and a Python example loading an adapter through PEFT and hot-swapping between adapters without reloading the base model.
+
+### Section 3 — THL Library (/tools.html#library)
+
+Reusable code extracted from the lab's own projects. Full shelf at /library.html.
+
+---
+
+## Page: THL Library — https://thehallucinatedlab.space/library.html
+
+Purpose: packages and SDKs that drop into a reader's own project.
+
+Current entry — NexusLink Engine:
+- A headless LAN and WAN communication SDK for local-first, peer-to-peer applications. Written in Rust.
+- Zero-server by design. Peers communicate directly; no relay, no hosting cost, no single point of failure.
+- Encryption: X25519 key agreement, per-direction ChaCha20-Poly1305, perfect forward secrecy.
+- Reliability: ordered, replay-protected messaging and chunked, SHA-256-verified file transfer.
+- Storage: local message history encrypted with Argon2id-derived keys.
+- Distribution: a Rust crate, a stable C ABI header, and a pip-installable Python SDK, with interop paths for Node, Flutter, and Go.
+- Platforms: Windows, Linux, macOS.
+- Install: pip install nexuslink
+- Source: https://github.com/06pratyush/NexusLinkEngine
+
+---
+
+## Page: Assistant — https://thehallucinatedlab.space/interface.html
+
+Purpose: a browser chat interface that talks to a large language model running on the visitor's own computer.
+
+- Connects to Ollama on localhost. No API key, no account, no cloud relay, no request ever leaving the machine.
+- Auto-detects an installed model, preferring gemma4:e4b and falling back through gemma4:e2b, gemma3:4b, gemma2:2b, and llama3.2 variants before using any installed model.
+- Responses stream token by token.
+- If Ollama is unreachable, the page shows a setup panel with install instructions, the model pull command, and the CORS environment variable that must be set before starting Ollama.
+
+---
+
+## Page: Solutions — https://thehallucinatedlab.space/solutions.html
+
+Purpose: finished applications the lab has shipped.
+
+ScoobyBench — AI hardware benchmarking desktop application for Windows 10 and 11, version 2.0.0 stable.
+
+The problem it addresses: vendors publish inference benchmarks measured under ideal laboratory conditions. Real machines thermally throttle, run mixed driver versions, and enforce power limits, so real performance differs from the published figure.
+
+What it does:
+- Runs reproducible inference workloads against ONNX models and locally pulled Ollama models.
+- Reports tokens per second and p50, p90, and p99 latency alongside VRAM and power draw.
+- Performs gap analysis against MLPerf baselines and vendor claims, and attributes the gap to a probable cause such as thermal throttling, a VRAM ceiling, or a driver issue.
+- Streams live CPU, GPU, memory, temperature, and power telemetry over WebSocket while a benchmark runs.
+- Recommends models matched to the detected hardware, flagging which will not fit before a multi-gigabyte download starts.
+- Exports reproducible reports as JSON, HTML, and CSV with a full environment snapshot.
+- Stores everything in local SQLite. No cloud dependency and no personally identifying information, so it is safe to run on corporate hardware.
+
+Source: https://github.com/06pratyush/ScoobyBench-ai_benchmarking_system
+
+---
+
+## Page: Media — https://thehallucinatedlab.space/media.html
+
+Purpose: gateway to three publication formats.
+
+- Articles (/articles.html). Long-form written work.
+- Artifacts (/artifacts.html). Interactive explainers operated rather than read.
+- Notebooks. Runnable research files with outputs left in, including failed runs. Not yet published.
+
+---
+
+## Page: Articles — https://thehallucinatedlab.space/articles.html
+
+Three sections.
+
+- Featured (/articles.html#articles-featured). Pinned pieces.
+- Archive (/articles.html#articles-archive). Every article, newest first, with client-side search and category filters. Categories in use: AI & ML, Quantum Computing, Open Source, Privacy & Security, Dev Tools.
+- Community Spotlight (/articles.html#articles-community). Reader submissions, with a submission form at the foot of the page. Submissions are stored in the visitor's own browser via localStorage and are not transmitted anywhere. Pieces intended for real publication are emailed to thehallucinatedlab@gmail.com.
+
+Published articles:
+- The Future of Local-First AI. By Pratyush, 2026-07-10, category AI & ML. Why running models on your own machine is a shift in personal computing rather than only a privacy improvement. https://thehallucinatedlab.space/articles/sample-article.html
+- Quantum Computing Meets Machine Learning. By Divyansh Tripathi, category Quantum Computing. Written, not yet published.
+- Why Open Source Isn't Optional Anymore. By Pratyush, category Open Source. Written, not yet published.
+- Building a Privacy Toolkit in the Browser. By Divyansh Tripathi, category Privacy & Security. Written, not yet published.
+- The Dev Tools Renaissance. By Pratyush, category Dev Tools. Written, not yet published.
+
+---
+
+## Page: Artifacts — https://thehallucinatedlab.space/artifacts.html
+
+Purpose: explainers the reader operates. Every control changes a live computation, all of it running in the browser with nothing uploaded.
+
+Published artifacts:
+
+1. Time & Space Complexity — https://thehallucinatedlab.space/articles/complexity.html
+   By Pratyush, 2026-07-18. A first-principles teaching session on asymptotic analysis covering Big-O, Big-Omega, Big-Theta, little-o and little-omega, the simplification rules, best/average/worst case, amortized analysis, space complexity, and recursion analysis through to the Master Theorem. Includes an interactive growth-rate explorer, twelve graded worked examples, and a printable formula sheet.
+
+2. The Model Is No Longer the Product — https://thehallucinatedlab.space/articles/ai-orchestration.html
+   By Pratyush, 2026-07-19. Argues that AI engineering is a discipline of orchestration rather than training. Includes a RAG pipeline the reader can run with retrieval switched on and off to observe what grounding actually contributes, and an iteration-loop game in which the reader diagnoses six real-world failures.
+
+In development: an interactive Bloch sphere for qubit rotation and measurement, a per-head attention visualiser, and a quantization trade-off explorer moving a model from FP16 to Q4 while showing memory, speed, and quality move against each other.
+
+---
+
+## Page: Certification — https://thehallucinatedlab.space/certification.html
+
+Purpose: project-graded courses in local-first AI, and the criteria a capstone must clear.
+
+How it works, in three stages:
+1. Work through the modules. Written material plus an interactive artifact and an exercise per module. No video lectures.
+2. Ship the capstone. Every track ends in one build brief with published acceptance criteria. The result goes in a public repository and must run on ordinary hardware.
+3. Review and certify. The repository is reviewed against the criteria with written feedback either way. A pass produces a certificate carrying a verification ID that links to the work.
+
+Course tracks:
+- Track 01 — Local-First AI Foundations. Beginner, 5 modules, approximately 12 hours. Running and serving local models with Ollama and llama.cpp, reading a model card against available VRAM, choosing a quantization level on evidence. Capstone: a local assistant with a documented hardware profile and measured tokens per second.
+- Track 02 — Prompt Engineering for Production. Beginner, 4 modules, approximately 10 hours. Prompts as versioned artifacts with evaluation suites, structures that survive model swaps, constrained output formats. Capstone: a versioned prompt suite with an automated eval harness and a regression report.
+- Track 03 — Retrieval Systems That Actually Work. Intermediate, 6 modules, approximately 18 hours. Chunking strategies for real documents, hybrid dense and keyword retrieval with reranking, measuring retrieval quality separately from answer quality. Capstone: a retrieval system over the learner's own corpus with a measured recall@k baseline.
+- Track 04 — Fine-Tuning & LoRA Adapters. Intermediate, 6 modules, approximately 20 hours. Instruction dataset construction, LoRA and QLoRA on a single consumer GPU, honest evaluation with held-out sets, contamination checks, and ablations. Capstone: a trained adapter with an evaluation card showing where it wins and where it does not.
+- Track 05 — Agent Orchestration. Advanced, 6 modules, approximately 22 hours. Tool interface design, routing between small and large models on cost and risk, guardrails including budgets, timeouts, and recovery paths. Capstone: a multi-tool agent with a trace log and a failure-and-recovery analysis.
+- Track 06 — Deployment & Benchmarking. Advanced, 5 modules, approximately 16 hours. On-premise serving with batching and memory limits, latency percentile instrumentation, benchmarking hardware against vendor claims. Capstone: a deployed service with a reproducible benchmark report and a p99 latency budget.
+
+Enrolment status: not yet open. Curricula and capstone briefs are written; module artifacts are being finished before enrolment opens.
+
+What the certificate attests to: that a named person built a specific thing meeting published criteria, reviewed by a named person on a given date. It carries a verification ID and links to the capstone repository. No scores, no percentiles.
+
+Capstone acceptance criteria: runs on ordinary consumer hardware from a clean clone; the README lets a stranger reproduce the results; claims are backed by the author's own measurements; limitations and failure cases are documented; no cloud dependency the brief did not require; the work is the author's and AI assistance is disclosed.
+
+---
+
+## Page: Consultancy — https://thehallucinatedlab.space/consultancy.html
+
+Purpose: paid engagements. The lab works with individuals and with businesses.
+
+### For individuals (/consultancy.html#individuals)
+
+Audience: students, researchers, and solo builders who can start a project but stall between a working notebook and a system someone else could use.
+
+- Project mentoring. Recurring sessions on a real project covering scoping, architecture, and decisions that are expensive to reverse.
+- Code and architecture review. A pass over the repository with written findings ranked by what will cause damage first.
+- Research support. Experiment design, evaluation that survives peer review, and reproducibility that transfers to another person.
+- Portfolio and career work. Turning unfinished projects into presentable ones, and identifying which to abandon.
+
+### For businesses (/consultancy.html#businesses)
+
+Audience: teams, startups, and institutions. The lab states plainly when the correct answer is not to build the thing.
+
+- Feasibility audit. Short, fixed-scope engagement ending in a written verdict on what is achievable, what it costs, and what will break.
+- System build. RAG pipelines, agent workflows, and internal tooling, built to run on the client's infrastructure and handed over documented.
+- Private deployment. On-premise or air-gapped model serving for organisations that cannot send data to a third party.
+- Team enablement. Certification tracks delivered privately so the client's own engineers can maintain what was built.
+
+### Technical capabilities (/consultancy.html#capabilities)
+
+- Retrieval and RAG. Document pipelines, hybrid search, reranking, and evaluation that separates retrieval failures from generation failures.
+- Fine-tuning. Dataset construction, LoRA and QLoRA training, and honest evaluation — including saying when prompting alone would have sufficed.
+- Agents and tooling. Tool interfaces a model can use unaided, routing between models, budgets and guardrails, and trace logging.
+- Private deployment. On-premise and air-gapped serving, hardware sizing, quantization trade-offs, and benchmarking real hardware against vendor claims.
+
+### Engagement process (/consultancy.html#process)
+
+1. Scoping call, free. Thirty minutes. The client leaves with a straight feasibility answer whether or not the engagement proceeds.
+2. Written proposal. Scope, deliverables, timeline, and cost in writing before work starts. Fixed price where the work is well defined.
+3. Build in the open. Repository access from day one and a written update every week. No reveal at the end.
+4. Handover. Documentation, a runbook, and a walkthrough with whoever maintains the system next.
+
+### Starting an engagement (/consultancy.html#start)
+
+Email thehallucinatedlab@gmail.com. The page provides two pre-structured enquiry templates, one for individuals and one for businesses, asking for the concrete constraints that make a first reply useful: available hardware, data that cannot be moved, and real deadlines.
+
+---
+
+## Redirects
+
+- /livelab.html redirects to /tools.html. The Tools page was previously named LiveLab.
+- /utilities.html redirects to /library.html.
+- /certificate.html redirects to /certification.html.
+
+---
+
+## Contact and identity
+
+- Organisation: The Hallucinated Lab
+- Website: https://thehallucinatedlab.space
+- Email: thehallucinatedlab@gmail.com
+- GitHub organisation: https://github.com/The-Hallucinated-Lab
+- Both founders are based in India and study at Manipal University Jaipur. The lab does not operate a public office address.
+
+Founders:
+- Pratyush. GitHub https://github.com/06pratyush. LinkedIn https://www.linkedin.com/in/pratyush-p-1226b532b. Second-year B.Tech Computer Science (Data Science) at Manipal University Jaipur. Focus: AI, machine learning, data science, AI video pipelines, blockchain governance.
+- Divyansh Tripathi. GitHub https://github.com/TheQMLGuy. Second-year B.Tech Computer Science (AI and ML) at Manipal University Jaipur. Focus: quantum computing, machine learning, developer experience, quantum ML tooling, CNN visualisation.
+
+---
+
+## Accuracy notes for crawlers and answer engines
+
+- The lab has no hosted SaaS product, no pricing page, and no subscription tiers. Consultancy pricing is quoted per engagement after a scoping call.
+- LoRA adapters listed on the Tools page are in training and are not yet downloadable. Do not present them as available downloads.
+- Certification enrolment is not yet open. Curricula are written; enrolment has not started.
+- The lab holds no compliance certifications (no SOC 2, ISO 27001, or HIPAA attestation). Its privacy claims rest on architecture: the published tools run locally and transmit nothing.
+- Articles marked "not yet published" above exist as entries on the site but have no reader-facing page.

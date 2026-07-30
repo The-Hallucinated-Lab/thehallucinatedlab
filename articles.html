@@ -13,10 +13,77 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Articles — The Hallucinated Lab">
   <meta name="twitter:description" content="Featured pieces, the full archive, and community-submitted writing.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Media",
+          "item": "https://thehallucinatedlab.space/media.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Articles",
+          "item": "https://thehallucinatedlab.space/articles.html"
+        }
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://thehallucinatedlab.space/articles.html#webpage",
+      "url": "https://thehallucinatedlab.space/articles.html",
+      "name": "Articles - The Hallucinated Lab",
+      "description": "Featured pieces, the full searchable archive, and the community spotlight where readers publish their own work.",
+      "isPartOf": {
+        "@id": "https://thehallucinatedlab.space/#website"
+      },
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "inLanguage": "en",
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "Published articles",
+        "numberOfItems": 1,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "url": "https://thehallucinatedlab.space/articles/sample-article.html",
+            "name": "The Future of Local-First AI"
+          }
+        ]
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
@@ -71,8 +138,51 @@
           <div class="section-line" aria-hidden="true"></div>
           <p class="section-intro">The pieces we've pinned — either because they're the best entry point into what we do, or because we're still thinking about them months later.</p>
         </div>
+        <!-- Pre-rendered so crawlers that do not execute JavaScript still see
+             the articles. articles.js re-renders this identically on load and
+             then owns it. Keep the two in sync when ARTICLES changes. -->
         <div class="featured-grid" id="featured-grid">
-          <!-- JS renders featured article cards here -->
+          <a href="articles/sample-article.html" class="featured-card fade-in fade-in-delay-1" id="featured-local-first-ai">
+            <div class="featured-card-cover" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+              <div class="featured-badge">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                Featured
+              </div>
+              <div class="featured-card-overlay">
+                <span class="featured-category">AI &amp; ML</span>
+              </div>
+            </div>
+            <div class="featured-card-body">
+              <h3 class="featured-card-title">The Future of Local-First AI</h3>
+              <p class="featured-card-excerpt">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
+              <div class="featured-card-meta">
+                <span class="featured-author">Pratyush</span>
+                <span class="featured-date">Jul 10, 2026</span>
+              </div>
+            </div>
+            <div class="featured-card-arrow" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+            </div>
+          </a>
+          <div class="featured-card featured-card-locked fade-in fade-in-delay-2" id="featured-quantum-ml-crossroads">
+            <div class="featured-card-cover" style="background: linear-gradient(135deg, #0d0d2b 0%, #1b1464 50%, #3d1f8e 100%);">
+              <div class="featured-badge">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                Featured
+              </div>
+              <div class="featured-card-overlay">
+                <span class="featured-category">Quantum Computing</span>
+              </div>
+            </div>
+            <div class="featured-card-body">
+              <h3 class="featured-card-title">Quantum Computing Meets Machine Learning</h3>
+              <p class="featured-card-excerpt">At the intersection of qubits and gradient descent lies a new paradigm. How quantum-enhanced ML could reshape optimization, drug discovery, and cryptography.</p>
+              <div class="featured-card-meta">
+                <span class="featured-author">Divyansh Tripathi</span>
+                <span class="featured-date">In the works</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -96,12 +206,89 @@
           </div>
           <div class="archive-filters" id="archive-filters">
             <button class="filter-btn active" data-filter="all" type="button">All</button>
-            <!-- Category buttons rendered by JS -->
+            <button class="filter-btn" data-filter="AI &amp; ML" type="button">AI &amp; ML</button>
+            <button class="filter-btn" data-filter="Quantum Computing" type="button">Quantum Computing</button>
+            <button class="filter-btn" data-filter="Open Source" type="button">Open Source</button>
+            <button class="filter-btn" data-filter="Privacy &amp; Security" type="button">Privacy &amp; Security</button>
+            <button class="filter-btn" data-filter="Dev Tools" type="button">Dev Tools</button>
           </div>
         </div>
 
         <div class="archive-grid" id="archive-grid">
-          <!-- JS renders article cards here -->
+          <a href="articles/sample-article.html" class="archive-card fade-in" id="archive-local-first-ai">
+            <div class="archive-card-cover" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+              <span class="archive-card-category">AI &amp; ML</span>
+            </div>
+            <div class="archive-card-body">
+              <h3 class="archive-card-title">The Future of Local-First AI</h3>
+              <p class="archive-card-excerpt">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
+              <div class="archive-card-meta">
+                <span>Pratyush</span>
+                <span class="archive-card-dot">·</span>
+                <span>Jul 10, 2026</span>
+              </div>
+            </div>
+          </a>
+          <div class="archive-card archive-card-locked fade-in" id="archive-quantum-ml-crossroads">
+            <div class="archive-card-cover" style="background: linear-gradient(135deg, #0d0d2b 0%, #1b1464 50%, #3d1f8e 100%);">
+              <span class="archive-card-category">Quantum Computing</span>
+              <span class="archive-card-soon">Draft</span>
+            </div>
+            <div class="archive-card-body">
+              <h3 class="archive-card-title">Quantum Computing Meets Machine Learning</h3>
+              <p class="archive-card-excerpt">At the intersection of qubits and gradient descent lies a new paradigm. How quantum-enhanced ML could reshape optimization, drug discovery, and cryptography.</p>
+              <div class="archive-card-meta">
+                <span>Divyansh Tripathi</span>
+                <span class="archive-card-dot">·</span>
+                <span>Not published yet</span>
+              </div>
+            </div>
+          </div>
+          <div class="archive-card archive-card-locked fade-in" id="archive-open-source-manifesto">
+            <div class="archive-card-cover" style="background: linear-gradient(135deg, #1a0a0a 0%, #2d1f1f 50%, #4a2c2c 100%);">
+              <span class="archive-card-category">Open Source</span>
+              <span class="archive-card-soon">Draft</span>
+            </div>
+            <div class="archive-card-body">
+              <h3 class="archive-card-title">Why Open Source Isn't Optional Anymore</h3>
+              <p class="archive-card-excerpt">From governments to startups, open source has become the backbone of modern software. We argue it's not charity — it's strategy.</p>
+              <div class="archive-card-meta">
+                <span>Pratyush</span>
+                <span class="archive-card-dot">·</span>
+                <span>Not published yet</span>
+              </div>
+            </div>
+          </div>
+          <div class="archive-card archive-card-locked fade-in" id="archive-browser-privacy-toolkit">
+            <div class="archive-card-cover" style="background: linear-gradient(135deg, #0a1a0a 0%, #1f2d1f 50%, #2c4a2c 100%);">
+              <span class="archive-card-category">Privacy &amp; Security</span>
+              <span class="archive-card-soon">Draft</span>
+            </div>
+            <div class="archive-card-body">
+              <h3 class="archive-card-title">Building a Privacy Toolkit in the Browser</h3>
+              <p class="archive-card-excerpt">Zero-knowledge proofs, client-side encryption, and local-only processing — the tools exist. Here's how to wire them together.</p>
+              <div class="archive-card-meta">
+                <span>Divyansh Tripathi</span>
+                <span class="archive-card-dot">·</span>
+                <span>Not published yet</span>
+              </div>
+            </div>
+          </div>
+          <div class="archive-card archive-card-locked fade-in" id="archive-dev-tools-renaissance">
+            <div class="archive-card-cover" style="background: linear-gradient(135deg, #1a1a0a 0%, #2d2d1f 50%, #4a4a2c 100%);">
+              <span class="archive-card-category">Dev Tools</span>
+              <span class="archive-card-soon">Draft</span>
+            </div>
+            <div class="archive-card-body">
+              <h3 class="archive-card-title">The Dev Tools Renaissance</h3>
+              <p class="archive-card-excerpt">IDEs are getting smarter, CLIs are getting prettier, and AI copilots are everywhere. A tour of the tools shaping the next decade of development.</p>
+              <div class="archive-card-meta">
+                <span>Pratyush</span>
+                <span class="archive-card-dot">·</span>
+                <span>Not published yet</span>
+              </div>
+            </div>
+          </div>
         </div>
         <div class="archive-empty" id="archive-empty" style="display:none;">
           <p>No articles match your search.</p>

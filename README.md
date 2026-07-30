@@ -64,11 +64,16 @@ thehallucinatedlab/
 ├── livelab.html          # Redirect → tools.html (old LiveLab URL)
 ├── utilities.html        # Redirect → library.html (old Utilities URL)
 ├── certificate.html      # Redirect → certification.html (old URL)
+├── 404.html              # Custom not-found page (served by GitHub Pages)
 ├── styles.css            # Core stylesheet — design tokens, navbar, hero, about
 ├── pages.css             # Shared component styles for every sub-page
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── articles.js           # Article data store, archive search, submission form
+├── robots.txt            # Crawl permissions — AI/LLM agents explicitly allowed
+├── sitemap.xml           # 13 canonical URLs for search engines
+├── llms.txt              # Concise Markdown site summary for LLM crawlers
+├── llms-full.txt         # Full machine-readable site directory
 ├── .nojekyll             # Disables Jekyll on GitHub Pages
 ├── CNAME                 # Custom domain configuration
 ├── .gitattributes        # Git config
@@ -117,11 +122,14 @@ thehallucinatedlab/
 - **Artifacts** — interactive explainers you operate rather than read
 - **Notebooks** — runnable research, landing soon
 
-### SEO
-- Open Graph + Twitter Card meta tags on all pages
-- Canonical URL
-- Semantic HTML5 structure with proper heading hierarchy
-- Descriptive `alt` attributes on all images
+### SEO & AI discoverability
+- **JSON-LD on every page** — an `Organization` / `Person` / `WebSite` identity graph on the home page, with `BreadcrumbList`, `CollectionPage`, `SoftwareApplication`, `WebApplication`, `ProfessionalService`, `Course`, and `Article` / `LearningResource` on the pages they describe
+- **`llms.txt` and `llms-full.txt`** — Markdown summaries written for LLM crawlers, including an accuracy section stating what is *not* yet available so answer engines don't overstate it
+- **`robots.txt`** explicitly allowing AI agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and others) plus an XML sitemap
+- **Pre-rendered article listings** — the Featured and Archive grids ship as static HTML so crawlers that don't execute JavaScript still see every article; `articles.js` re-renders the same markup and takes over the filtering
+- Open Graph + Twitter Card meta with images, canonical URLs, and `preconnect` hints for the font origins
+- One `<h1>` per page and no skipped heading levels
+- Descriptive `alt` attributes and explicit `width`/`height` on all images (no layout shift)
 
 ---
 
