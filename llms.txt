@@ -1,0 +1,63 @@
+# The Hallucinated Lab
+
+> The Hallucinated Lab is a local-first AI lab and consultancy. It builds AI tools that run entirely on the user's own machine — no cloud dependency, no API keys, no data leaving the device — and provides AI consulting and engineering services to individuals and businesses. It was founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
+
+The Hallucinated Lab operates in three modes:
+
+1. **Free artifacts.** Prompts, LoRA adapters, open-source packages, interactive explainers, and a browser-based assistant that talks to a locally running model. All free, all designed to run offline.
+2. **Services.** AI consultancy for individuals (mentoring, code and architecture review, research support) and businesses (feasibility audits, RAG and agent system builds, private on-premise deployment, team enablement).
+3. **Certification.** Project-graded course tracks in local-first AI. Every track ends in a build that is reviewed against published criteria before a certificate is issued.
+
+**Core position:** if a model can run on your hardware, you should be able to run it without a subscription, a rate limit, or a third party reading your data. Every tool published here is built to that constraint.
+
+**Site is:** a static, zero-build site (vanilla HTML, CSS, JavaScript) hosted on GitHub Pages. No frameworks, no trackers, no analytics scripts, no cookies.
+
+## Pages
+
+- [Home](https://thehallucinatedlab.space/): Overview of the lab and a guide to every section of the site.
+- [Tools](https://thehallucinatedlab.space/tools.html): Three sections — a prompt library, LoRA adapters for locally running LLMs, and the THL Library of packages.
+- [Assistant](https://thehallucinatedlab.space/interface.html): Browser chat interface that connects to Ollama on the user's own machine. No API keys, no cloud relay.
+- [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
+- [Media](https://thehallucinatedlab.space/media.html): Entry point to Articles, Artifacts, and (upcoming) Notebooks.
+- [Certification](https://thehallucinatedlab.space/certification.html): Six project-graded course tracks and the criteria a capstone must clear.
+- [Consultancy](https://thehallucinatedlab.space/consultancy.html): Engagement models for individuals and businesses, the four-stage process, and how to start.
+
+## Tools
+
+- [Prompt library](https://thehallucinatedlab.space/tools.html#prompts): Eight model-agnostic prompts for code review, root-cause debugging, refactoring, dataset triage, SQL generation, tutoring, paper review, and model routing. Free to copy, no account.
+- [LoRA adapters](https://thehallucinatedlab.space/tools.html#adapters): Small fine-tuned adapters that stack on a base model already installed locally. Currently in training; none are downloadable yet. Usage guides for Ollama and PEFT are published.
+- [THL Library](https://thehallucinatedlab.space/library.html): Open-source packages. Current entry is NexusLink Engine, a headless Rust SDK for encrypted peer-to-peer LAN/WAN communication with a pip-installable Python binding.
+
+## Media
+
+- [Articles](https://thehallucinatedlab.space/articles.html): Long-form writing on AI, quantum computing, privacy, and developer tooling. Includes a community section open to reader submissions.
+- [Artifacts](https://thehallucinatedlab.space/artifacts.html): Interactive explainers the reader operates rather than reads. All computation runs in the browser.
+- [Time & Space Complexity](https://thehallucinatedlab.space/articles/complexity.html): Interactive teaching session on asymptotic analysis, Big-O through the Master Theorem, with a growth-rate explorer and twelve worked examples.
+- [The Model Is No Longer the Product](https://thehallucinatedlab.space/articles/ai-orchestration.html): Interactive piece on AI engineering as orchestration, with a runnable RAG pipeline and a failure-diagnosis game.
+- [The Future of Local-First AI](https://thehallucinatedlab.space/articles/sample-article.html): Article on the shift from cloud dependency to local-first intelligence.
+
+## Services
+
+- [Consultancy for individuals](https://thehallucinatedlab.space/consultancy.html#individuals): Project mentoring, code and architecture review, research and experiment design, portfolio work. For students, researchers, and solo builders.
+- [Consultancy for businesses](https://thehallucinatedlab.space/consultancy.html#businesses): Fixed-scope feasibility audits, RAG and agent system builds, on-premise and air-gapped deployment, private delivery of certification tracks for internal teams.
+- [Engagement process](https://thehallucinatedlab.space/consultancy.html#process): Free scoping call, written proposal with fixed price where scope allows, build in the open with repo access from day one, handover with documentation and a runbook.
+
+## Technical capabilities
+
+- Retrieval and RAG: document pipelines, chunking strategy, hybrid dense and keyword search, reranking, retrieval evaluation separated from generation evaluation.
+- Fine-tuning: instruction dataset construction, LoRA and QLoRA training on single consumer GPUs, held-out evaluation and contamination checks.
+- Agents and tooling: tool interface design, routing between small and large models, budgets, timeouts, guardrails, trace logging.
+- Private deployment: on-premise and air-gapped model serving, hardware sizing, quantization trade-off analysis, benchmarking measured hardware against vendor claims.
+
+## Contact
+
+- Email: thehallucinatedlab@gmail.com
+- GitHub organisation: https://github.com/The-Hallucinated-Lab
+- Pratyush: https://github.com/06pratyush — AI, machine learning, data science
+- Divyansh Tripathi: https://github.com/TheQMLGuy — quantum computing, machine learning, developer experience
+
+## Optional
+
+- [Full site map for crawlers](https://thehallucinatedlab.space/llms-full.txt): Expanded directory of every page and section with descriptions.
+- [XML sitemap](https://thehallucinatedlab.space/sitemap.xml)
+- [Source repository](https://github.com/The-Hallucinated-Lab/thehallucinatedlab)

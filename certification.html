@@ -13,10 +13,173 @@
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Certification — The Hallucinated Lab">
   <meta name="twitter:description" content="Courses that end in something you built, and a certificate that points at it.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Certification",
+          "item": "https://thehallucinatedlab.space/certification.html"
+        }
+      ]
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://thehallucinatedlab.space/certification.html#webpage",
+      "url": "https://thehallucinatedlab.space/certification.html",
+      "name": "Certification - The Hallucinated Lab",
+      "description": "Project-graded course tracks in local-first AI. Every track ends in a build reviewed against published criteria before a certificate is issued. Enrolment is not yet open.",
+      "isPartOf": {
+        "@id": "https://thehallucinatedlab.space/#website"
+      },
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "inLanguage": "en",
+      "mainEntity": {
+        "@type": "ItemList",
+        "name": "Course tracks",
+        "numberOfItems": 6,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "item": {
+              "@type": "Course",
+              "name": "Local-First AI Foundations",
+              "description": "Get a real model running on your own machine and understand weights, quantization, context windows, and where the memory goes.",
+              "provider": {
+                "@id": "https://thehallucinatedlab.space/#organization"
+              },
+              "educationalLevel": "Beginner",
+              "coursePrerequisites": "None stated",
+              "timeRequired": "PT12H",
+              "teaches": "A local assistant with a documented hardware profile and measured tokens per second.",
+              "url": "https://thehallucinatedlab.space/certification.html#courses",
+              "inLanguage": "en"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "item": {
+              "@type": "Course",
+              "name": "Prompt Engineering for Production",
+              "description": "Prompts as versioned artifacts with evaluation suites behind them, structured to survive model swaps.",
+              "provider": {
+                "@id": "https://thehallucinatedlab.space/#organization"
+              },
+              "educationalLevel": "Beginner",
+              "coursePrerequisites": "None stated",
+              "timeRequired": "PT10H",
+              "teaches": "A versioned prompt suite with an automated eval harness and a regression report.",
+              "url": "https://thehallucinatedlab.space/certification.html#courses",
+              "inLanguage": "en"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "item": {
+              "@type": "Course",
+              "name": "Retrieval Systems That Actually Work",
+              "description": "Chunking, hybrid search, reranking, and knowing when retrieval is the wrong tool.",
+              "provider": {
+                "@id": "https://thehallucinatedlab.space/#organization"
+              },
+              "educationalLevel": "Intermediate",
+              "coursePrerequisites": "None stated",
+              "timeRequired": "PT18H",
+              "teaches": "A retrieval system over your own corpus with a measured recall@k baseline.",
+              "url": "https://thehallucinatedlab.space/certification.html#courses",
+              "inLanguage": "en"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "item": {
+              "@type": "Course",
+              "name": "Fine-Tuning and LoRA Adapters",
+              "description": "Dataset construction, LoRA and QLoRA on a single consumer GPU, and telling a real improvement from a memorised eval set.",
+              "provider": {
+                "@id": "https://thehallucinatedlab.space/#organization"
+              },
+              "educationalLevel": "Intermediate",
+              "coursePrerequisites": "None stated",
+              "timeRequired": "PT20H",
+              "teaches": "A trained adapter with an evaluation card showing where it wins and where it does not.",
+              "url": "https://thehallucinatedlab.space/certification.html#courses",
+              "inLanguage": "en"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "item": {
+              "@type": "Course",
+              "name": "Agent Orchestration",
+              "description": "Tool use, routing, and multi-step planning - plus runaway loops, silent tool errors, and context that quietly falls off the end.",
+              "provider": {
+                "@id": "https://thehallucinatedlab.space/#organization"
+              },
+              "educationalLevel": "Advanced",
+              "coursePrerequisites": "None stated",
+              "timeRequired": "PT22H",
+              "teaches": "A multi-tool agent with a trace log and a documented failure-and-recovery analysis.",
+              "url": "https://thehallucinatedlab.space/certification.html#courses",
+              "inLanguage": "en"
+            }
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "item": {
+              "@type": "Course",
+              "name": "Deployment and Benchmarking",
+              "description": "Serving, batching, telemetry, and benchmarking your hardware honestly - without handing it to a cloud vendor.",
+              "provider": {
+                "@id": "https://thehallucinatedlab.space/#organization"
+              },
+              "educationalLevel": "Advanced",
+              "coursePrerequisites": "None stated",
+              "timeRequired": "PT16H",
+              "teaches": "A deployed service with a reproducible benchmark report and a p99 latency budget.",
+              "url": "https://thehallucinatedlab.space/certification.html#courses",
+              "inLanguage": "en"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 

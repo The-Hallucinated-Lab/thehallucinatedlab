@@ -2,7 +2,11 @@
    articles.js — Data store, rendering, filtering & form handling
    for the Articles page (Featured / Archive / Community Spotlight).
 
-   Interactive pieces live in artifacts.js, not here.
+   The Featured grid, Archive grid, and category filters are also
+   pre-rendered as static markup in articles.html, so crawlers that
+   do not execute JavaScript still see every article. This file
+   re-renders the same output on load and then owns those grids —
+   when ARTICLES changes below, update articles.html to match.
    ============================================================ */
 
 /* ============ ARTICLE DATA STORE ============ */

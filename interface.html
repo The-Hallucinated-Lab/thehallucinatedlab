@@ -9,13 +9,65 @@
   <meta property="og:description" content="AI-powered local assistant. Chat with Ollama running on your machine — fully private.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/interface.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/interface.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Assistant — The Hallucinated Lab">
   <meta name="twitter:description" content="AI-powered local assistant. Chat with Ollama on your machine.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Assistant",
+          "item": "https://thehallucinatedlab.space/interface.html"
+        }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "The Hallucinated Lab Assistant",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Any modern web browser",
+      "browserRequirements": "Requires JavaScript and a local Ollama runtime on the same machine",
+      "description": "A browser chat interface that connects to Ollama running on your own machine. No API keys, no accounts, no cloud relay - requests never leave the device. Auto-detects an installed model and streams responses token by token.",
+      "url": "https://thehallucinatedlab.space/interface.html",
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ]
+}
+  </script>
 </head>
 <body>
 
@@ -52,7 +104,7 @@
           <span class="status-dot"></span>
           <span id="setup-status-text">Checking connection...</span>
         </div>
-        <h2>Local AI Assistant</h2>
+        <h1>Local AI Assistant</h1>
         <p>This interface connects to <strong style="color:var(--gold-primary);">Ollama</strong> running on your machine. No API keys, no cloud, no data leaves your device. Completely local.</p>
 
         <div class="setup-steps" id="setup-steps" style="display:none;">

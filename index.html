@@ -13,31 +13,133 @@
   <meta name="twitter:title" content="The Hallucinated Lab">
   <meta name="twitter:description" content="We build tools that give you unrestricted access to cutting-edge technology — running entirely on your machine.">
   <link rel="canonical" href="https://thehallucinatedlab.space">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "The Hallucinated Lab",
-    "url": "https://thehallucinatedlab.space",
-    "email": "thehallucinatedlab@gmail.com",
-    "description": "We build tools that give you unrestricted access to cutting-edge technology — running entirely on your machine.",
-    "member": [
-      {
-        "@type": "Person",
-        "name": "Pratyush",
-        "url": "https://github.com/06pratyush"
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://thehallucinatedlab.space/#organization",
+      "name": "The Hallucinated Lab",
+      "alternateName": "THL",
+      "url": "https://thehallucinatedlab.space/",
+      "email": "thehallucinatedlab@gmail.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://thehallucinatedlab.space/assets/images/logo.jpeg",
+        "width": 1024,
+        "height": 1024
       },
-      {
-        "@type": "Person",
-        "name": "Divyansh Tripathi",
-        "url": "https://github.com/TheQMLGuy"
-      }
-    ]
-  }
+      "image": "https://thehallucinatedlab.space/assets/images/logo.jpeg",
+      "description": "A local-first AI lab and consultancy. We build AI tools that run entirely on your own machine - no cloud dependency, no API keys, no data leaving the device - and provide AI consulting and engineering services to individuals and businesses.",
+      "foundingDate": "2026",
+      "founder": [
+        {
+          "@id": "https://thehallucinatedlab.space/#pratyush"
+        },
+        {
+          "@id": "https://thehallucinatedlab.space/#divyansh"
+        }
+      ],
+      "knowsAbout": [
+        "Local-first AI",
+        "Retrieval-Augmented Generation",
+        "LoRA fine-tuning",
+        "AI agent orchestration",
+        "On-premise model deployment",
+        "Quantum machine learning",
+        "Open source software"
+      ],
+      "areaServed": "Worldwide",
+      "sameAs": [
+        "https://github.com/The-Hallucinated-Lab"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://thehallucinatedlab.space/#pratyush",
+      "name": "Pratyush",
+      "alternateName": "@06pratyush",
+      "description": "Second-year B.Tech Computer Science (Data Science) student at Manipal University Jaipur. Works on AI, machine learning, and data science - from AI video pipelines to blockchain governance.",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "Manipal University Jaipur"
+      },
+      "knowsAbout": [
+        "Artificial intelligence",
+        "Machine learning",
+        "Data science"
+      ],
+      "worksFor": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "sameAs": [
+        "https://github.com/06pratyush",
+        "https://www.linkedin.com/in/pratyush-p-1226b532b"
+      ]
+    },
+    {
+      "@type": "Person",
+      "@id": "https://thehallucinatedlab.space/#divyansh",
+      "name": "Divyansh Tripathi",
+      "alternateName": "@TheQMLGuy",
+      "description": "Second-year B.Tech Computer Science (AI and ML) student at Manipal University Jaipur. Works at the intersection of quantum computing, machine learning, and developer experience.",
+      "affiliation": {
+        "@type": "CollegeOrUniversity",
+        "name": "Manipal University Jaipur"
+      },
+      "knowsAbout": [
+        "Quantum computing",
+        "Quantum machine learning",
+        "Developer experience"
+      ],
+      "worksFor": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "sameAs": [
+        "https://github.com/TheQMLGuy"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://thehallucinatedlab.space/#website",
+      "url": "https://thehallucinatedlab.space/",
+      "name": "The Hallucinated Lab",
+      "description": "Local-first AI tools, interactive explainers, certification courses, and AI consultancy.",
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "inLanguage": "en"
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://thehallucinatedlab.space/#webpage",
+      "url": "https://thehallucinatedlab.space/",
+      "name": "The Hallucinated Lab - Where Ideas Come Alive",
+      "isPartOf": {
+        "@id": "https://thehallucinatedlab.space/#website"
+      },
+      "about": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
   </script>
 </head>
 <body>
