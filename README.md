@@ -51,15 +51,33 @@ This is a **zero-dependency static website** — no frameworks, no build tools, 
 
 ```
 thehallucinatedlab/
-├── index.html            # Home — hero, about, contact, footer
-├── utilities.html        # Utilities page — placeholder while tools are rebuilt
-├── interface.html        # AI chat assistant — local Ollama integration
-├── styles.css            # Core stylesheet — design tokens, components, responsive
-├── pages.css             # Shared styles for utilities and interface pages
-├── script.js             # Particles animation, navbar, scroll effects, typing effect
+├── index.html            # Home — hero, "Explore the Lab" tab guide, services, about
+├── tools.html            # Tools — Prompts, LoRA Adapters, THL Library
+├── interface.html        # Assistant — local Ollama chat integration
+├── solutions.html        # Solutions — shipped products (ScoobyBench)
+├── media.html            # Media — gateway to Articles / Artifacts / Notebooks
+├── articles.html         # Articles — Featured, Archive, Community Spotlight
+├── artifacts.html        # Artifacts — interactive, playable explainers
+├── certification.html    # Certification — course tracks and the certificate
+├── consultancy.html      # Consultancy — individual & business engagements
+├── library.html          # THL Library — full package shelf (linked from Tools)
+├── livelab.html          # Redirect → tools.html (old LiveLab URL)
+├── utilities.html        # Redirect → library.html (old Utilities URL)
+├── certificate.html      # Redirect → certification.html (old URL)
+├── styles.css            # Core stylesheet — design tokens, navbar, hero, about
+├── pages.css             # Shared component styles for every sub-page
+├── script.js             # Particles, navbar, scroll reveals, typing effect
+├── tools.js              # Prompt category filter + copy-to-clipboard
+├── articles.js           # Article data store, archive search, submission form
 ├── .nojekyll             # Disables Jekyll on GitHub Pages
 ├── CNAME                 # Custom domain configuration
 ├── .gitattributes        # Git config
+├── articles/
+│   ├── article.css           # Article/artifact reading styles
+│   ├── article.js            # Reading progress, TOC, scroll animations
+│   ├── ai-orchestration.html # Artifact — RAG pipeline + iteration game
+│   ├── complexity.html       # Artifact — complexity explorer
+│   └── sample-article.html   # Article — local-first AI
 └── assets/
     └── images/
         ├── logo.jpeg         # Lab logo (navbar + favicon)
@@ -89,8 +107,15 @@ thehallucinatedlab/
 - **Auto-detects installed model** (recommended: `gemma4:e4b`); falls back through `gemma4:e2b → gemma3:4b → gemma2:2b → llama3.2:*` and finally any installed model
 - **Streaming responses** rendered token-by-token, with a setup panel that surfaces install/CORS instructions when Ollama isn't reachable
 
-### Utilities
-- Currently a placeholder while the tool platform is being rebuilt
+### Tools
+- **Prompt library** — eight production-ready prompts with category filters and one-click copy
+- **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
+- **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)
+
+### Media
+- **Articles** — featured picks, a searchable archive, and a community spotlight with a submission form (stored in `localStorage`)
+- **Artifacts** — interactive explainers you operate rather than read
+- **Notebooks** — runnable research, landing soon
 
 ### SEO
 - Open Graph + Twitter Card meta tags on all pages
@@ -137,10 +162,14 @@ The site is deployed automatically via **GitHub Pages** from the `main` branch. 
 
 | Page | Description |
 |---|---|
-| **Home** | Hero with particle canvas, typing animation, about section, contact links |
-| **Utilities** | Placeholder page — tools are being rebuilt from scratch |
+| **Home** | Hero with particle canvas and typing animation, an "Explore the Lab" guide to every tab, services & certification band, and the team/about section at the bottom |
+| **Tools** | Prompts, LoRA adapters, and the THL Library — everything meant to leave with you |
 | **Assistant** | AI chat powered by local Ollama — auto-detects installed model, streaming responses |
-| **Navbar** | Fixed top bar — Home, Utilities, Assistant, Contact + mobile hamburger |
+| **Solutions** | Shipped products, led by ScoobyBench (AI hardware benchmarking) |
+| **Media** | Gateway to Articles, Artifacts, and Notebooks |
+| **Certification** | Six project-graded course tracks and what the certificate actually attests to |
+| **Consultancy** | Engagements for individuals and businesses, plus how we scope and hand over work |
+| **Navbar** | Fixed top bar — Home, Tools, Assistant, Solutions, Media, Certification, Consultancy + mobile hamburger |
 
 ---
 
