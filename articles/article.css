@@ -338,18 +338,66 @@
   line-height: 1.5;
   white-space: normal;
   width: max-content;
-  max-width: 280px;
+  /* Never wider than the viewport allows, so a shown tooltip stays readable
+     on a phone. */
+  max-width: min(280px, calc(100vw - 2.5rem));
+  /* display:none, not just opacity:0 — an invisible-but-laid-out tooltip
+     still contributes scrollable overflow. A term that wrapped across two
+     lines pushed the page 10px past a 375px viewport. `allow-discrete`
+     keeps the fade in browsers that support it; older ones just snap. */
+  display: none;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease, display 0.3s allow-discrete;
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   z-index: 50;
 }
 
-.tooltip-term:hover::after {
+.tooltip-term:hover::after,
+.tooltip-term:focus-visible::after {
+  display: block;
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+@starting-style {
+  .tooltip-term:hover::after,
+  .tooltip-term:focus-visible::after {
+    opacity: 0;
+    transform: translateX(-50%) translateY(4px);
+  }
+}
+
+/* On a phone a 280px bubble centred on an inline term runs off the edge —
+   several were clipped past the left margin and unreadable. Anchor
+   positioning would solve it, but GSAP puts a transform on the surrounding
+   paragraph, so a fixed-position bubble would resolve against that instead
+   of the viewport. Drop the bubble entirely below ~700px and let the
+   definition open in flow underneath the term, where it always fits. */
+@media (max-width: 700px) {
+  .tooltip-term::after {
+    position: static;
+    transform: none;
+    width: auto;
+    max-width: 100%;
+    margin: 6px 0;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .tooltip-term:hover::after,
+  .tooltip-term:focus-visible::after {
+    transform: none;
+  }
+
+  @starting-style {
+    .tooltip-term:hover::after,
+    .tooltip-term:focus-visible::after {
+      opacity: 0;
+      transform: none;
+    }
+  }
 }
 
 /* ============ BLOCKQUOTE ============ */
