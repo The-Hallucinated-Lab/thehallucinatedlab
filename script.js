@@ -328,10 +328,35 @@ function initTypingEffect() {
   type();
 }
 
-/* ============ INIT ============ */
+/* ============ INIT ============
+   These four run on every page of the site and are independent of each
+   other, but they used to run as one uninterrupted sequence — so a
+   throw inside initParticles (a canvas the page can live without) took
+   initNavbar with it, and the mobile menu, the Escape-to-close handler
+   and the section highlighting never got wired up. Losing decoration
+   should not cost anyone navigation.
+
+   Each feature is isolated, and its name is reported if it fails so the
+   console says which one rather than just pointing at this file. */
+function startFeature(name, init) {
+  try {
+    init();
+  } catch (err) {
+    console.error(`[init] ${name} failed:`, err);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  initParticles();
-  initNavbar();
-  initScrollAnimations();
-  initTypingEffect();
+  startFeature('particles', initParticles);
+  startFeature('navbar', initNavbar);
+  startFeature('scroll-animations', initScrollAnimations);
+  startFeature('typing', initTypingEffect);
+});
+
+/* A rejected promise with no handler is otherwise invisible outside
+   devtools. Nothing here reports anywhere — the site has no telemetry
+   and collects nothing — but naming it in the console is the difference
+   between a diagnosable bug report and "it just stopped working". */
+window.addEventListener('unhandledrejection', (event) => {
+  console.error('[unhandled rejection]', event.reason);
 });

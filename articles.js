@@ -71,24 +71,31 @@ const ARTICLES = [
 /* ============ HELPERS ============ */
 const MAX_COMMUNITY_POSTS = 50;
 
+/* @pure-start — everything between these markers is free of DOM,
+   storage and network access, and is loaded directly by
+   test/*.test.js. Keep it that way: reaching for `document` here
+   breaks the tests that cover escaping and validation. */
+
 function formatDate(dateStr) {
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+/* Escapes for both text and attribute contexts. This used to round-trip
+   through document.createElement, which meant a DOM allocation per card
+   per render and made it impossible to unit test. */
 function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str == null ? '' : String(str);
-  return div.innerHTML;
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 
-/* Article copy is authored in ARTICLES above rather than submitted by
-   anyone, but it still goes through innerHTML — so an ampersand or a
-   stray angle bracket in a title would otherwise render as broken
-   markup rather than as text. */
 function escapeAttr(str) {
-  return escapeHtml(str).replace(/"/g, '&quot;');
+  return escapeHtml(str);
 }
 
 /* Only ever fed the authored coverGradient values; this keeps anything
@@ -96,6 +103,98 @@ function escapeAttr(str) {
 function safeGradient(value) {
   return /^(linear|radial)-gradient\([^;"<>]*\)$/.test(value || '') ? value : 'var(--bg-card)';
 }
+
+/* ============ SUBMISSION VALIDATION ============
+   The community form is the only place anything on this site accepts
+   input and writes it anywhere. The old check was
+   `if (!name || !title || !body) return;` — which silently did nothing,
+   so submitting an empty body looked identical to a broken page.
+
+   Bounds are declared next to the schema rather than scattered through
+   the handler, every field is checked so the visitor sees all their
+   mistakes at once instead of one per attempt, and values are
+   normalised before they are stored. */
+const SUBMISSION_CATEGORIES = [
+  'General', 'AI & ML', 'Quantum Computing', 'Open Source',
+  'Privacy & Security', 'Dev Tools', 'Research', 'Other',
+];
+
+const SUBMISSION_LIMITS = {
+  name: { min: 2, max: 80 },
+  title: { min: 3, max: 120 },
+  body: { min: 20, max: 10000 },
+  email: { max: 254 },
+};
+
+/* Deliberately permissive. This address is never sent anywhere and
+   never used to authenticate anything, so the only job here is to catch
+   an obvious typo, not to adjudicate RFC 5322. */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+function collapseWhitespace(value) {
+  return String(value == null ? '' : value).replace(/\s+/g, ' ').trim();
+}
+
+function validateSubmission(raw) {
+  const errors = {};
+  const input = raw || {};
+
+  const name = collapseWhitespace(input.name);
+  const title = collapseWhitespace(input.title);
+  const body = String(input.body == null ? '' : input.body).trim();
+  const email = String(input.email == null ? '' : input.email).trim().toLowerCase();
+
+  if (!name) errors.name = 'Please add your name.';
+  else if (name.length < SUBMISSION_LIMITS.name.min) errors.name = 'That name looks too short.';
+  else if (name.length > SUBMISSION_LIMITS.name.max) errors.name = `Keep your name under ${SUBMISSION_LIMITS.name.max} characters.`;
+
+  if (!title) errors.title = 'Please add a title.';
+  else if (title.length < SUBMISSION_LIMITS.title.min) errors.title = 'That title looks too short.';
+  else if (title.length > SUBMISSION_LIMITS.title.max) errors.title = `Keep the title under ${SUBMISSION_LIMITS.title.max} characters.`;
+
+  if (!body) errors.body = 'Please write something before submitting.';
+  else if (body.length < SUBMISSION_LIMITS.body.min) errors.body = `Write at least ${SUBMISSION_LIMITS.body.min} characters.`;
+  else if (body.length > SUBMISSION_LIMITS.body.max) errors.body = `That is over the ${SUBMISSION_LIMITS.body.max.toLocaleString('en-US')} character limit.`;
+
+  // Optional, but if it is filled in it should be usable.
+  if (email) {
+    if (email.length > SUBMISSION_LIMITS.email.max) errors.email = 'That email address is too long.';
+    else if (!EMAIL_PATTERN.test(email)) errors.email = 'That does not look like an email address.';
+  }
+
+  /* The <select> only offers these, but the value arrives as a string
+     and nothing stops it being anything else. Fall back rather than
+     reject — a bad category is not the visitor's mistake to fix. */
+  const category = SUBMISSION_CATEGORIES.includes(input.category) ? input.category : 'General';
+
+  return {
+    valid: Object.keys(errors).length === 0,
+    errors,
+    // Full ISO 8601 with offset, rather than a bare date with the
+    // timezone silently discarded.
+    value: { name, email, title, category, body, date: new Date().toISOString() },
+  };
+}
+
+/* Anything already in localStorage is untrusted: the visitor, another
+   script, or an older version of this page could have written it. Coerce
+   to a known shape on the way out rather than trusting the fields. */
+function normalizeStoredPost(post) {
+  if (!post || typeof post !== 'object') return null;
+  const name = collapseWhitespace(post.name) || 'Anonymous';
+  const title = collapseWhitespace(post.title);
+  const body = String(post.body == null ? '' : post.body);
+  if (!title && !body) return null;
+  return {
+    name,
+    title,
+    body,
+    category: SUBMISSION_CATEGORIES.includes(post.category) ? post.category : 'General',
+    date: post.date,
+  };
+}
+
+/* @pure-end */
 
 /* ============ COMMUNITY POST STORAGE ============
    localStorage is synchronous and blocks the main thread, so this store
@@ -108,7 +207,8 @@ const COMMUNITY_KEY = 'thl_community_posts';
 function readCommunityPosts() {
   try {
     const parsed = JSON.parse(localStorage.getItem(COMMUNITY_KEY) || '[]');
-    return Array.isArray(parsed) ? parsed.filter(p => p && typeof p === 'object') : [];
+    if (!Array.isArray(parsed)) return [];
+    return parsed.map(normalizeStoredPost).filter(Boolean);
   } catch (err) {
     return [];
   }
@@ -297,33 +397,73 @@ function renderCommunity() {
 }
 
 /* ============ FORM HANDLING ============ */
+/* Attaches (or clears) a message under one field, and marks the input
+   invalid for screen readers as well as sighted visitors. */
+function setFieldError(fieldId, message) {
+  const input = document.getElementById(fieldId);
+  if (!input) return;
+  const errorId = `${fieldId}-error`;
+  let el = document.getElementById(errorId);
+
+  if (!message) {
+    if (el) el.remove();
+    input.removeAttribute('aria-invalid');
+    input.removeAttribute('aria-describedby');
+    return;
+  }
+
+  if (!el) {
+    el = document.createElement('p');
+    el.id = errorId;
+    el.className = 'form-error';
+    input.insertAdjacentElement('afterend', el);
+  }
+  el.textContent = message;
+  input.setAttribute('aria-invalid', 'true');
+  input.setAttribute('aria-describedby', errorId);
+}
+
 function initSubmitForm() {
   const form = document.getElementById('submit-form');
   const toast = document.getElementById('submit-toast');
   if (!form) return;
 
+  const FIELDS = ['submit-name', 'submit-email', 'submit-title', 'submit-body'];
+  let submitting = false;
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
-    const name = document.getElementById('submit-name').value.trim();
-    const email = document.getElementById('submit-email').value.trim();
-    const title = document.getElementById('submit-title').value.trim();
-    const category = document.getElementById('submit-category').value;
-    const body = document.getElementById('submit-body').value.trim();
+    /* The handler is synchronous, but the scroll and toast below run on
+       timers - without this a double-click lands two identical posts. */
+    if (submitting) return;
 
-    if (!name || !title || !body) return;
+    const result = validateSubmission({
+      name: document.getElementById('submit-name').value,
+      email: document.getElementById('submit-email').value,
+      title: document.getElementById('submit-title').value,
+      category: document.getElementById('submit-category').value,
+      body: document.getElementById('submit-body').value,
+    });
 
-    const post = {
-      name,
-      email,
-      title,
-      category,
-      body,
-      date: new Date().toISOString().split('T')[0],
-    };
+    // Clear last attempt's messages, then show every current problem at
+    // once rather than making the visitor discover them one at a time.
+    FIELDS.forEach(id => setFieldError(id, null));
 
-    writeCommunityPost(post);
+    if (!result.valid) {
+      Object.entries(result.errors).forEach(([field, message]) => {
+        setFieldError(`submit-${field}`, message);
+      });
+      const firstBad = document.getElementById(`submit-${Object.keys(result.errors)[0]}`);
+      if (firstBad) {
+        firstBad.focus();
+        firstBad.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
+    submitting = true;
+    writeCommunityPost(result.value);
     form.reset();
 
     if (toast) {
@@ -339,6 +479,14 @@ function initSubmitForm() {
         communitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }, 500);
     }
+
+    setTimeout(() => { submitting = false; }, 1000);
+  });
+
+  // Clear a field's error as soon as the visitor starts fixing it.
+  FIELDS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('input', () => setFieldError(id, null));
   });
 }
 
@@ -386,12 +534,25 @@ function observeNewFadeIns(container) {
   container.querySelectorAll('.fade-in:not(.visible)').forEach(el => fadeObserver.observe(el));
 }
 
-/* ============ INIT ============ */
+/* ============ INIT ============
+   Isolated for the same reason as script.js: a corrupt entry in
+   localStorage should not stop renderCommunity from taking the rest of
+   the page down with it. The static markup in articles.html already
+   covers Featured and Archive, so a failure here degrades to the
+   server-rendered version rather than to a blank section. */
 document.addEventListener('DOMContentLoaded', () => {
-  renderFeatured();
-  renderArchiveFilters();
-  renderArchive('all', '');
-  renderCommunity();
-  initSubmitForm();
-  initArchiveSearch();
+  [
+    ['featured', renderFeatured],
+    ['archive-filters', renderArchiveFilters],
+    ['archive', () => renderArchive('all', '')],
+    ['community', renderCommunity],
+    ['submit-form', initSubmitForm],
+    ['archive-search', initArchiveSearch],
+  ].forEach(([name, run]) => {
+    try {
+      run();
+    } catch (err) {
+      console.error(`[articles] ${name} failed:`, err);
+    }
+  });
 });
