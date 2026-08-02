@@ -70,6 +70,20 @@ test('no page has an inline <script> — the CSP would block it', () => {
   }
 });
 
+test('no page has an inline event handler — the CSP would block it', () => {
+  /* The sibling test above catches inline <script> blocks, but an
+     onclick="" attribute is inline script too and was slipping through:
+     the formula sheet's print button sat dead behind script-src 'self'
+     for a whole release because nothing asserted on this. */
+  const offenders = [];
+  for (const f of htmlFiles()) {
+    const handlers = read(f).match(/\son[a-z]+\s*=\s*"[^"]*"/gi) || [];
+    for (const h of handlers) offenders.push(`${f} ->${h.trim()}`);
+  }
+  assert.equal(offenders.length, 0,
+    `inline event handlers found; the CSP forbids them, so they never fire. Bind them in a .js file instead:\n  ${offenders.join('\n  ')}`);
+});
+
 test('no page loads a subresource from a third-party origin', () => {
   const offenders = [];
   for (const f of htmlFiles()) {
