@@ -69,15 +69,59 @@ const ARTICLES = [
 ];
 
 /* ============ HELPERS ============ */
+const MAX_COMMUNITY_POSTS = 50;
+
 function formatDate(dateStr) {
   const d = new Date(dateStr);
+  if (Number.isNaN(d.getTime())) return '';
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
 function escapeHtml(str) {
   const div = document.createElement('div');
-  div.textContent = str;
+  div.textContent = str == null ? '' : String(str);
   return div.innerHTML;
+}
+
+/* Article copy is authored in ARTICLES above rather than submitted by
+   anyone, but it still goes through innerHTML — so an ampersand or a
+   stray angle bracket in a title would otherwise render as broken
+   markup rather than as text. */
+function escapeAttr(str) {
+  return escapeHtml(str).replace(/"/g, '&quot;');
+}
+
+/* Only ever fed the authored coverGradient values; this keeps anything
+   that is not a plain CSS gradient out of the style attribute. */
+function safeGradient(value) {
+  return /^(linear|radial)-gradient\([^;"<>]*\)$/.test(value || '') ? value : 'var(--bg-card)';
+}
+
+/* ============ COMMUNITY POST STORAGE ============
+   localStorage is synchronous and blocks the main thread, so this store
+   is deliberately bounded: oldest entries are evicted past
+   MAX_COMMUNITY_POSTS rather than letting the array grow for as long as
+   someone keeps submitting. Reads always return an array, whatever is
+   actually sitting in storage. */
+const COMMUNITY_KEY = 'thl_community_posts';
+
+function readCommunityPosts() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(COMMUNITY_KEY) || '[]');
+    return Array.isArray(parsed) ? parsed.filter(p => p && typeof p === 'object') : [];
+  } catch (err) {
+    return [];
+  }
+}
+
+function writeCommunityPost(post) {
+  try {
+    const posts = readCommunityPosts();
+    posts.push(post);
+    localStorage.setItem(COMMUNITY_KEY, JSON.stringify(posts.slice(-MAX_COMMUNITY_POSTS)));
+  } catch (err) {
+    /* storage full or blocked — the post still renders this session */
+  }
 }
 
 /* An article without a URL is written but not yet published — render it as
@@ -97,31 +141,31 @@ function renderFeatured() {
 
   const featured = sortByNewest(ARTICLES.filter(a => a.featured));
   if (featured.length === 0) {
-    grid.innerHTML = '<p class="empty-text">No featured articles yet.</p>';
+    setGridHtml(grid, '<p class="empty-text">No featured articles yet.</p>');
     return;
   }
 
-  grid.innerHTML = featured.map((article, idx) => {
+  setGridHtml(grid, featured.map((article, idx) => {
     const readable = isReadable(article);
     const tag = readable ? 'a' : 'div';
-    const href = readable ? ` href="${article.articleUrl}"` : '';
+    const href = readable ? ` href="${escapeAttr(article.articleUrl)}"` : '';
 
     return `
-    <${tag}${href} class="featured-card${readable ? '' : ' featured-card-locked'} fade-in fade-in-delay-${(idx % 3) + 1}" id="featured-${article.id}">
-      <div class="featured-card-cover" style="background: ${article.coverGradient};">
+    <${tag}${href} class="featured-card${readable ? '' : ' featured-card-locked'} fade-in fade-in-delay-${(idx % 3) + 1}" id="featured-${escapeAttr(article.id)}">
+      <div class="featured-card-cover" style="background: ${safeGradient(article.coverGradient)};">
         <div class="featured-badge">
           <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
           Featured
         </div>
         <div class="featured-card-overlay">
-          <span class="featured-category">${article.category}</span>
+          <span class="featured-category">${escapeHtml(article.category)}</span>
         </div>
       </div>
       <div class="featured-card-body">
-        <h3 class="featured-card-title">${article.title}</h3>
-        <p class="featured-card-excerpt">${article.excerpt}</p>
+        <h3 class="featured-card-title">${escapeHtml(article.title)}</h3>
+        <p class="featured-card-excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="featured-card-meta">
-          <span class="featured-author">${article.author}</span>
+          <span class="featured-author">${escapeHtml(article.author)}</span>
           <span class="featured-date">${readable ? formatDate(article.date) : 'In the works'}</span>
         </div>
       </div>
@@ -129,7 +173,7 @@ function renderFeatured() {
         <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
       </div>` : ''}
     </${tag}>`;
-  }).join('');
+  }).join(''));
 
   observeNewFadeIns(grid);
 }
@@ -165,28 +209,28 @@ function renderArchive(filterCategory, searchQuery) {
   grid.style.display = '';
   empty.style.display = 'none';
 
-  grid.innerHTML = list.map(article => {
+  setGridHtml(grid, list.map(article => {
     const readable = isReadable(article);
     const tag = readable ? 'a' : 'div';
-    const href = readable ? ` href="${article.articleUrl}"` : '';
+    const href = readable ? ` href="${escapeAttr(article.articleUrl)}"` : '';
 
     return `
-    <${tag}${href} class="archive-card${readable ? '' : ' archive-card-locked'} fade-in" id="archive-${article.id}">
-      <div class="archive-card-cover" style="background: ${article.coverGradient};">
-        <span class="archive-card-category">${article.category}</span>
+    <${tag}${href} class="archive-card${readable ? '' : ' archive-card-locked'} fade-in" id="archive-${escapeAttr(article.id)}">
+      <div class="archive-card-cover" style="background: ${safeGradient(article.coverGradient)};">
+        <span class="archive-card-category">${escapeHtml(article.category)}</span>
         ${readable ? '' : '<span class="archive-card-soon">Draft</span>'}
       </div>
       <div class="archive-card-body">
-        <h3 class="archive-card-title">${article.title}</h3>
-        <p class="archive-card-excerpt">${article.excerpt}</p>
+        <h3 class="archive-card-title">${escapeHtml(article.title)}</h3>
+        <p class="archive-card-excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="archive-card-meta">
-          <span>${article.author}</span>
+          <span>${escapeHtml(article.author)}</span>
           <span class="archive-card-dot">·</span>
           <span>${readable ? formatDate(article.date) : 'Not published yet'}</span>
         </div>
       </div>
     </${tag}>`;
-  }).join('');
+  }).join(''));
 
   observeNewFadeIns(grid);
 }
@@ -199,7 +243,7 @@ function renderArchiveFilters() {
   const categories = [...new Set(ARTICLES.map(a => a.category))];
 
   container.innerHTML = '<button class="filter-btn active" data-filter="all" type="button">All</button>' +
-    categories.map(cat => `<button class="filter-btn" data-filter="${cat}" type="button">${cat}</button>`).join('');
+    categories.map(cat => `<button class="filter-btn" data-filter="${escapeAttr(cat)}" type="button">${escapeHtml(cat)}</button>`).join('');
 
   container.querySelectorAll('.filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -217,12 +261,7 @@ function renderCommunity() {
   const empty = document.getElementById('community-empty');
   if (!grid || !empty) return;
 
-  let submissions = [];
-  try {
-    submissions = JSON.parse(localStorage.getItem('thl_community_posts') || '[]');
-  } catch (err) {
-    submissions = [];
-  }
+  const submissions = readCommunityPosts();
 
   if (submissions.length === 0) {
     grid.style.display = 'none';
@@ -236,20 +275,23 @@ function renderCommunity() {
   // Show newest first
   const sorted = [...submissions].reverse();
 
-  grid.innerHTML = sorted.map((post, idx) => `
+  setGridHtml(grid, sorted.map((post, idx) => {
+    const name = String(post.name || 'Anonymous');
+    const body = String(post.body || '');
+    return `
     <div class="community-card fade-in" id="community-post-${idx}">
       <div class="community-card-header">
-        <div class="community-avatar" aria-hidden="true">${escapeHtml(post.name.charAt(0).toUpperCase())}</div>
+        <div class="community-avatar" aria-hidden="true">${escapeHtml(name.charAt(0).toUpperCase())}</div>
         <div class="community-card-info">
-          <span class="community-author">${escapeHtml(post.name)}</span>
+          <span class="community-author">${escapeHtml(name)}</span>
           <span class="community-date">${formatDate(post.date)}</span>
         </div>
         <span class="community-category-tag">${escapeHtml(post.category)}</span>
       </div>
       <h3 class="community-card-title">${escapeHtml(post.title)}</h3>
-      <p class="community-card-body">${escapeHtml(post.body.substring(0, 300))}${post.body.length > 300 ? '…' : ''}</p>
-    </div>
-  `).join('');
+      <p class="community-card-body">${escapeHtml(body.substring(0, 300))}${body.length > 300 ? '…' : ''}</p>
+    </div>`;
+  }).join(''));
 
   observeNewFadeIns(grid);
 }
@@ -280,13 +322,7 @@ function initSubmitForm() {
       date: new Date().toISOString().split('T')[0],
     };
 
-    try {
-      const posts = JSON.parse(localStorage.getItem('thl_community_posts') || '[]');
-      posts.push(post);
-      localStorage.setItem('thl_community_posts', JSON.stringify(posts));
-    } catch (err) {
-      /* storage full or blocked — the post still renders this session */
-    }
+    writeCommunityPost(post);
 
     form.reset();
 
@@ -321,17 +357,33 @@ function initArchiveSearch() {
   });
 }
 
-/* ============ OBSERVE NEW FADE-INS ============ */
-function observeNewFadeIns(container) {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+/* ============ OBSERVE NEW FADE-INS ============
+   One observer for the whole page, not one per render. The archive
+   re-renders on every filter click and every debounced keystroke; the
+   previous version built a fresh IntersectionObserver each time and
+   never disconnected it, so each render left behind an observer still
+   holding strong references to the card elements innerHTML had just
+   thrown away — a detached DOM tree per search keystroke.
 
-  container.querySelectorAll('.fade-in:not(.visible)').forEach(el => observer.observe(el));
+   Targets are unobserved as soon as they reveal, and the cards a
+   container is about to discard are unobserved before it re-renders. */
+const fadeObserver = new IntersectionObserver((entries, obs) => {
+  entries.forEach(entry => {
+    if (!entry.isIntersecting) return;
+    entry.target.classList.add('visible');
+    obs.unobserve(entry.target);
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+/* Replace a container's contents without stranding the old cards
+   inside the observer. */
+function setGridHtml(container, html) {
+  container.querySelectorAll('.fade-in').forEach(el => fadeObserver.unobserve(el));
+  container.innerHTML = html;
+}
+
+function observeNewFadeIns(container) {
+  container.querySelectorAll('.fade-in:not(.visible)').forEach(el => fadeObserver.observe(el));
 }
 
 /* ============ INIT ============ */

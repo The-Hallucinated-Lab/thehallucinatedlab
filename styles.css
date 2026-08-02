@@ -20,8 +20,8 @@
   --radius-lg: 20px;
   --radius-xl: 28px;
   --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'JetBrains Mono', 'Courier New', monospace;
+  --font-heading: 'Outfit', 'Outfit Fallback', sans-serif;
+  --font-body: 'JetBrains Mono', 'JetBrains Mono Fallback', 'Courier New', monospace;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -248,4 +248,49 @@ section { padding: 6rem 2rem; position: relative; }
 @media (max-width: 768px) {
   .about-grid { grid-template-columns: 1fr; }
   section { padding: 4rem 1.2rem; }
+}
+
+/* ============================================================
+   RENDERING BUDGET
+   ============================================================ */
+
+/* Deliberately NOT using `content-visibility: auto` on the page
+   sections. It was tried and measured: every off-screen section
+   collapses to its contain-intrinsic-size placeholder until it first
+   renders, which on the homepage reported the document as 3481px tall
+   against a real 4205px and put in-page anchors on guessed positions.
+   `contain-intrinsic-size: auto` only fixes that from the second
+   render onward — first visits still get the wrong scroll height.
+
+   The saving it buys is proportional to how much off-screen content
+   there is, and pages here run ~250 DOM nodes across three sections.
+   Not worth a wrong scrollbar. Revisit if a page ever grows a long
+   virtualisable list. */
+
+/* .fade-in starts at opacity 0 and waits for the IntersectionObserver
+   in script.js. With scripting off that reveal never happens and the
+   page reads as blank, so hand the content back unconditionally. */
+@media (scripting: none) {
+  .fade-in { opacity: 1; transform: none; }
+}
+
+/* Motion is decoration everywhere on this site — no animation here
+   carries meaning that the static state does not. Honouring the
+   preference also drops the compositor layers and the wake-ups that
+   come with them, which is a battery win on laptops and phones. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  html { scroll-behavior: auto; }
+
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s !important;
+  }
 }
