@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Solutions — The Hallucinated Lab</title>
   <meta name="description" content="Local-first AI solutions by The Hallucinated Lab. Private, purpose-built, and fully under your control — including ScoobyBench, the AI hardware benchmarking desktop app.">
   <meta property="og:title" content="Solutions — The Hallucinated Lab">
@@ -21,10 +23,11 @@
   <meta property="og:image:alt" content="The Hallucinated Lab logo">
   <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
   <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
-  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
   <script type="application/ld+json">
@@ -81,7 +84,11 @@
   <header>
     <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
       <a href="/" class="nav-logo">
-        <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
         <span>THE HALLUCINATED LAB</span>
       </a>
       <ul class="nav-links" id="nav-links">
@@ -263,15 +270,6 @@
   </footer>
 
   <script src="script.js" defer></script>
-  <script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const tabs = document.querySelectorAll('.sb-tab');
-    const screens = document.querySelectorAll('.sb-screen');
-    tabs.forEach(tab => tab.addEventListener('click', () => {
-      tabs.forEach(t => t.classList.toggle('active', t === tab));
-      screens.forEach(s => s.classList.toggle('active', s.dataset.screen === tab.dataset.screen));
-    }));
-  });
-  </script>
+  <script src="solutions.js" defer></script>
 </body>
 </html>
