@@ -1,3 +1,38 @@
 .claude/worktrees/
 DESIGN-LANGUAGE.txt
 ARTICLE-FORMAT.txt
+
+# --- Secrets -------------------------------------------------------
+# This site is static and ships no credentials, but git history is
+# permanent: anything that lands here has to be rotated, not just
+# deleted. These patterns exist so a stray local file never becomes a
+# commit in the first place.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+id_rsa*
+*service-account*.json
+secrets.json
+
+# --- OS / editor ---------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# --- Local tooling -------------------------------------------------
+node_modules/
+.cache/
+*.log
+
+# Local Claude Code config
+.claude/
