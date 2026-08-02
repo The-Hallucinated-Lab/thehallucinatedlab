@@ -29,28 +29,78 @@ const CONFIG = {
   },
 };
 
+/* ============ DEVICE / CONNECTION BUDGET ============
+   The hero canvas and the typing loop are decoration. On a metered
+   connection, a low-memory phone, or for someone who has asked the OS
+   for less motion, they are pure cost — so we decide once, up front,
+   how much of it to run. */
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function shouldAnimate() {
+  if (prefersReducedMotion.matches) return false;
+  const conn = navigator.connection;
+  if (conn) {
+    if (conn.saveData) return false;
+    if (/(^|-)2g$/.test(conn.effectiveType || '')) return false;
+  }
+  if (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 2) return false;
+  return true;
+}
+
 /* ============ PARTICLES ============ */
 function initParticles() {
   const canvas = document.getElementById('particles-canvas');
   if (!canvas) return;
-  const ctx = canvas.getContext('2d');
+
+  // Nothing below this point should run at all if we're not animating.
+  if (!shouldAnimate()) {
+    canvas.remove();
+    return;
+  }
+
+  const ctx = canvas.getContext('2d', { alpha: true });
   if (!ctx) return;
 
   const particles = [];
   const { color, maxCount, densityFactor, connectionDistance, connectionOpacity, sizeRange, speedRange, opacityRange } = CONFIG.particles;
+  const connectionDistanceSq = connectionDistance * connectionDistance;
+  const rgb = `${color[0]}, ${color[1]}, ${color[2]}`;
 
-  const resize = () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  };
+  let width = 0;
+  let height = 0;
+  let rafId = null;
+  let onScreen = true;
+
+  /* A full-viewport canvas at devicePixelRatio 3 costs ~4x the backing
+     store of one at DPR 1.5 for a field of soft dots nobody inspects. */
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+
+  function resize() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    if (w === width && h === height) return;   // orientation-bar jitter fires resize with no real change
+    width = w;
+    height = h;
+    canvas.width = Math.round(w * dpr);
+    canvas.height = Math.round(h * dpr);
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
   resize();
-  window.addEventListener('resize', resize);
+
+  let resizeTimer;
+  const onResize = () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(resize, 150);
+  };
+  window.addEventListener('resize', onResize, { passive: true });
 
   class Particle {
     constructor() { this.reset(); }
     reset() {
-      this.x = Math.random() * canvas.width;
-      this.y = Math.random() * canvas.height;
+      this.x = Math.random() * width;
+      this.y = Math.random() * height;
       this.size = Math.random() * (sizeRange[1] - sizeRange[0]) + sizeRange[0];
       this.speedX = (Math.random() - 0.5) * speedRange;
       this.speedY = (Math.random() - 0.5) * speedRange;
@@ -59,44 +109,76 @@ function initParticles() {
     update() {
       this.x += this.speedX;
       this.y += this.speedY;
-      if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+      if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
     }
     draw() {
       ctx.beginPath();
       ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${this.opacity})`;
+      ctx.fillStyle = `rgba(${rgb}, ${this.opacity})`;
       ctx.fill();
     }
   }
 
-  const count = Math.min(maxCount, Math.floor(canvas.width * canvas.height / densityFactor));
+  const count = Math.min(maxCount, Math.floor(width * height / densityFactor));
   for (let i = 0; i < count; i++) particles.push(new Particle());
 
   function connectParticles() {
+    /* O(n^2) over the particle field every frame. Comparing squared
+       distances keeps the ~3,000 Math.sqrt calls per frame out of it —
+       the threshold comparison is identical either way. */
     for (let i = 0; i < particles.length; i++) {
+      const a = particles[i];
       for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
-        if (dist < connectionDistance) {
+        const b = particles[j];
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        const distSq = dx * dx + dy * dy;
+        if (distSq < connectionDistanceSq) {
+          const dist = Math.sqrt(distSq);
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(${color[0]}, ${color[1]}, ${color[2]}, ${connectionOpacity * (1 - dist / connectionDistance)})`;
+          ctx.strokeStyle = `rgba(${rgb}, ${connectionOpacity * (1 - dist / connectionDistance)})`;
           ctx.lineWidth = 0.5;
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
           ctx.stroke();
         }
       }
     }
   }
 
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particles.forEach(p => { p.update(); p.draw(); });
+  function frame() {
+    ctx.clearRect(0, 0, width, height);
+    for (const p of particles) { p.update(); p.draw(); }
     connectParticles();
-    requestAnimationFrame(animate);
+    rafId = requestAnimationFrame(frame);
   }
-  animate();
+
+  function start() {
+    if (rafId === null) rafId = requestAnimationFrame(frame);
+  }
+  function stop() {
+    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+
+  /* Stop the loop outright once the hero scrolls away, and whenever the
+     tab is backgrounded — a canvas nobody can see should not be burning
+     frames or battery. */
+  const visibilityObserver = new IntersectionObserver(([entry]) => {
+    onScreen = entry.isIntersecting;
+    if (onScreen && document.visibilityState === 'visible') start(); else stop();
+  }, { threshold: 0 });
+  visibilityObserver.observe(canvas);
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && onScreen) start(); else stop();
+  });
+
+  /* If motion preference flips mid-session, honour it without a reload. */
+  prefersReducedMotion.addEventListener('change', (e) => {
+    if (e.matches) { stop(); visibilityObserver.disconnect(); canvas.remove(); }
+  });
+
+  start();
 }
 
 /* ============ NAVBAR ============ */
@@ -108,48 +190,55 @@ function initNavbar() {
 
   if (!navbar) return;
 
-  // Scroll-aware background
+  /* Scroll-aware background. Passive so it never blocks scrolling, and
+     the class write is deferred to a frame so a fast flick does not
+     queue one style recalculation per scroll event. */
+  let scrollQueued = false;
   window.addEventListener('scroll', () => {
-    navbar.classList.toggle('scrolled', window.scrollY > CONFIG.navbar.scrollThreshold);
-  });
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(() => {
+      navbar.classList.toggle('scrolled', window.scrollY > CONFIG.navbar.scrollThreshold);
+      scrollQueued = false;
+    });
+  }, { passive: true });
 
   // Hamburger toggle with ARIA
   if (hamburger && navLinks) {
+    const closeMenu = () => {
+      navLinks.classList.remove('open');
+      hamburger.classList.remove('active');
+      hamburger.setAttribute('aria-expanded', 'false');
+    };
+
     hamburger.addEventListener('click', () => {
       const isOpen = navLinks.classList.toggle('open');
       hamburger.classList.toggle('active');
       hamburger.setAttribute('aria-expanded', String(isOpen));
     });
 
-    links.forEach(link => link.addEventListener('click', () => {
-      navLinks.classList.remove('open');
-      hamburger.classList.remove('active');
-      hamburger.setAttribute('aria-expanded', 'false');
-    }));
+    links.forEach(link => link.addEventListener('click', closeMenu));
 
     // Close menu on Escape key
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape' && navLinks.classList.contains('open')) {
-        navLinks.classList.remove('open');
-        hamburger.classList.remove('active');
-        hamburger.setAttribute('aria-expanded', 'false');
+        closeMenu();
         hamburger.focus();
       }
     });
   }
 
-  // Active section highlighting via IntersectionObserver (replaces scroll-based detection)
+  // Active section highlighting via IntersectionObserver
   const sections = document.querySelectorAll('section[id]');
+  if (!sections.length) return;
+
   const sectionObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      const id = entry.target.getAttribute('id');
-      const link = document.querySelector(`.nav-links a[href="#${id}"]`);
-      if (link) {
-        if (entry.isIntersecting) {
-          links.forEach(l => l.classList.remove('active'));
-          link.classList.add('active');
-        }
-      }
+      if (!entry.isIntersecting) return;
+      const link = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
+      if (!link) return;
+      links.forEach(l => l.classList.remove('active'));
+      link.classList.add('active');
     });
   }, { threshold: 0.3, rootMargin: '-10% 0px -60% 0px' });
 
@@ -158,15 +247,24 @@ function initNavbar() {
 
 /* ============ SCROLL ANIMATIONS ============ */
 function initScrollAnimations() {
-  const observer = new IntersectionObserver((entries) => {
+  const targets = document.querySelectorAll('.fade-in');
+  if (!targets.length) return;
+
+  /* Reveal is one-way, so each element is unobserved the moment it
+     fires. Once the last one has, the observer holds no element
+     references at all and can be collected. */
+  let remaining = targets.length;
+
+  const observer = new IntersectionObserver((entries, obs) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+      if (!entry.isIntersecting) return;
+      entry.target.classList.add('visible');
+      obs.unobserve(entry.target);
+      if (--remaining === 0) obs.disconnect();
     });
   }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
-  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+  targets.forEach(el => observer.observe(el));
 }
 
 /* ============ TYPING EFFECT ============ */
@@ -175,9 +273,6 @@ function initTypingEffect() {
   if (!el) return;
 
   const { texts, typeSpeed, deleteSpeed, pauseAfterType, pauseAfterDelete } = CONFIG.typing;
-  let textIdx = 0;
-  let charIdx = 0;
-  let deleting = false;
 
   const srOnly = document.createElement('span');
   srOnly.className = 'sr-only';
@@ -187,25 +282,49 @@ function initTypingEffect() {
   el.removeAttribute('aria-live');
   el.removeAttribute('aria-atomic');
 
+  /* Reduced motion still wants the content, just not the animation:
+     show the first line, announce it, and leave it alone. */
+  if (!shouldAnimate()) {
+    el.textContent = texts[0];
+    srOnly.textContent = texts[0];
+    return;
+  }
+
+  let textIdx = 0;
+  let charIdx = 0;
+  let deleting = false;
+  let timer = null;
+
   function type() {
     const current = texts[textIdx];
     el.textContent = current.substring(0, charIdx);
 
     if (!deleting && charIdx < current.length) {
       charIdx++;
-      setTimeout(type, typeSpeed);
+      timer = setTimeout(type, typeSpeed);
     } else if (!deleting && charIdx === current.length) {
       srOnly.textContent = current;
-      setTimeout(() => { deleting = true; type(); }, pauseAfterType);
+      timer = setTimeout(() => { deleting = true; type(); }, pauseAfterType);
     } else if (deleting && charIdx > 0) {
       charIdx--;
-      setTimeout(type, deleteSpeed);
+      timer = setTimeout(type, deleteSpeed);
     } else {
       deleting = false;
       textIdx = (textIdx + 1) % texts.length;
-      setTimeout(type, pauseAfterDelete);
+      timer = setTimeout(type, pauseAfterDelete);
     }
   }
+
+  /* A backgrounded tab does not need a timer waking it up every 40ms. */
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'hidden') {
+      clearTimeout(timer);
+      timer = null;
+    } else if (timer === null) {
+      type();
+    }
+  });
+
   type();
 }
 
