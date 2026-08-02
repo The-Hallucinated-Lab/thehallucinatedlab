@@ -247,6 +247,52 @@ in [SECURITY.md](SECURITY.md).
 
 ---
 
+## 🧪 Tests
+
+The repo has **no dependencies and no build step**, and the test suite
+keeps it that way — it uses `node:test` and `node:assert`, both built
+into Node. There is no `package.json` and nothing to install.
+
+```bash
+node --test "test/**/*.test.js"
+```
+
+Browser scripts are plain `<script>` files, not modules, so each one
+marks the block that is genuinely free of DOM, storage and network
+access with sentinel comments:
+
+```js
+/* @pure-start */
+function escapeHtml(str) { ... }
+/* @pure-end */
+```
+
+`test/helpers/load-pure.js` reads that block and evaluates it under
+Node. If someone reaches for `document` inside the markers, the tests
+fail with a `ReferenceError` — which is the point.
+
+What is covered:
+
+| File | Covers |
+|---|---|
+| `test/markdown.test.js` | `formatMarkdown()` — the only place text we did not author reaches `innerHTML`. Rendering, plus a payload battery asserting no input can emit a tag outside `<pre> <code> <strong> <em> <br>`. |
+| `test/submission.test.js` | The community form validator: bounds, normalization, the category allowlist, and coercion of whatever is already in `localStorage`. |
+| `test/site-invariants.test.js` | Properties of the site itself — no inline `<script>`, no third-party origin, no widened CSP, no `<img>` at a master image, no broken asset reference, and the budget above. |
+
+That last file is the one that matters most for a site with no build
+step. A future inline `<script>` will not throw — the CSP silently
+blocks it and the feature just stops working. The test catches it
+before it ships.
+
+### CI
+
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the suite
+plus a `node --check` over every script and a credential tripwire, on
+pull requests and pushes to `main`. Actions are pinned to commit SHAs
+rather than mutable tags.
+
+---
+
 ## 🧩 Page Sections
 
 | Page | Description |

@@ -1,0 +1,80 @@
+name: CI
+
+# The site has no build step, so there is nothing to compile — this
+# checks the things that can silently rot on a static site: a CSP that
+# stops being enforceable, an asset reference that no longer resolves,
+# a page that quietly grows past the documented budget.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# Read-only. Nothing here needs write access to the repo.
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Tests and site invariants
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # Pinned to a commit SHA rather than a mutable tag, so a compromised
+      # or retagged action cannot change what runs here.
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Node
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: '22'
+
+      # No package.json, no lockfile, no npm install. The test suite uses
+      # node:test and node:assert, both built in. Keeping the repo
+      # dependency-free means there is no supply chain to audit.
+      - name: Check every script parses
+        run: |
+          set -e
+          for f in $(git ls-files '*.js'); do
+            case "$f" in assets/vendor/*) continue ;; esac
+            node --check "$f"
+          done
+          echo "all scripts parse"
+
+      - name: Run tests
+        run: node --test "test/**/*.test.js"
+
+  secrets:
+    name: Secret scan
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      # The site ships no credentials and has no backend, so this is a
+      # tripwire rather than a scanner: it fails the build if a key
+      # pattern or a gitignored secret file ever gets committed.
+      - name: Look for committed credentials
+        run: |
+          set -e
+          patterns='(AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY-----|gh[pousr]_[A-Za-z0-9]{36}|sk-[A-Za-z0-9]{32,}|xox[baprs]-[A-Za-z0-9-]{10,})'
+          if git grep -nIE "$patterns" -- . ':!.github/workflows/ci.yml'; then
+            echo "::error::possible credential committed — rotate it, do not just delete the commit"
+            exit 1
+          fi
+          if git ls-files | grep -qE '(^|/)\.env$|\.pem$|\.p12$|\.keystore$|(^|/)id_rsa'; then
+            echo "::error::a key or env file is tracked by git"
+            exit 1
+          fi
+          echo "no credential patterns found"
