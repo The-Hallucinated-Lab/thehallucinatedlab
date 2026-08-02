@@ -1,0 +1,6 @@
+node_modules/
+npm-debug.log*
+
+# Claude Code scratch worktrees. These were previously committed by accident as
+# gitlinks (mode 160000), which broke clones since no submodule was configured.
+.claude/worktrees/

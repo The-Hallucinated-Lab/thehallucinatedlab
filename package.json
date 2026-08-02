@@ -1,0 +1,18 @@
+{
+  "name": "thehallucinatedlab",
+  "private": true,
+  "type": "commonjs",
+  "description": "Dev-only tooling. The site itself ships as static files with no build step and no runtime dependencies.",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.26.0",
+    "@babel/preset-react": "^7.26.3",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/react": "^16.1.0",
+    "jsdom": "^26.0.0",
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  }
+}
