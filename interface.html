@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' http://localhost:11434 http://127.0.0.1:11434; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Assistant — The Hallucinated Lab</title>
   <meta name="description" content="AI-powered local assistant by The Hallucinated Lab. Chat with Ollama running on your machine — no cloud, no API keys, fully private.">
   <meta property="og:title" content="Assistant — The Hallucinated Lab">
@@ -21,10 +23,11 @@
   <meta property="og:image:alt" content="The Hallucinated Lab logo">
   <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
   <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
-  <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="styles.css">
   <link rel="stylesheet" href="pages.css">
   <script type="application/ld+json">
@@ -76,7 +79,11 @@
   <header>
     <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
       <a href="/" class="nav-logo">
-        <img src="assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
         <span>THE HALLUCINATED LAB</span>
       </a>
       <ul class="nav-links" id="nav-links">
@@ -177,255 +184,7 @@
   </footer>
 
   <script src="script.js" defer></script>
-  <script>
-  /* ============ INTERFACE CHAT ENGINE ============ */
-  (function() {
-    'use strict';
-
-    const OLLAMA_BASE = 'http://localhost:11434';
-    const PREFERRED_MODELS = ['gemma4:e4b', 'gemma4:e2b', 'gemma3:4b', 'gemma2:2b', 'llama3.2:3b', 'llama3.2:1b'];
-    let MODEL = null; // resolved at connection time from /api/tags
-    let chatHistory = [];
-    let attachedFile = null;
-    let isStreaming = false;
-
-    document.addEventListener('DOMContentLoaded', () => {
-      checkOllamaConnection();
-      initChatUI();
-    });
-
-    function buildSystemPrompt() {
-      return `You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user's machine via Ollama. Be helpful, concise, and technical when needed.`;
-    }
-
-    /* ---- Connection Check ---- */
-    async function checkOllamaConnection() {
-      const statusEl = document.getElementById('setup-status');
-      const statusText = document.getElementById('setup-status-text');
-      const setupSteps = document.getElementById('setup-steps');
-      const retryBtn = document.getElementById('setup-retry');
-      const setupPanel = document.getElementById('chat-setup');
-      const chatContainer = document.getElementById('chat-container');
-
-      statusEl.className = 'setup-status checking';
-      statusText.textContent = 'Checking connection...';
-      setupSteps.style.display = 'none';
-      retryBtn.style.display = 'none';
-
-      try {
-        const res = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(5000) });
-        if (!res.ok) throw new Error('Not OK');
-        const data = await res.json();
-
-        const installed = (data.models || []).map(m => m.name).filter(Boolean);
-        if (installed.length === 0) {
-          statusEl.className = 'setup-status offline';
-          statusText.textContent = 'No models installed';
-          setupSteps.style.display = 'block';
-          retryBtn.style.display = 'inline-flex';
-        } else {
-          // Prefer one of our recommended models if installed; otherwise use the first one available.
-          MODEL = PREFERRED_MODELS.find(p => installed.includes(p)) || installed[0];
-          statusEl.className = 'setup-status online';
-          statusText.textContent = 'Connected — ' + MODEL;
-          setTimeout(() => {
-            setupPanel.classList.add('hidden');
-            chatContainer.classList.remove('hidden');
-          }, 800);
-        }
-      } catch (e) {
-        console.warn('[Ollama] connection failed:', e);
-        statusEl.className = 'setup-status offline';
-        statusText.textContent = 'Ollama not detected (or CORS blocked)';
-        setupSteps.style.display = 'block';
-        retryBtn.style.display = 'inline-flex';
-      }
-
-      // Bind retry once
-      if (!retryBtn.dataset.bound) {
-        retryBtn.addEventListener('click', () => checkOllamaConnection());
-        retryBtn.dataset.bound = '1';
-      }
-    }
-
-    /* ---- Chat UI ---- */
-    function initChatUI() {
-      const input = document.getElementById('chat-input');
-      const sendBtn = document.getElementById('chat-send');
-      const attachBtn = document.getElementById('chat-attach');
-      const fileInput = document.getElementById('chat-file-input');
-
-      // Auto-resize textarea
-      input.addEventListener('input', () => {
-        input.style.height = 'auto';
-        input.style.height = Math.min(input.scrollHeight, 120) + 'px';
-        sendBtn.disabled = !input.value.trim() && !attachedFile;
-      });
-
-      // Send on Enter (Shift+Enter for newline)
-      input.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          if (!sendBtn.disabled && !isStreaming) sendMessage();
-        }
-      });
-
-      sendBtn.addEventListener('click', () => {
-        if (!isStreaming) sendMessage();
-      });
-
-      // File attachment
-      attachBtn.addEventListener('click', () => fileInput.click());
-      fileInput.addEventListener('change', () => {
-        if (fileInput.files.length) {
-          attachedFile = fileInput.files[0];
-          input.placeholder = `📎 ${attachedFile.name} attached. Type a message...`;
-        }
-      });
-    }
-
-    /* ---- Send Message ---- */
-    async function sendMessage() {
-      const input = document.getElementById('chat-input');
-      const text = input.value.trim();
-      if (!text && !attachedFile) return;
-
-      // Remove empty state
-      const emptyEl = document.getElementById('chat-empty');
-      if (emptyEl) emptyEl.remove();
-
-      // Display user message
-      let userContent = text;
-      if (attachedFile) {
-        userContent += `\n📎 ${attachedFile.name}`;
-      }
-      addBubble('user', userContent);
-
-      // Build message for API
-      const userMsg = { role: 'user', content: text + (attachedFile ? `\n[Attached file: ${attachedFile.name}, type: ${attachedFile.type}, size: ${attachedFile.size} bytes]` : '') };
-      chatHistory.push(userMsg);
-
-      // Clear input
-      input.value = '';
-      input.style.height = 'auto';
-      document.getElementById('chat-send').disabled = true;
-
-      // Show typing indicator
-      const typingEl = showTyping();
-
-      isStreaming = true;
-
-      try {
-        const systemMsg = { role: 'system', content: buildSystemPrompt() };
-        const messages = [systemMsg, ...chatHistory];
-
-        const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: MODEL, messages, stream: true }),
-        });
-
-        if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
-
-        // Remove typing indicator
-        typingEl.remove();
-
-        // Stream response
-        const aiBubble = addBubble('ai', '');
-        const contentEl = aiBubble.querySelector('.bubble-content') || aiBubble;
-        let fullResponse = '';
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            try {
-              const json = JSON.parse(line);
-              if (json.message && json.message.content) {
-                fullResponse += json.message.content;
-                contentEl.innerHTML = formatMarkdown(fullResponse);
-                scrollToBottom();
-              }
-            } catch (e) { /* skip malformed line */ }
-          }
-        }
-
-        chatHistory.push({ role: 'assistant', content: fullResponse });
-
-      } catch (err) {
-        typingEl.remove();
-        addBubble('ai', `⚠️ Error: ${err.message}`);
-      }
-
-      isStreaming = false;
-      attachedFile = null;
-      document.getElementById('chat-file-input').value = '';
-      document.getElementById('chat-input').placeholder = 'Type a message...';
-    }
-
-    /* ---- UI Helpers ---- */
-    function addBubble(role, content) {
-      const messages = document.getElementById('chat-messages');
-      const bubble = document.createElement('div');
-      bubble.className = `chat-bubble chat-bubble-${role}`;
-
-      const contentSpan = document.createElement('span');
-      contentSpan.className = 'bubble-content';
-      contentSpan.innerHTML = role === 'ai' ? formatMarkdown(content) : escapeHtml(content);
-      bubble.appendChild(contentSpan);
-
-      messages.appendChild(bubble);
-      scrollToBottom();
-      return bubble;
-    }
-
-    function showTyping() {
-      const messages = document.getElementById('chat-messages');
-      const typing = document.createElement('div');
-      typing.className = 'chat-typing';
-      typing.innerHTML = '<span></span><span></span><span></span>';
-      messages.appendChild(typing);
-      scrollToBottom();
-      return typing;
-    }
-
-    function scrollToBottom() {
-      const messages = document.getElementById('chat-messages');
-      messages.scrollTop = messages.scrollHeight;
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML.replace(/\n/g, '<br>');
-    }
-
-    function formatMarkdown(text) {
-      // Basic markdown: bold, italic, code blocks, inline code, line breaks
-      let html = escapeHtml(text);
-      // Code blocks
-      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-      // Inline code
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      // Bold
-      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      // Italic
-      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      return html;
-    }
-
-  })();
-  </script>
+  <script src="interface.js" defer></script>
 
 </body>
 </html>

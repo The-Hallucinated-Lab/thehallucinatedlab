@@ -188,6 +188,18 @@
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
 }
+/* Connection and timeout notices. Deliberately not styled as an AI
+   bubble - 'Lost the connection to Ollama' is the page talking, not the
+   model, and presenting it as a reply reads as the assistant answering. */
+.chat-bubble-system {
+  align-self: center;
+  background: transparent;
+  border: 1px dashed var(--border-subtle);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  text-align: center;
+  max-width: 80%;
+}
 .chat-bubble-ai strong { color: var(--gold-primary); }
 .chat-bubble-ai code {
   display: inline; padding: 1px 6px; border-radius: 4px;
@@ -261,6 +273,10 @@
   background: var(--gold-light); transform: scale(1.05);
 }
 .chat-send-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+/* While a reply is streaming the send button becomes a stop button - it
+   stays enabled, because interrupting a runaway generation is the whole
+   point of it. */
+.chat-send-btn.is-stop { background: rgba(201, 168, 76, 0.15); border-color: var(--border-gold); }
 .chat-send-btn svg { width: 18px; height: 18px; }
 
 /* ============ RESPONSIVE ============ */
@@ -1094,6 +1110,21 @@
 .form-input::placeholder,
 .form-textarea::placeholder {
   color: var(--text-muted);
+}
+
+/* Validation feedback. Submitting an invalid form used to return
+   silently, which was indistinguishable from the page being broken. */
+.form-error {
+  margin-top: 0.4rem;
+  font-size: 0.75rem;
+  color: #e0785c;
+  line-height: 1.4;
+}
+
+.form-input[aria-invalid="true"],
+.form-select[aria-invalid="true"],
+.form-textarea[aria-invalid="true"] {
+  border-color: rgba(224, 120, 92, 0.55);
 }
 
 .form-select {
