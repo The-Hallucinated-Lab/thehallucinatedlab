@@ -199,3 +199,9 @@ function computeMT() {
 
 [mtA, mtB, mtD].forEach(el => el.addEventListener('input', computeMT));
 computeMT();
+
+/* The formula sheet's print button. This lives here rather than as an
+   inline onclick because the page ships script-src 'self' with no
+   'unsafe-inline' — an inline handler is silently blocked by CSP. */
+const printBtn = document.getElementById('print-sheet');
+if (printBtn) printBtn.addEventListener('click', () => window.print());
