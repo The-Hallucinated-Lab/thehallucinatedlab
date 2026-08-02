@@ -41,7 +41,7 @@ This is a **zero-dependency static website** — no frameworks, no build tools, 
 | **Structure** | HTML5 with semantic elements |
 | **Styling** | Vanilla CSS with CSS custom properties (design tokens) |
 | **Interactivity** | Vanilla JavaScript (ES6+) |
-| **Fonts** | [Outfit](https://fonts.google.com/specimen/Outfit) (headings), [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (body) via Google Fonts |
+| **Fonts** | [Outfit](https://fonts.google.com/specimen/Outfit) (headings), [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (body) — self-hosted variable WOFF2, Latin subsets |
 | **Hosting** | GitHub Pages |
 | **Domain** | [thehallucinatedlab.space](https://thehallucinatedlab.space) (custom domain via CNAME) |
 
@@ -67,9 +67,14 @@ thehallucinatedlab/
 ├── 404.html              # Custom not-found page (served by GitHub Pages)
 ├── styles.css            # Core stylesheet — design tokens, navbar, hero, about
 ├── pages.css             # Shared component styles for every sub-page
+├── fonts.css             # Self-hosted @font-face + metric-matched fallbacks
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── articles.js           # Article data store, archive search, submission form
+├── interface.js          # Assistant chat engine (Ollama)
+├── solutions.js          # ScoobyBench screenshot tab switcher
+├── redirect.js           # Shared redirect for the renamed-page stubs
+├── SECURITY.md           # Disclosure policy + known header limitations
 ├── robots.txt            # Crawl permissions — AI/LLM agents explicitly allowed
 ├── sitemap.xml           # 13 canonical URLs for search engines
 ├── llms.txt              # Concise Markdown site summary for LLM crawlers
@@ -81,13 +86,21 @@ thehallucinatedlab/
 │   ├── article.css           # Article/artifact reading styles
 │   ├── article.js            # Reading progress, TOC, scroll animations
 │   ├── ai-orchestration.html # Artifact — RAG pipeline + iteration game
+│   ├── ai-orchestration.js   # Its interactive figures
 │   ├── complexity.html       # Artifact — complexity explorer
+│   ├── complexity.js         # Its interactive figures
 │   └── sample-article.html   # Article — local-first AI
 └── assets/
+    ├── fonts/                # Variable WOFF2, latin + latin-ext subsets
+    ├── vendor/               # GSAP 3.12.2 (self-hosted, was cdnjs)
     └── images/
-        ├── logo.jpeg         # Lab logo (navbar + favicon)
-        ├── pratyush.jpeg     # Team member avatar
-        └── divyansh.jpeg     # Team member avatar
+        ├── logo.jpeg         # 1024px master — social card only
+        ├── logo-72.{avif,webp,jpg}      # Navbar, 36px @2x
+        ├── favicon-32.png / favicon-180.png
+        ├── pratyush.jpeg / divyansh.jpeg  # Masters for the variants below
+        ├── pratyush-240.{avif,webp,jpg}   # About-page avatar, 120px @2x
+        ├── pratyush-80.{avif,webp,jpg}    # Article byline, 40px @2x
+        └── divyansh-240.{avif,webp,jpg}
 ```
 
 ---
@@ -163,6 +176,74 @@ npx -y serve .
 ### Deploy
 
 The site is deployed automatically via **GitHub Pages** from the `main` branch. Any push to `main` triggers a deployment to [thehallucinatedlab.space](https://thehallucinatedlab.space).
+
+---
+
+## 📊 Performance Budget
+
+There is no bundler here to enforce this, so it lives in the README
+instead. **If a change pushes a page over these numbers, that is the
+change's problem to justify — not a number to raise.**
+
+| Budget | Limit | Why |
+|---|---|---|
+| Requests, first load | **≤ 10** | Every page today is 8 or fewer. |
+| Transferred bytes, first load | **≤ 150 KB** | Homepage is well under this after compression. |
+| JavaScript, per page | **≤ 40 KB** uncompressed | Article pages are the exception: GSAP is ~115 KB on top. |
+| Third-party origins | **0** | Fonts and GSAP are self-hosted. Adding an origin needs a real reason. |
+| Any single image | **≤ 20 KB** | Serve a variant sized for its container, never the master. |
+| DOM nodes, per page | **≤ 1,500** | Homepage sits around 250. |
+| Fonts | **2 families, variable, Latin only** | Two files cover every weight the CSS uses. |
+
+Rules of thumb behind those numbers:
+
+- **Never point an `<img>` at a master image.** `logo.jpeg` is 1024×1024
+  and exists only for the social card. The navbar uses `logo-72.*`.
+  A 1024px image in a 36px box costs ~4 MB of decoded RAM to display
+  3 KB worth of pixels.
+- **Every `<img>` needs `width` and `height`** so nothing shifts while
+  it loads.
+- **No inline `<script>`.** The CSP on every page is `script-src 'self'`
+  with no `unsafe-inline`; an inline block will silently not run. Put it
+  in a `.js` file and load it with `defer`.
+- **Decoration checks `shouldAnimate()` first.** `script.js` skips the
+  particle canvas and the typing loop on reduced-motion, Save-Data,
+  2G, and ≤2 GB devices. New animation should do the same.
+- **Anything that observes or subscribes must also stop.** Observers get
+  `unobserve`d on reveal; the particle loop stops when the tab is hidden
+  or the hero scrolls away.
+
+### Regenerating assets
+
+Image variants (needs Pillow):
+
+```bash
+python -c "
+from PIL import Image
+im = Image.open('assets/images/logo.jpeg').convert('RGB').resize((72,72), Image.LANCZOS)
+im.save('assets/images/logo-72.webp', quality=80, method=6)
+im.save('assets/images/logo-72.avif', quality=58)
+im.save('assets/images/logo-72.jpg', quality=80, optimize=True)
+"
+```
+
+Fonts: request the variable ranges from Google Fonts with a browser
+User-Agent, then save the `latin` and `latin-ext` WOFF2 files into
+`assets/fonts/` and update `fonts.css`. The URL that produced the
+current set:
+
+```bash
+curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36" \
+  "https://fonts.googleapis.com/css2?family=Outfit:wght@400..800&family=JetBrains+Mono:wght@400..600&display=swap"
+```
+
+The `size-adjust` / `ascent-override` numbers on the fallback faces in
+`fonts.css` were measured in-browser against Arial and Courier New. If
+you change a font, re-measure them — stale values reintroduce the
+layout shift they exist to prevent.
+
+Security policy and the headers GitHub Pages cannot set are documented
+in [SECURITY.md](SECURITY.md).
 
 ---
 
