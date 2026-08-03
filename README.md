@@ -71,7 +71,11 @@ thehallucinatedlab/
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── articles.js           # Article data store, archive search, submission form
-├── interface.js          # Assistant chat engine (Ollama)
+├── interface.js          # Assistant chat engine (intent parser + Ollama)
+├── image-converter.html  # Image Converter — the first THL tool
+├── image-converter.js    # Its drop zone, controls, and result panel
+├── toolkit.js            # Shared tool runtime + argument-table renderer
+├── nlp.js                # Intent parser (classification + slot filling)
 ├── solutions.js          # ScoobyBench screenshot tab switcher
 ├── redirect.js           # Shared redirect for the renamed-page stubs
 ├── SECURITY.md           # Disclosure policy + known header limitations
@@ -79,6 +83,24 @@ thehallucinatedlab/
 ├── sitemap.xml           # 13 canonical URLs for search engines
 ├── llms.txt              # Concise Markdown site summary for LLM crawlers
 ├── llms-full.txt         # Full machine-readable site directory
+├── RELEASING.md          # How the pip package gets published
+├── LICENSE               # MIT
+├── spec/
+│   ├── manifest.json         # THE tool spec — every consumer reads this
+│   └── nlp-fixtures.json     # Shared parser cases, run by both test suites
+├── scripts/
+│   └── sync-spec.js          # Copies the spec into the Python package
+├── python/                   # The `thehallucinatedlab` pip package
+│   ├── pyproject.toml
+│   ├── README.md             # PyPI long description
+│   ├── thehallucinatedlab/
+│   │   ├── registry.py           # Reads the manifest, validates arguments
+│   │   ├── nlp/__init__.py       # Python port of nlp.js
+│   │   ├── tools/image_convert.py# Pillow implementation
+│   │   ├── nexuslink.py          # Lazy door onto the NexusLink binding
+│   │   ├── cli.py                # The `thl` command
+│   │   └── data/manifest.json    # Synced copy of spec/manifest.json
+│   └── tests/                # pytest
 ├── .nojekyll             # Disables Jekyll on GitHub Pages
 ├── CNAME                 # Custom domain configuration
 ├── .gitattributes        # Git config
@@ -121,11 +143,15 @@ thehallucinatedlab/
 - **Smooth transitions** using a custom cubic-bezier easing curve
 
 ### Assistant
-- **Local-only chat** — talks to Ollama running on your machine; no API keys, no cloud, no data leaves your device
+- **Tools without a model** — an intent parser reads every message first; "convert this to png" runs in the page and returns a file, with nothing installed
+- **Asks rather than guesses** — a request missing a required argument gets one question, and the answer is merged into the pending call
+- **Local-only chat** — anything the parser doesn't recognise goes to Ollama running on your machine; no API keys, no cloud, no data leaves your device
 - **Auto-detects installed model** (recommended: `gemma4:e4b`); falls back through `gemma4:e2b → gemma3:4b → gemma2:2b → llama3.2:*` and finally any installed model
 - **Streaming responses** rendered token-by-token, with a setup panel that surfaces install/CORS instructions when Ollama isn't reachable
 
 ### Tools
+- **Image Converter** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
+- **One spec, four consumers** — `spec/manifest.json` drives the converter UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
 - **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)
@@ -172,6 +198,31 @@ python -m http.server 8000
 # Node.js (npx, no install)
 npx -y serve .
 ```
+
+> **The tool pages need a server, not `file://`.** `image-converter.html` and the
+> Assistant fetch `spec/manifest.json`, which the browser blocks over `file://`.
+> Every other page opens fine either way.
+
+### Working on the pip package
+
+The site stays dependency-free; `python/` does not, because encoding images is not
+something to hand-roll.
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -e "python[dev]"
+
+pytest python/ -q
+ruff check python/
+```
+
+Editing `spec/manifest.json` means re-syncing the copy the wheel carries:
+
+```bash
+node scripts/sync-spec.js
+```
+
+Publishing is documented in [RELEASING.md](RELEASING.md).
 
 ### Deploy
 
@@ -278,6 +329,19 @@ What is covered:
 | `test/markdown.test.js` | `formatMarkdown()` — the only place text we did not author reaches `innerHTML`. Rendering, plus a payload battery asserting no input can emit a tag outside `<pre> <code> <strong> <em> <br>`. |
 | `test/submission.test.js` | The community form validator: bounds, normalization, the category allowlist, and coercion of whatever is already in `localStorage`. |
 | `test/site-invariants.test.js` | Properties of the site itself — no inline `<script>`, no third-party origin, no widened CSP, no `<img>` at a master image, no broken asset reference, and the budget above. |
+| `test/nlp.test.js` | The intent parser, driven by `spec/nlp-fixtures.json`. |
+| `test/toolkit.test.js` | Argument validation against the manifest, output filenames, and the argument-table model. |
+| `test/manifest.test.js` | That the spec and the copy inside the wheel are byte-identical, that every tool declares what its consumers read, and that the examples shown on the site really parse the way they claim. |
+
+The intent parser exists twice — `nlp.js` and `thehallucinatedlab.nlp` — because the
+website and the package both need it and neither can import the other. That is a real
+drift risk, so both suites run the same `spec/nlp-fixtures.json`. Teach one parser a
+phrasing without the other and the build goes red.
+
+```bash
+pytest python/ -q      # 70 tests, including the shared parser fixtures
+ruff check python/
+```
 
 That last file is the one that matters most for a site with no build
 step. A future inline `<script>` will not throw — the CSP silently
@@ -286,10 +350,12 @@ before it ships.
 
 ### CI
 
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the suite
-plus a `node --check` over every script and a credential tripwire, on
-pull requests and pushes to `main`. Actions are pinned to commit SHAs
-rather than mutable tags.
+[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the Node suite
+plus a `node --check` over every script, the Python suite on 3.10 and 3.13,
+and a credential tripwire, on pull requests and pushes to `main`.
+[`release.yml`](.github/workflows/release.yml) publishes the pip package on a
+`v*` tag using PyPI Trusted Publishing, so no API token is stored here.
+Actions are pinned to commit SHAs rather than mutable tags.
 
 ---
 
