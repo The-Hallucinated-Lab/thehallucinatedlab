@@ -119,7 +119,7 @@ def _prepare(img: Image.Image, spec: dict[str, Any], background: str) -> Image.I
     return canvas
 
 
-def image_convert(
+def converter(
     source: Source,
     dest: str | os.PathLike[str] | None = None,
     *,
@@ -151,14 +151,14 @@ def image_convert(
         UnsupportedFormat: this Pillow install cannot encode the target.
 
     Example:
-        >>> result = image_convert("photo.jpg", format="png")
+        >>> result = converter("photo.jpg", format="png")
         >>> result.path.name
         'photo.png'
     """
     args = registry.validate(
-        "image_convert", format=format, quality=quality, background=background
+        "converter", format=format, quality=quality, background=background
     )
-    tool = registry.describe("image_convert")
+    tool = registry.describe("converter")
     spec = tool["meta"]["formats"][args["format"]]
     pillow_name = _ensure_encoder(args["format"])
 
@@ -203,4 +203,4 @@ def image_convert(
     )
 
 
-registry.register("image_convert", image_convert)
+registry.register("converter", converter)

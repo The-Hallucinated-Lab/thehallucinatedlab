@@ -26,8 +26,8 @@ endpoint to attack and no upload to intercept. That rules out most of
 the classes of bug people usually look for. What is genuinely in scope:
 
 - Cross-site scripting in any page or in the JavaScript that renders into
-  it — `articles.js`, `interface.js`, `tools.js`, `toolkit.js`, `nlp.js`,
-  `image-converter.js`, `articles/article.js`
+  it — `blogs.js`, `interface.js`, `tools.js`, `toolkit.js`, `nlp.js`,
+  `converter.js`, `blogs/blog.js`
 - A Content-Security-Policy bypass on any page
 - Anything that causes the Assistant page or a tool page to send data off
   the visitor's machine (see below)

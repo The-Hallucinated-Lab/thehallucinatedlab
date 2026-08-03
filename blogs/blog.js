@@ -1,5 +1,5 @@
 /* ============================================================
-   article.js — GSAP ScrollTrigger engine for interactive articles
+   blog.js — GSAP ScrollTrigger engine for interactive blogs
    Requires: gsap.min.js + ScrollTrigger.min.js loaded before this
    ============================================================ */
 
@@ -33,13 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   /* ============ PARALLAX HERO ============ */
-  const heroBg = document.querySelector('.article-hero-bg');
+  const heroBg = document.querySelector('.blog-hero-bg');
   if (heroBg) {
     gsap.to(heroBg, {
       yPercent: 30,
       ease: 'none',
       scrollTrigger: {
-        trigger: '.article-hero',
+        trigger: '.blog-hero',
         start: 'top top',
         end: 'bottom top',
         scrub: true,
@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ============ HEADING ANIMATIONS ============ */
-  const headings = gsap.utils.toArray('.article-content h2, .article-content h3');
+  const headings = gsap.utils.toArray('.blog-content h2, .blog-content h3');
   headings.forEach((heading) => {
     if (!heading.classList.contains('gsap-reveal')) {
       gsap.fromTo(heading,
@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* ============ STICKY TOC ACTIVE HIGHLIGHTING ============ */
   const tocLinks = document.querySelectorAll('.toc-link');
-  const sections = document.querySelectorAll('.article-content h2[id]');
+  const sections = document.querySelectorAll('.blog-content h2[id]');
 
   if (tocLinks.length && sections.length) {
     sections.forEach((section) => {
@@ -129,7 +129,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   /* ============ BLOCKQUOTE ENTRANCE ============ */
-  const quotes = gsap.utils.toArray('.article-content blockquote');
+  const quotes = gsap.utils.toArray('.blog-content blockquote');
   quotes.forEach((quote) => {
     gsap.fromTo(quote,
       { autoAlpha: 0, x: -30, borderLeftColor: 'transparent' },

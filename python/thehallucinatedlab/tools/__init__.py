@@ -7,6 +7,6 @@ does.
 
 from __future__ import annotations
 
-from .image_convert import ConvertResult, image_convert
+from .converter import ConvertResult, converter
 
-__all__ = ["image_convert", "ConvertResult"]
+__all__ = ["converter", "ConvertResult"]

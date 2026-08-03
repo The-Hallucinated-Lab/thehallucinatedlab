@@ -112,8 +112,8 @@ test('an optional default is itself a legal value', () => {
   }
 });
 
-test('image_convert declares encoder metadata for every format it offers', () => {
-  const tool = manifest.tools.find(t => t.name === 'image_convert');
+test('converter declares encoder metadata for every format it offers', () => {
+  const tool = manifest.tools.find(t => t.name === 'converter');
   const format = tool.params.find(p => p.name === 'format');
   const formats = tool.meta.formats;
 

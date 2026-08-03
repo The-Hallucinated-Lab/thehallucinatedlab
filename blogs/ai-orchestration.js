@@ -5,7 +5,7 @@
    ============================================================ */
 
 /* ============================================================
-   Article-scoped interactivity — vanilla JS, no dependencies.
+   Blog-scoped interactivity — vanilla JS, no dependencies.
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
 

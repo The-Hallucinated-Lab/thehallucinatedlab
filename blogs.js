@@ -1,12 +1,12 @@
 /* ============================================================
-   articles.js — Data store, rendering, filtering & form handling
-   for the Articles page (Featured / Archive / Community Spotlight).
+   blogs.js — Data store, rendering, filtering & form handling
+   for the Blogs page (Featured / Archive / Community Spotlight).
 
    The Featured grid, Archive grid, and category filters are also
-   pre-rendered as static markup in articles.html, so crawlers that
+   pre-rendered as static markup in blogs.html, so crawlers that
    do not execute JavaScript still see every article. This file
    re-renders the same output on load and then owns those grids —
-   when ARTICLES changes below, update articles.html to match.
+   when ARTICLES changes below, update blogs.html to match.
    ============================================================ */
 
 /* ============ ARTICLE DATA STORE ============ */
@@ -20,7 +20,7 @@ const ARTICLES = [
     excerpt: 'Why running AI models entirely on your machine isn\'t just a privacy win — it\'s the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.',
     coverGradient: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
     featured: true,
-    articleUrl: 'articles/sample-article.html',
+    articleUrl: 'blogs/sample-blog.html',
   },
   {
     id: 'quantum-ml-crossroads',
@@ -241,7 +241,7 @@ function renderFeatured() {
 
   const featured = sortByNewest(ARTICLES.filter(a => a.featured));
   if (featured.length === 0) {
-    setGridHtml(grid, '<p class="empty-text">No featured articles yet.</p>');
+    setGridHtml(grid, '<p class="empty-text">No featured blogs yet.</p>');
     return;
   }
 
@@ -473,7 +473,7 @@ function initSubmitForm() {
 
     renderCommunity();
 
-    const communitySection = document.getElementById('articles-community');
+    const communitySection = document.getElementById('blogs-community');
     if (communitySection) {
       setTimeout(() => {
         communitySection.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -537,7 +537,7 @@ function observeNewFadeIns(container) {
 /* ============ INIT ============
    Isolated for the same reason as script.js: a corrupt entry in
    localStorage should not stop renderCommunity from taking the rest of
-   the page down with it. The static markup in articles.html already
+   the page down with it. The static markup in blogs.html already
    covers Featured and Archive, so a failure here degrades to the
    server-rendered version rather than to a blank section. */
 document.addEventListener('DOMContentLoaded', () => {
@@ -552,7 +552,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       run();
     } catch (err) {
-      console.error(`[articles] ${name} failed:`, err);
+      console.error(`[blogs] ${name} failed:`, err);
     }
   });
 });

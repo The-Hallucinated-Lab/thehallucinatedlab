@@ -34,7 +34,7 @@ thl = "thehallucinatedlab.cli:main"
 
 [project.urls]
 Homepage = "https://thehallucinatedlab.space"
-Documentation = "https://thehallucinatedlab.space/image-converter.html"
+Documentation = "https://thehallucinatedlab.space/converter.html"
 Source = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
 Issues = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/issues"
 

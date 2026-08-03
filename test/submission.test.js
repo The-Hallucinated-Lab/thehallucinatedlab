@@ -16,7 +16,7 @@ const {
   formatDate,
   SUBMISSION_CATEGORIES,
   SUBMISSION_LIMITS,
-} = loadPure('articles.js', [
+} = loadPure('blogs.js', [
   'validateSubmission', 'normalizeStoredPost', 'escapeHtml',
   'safeGradient', 'formatDate', 'SUBMISSION_CATEGORIES', 'SUBMISSION_LIMITS',
 ]);

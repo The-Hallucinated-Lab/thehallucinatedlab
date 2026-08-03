@@ -2,14 +2,14 @@
 
 Every tool in the lab is a method on this package:
 
-    >>> from thehallucinatedlab import image_convert
-    >>> result = image_convert("photo.jpg", format="png")
+    >>> from thehallucinatedlab import converter
+    >>> result = converter("photo.jpg", format="png")
 
 If you cannot remember what a tool takes, the argument reference is on
 the website -- and it is generated from the very same spec this package
 validates against, so the two cannot disagree:
 
-    https://thehallucinatedlab.space/image-converter.html
+    https://thehallucinatedlab.space/converter.html
 
 You can also ask in plain english:
 
@@ -37,14 +37,21 @@ from .errors import (
 )
 from .nlp import merge_answer, parse
 from .registry import Registry, registry
-from .tools.image_convert import ConvertResult, image_convert
+from .tools.converter import ConvertResult, converter
 
 __version__ = "0.1.0"
 
+# Deprecated alias. The tool is "converter" everywhere now — website, spec,
+# CLI and API — but `image_convert` shipped in 0.1.0, so it keeps working
+# rather than breaking installs that already import it.
+image_convert = converter
+
 __all__ = [
     # tools
-    "image_convert",
+    "converter",
     "ConvertResult",
+    # deprecated, kept for 0.1.0 compatibility
+    "image_convert",
     # natural language
     "parse",
     "merge_answer",
