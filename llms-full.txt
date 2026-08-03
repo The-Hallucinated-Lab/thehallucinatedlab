@@ -86,7 +86,17 @@ Reusable code extracted from the lab's own projects. Full shelf at /library.html
 
 Purpose: packages and SDKs that drop into a reader's own project.
 
-Current entry — NexusLink Engine:
+Entry — thehallucinatedlab (Python toolkit):
+- Install: pip install thehallucinatedlab
+- Every THL tool is a method: `from thehallucinatedlab import image_convert`.
+- Also ships a `thl` command: `thl tools`, `thl convert photo.jpg --format png`, and a plain-english form, `thl "convert photo.jpg to png"`.
+- One spec file (spec/manifest.json) declares each tool's arguments, bounds, defaults and vocabulary. The website builds its converter UI and argument tables from it, the assistant parses against it, and the package validates against it, so the documentation cannot describe arguments the code does not accept.
+- Natural language is handled by a deterministic intent parser (classification plus slot filling), not a model. It is implemented twice, in JavaScript and Python, against a shared fixture file that both test suites run.
+- Requires Python 3.10+. Only runtime dependency is Pillow.
+- Errors are typed: THLError, ToolNotFound, InvalidArgument, MissingArgument, UnsupportedFormat.
+- Source: https://github.com/The-Hallucinated-Lab/thehallucinatedlab
+
+Entry — NexusLink Engine:
 - A headless LAN and WAN communication SDK for local-first, peer-to-peer applications. Written in Rust.
 - Zero-server by design. Peers communicate directly; no relay, no hosting cost, no single point of failure.
 - Encryption: X25519 key agreement, per-direction ChaCha20-Poly1305, perfect forward secrecy.
@@ -94,8 +104,21 @@ Current entry — NexusLink Engine:
 - Storage: local message history encrypted with Argon2id-derived keys.
 - Distribution: a Rust crate, a stable C ABI header, and a pip-installable Python SDK, with interop paths for Node, Flutter, and Go.
 - Platforms: Windows, Linux, macOS.
-- Install: pip install nexuslink
+- Install: not published to PyPI yet; build from source.
 - Source: https://github.com/06pratyush/NexusLinkEngine
+- Reachable through the toolkit namespace once its binding is installed: `from thehallucinatedlab import nexuslink`.
+
+---
+
+## Page: Image Converter — https://thehallucinatedlab.space/image-converter.html
+
+Purpose: convert an image between formats, and document the arguments the same tool takes everywhere else.
+
+- Converts between PNG, JPEG, WebP and AVIF using the browser's canvas API. The file is never uploaded; there is no endpoint and no server, and the page keeps working with the network off.
+- Arguments: format (required; png, jpeg, webp, avif, with jpg/jfif accepted as aliases), quality (integer 1-100, default 92, ignored for PNG because PNG is lossless), background (hex colour, default #ffffff, used to flatten transparency when the target has no alpha channel, which in practice means JPEG).
+- Browsers vary in which formats they can encode. The page probes each one at startup and disables the ones the browser cannot produce, rather than handing back a file whose extension does not match its contents.
+- The argument reference table on the page is generated from the shared tool spec, so it always matches what the code accepts.
+- The same conversion is available as image_convert in the thehallucinatedlab pip package, and by asking the Assistant in plain english.
 
 ---
 
@@ -106,7 +129,10 @@ Purpose: a browser chat interface that talks to a large language model running o
 - Connects to Ollama on localhost. No API key, no account, no cloud relay, no request ever leaving the machine.
 - Auto-detects an installed model, preferring gemma4:e4b and falling back through gemma4:e2b, gemma3:4b, gemma2:2b, and llama3.2 variants before using any installed model.
 - Responses stream token by token.
-- If Ollama is unreachable, the page shows a setup panel with install instructions, the model pull command, and the CORS environment variable that must be set before starting Ollama.
+- If Ollama is unreachable, the page shows a setup panel with install instructions, the model pull command, and the CORS environment variable that must be set before starting Ollama. That panel can be skipped, because tools do not need it.
+- Tool requests are handled before the model and never reach it. A deterministic intent parser reads every message first; if it recognises a THL tool ("convert this to png", "make it a jpg at 80 quality") the conversion runs in the page and the reply is a downloadable file. This works with nothing installed.
+- If a required argument is missing the assistant asks for that one argument and merges the answer into the pending request.
+- Anything the parser does not recognise is passed to Ollama as before. With no model available, the assistant replies with what it can actually do instead of a connection error.
 
 ---
 

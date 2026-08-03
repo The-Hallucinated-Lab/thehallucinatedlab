@@ -16,6 +16,7 @@ The Hallucinated Lab operates in three modes:
 
 - [Home](https://thehallucinatedlab.space/): Overview of the lab and a guide to every section of the site.
 - [Tools](https://thehallucinatedlab.space/tools.html): Three sections — a prompt library, LoRA adapters for locally running LLMs, and the THL Library of packages.
+- [Image Converter](https://thehallucinatedlab.space/image-converter.html): Converts images between PNG, JPEG, WebP and AVIF entirely in the browser on a canvas. Nothing is uploaded and it works offline. Doubles as the argument reference for the image_convert method in the thehallucinatedlab pip package.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser chat interface that connects to Ollama on the user's own machine. No API keys, no cloud relay.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Articles, Artifacts, and (upcoming) Notebooks.
@@ -26,7 +27,8 @@ The Hallucinated Lab operates in three modes:
 
 - [Prompt library](https://thehallucinatedlab.space/tools.html#prompts): Eight model-agnostic prompts for code review, root-cause debugging, refactoring, dataset triage, SQL generation, tutoring, paper review, and model routing. Free to copy, no account.
 - [LoRA adapters](https://thehallucinatedlab.space/tools.html#adapters): Small fine-tuned adapters that stack on a base model already installed locally. Currently in training; none are downloadable yet. Usage guides for Ollama and PEFT are published.
-- [THL Library](https://thehallucinatedlab.space/library.html): Open-source packages. Current entry is NexusLink Engine, a headless Rust SDK for encrypted peer-to-peer LAN/WAN communication with a pip-installable Python binding.
+- [Image Converter](https://thehallucinatedlab.space/image-converter.html): The first THL tool. Converts PNG, JPEG, WebP and AVIF client-side using the canvas API - no upload, no server, works offline. Arguments: format (required), quality (1-100, default 92), background (hex, flattens transparency for JPEG).
+- [THL Library](https://thehallucinatedlab.space/library.html): Open-source packages. `pip install thehallucinatedlab` gives every tool as a Python method plus a `thl` command; NexusLink Engine is a headless Rust SDK for encrypted peer-to-peer LAN/WAN communication, built from source rather than PyPI for now.
 
 ## Media
 

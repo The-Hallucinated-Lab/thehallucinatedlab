@@ -1,0 +1,105 @@
+name: Release to PyPI
+
+# Publishes python/ to PyPI when a v* tag is pushed.
+#
+# Uses Trusted Publishing (OIDC), so there is no API token in this repo
+# and nothing to rotate or leak: PyPI verifies the workflow identity
+# directly. That requires a one-time setup on pypi.org that cannot be
+# automated from here -- see RELEASING.md.
+#
+# Tests run again before the build. CI has almost certainly already run
+# them on the commit being tagged, but "almost certainly" is not what you
+# want standing between a typo and an immutable PyPI release.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+# Nothing here writes to the repository.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Install
+        run: python -m pip install --upgrade pip build twine && pip install -e "python[dev]"
+
+      - name: Lint
+        run: ruff check python/
+
+      - name: Run tests
+        run: pytest python/ -q
+
+      # A wheel whose bundled spec differs from the site's would ship a
+      # package documented by a page that describes something else.
+      - name: Check the tool spec is in sync
+        run: node scripts/sync-spec.js --check
+
+      # PyPI is append-only: 0.1.0 can never be re-uploaded. Catching a
+      # tag/version mismatch here is the difference between fixing a typo
+      # and burning a version number.
+      - name: Check the tag matches the package version
+        run: |
+          set -e
+          tag="${GITHUB_REF_NAME#v}"
+          version=$(python -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('python/pyproject.toml').read_text())['project']['version'])")
+          if [ "$tag" != "$version" ]; then
+            echo "::error::tag $GITHUB_REF_NAME does not match pyproject version $version"
+            exit 1
+          fi
+          echo "releasing $version"
+
+      - name: Build sdist and wheel
+        run: python -m build python/ --outdir dist/
+
+      - name: Check the metadata renders on PyPI
+        run: twine check --strict dist/*
+
+      - name: Upload the artifacts
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: dist
+          path: dist/
+
+  publish:
+    name: Publish
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # Separate job so the OIDC token is minted only after everything has
+    # already passed, and only this job can ever mint one.
+    permissions:
+      id-token: write
+
+    # Point the PyPI trusted publisher at this environment name. It also
+    # gives you a place to add a manual approval gate later.
+    environment:
+      name: pypi
+      url: https://pypi.org/p/thehallucinatedlab
+
+    steps:
+      # Same major as upload-artifact above: the two share an artifact
+      # format and mixing majors fails at download time.
+      - name: Download the artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: dist
+          path: dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
