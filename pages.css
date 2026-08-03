@@ -16,7 +16,11 @@
   color: var(--text-secondary); font-size: 1rem;
   line-height: 1.8; max-width: 600px; margin: 0 auto;
 }
-.hidden { display: none; }
+/* Utility class — needs !important because components defined later in this
+   file set their own `display` (.file-preview, .tool-result, .tool-status-error
+   all use flex/block). Same specificity means source order would otherwise win
+   and .hidden would silently do nothing. */
+.hidden { display: none !important; }
 
 /* ============ UTILITIES PAGE (empty state) ============ */
 .utilities-section { padding: 2rem 2rem 6rem; }
@@ -432,4 +436,279 @@
   .articles-grid { grid-template-columns: 1fr; }
   .visualiser-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .visualiser-body { min-height: 240px; }
+}
+
+
+/* ============================================================
+   TOOL ROUTER — recovered from worktree elastic-varahamihira-370e25
+   Tool grid, shared tool-page layout, dropzone, and in-chat results.
+   ============================================================ */
+
+/* ============ UTILITIES PAGE (tool grid) ============ */
+.utilities-section { padding: 2rem 2rem 6rem; }
+
+.tool-grid {
+  list-style: none; padding: 0; margin: 2rem auto 0;
+  max-width: 1100px;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.2rem;
+}
+.tool-card {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); transition: var(--transition);
+  overflow: hidden;
+}
+.tool-card:hover {
+  border-color: var(--border-gold);
+  transform: translateY(-3px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+.tool-card-link {
+  display: flex; flex-direction: column; gap: 0.8rem;
+  padding: 1.6rem; height: 100%;
+  text-decoration: none; color: inherit;
+}
+.tool-card-icon {
+  width: 48px; height: 48px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 12px; background: var(--gold-glow);
+  border: 1px solid var(--border-gold); color: var(--gold-primary);
+}
+.tool-card-title {
+  font-family: var(--font-heading); font-size: 1.05rem;
+  font-weight: 700; margin: 0;
+}
+.tool-card-desc {
+  color: var(--text-secondary); font-size: 0.84rem;
+  line-height: 1.6; margin: 0; flex: 1;
+}
+.tool-card-launch {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 0.4rem;
+  color: var(--gold-primary); font-size: 0.82rem; font-weight: 600;
+  letter-spacing: 0.5px;
+}
+.tool-card-launch svg { transition: var(--transition); }
+.tool-card:hover .tool-card-launch svg { transform: translateX(3px); }
+
+/* ============ TOOL PAGE (shared layout for tools/*.html) ============ */
+.tool-page-main { padding: 5rem 1.2rem 3rem; }
+.tool-page-shell {
+  max-width: 760px; margin: 0 auto;
+  display: flex; flex-direction: column; gap: 1.5rem;
+}
+.tool-page-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  align-self: flex-start;
+  padding: 6px 12px; border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); text-decoration: none;
+  font-size: 0.82rem; transition: var(--transition);
+}
+.tool-page-back:hover { color: var(--gold-primary); border-color: var(--border-gold); }
+
+.tool-page-header { text-align: center; padding: 0.5rem 0 0.5rem; }
+.tool-page-title {
+  font-family: var(--font-heading); font-size: clamp(1.8rem, 4vw, 2.5rem);
+  font-weight: 800; margin: 0 0 0.5rem;
+}
+.tool-page-subtitle {
+  color: var(--text-secondary); font-size: 0.9rem;
+  line-height: 1.7; max-width: 540px; margin: 0 auto;
+}
+
+.tool-card-surface {
+  background: var(--bg-card); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl); padding: 2rem;
+}
+
+/* Dropzone */
+.dropzone {
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 0.6rem;
+  min-height: 180px; padding: 2rem;
+  border: 2px dashed var(--border-subtle); border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.015);
+  transition: var(--transition); cursor: pointer; text-align: center;
+}
+.dropzone.is-dragover, .dropzone:hover {
+  border-color: var(--gold-primary); background: var(--gold-glow);
+}
+.dropzone-icon { color: var(--text-muted); opacity: 0.6; }
+.dropzone-label { color: var(--text-secondary); font-size: 0.88rem; }
+.dropzone-hint { color: var(--text-muted); font-size: 0.76rem; }
+.dropzone-browse {
+  color: var(--gold-primary); font-weight: 600;
+  text-decoration: underline; text-underline-offset: 3px;
+}
+
+/* File preview row */
+.file-preview {
+  display: flex; align-items: center; gap: 1rem;
+  padding: 1rem; border-radius: var(--radius-md);
+  background: var(--bg-secondary); border: 1px solid var(--border-subtle);
+}
+.file-preview-thumb {
+  width: 64px; height: 64px; border-radius: var(--radius-sm);
+  object-fit: cover; background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+}
+.file-preview-meta { flex: 1; min-width: 0; }
+.file-preview-name {
+  font-size: 0.88rem; font-weight: 600; color: var(--text-primary);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.file-preview-size { font-size: 0.76rem; color: var(--text-muted); margin-top: 2px; }
+.file-preview-clear {
+  flex-shrink: 0; width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; border: 1px solid var(--border-subtle);
+  background: transparent; color: var(--text-muted); cursor: pointer;
+  font-size: 1.1rem; line-height: 1;
+  transition: var(--transition);
+}
+.file-preview-clear:hover { color: #e74c3c; border-color: rgba(231, 76, 60, 0.4); }
+
+/* Options row */
+/* Stacked, not side by side: the vertical order is format then quality, which
+   is the same order as the CLI flags and the SDK positionals. Reading the page
+   top to bottom teaches the argument order without documenting it. */
+.tool-options {
+  display: flex; flex-direction: column; gap: 1.25rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--border-subtle);
+  border-bottom: 1px solid var(--border-subtle);
+  margin-top: 1.2rem;
+}
+.tool-option { display: flex; flex-direction: column; gap: 0.5rem; }
+.tool-option {
+  display: flex; flex-direction: column; gap: 6px;
+  flex: 1; min-width: 160px;
+}
+.tool-option-label {
+  font-size: 0.74rem; text-transform: uppercase; letter-spacing: 0.6px;
+  color: var(--text-muted); font-weight: 600;
+}
+.tool-option-segments {
+  display: inline-flex; padding: 3px;
+  background: var(--bg-secondary); border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md); gap: 2px;
+}
+.tool-option-segments label {
+  flex: 1; padding: 6px 10px; border-radius: 6px;
+  font-size: 0.78rem; font-weight: 600; cursor: pointer;
+  text-align: center; color: var(--text-secondary);
+  transition: var(--transition);
+}
+.tool-option-segments input[type="radio"] { display: none; }
+.tool-option-segments input[type="radio"]:checked + span,
+.tool-option-segments label:has(input:checked) {
+  background: var(--gold-primary); color: var(--bg-primary);
+}
+.tool-option-segments label span { display: block; }
+.tool-option-range {
+  display: flex; align-items: center; gap: 10px;
+}
+.tool-option-range input[type="range"] {
+  flex: 1; accent-color: var(--gold-primary);
+}
+.tool-option-range output {
+  font-family: var(--font-body); font-size: 0.82rem; font-weight: 600;
+  color: var(--gold-primary); min-width: 36px; text-align: right;
+}
+
+/* Action buttons */
+.tool-actions {
+  display: flex; gap: 10px; margin-top: 1.2rem;
+}
+.tool-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 12px 22px; border-radius: var(--radius-md);
+  font-family: var(--font-body); font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; transition: var(--transition); border: 1px solid transparent;
+  text-decoration: none;
+}
+.tool-btn-primary {
+  flex: 1;
+  background: var(--gold-primary); color: var(--bg-primary);
+  border-color: var(--gold-primary);
+}
+.tool-btn-primary:hover:not(:disabled) {
+  background: var(--gold-light); transform: translateY(-1px);
+  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.25);
+}
+.tool-btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.tool-btn-secondary {
+  background: transparent; color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+.tool-btn-secondary:hover { color: var(--gold-primary); border-color: var(--border-gold); }
+
+/* Result panel */
+.tool-result {
+  margin-top: 1.5rem; padding: 1.4rem;
+  border-radius: var(--radius-lg);
+  background: rgba(46, 204, 113, 0.06);
+  border: 1px solid rgba(46, 204, 113, 0.2);
+  display: flex; flex-direction: column; gap: 1rem;
+}
+.tool-result-header {
+  display: flex; align-items: center; gap: 10px;
+  font-size: 0.86rem; font-weight: 600; color: #2ecc71;
+}
+.tool-result-meta {
+  font-size: 0.78rem; color: var(--text-secondary);
+  display: flex; flex-wrap: wrap; gap: 1rem;
+}
+.tool-result-meta span strong { color: var(--text-primary); }
+
+/* Status / error */
+.tool-status-error {
+  margin-top: 1rem; padding: 0.9rem 1rem;
+  border-radius: var(--radius-md);
+  background: rgba(231, 76, 60, 0.08);
+  border: 1px solid rgba(231, 76, 60, 0.25);
+  color: #e74c3c; font-size: 0.84rem;
+}
+
+
+/* In-chat tool result (e.g. converted file) */
+.chat-tool-meta {
+  margin-top: 4px; opacity: 0.7;
+  font-size: 0.78rem; color: var(--text-secondary);
+}
+.chat-tool-download {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 10px; padding: 8px 14px; border-radius: var(--radius-md);
+  background: var(--gold-glow); border: 1px solid var(--border-gold);
+  color: var(--gold-primary); text-decoration: none;
+  font-size: 0.82rem; font-weight: 600;
+  transition: var(--transition);
+}
+.chat-tool-download:hover {
+  background: var(--gold-primary); color: var(--bg-primary);
+}
+
+
+/* ---- Assistant quick-action chips ---- */
+/* Horizontal padding matches .chat-input-bar so the chips line up with the
+   text field rather than sitting flush against the container edge. */
+.chat-quick {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 0 1.5rem 10px;
+}
+.chat-chip {
+  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.5px;
+  padding: 6px 13px; border-radius: 99px; cursor: pointer;
+  background: transparent; border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); transition: var(--transition);
+}
+.chat-chip:hover {
+  color: var(--gold-primary); border-color: var(--border-gold);
+  background: var(--gold-glow);
+}
+@media (max-width: 768px) {
+  .chat-quick { overflow-x: auto; flex-wrap: nowrap; scrollbar-width: none; }
+  .chat-quick::-webkit-scrollbar { display: none; }
+  .chat-chip { flex-shrink: 0; }
 }

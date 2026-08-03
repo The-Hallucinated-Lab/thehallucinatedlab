@@ -66,9 +66,21 @@ body {
   transition: var(--transition);
 }
 .navbar.scrolled { border-bottom-color: var(--border-subtle); background: rgba(5, 5, 5, 0.95); }
-.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.nav-logo img { height: 36px; width: 36px; border-radius: 50%; }
-.nav-logo span { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5px; }
+/* Gap is 0 by design: a hidden wordmark must not reserve gap space, or the
+   logo sits with a phantom indent. Spacing is animated via margin-left instead. */
+.nav-logo { display: flex; align-items: center; gap: 0; text-decoration: none; }
+.nav-logo img { height: 36px; width: 36px; border-radius: 50%; flex-shrink: 0; }
+.nav-logo span {
+  font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem;
+  background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  display: inline-block; overflow: hidden; white-space: nowrap;
+  max-width: 0; opacity: 0; margin-left: 0;
+  transition: max-width var(--transition), opacity 0.3s ease, margin-left var(--transition);
+}
+/* The text stays in the DOM, only clipped — screen readers still announce it. */
+.nav-logo:hover span, .nav-logo:focus-visible span { max-width: 340px; opacity: 1; margin-left: 12px; }
+@media (prefers-reduced-motion: reduce) { .nav-logo span { transition: none; } }
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; transition: var(--transition); position: relative; }
 .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--gold-primary); transition: var(--transition); }
@@ -218,4 +230,7 @@ section { padding: 6rem 2rem; position: relative; }
   .nav-hamburger { display: flex; z-index: 1001; }
   .about-grid { grid-template-columns: 1fr; }
   section { padding: 4rem 1.2rem; }
+  /* Touch devices have no hover, so a hover-only wordmark would be
+     permanently invisible. Show it unconditionally below this breakpoint. */
+  .nav-logo span { max-width: none; opacity: 1; margin-left: 12px; font-size: 0.95rem; }
 }
