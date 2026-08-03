@@ -182,6 +182,119 @@ function initParticles() {
 }
 
 /* ============ NAVBAR ============ */
+/* ============ NAV SUBSECTIONS ============
+   Keyed by the href already in the markup, so the nav stays declarative in
+   HTML and this only enhances it. A page with no entry simply never
+   expands, which is why Home, Certification and Consultancy are absent
+   rather than listed with empty arrays. */
+const NAV_CHILDREN = {
+  'tools.html': [
+    { label: 'Prompts', href: 'tools.html#prompts' },
+    { label: 'Adapters', href: 'tools.html#adapters' },
+    { label: 'Library', href: 'tools.html#library' },
+  ],
+  'media.html': [
+    { label: 'Blogs', href: 'blogs.html' },
+    { label: 'Artifacts', href: 'artifacts.html' },
+  ],
+  'interface.html': [
+    { label: 'Converter', href: 'converter.html' },
+  ],
+};
+
+/* 20px stroke glyphs, drawn on the 24-grid the rest of the site uses. */
+const NAV_ICONS = {
+  '/': 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
+  'tools.html': 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.1-.5-.5-2.1z',
+  'interface.html': 'M12 3.5l1.7 4.8L18.5 10l-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z',
+  'solutions.html': 'M12 3l9 5-9 5-9-5zM3 12.5 12 17l9-4.5M3 17 12 21l9-4',
+  'media.html': 'M12 6.5a4 4 0 0 0-4-2H3v13h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v-13h-5a4 4 0 0 0-4 2zM12 6.5v13',
+  'certification.html': 'M12 3l2.3 4.7 5.2.8-3.8 3.6.9 5.1L12 14.8l-4.6 2.4.9-5.1L4.5 8.5l5.2-.8z',
+  'consultancy.html': 'M16 20v-1a4 4 0 0 0-8 0v1M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7',
+};
+
+/* Collapse each top-level link to its icon and reveal the label on hover,
+   then expand its subsections inline to the right of whatever was clicked.
+   Progressive enhancement on purpose: the <ul> stays in the HTML, so with
+   JS off (or for a crawler) it is still a plain list of working links. */
+function initNavFlyout() {
+  const list = document.querySelector('.nav-links');
+  if (!list || !window.matchMedia('(min-width: 769px)').matches) return;
+
+  const key = a => (a.getAttribute('href') || '').replace(/^\.\//, '');
+  let openItem = null;
+
+  const collapse = () => {
+    if (!openItem) return;
+    openItem.querySelector('.nav-flyout').style.width = '0px';
+    openItem.classList.remove('is-open');
+    openItem = null;
+  };
+
+  list.querySelectorAll(':scope > li').forEach((li) => {
+    const link = li.querySelector('a');
+    if (!link) return;
+    const href = key(link);
+
+    const icon = NAV_ICONS[href];
+    if (icon) {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('aria-hidden', 'true');
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', icon);
+      svg.appendChild(path);
+      /* Keep the text node — it is the accessible name and the crawlable
+         label. CSS clips it to zero width until hover. */
+      const label = document.createElement('span');
+      label.className = 'nav-label';
+      label.textContent = link.textContent.trim();
+      link.textContent = '';
+      link.append(svg, label);
+      link.classList.add('has-icon');
+    }
+
+    const children = NAV_CHILDREN[href];
+    if (!children) return;
+
+    li.classList.add('has-children');
+    const fly = document.createElement('span');
+    fly.className = 'nav-flyout';
+    const inner = document.createElement('span');
+    inner.className = 'nav-flyout-inner';
+    const rule = document.createElement('span');
+    rule.className = 'nav-flyout-rule';
+    inner.appendChild(rule);
+    children.forEach((c) => {
+      const a = document.createElement('a');
+      a.className = 'nav-sub';
+      a.href = c.href;
+      a.textContent = c.label;
+      inner.appendChild(a);
+    });
+    fly.appendChild(inner);
+    li.appendChild(fly);
+
+    link.addEventListener('click', (e) => {
+      /* First click opens, second follows through. The section page is
+         still reachable, but one click reveals what is inside it. */
+      if (openItem === li) return;
+      e.preventDefault();
+      collapse();
+      openItem = li;
+      li.classList.add('is-open');
+      fly.style.width = inner.scrollWidth + 'px';
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    if (openItem && !openItem.contains(e.target)) collapse();
+  });
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') collapse();
+  });
+}
+
 function initNavbar() {
   const navbar = document.querySelector('.navbar');
   const hamburger = document.querySelector('.nav-hamburger');
@@ -189,6 +302,8 @@ function initNavbar() {
   const links = document.querySelectorAll('.nav-links a');
 
   if (!navbar) return;
+
+  initNavFlyout();
 
   /* Scroll-aware background. Passive so it never blocks scrolling, and
      the class write is deferred to a frame so a fast flick does not

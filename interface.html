@@ -6,15 +6,15 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://localhost:11434 http://127.0.0.1:11434; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Assistant — The Hallucinated Lab</title>
-  <meta name="description" content="AI-powered local assistant by The Hallucinated Lab. Chat with Ollama running on your machine — no cloud, no API keys, fully private.">
+  <meta name="description" content="Local assistant by The Hallucinated Lab. Say what you want in plain English and it runs the tool in your browser — no model to install, nothing uploaded.">
   <meta property="og:title" content="Assistant — The Hallucinated Lab">
-  <meta property="og:description" content="AI-powered local assistant. Chat with Ollama running on your machine — fully private.">
+  <meta property="og:description" content="Say what you want in plain English and it runs the tool right in your browser. Nothing to install, nothing uploaded.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/interface.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/interface.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Assistant — The Hallucinated Lab">
-  <meta name="twitter:description" content="AI-powered local assistant. Chat with Ollama on your machine.">
+  <meta name="twitter:description" content="Plain-English requests, run as local tools right in your browser.">
   <meta property="og:site_name" content="The Hallucinated Lab">
   <meta property="og:locale" content="en_US">
   <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
@@ -56,8 +56,8 @@
       "name": "The Hallucinated Lab Assistant",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Any modern web browser",
-      "browserRequirements": "Requires JavaScript and a local Ollama runtime on the same machine",
-      "description": "A browser chat interface that connects to Ollama running on your own machine. No API keys, no accounts, no cloud relay - requests never leave the device. Auto-detects an installed model and streams responses token by token.",
+      "browserRequirements": "Requires JavaScript. No model, runtime or install needed.",
+      "description": "A browser interface that parses a plain-English request and runs the matching tool locally on the page. No model, no API keys, no accounts, no cloud relay - files never leave the device.",
       "url": "https://thehallucinatedlab.space/interface.html",
       "publisher": {
         "@id": "https://thehallucinatedlab.space/#organization"
@@ -105,68 +105,20 @@
 
     <section class="interface-section" id="interface-section">
 
-      <!-- Setup Panel (shown when Ollama is not detected) -->
-      <div class="chat-setup-panel" id="chat-setup">
-        <div class="setup-status checking" id="setup-status">
-          <span class="status-dot"></span>
-          <span id="setup-status-text">Checking connection...</span>
-        </div>
-        <h1>Local AI Assistant</h1>
-        <p>Chat connects to <strong style="color:var(--gold-primary);">Ollama</strong> running on your machine. No API keys, no cloud, no data leaves your device. Completely local.</p>
-        <p style="opacity:0.75;font-size:0.85rem;"><strong style="color:var(--gold-primary);">Tools need none of this.</strong> Converting an image is understood and run right here in the page — you only need Ollama for open-ended conversation.</p>
-
-        <div class="setup-steps" id="setup-steps" style="display:none;">
-          <div class="setup-step">
-            <div class="setup-step-num">1</div>
-            <div class="setup-step-text">
-              Install Ollama from <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" style="color:var(--gold-primary);">ollama.com</a>
-            </div>
-          </div>
-          <div class="setup-step">
-            <div class="setup-step-num">2</div>
-            <div class="setup-step-text">
-              Pull a model — recommended: <code>ollama pull gemma4:e4b</code><br>
-              <span style="opacity:0.7;font-size:0.8rem;">Any installed model works; the page picks the first one it finds.</span>
-            </div>
-          </div>
-          <div class="setup-step">
-            <div class="setup-step-num">3</div>
-            <div class="setup-step-text">
-              Allow the page to talk to Ollama (CORS). Set this <strong>before</strong> starting Ollama:<br>
-              <strong>Local dev (file:// or localhost):</strong><br>
-              <code>setx OLLAMA_ORIGINS "*"</code> &nbsp;<em>(Windows)</em><br>
-              <code>export OLLAMA_ORIGINS="*"</code> &nbsp;<em>(macOS / Linux)</em><br>
-              <strong>Production site:</strong><br>
-              <code>OLLAMA_ORIGINS=https://thehallucinatedlab.space</code><br>
-              Then restart Ollama.
-            </div>
-          </div>
-          <div class="setup-step">
-            <div class="setup-step-num">4</div>
-            <div class="setup-step-text">
-              Make sure Ollama is running, then click Retry below.
-            </div>
-          </div>
-        </div>
-
-        <button class="setup-retry-btn" id="setup-retry" style="display:none;">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-          Retry Connection
-        </button>
-
-        <button class="setup-skip-btn" id="setup-skip" style="display:none;">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
-          Skip — just use the tools
-        </button>
-      </div>
-
-      <!-- Chat Container (shown when Ollama is connected) -->
-      <div class="chat-container hidden" id="chat-container">
+      <!-- No setup step: the router needs nothing installed. -->
+      <div class="chat-container" id="chat-container">
         <div class="chat-messages" id="chat-messages">
           <div class="chat-empty" id="chat-empty">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
-            <p>Attach an image and say <em>"convert this to png"</em> — that runs here in the page. Anything else goes to your local Ollama model.</p>
+            <p>Attach an image and say <em>"convert this to webp"</em>. Everything runs here in the page — nothing to install, nothing uploaded.</p>
           </div>
+        </div>
+
+        <div class="chat-quick" id="chat-quick" role="group" aria-label="Quick actions">
+          <button type="button" class="chat-chip" data-fill="convert this to png">convert · png</button>
+          <button type="button" class="chat-chip" data-fill="convert this to jpeg">convert · jpeg</button>
+          <button type="button" class="chat-chip" data-fill="convert this to webp">convert · webp</button>
+          <button type="button" class="chat-chip" data-fill="convert this to webp at 70 quality">quality · 70</button>
         </div>
 
         <div class="chat-input-bar">
