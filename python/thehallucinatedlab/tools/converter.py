@@ -84,7 +84,7 @@ def _hex_to_rgb(value: str) -> tuple[int, int, int]:
 
 
 def _read_source(source: Source) -> tuple[Path | None, bytes]:
-    if isinstance(source, (bytes, bytearray)):
+    if isinstance(source, bytes | bytearray):
         return None, bytes(source)
     if hasattr(source, "read"):
         payload = source.read()

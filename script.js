@@ -189,16 +189,14 @@ function initParticles() {
    rather than listed with empty arrays. */
 const NAV_CHILDREN = {
   'tools.html': [
-    { label: 'Prompts', href: 'tools.html#prompts' },
-    { label: 'Adapters', href: 'tools.html#adapters' },
-    { label: 'Library', href: 'tools.html#library' },
+    { label: 'Converter', href: 'converter.html' },
+    { label: 'Assistant', href: 'interface.html' },
+    { label: 'Prompts', href: 'prompts.html' },
+    { label: 'Adapters', href: 'adapters.html' },
   ],
   'media.html': [
     { label: 'Blogs', href: 'blogs.html' },
     { label: 'Artifacts', href: 'artifacts.html' },
-  ],
-  'interface.html': [
-    { label: 'Converter', href: 'converter.html' },
   ],
 };
 
@@ -220,6 +218,11 @@ const NAV_ICONS = {
 function initNavFlyout() {
   const list = document.querySelector('.nav-links');
   if (!list || !window.matchMedia('(min-width: 769px)').matches) return;
+
+  /* Scoping class: the icon styling must not apply to the plain text list
+     that mobile and no-JS get. CSS keys off .nav-links.is-icons, so the
+     enhanced and unenhanced states can never bleed into each other. */
+  list.classList.add('is-icons');
 
   const key = a => (a.getAttribute('href') || '').replace(/^\.\//, '');
   let openItem = null;

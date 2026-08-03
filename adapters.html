@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>LoRA Adapters — The Hallucinated Lab</title>
+  <meta name="description" content="LoRA adapters by The Hallucinated Lab — small fine-tuned adapters that stack onto a base model you already run locally.">
+  <meta property="og:title" content="LoRA Adapters — The Hallucinated Lab">
+  <meta property="og:description" content="Small fine-tuned adapters that stack onto a model you already run.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/adapters.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/adapters.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="LoRA Adapters — The Hallucinated Lab">
+  <meta name="twitter:description" content="Small fine-tuned adapters that stack onto a model you already run.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Take It And Run</span>
+      <h1 class="page-title">LoRA Adapters</h1>
+      <p class="page-subtitle">Small fine-tuned adapters that stack onto a base model already installed on your machine.</p>
+    </section>
+
+    <section class="media-section">
+      <div class="container">
+          <p class="section-intro">Small fine-tuned adapters you load on top of a model you already run locally. A few dozen megabytes each — no new base model to download, no cloud inference, and you can unload one the moment you're done with it.</p>
+        </div>
+
+        <div class="adapter-grid">
+
+          <div class="adapter-card fade-in fade-in-delay-1">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-review-8b</h3>
+              <span class="adapter-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+            </div>
+            <p class="adapter-desc">Teaches a general instruct model to produce structured code review output — severity, location, failure case, fix — instead of prose commentary.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Llama 3.1 8B Instruct</dd></div>
+              <div><dt>Rank / α</dt><dd>16 / 32</dd></div>
+              <div><dt>Target</dt><dd>q, k, v, o projections</dd></div>
+              <div><dt>Size</dt><dd>~42 MB</dd></div>
+            </dl>
+          </div>
+
+          <div class="adapter-card fade-in fade-in-delay-2">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-sql-3b</h3>
+              <span class="adapter-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+            </div>
+            <p class="adapter-desc">Schema-grounded SQL generation for small models. Tuned to refuse rather than hallucinate a column that isn't in the schema you passed.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Qwen 2.5 3B Instruct</dd></div>
+              <div><dt>Rank / α</dt><dd>8 / 16</dd></div>
+              <div><dt>Target</dt><dd>attention + MLP</dd></div>
+              <div><dt>Size</dt><dd>~18 MB</dd></div>
+            </dl>
+          </div>
+
+          <div class="adapter-card fade-in fade-in-delay-3">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-router-1b</h3>
+              <span class="adapter-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
+            </div>
+            <p class="adapter-desc">A tiny classifier adapter for the routing prompt above — emits strict JSON at a fraction of the latency of asking a large model to triage.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Llama 3.2 1B Instruct</dd></div>
+              <div><dt>Rank / α</dt><dd>8 / 16</dd></div>
+              <div><dt>Target</dt><dd>q, v projections</dd></div>
+              <div><dt>Size</dt><dd>~9 MB</dd></div>
+            </dl>
+          </div>
+
+          <div class="adapter-card fade-in fade-in-delay-1">
+            <div class="adapter-head">
+              <h3 class="adapter-title">thl-notes-7b</h3>
+              <span class="adapter-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
+            </div>
+            <p class="adapter-desc">Turns lecture transcripts and meeting recordings into structured notes with claims, open questions, and action items kept separate.</p>
+            <dl class="adapter-specs">
+              <div><dt>Base</dt><dd>Mistral 7B Instruct v0.3</dd></div>
+              <div><dt>Rank / α</dt><dd>16 / 32</dd></div>
+              <div><dt>Target</dt><dd>attention</dd></div>
+              <div><dt>Size</dt><dd>~38 MB</dd></div>
+            </dl>
+          </div>
+
+        </div>
+
+        <div class="adapter-note fade-in">
+          <p><strong>Nothing here is downloadable yet.</strong> These are the adapters currently on the bench — the cards go live with weights, an evaluation card, and a licence the moment each one clears its benchmark. Want one of them first, or have a use case we haven't listed? <a href="consultancy.html" class="inline-link">Tell us</a>.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">How you'll use them</h3>
+          <p class="how-panel-text">An adapter is a delta, not a model. You keep the base weights you already pulled and stack the adapter on top at load time — which is why swapping behaviour costs megabytes instead of gigabytes.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Ollama — bake it into a local model</span>
+            <pre class="how-code"><code># Modelfile
+FROM llama3.1:8b-instruct-q4_K_M
+ADAPTER ./thl-review-8b.gguf
+
+ollama create thl-review -f Modelfile
+ollama run thl-review</code></pre>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Python — load it with PEFT at runtime</span>
+            <pre class="how-code"><code>from peft import PeftModel
+from transformers import AutoModelForCausalLM
+
+base = AutoModelForCausalLM.from_pretrained("meta-llama/Llama-3.1-8B-Instruct")
+model = PeftModel.from_pretrained(base, "./thl-review-8b")
+
+# swap behaviour without reloading the base model
+model.load_adapter("./thl-sql-3b", adapter_name="sql")
+model.set_adapter("sql")</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

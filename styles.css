@@ -314,28 +314,66 @@ section { padding: 6rem 2rem; position: relative; }
 /* ============ NAV: ICON BAR + INLINE FLYOUT ============
    Labels collapse to icons so the bar has room to expand a subsection
    inline. Measured on the prototype: text labels needed 1115px of bar in
-   a 783px window; icons fit. The <ul> is untouched in HTML — script.js
-   enhances it, so with JS off this whole block simply never applies. */
-.nav-links > li { display: inline-flex; align-items: center; }
-.nav-links a.has-icon { display: inline-flex; align-items: center; }
-.nav-links a.has-icon svg {
+   a 783px window; icons fit. Everything here is scoped to .is-icons,
+   which script.js only adds above 769px — so mobile and no-JS keep the
+   plain text list untouched. */
+.nav-links.is-icons { gap: 0.35rem; }
+.nav-links.is-icons > li { display: inline-flex; align-items: center; }
+
+/* A bare glyph on a dark field reads as a hairline with nothing holding
+   it. The pill gives each icon a hit area and somewhere for hover to
+   land — without it the bar has no sense of being touchable. */
+.nav-links.is-icons a.has-icon {
+  display: inline-flex; align-items: center;
+  padding: 9px 11px; border-radius: 12px;
+  border: 1px solid transparent;
+  position: relative; isolation: isolate;
+  transition: background var(--transition), border-color var(--transition), color var(--transition);
+}
+.nav-links.is-icons a.has-icon svg {
   width: 20px; height: 20px; flex-shrink: 0;
   stroke: currentColor; fill: none;
   stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  /* Slight overshoot on the way up: the lift is what makes it feel like
+     a control answering rather than a colour swap. */
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.nav-links.is-icons a.has-icon:hover {
+  background: var(--gold-glow);
+  border-color: var(--border-subtle);
+  color: var(--gold-primary);
+}
+.nav-links.is-icons a.has-icon:hover svg { transform: translateY(-2px) scale(1.08); }
+.nav-links.is-icons a.has-icon:active svg { transform: translateY(0) scale(0.96); }
+
+/* Open and current both read as "you are here", so they share a look. */
+.nav-links.is-icons li.is-open > a.has-icon,
+.nav-links.is-icons a.has-icon.active {
+  background: rgba(201, 168, 76, 0.10);
+  border-color: var(--border-gold);
+  color: var(--gold-primary);
+  box-shadow: 0 0 18px rgba(201, 168, 76, 0.10);
+}
+/* The current section keeps a lit dot even while another menu is open,
+   so opening Tools never makes you lose track of the page you are on. */
+.nav-links.is-icons a.has-icon.active::before {
+  content: ''; position: absolute; left: 50%; bottom: 3px;
+  width: 3px; height: 3px; margin-left: -1.5px;
+  border-radius: 50%; background: var(--gold-primary);
+  box-shadow: 0 0 6px var(--gold-primary);
 }
 /* Clipped rather than hidden: the label is the accessible name. */
-.nav-links a.has-icon .nav-label {
+.nav-links.is-icons a.has-icon .nav-label {
   display: inline-block; overflow: hidden; white-space: nowrap;
   max-width: 0; opacity: 0; margin-left: 0;
   transition: max-width var(--transition), opacity 0.3s ease, margin-left var(--transition);
 }
-.nav-links a.has-icon:hover .nav-label,
-.nav-links a.has-icon:focus-visible .nav-label,
-.nav-links li.is-open > a.has-icon .nav-label,
-.nav-links a.has-icon.active .nav-label { max-width: 160px; opacity: 1; margin-left: 8px; }
-/* The underline is sized to the icon, so suppress it while collapsed. */
-.nav-links a.has-icon::after { display: none; }
-.nav-links li.is-open > a.has-icon { color: var(--gold-primary); }
+.nav-links.is-icons a.has-icon:hover .nav-label,
+.nav-links.is-icons a.has-icon:focus-visible .nav-label,
+.nav-links.is-icons li.is-open > a.has-icon .nav-label,
+.nav-links.is-icons a.has-icon.active .nav-label { max-width: 160px; opacity: 1; margin-left: 8px; }
+/* The underline is sized to the icon, so suppress it once pilled. */
+.nav-links.is-icons a.has-icon::after { display: none; }
 
 .nav-flyout {
   display: inline-flex; overflow: hidden; width: 0;
@@ -343,7 +381,7 @@ section { padding: 6rem 2rem; position: relative; }
 }
 .nav-flyout-inner {
   display: inline-flex; align-items: center; gap: 8px;
-  padding-left: 0.9rem; white-space: nowrap;
+  padding-left: 0.75rem; white-space: nowrap;
 }
 .nav-flyout-rule {
   width: 1px; height: 18px; flex-shrink: 0;
@@ -351,13 +389,20 @@ section { padding: 6rem 2rem; position: relative; }
 }
 .nav-sub {
   font-size: 0.68rem; letter-spacing: 0.8px; text-transform: uppercase;
-  padding: 6px 13px; border-radius: 99px;
+  padding: 7px 14px; border-radius: 99px;
   border: 1px solid var(--border-subtle); color: var(--text-secondary);
-  text-decoration: none; transition: var(--transition);
+  text-decoration: none;
+  transition: color var(--transition), border-color var(--transition),
+              background var(--transition), transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
-.nav-sub:hover { color: var(--gold-primary); border-color: var(--border-gold); background: var(--gold-glow); }
+.nav-sub:hover {
+  color: var(--gold-primary); border-color: var(--border-gold);
+  background: var(--gold-glow); transform: translateY(-1px);
+}
 .nav-sub::after { display: none; }
 
 @media (prefers-reduced-motion: reduce) {
-  .nav-flyout, .nav-links a.has-icon .nav-label { transition: none; }
+  .nav-flyout, .nav-links.is-icons a.has-icon .nav-label,
+  .nav-links.is-icons a.has-icon svg, .nav-sub { transition: none; }
+  .nav-links.is-icons a.has-icon:hover svg { transform: none; }
 }

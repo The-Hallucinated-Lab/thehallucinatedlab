@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Prompts — The Hallucinated Lab</title>
+  <meta name="description" content="A prompt library for real use cases by The Hallucinated Lab. Copy any prompt and run it on the model already on your machine.">
+  <meta property="og:title" content="Prompts — The Hallucinated Lab">
+  <meta property="og:description" content="A prompt library for real use cases — copy and run on your own model.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/prompts.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/prompts.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Prompts — The Hallucinated Lab">
+  <meta name="twitter:description" content="A prompt library for real use cases — copy and run on your own model.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Take It And Run</span>
+      <h1 class="page-title">Prompts</h1>
+      <p class="page-subtitle">A prompt library for real use cases — copy one, paste it into whatever model you already run.</p>
+    </section>
+
+    <section class="media-section">
+      <div class="container">
+          <p class="section-intro">Prompts we actually use, written for specific jobs rather than general chat. Each one is model-agnostic — paste it into the <a href="interface.html" class="inline-link">Assistant</a>, your local runtime, or any hosted model.</p>
+        </div>
+
+        <div class="archive-filters prompt-filters fade-in" id="prompt-filters">
+          <button class="filter-btn active" data-filter="all" type="button">All</button>
+          <button class="filter-btn" data-filter="engineering" type="button">Engineering</button>
+          <button class="filter-btn" data-filter="data" type="button">Data</button>
+          <button class="filter-btn" data-filter="learning" type="button">Learning</button>
+          <button class="filter-btn" data-filter="writing" type="button">Writing</button>
+          <button class="filter-btn" data-filter="agents" type="button">Agents</button>
+        </div>
+
+        <div class="prompt-grid" id="prompt-grid">
+
+          <!-- 1 -->
+          <article class="prompt-card fade-in" data-category="engineering">
+            <div class="prompt-head">
+              <span class="blog-tag">Engineering</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Adversarial Code Reviewer</h3>
+            <p class="prompt-desc">Stops the model from telling you your code is great. Forces ranked, evidence-backed findings with a concrete failure case for each one.</p>
+            <pre class="prompt-body"><code>You are reviewing code as a hostile senior engineer whose job is to find
+what breaks in production. Praise is not useful output.
+
+Review the code below and return findings ONLY. For each finding give:
+1. Severity: critical / major / minor
+2. Location: file and line
+3. The defect in one sentence
+4. A concrete failure case — specific inputs or state that trigger it
+5. The minimal fix
+
+Rules:
+- Rank findings most severe first.
+- If you cannot construct a concrete failure case, drop the finding.
+- Do not comment on formatting or naming unless it causes a real bug.
+- If the code is genuinely sound, say "No defects found" and stop.
+
+CODE:
+&lt;paste code here&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 2 -->
+          <article class="prompt-card fade-in" data-category="engineering">
+            <div class="prompt-head">
+              <span class="blog-tag">Engineering</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Root-Cause Debugger</h3>
+            <p class="prompt-desc">Turns "here's my error" into a disciplined differential diagnosis instead of a guess-and-patch loop.</p>
+            <pre class="prompt-body"><code>Act as a debugging partner running a differential diagnosis. Do not
+suggest a fix until you have ranked the causes.
+
+Step 1 — Restate the failure in one sentence, separating the symptom
+        from what I assumed the cause was.
+Step 2 — List every hypothesis that could produce this exact symptom,
+        ranked by prior probability given the stack described.
+Step 3 — For each hypothesis, give the single cheapest experiment that
+        would confirm or eliminate it, and say what result means what.
+Step 4 — Stop. Wait for my experiment results before proposing a fix.
+
+If the information given is not enough to form hypotheses, ask for the
+specific missing signal — nothing else.
+
+SYSTEM: &lt;language, runtime, versions, deployment&gt;
+SYMPTOM: &lt;exact error text or observed behaviour&gt;
+WHAT CHANGED: &lt;last known-good state, recent changes&gt;
+ALREADY TRIED: &lt;list&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 3 -->
+          <article class="prompt-card fade-in" data-category="engineering">
+            <div class="prompt-head">
+              <span class="blog-tag">Engineering</span>
+              <span class="prompt-meta">Works on 3B+</span>
+            </div>
+            <h3 class="prompt-title">Refactor Without Rewrites</h3>
+            <p class="prompt-desc">Keeps a model from "improving" your code into something unrecognisable. Behaviour-preserving changes only, one at a time.</p>
+            <pre class="prompt-body"><code>Refactor the code below under a strict contract:
+
+HARD RULES
+- Public behaviour must not change. Same inputs, same outputs, same
+  errors, same side effects.
+- No new dependencies. No new files. No renamed public symbols.
+- Match the surrounding style — comment density, naming, and idiom.
+- Every change must be justified by one of: duplication removed,
+  dead code removed, a real complexity reduction, or a fixed bug.
+
+OUTPUT FORMAT
+1. A numbered list of the changes you intend to make, each with its
+   one-line justification.
+2. Wait for me to approve or cut items from that list.
+3. Only then output the refactored code.
+
+Anything you want to change but cannot justify, list separately under
+"Out of scope" and leave the code alone.
+
+CODE:
+&lt;paste code here&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 4 -->
+          <article class="prompt-card fade-in" data-category="data">
+            <div class="prompt-head">
+              <span class="blog-tag">Data</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Dataset Triage</h3>
+            <p class="prompt-desc">Point it at a schema and a sample before you model anything. It finds the leakage, the label noise, and the column that's secretly a duplicate of the target.</p>
+            <pre class="prompt-body"><code>You are auditing a dataset before any modelling begins. Assume the data
+is broken until proven otherwise.
+
+Given the schema and sample rows below, report:
+
+1. LEAKAGE — any column that could encode the target, directly or via
+   collection order, timestamps, or IDs. Explain the mechanism.
+2. INTEGRITY — nulls, impossible values, unit mismatches, duplicated
+   rows, and inconsistent categorical spellings.
+3. DISTRIBUTION RISK — class imbalance, rare categories that will not
+   survive a split, and columns with near-zero variance.
+4. SPLIT STRATEGY — how this data must be split (random / grouped /
+   temporal) and why the other options would inflate scores.
+5. THE THREE THINGS to fix before anything else, in order.
+
+Be specific about columns by name. Do not suggest models.
+
+SCHEMA:
+&lt;column: type, description&gt;
+
+SAMPLE ROWS:
+&lt;paste 10-20 rows&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 5 -->
+          <article class="prompt-card fade-in" data-category="data">
+            <div class="prompt-head">
+              <span class="blog-tag">Data</span>
+              <span class="prompt-meta">Works on 3B+</span>
+            </div>
+            <h3 class="prompt-title">Plain English → SQL</h3>
+            <p class="prompt-desc">Schema-grounded query generation that refuses to invent columns — and tells you when your question is ambiguous instead of guessing.</p>
+            <pre class="prompt-body"><code>You write SQL against the schema below and nothing else.
+
+CONSTRAINTS
+- Use only tables and columns that appear in the schema. If the question
+  needs something that is not there, say exactly what is missing and stop.
+- If the question is ambiguous (which date? which status counts as
+  active?), list the interpretations and ask — do not pick one silently.
+- Dialect: &lt;postgres / mysql / sqlite / duckdb&gt;
+- Prefer explicit JOINs and CTEs over nested subqueries.
+
+OUTPUT
+1. The query.
+2. One line per CTE explaining what it produces.
+3. A note on what would make this query slow at 100x the current row
+   count, and the index that would fix it.
+
+SCHEMA:
+&lt;CREATE TABLE statements or column listing&gt;
+
+QUESTION:
+&lt;your question in plain English&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 6 -->
+          <article class="prompt-card fade-in" data-category="learning">
+            <div class="prompt-head">
+              <span class="blog-tag">Learning</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Socratic Tutor</h3>
+            <p class="prompt-desc">Teaches by finding the exact edge of what you know and pushing one step past it — instead of dumping a lecture you'll forget by Thursday.</p>
+            <pre class="prompt-body"><code>Teach me &lt;topic&gt;. You are a tutor, not a lecturer.
+
+PROTOCOL
+1. Open with one diagnostic question that reveals what I already
+   understand. Do not explain anything yet.
+2. Based on my answer, find the single closest gap and address only
+   that. One idea per turn.
+3. After each explanation, give me a problem I can only solve if I
+   actually understood it — not a definition recall question.
+4. If I get it wrong, do not give the answer. Give a smaller version of
+   the same problem.
+5. Every 4 turns, ask me to explain the concept back in my own words,
+   and correct only what is actually wrong.
+
+CONSTRAINTS
+- Never more than 150 words per turn.
+- Use one concrete example before any formal notation.
+- If I ask you to just tell me the answer, ask once whether I want to
+  switch out of tutor mode before complying.
+
+MY BACKGROUND: &lt;what you already know&gt;
+MY GOAL: &lt;what you want to be able to do&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 7 -->
+          <article class="prompt-card fade-in" data-category="writing">
+            <div class="prompt-head">
+              <span class="blog-tag">Writing</span>
+              <span class="prompt-meta">Works on 7B+</span>
+            </div>
+            <h3 class="prompt-title">Paper Distiller</h3>
+            <p class="prompt-desc">Reads a paper the way a reviewer does: what's claimed, what's actually shown, and where the gap between the two is.</p>
+            <pre class="prompt-body"><code>Summarise the paper below as a skeptical reviewer, not a press release.
+
+Produce exactly these sections:
+
+CLAIM — what the authors say they achieved, in one sentence.
+EVIDENCE — what they actually measured, on what data, against what
+  baselines. Name the numbers.
+THE GAP — where the claim outruns the evidence. Look for: cherry-picked
+  baselines, missing ablations, benchmark contamination, results that
+  only hold at one scale, and "significant" without variance reported.
+NOVELTY — what is genuinely new versus what is a known idea rebranded.
+  Name the prior work it most resembles.
+IF TRUE — what changes downstream if the result holds up.
+REPRODUCIBILITY — code, data, seeds, compute. What is missing to run it.
+
+Say "not reported" rather than inferring anything the paper does not state.
+
+PAPER:
+&lt;paste abstract + method + results, or the full text&gt;</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+          <!-- 8 -->
+          <article class="prompt-card fade-in" data-category="agents">
+            <div class="prompt-head">
+              <span class="blog-tag">Agents</span>
+              <span class="prompt-meta">Works on 8B+</span>
+            </div>
+            <h3 class="prompt-title">Local Model Router</h3>
+            <p class="prompt-desc">A system prompt for the small model that sits in front of your stack and decides which model — or none — should handle each request.</p>
+            <pre class="prompt-body"><code>You are a router. You never answer the user's question yourself.
+
+Classify the incoming request and emit ONLY this JSON:
+
+{
+  "route": "small" | "large" | "code" | "retrieval" | "refuse",
+  "reason": "&lt;one clause&gt;",
+  "rewritten_query": "&lt;the request, made self-contained&gt;",
+  "needs_context": true | false
+}
+
+ROUTING RULES
+- "small"     — chit-chat, formatting, extraction, short rewrites.
+- "large"     — multi-step reasoning, ambiguity, anything where being
+                wrong is expensive.
+- "code"      — writing, reading, or debugging source code.
+- "retrieval" — the answer depends on documents, dates, or private data
+                the model cannot know. Set needs_context true.
+- "refuse"    — the request is outside this system's scope.
+
+Default to "large" when genuinely torn. Never emit prose, never emit
+markdown fences, never explain. JSON only.</code></pre>
+            <div class="prompt-actions">
+              <button class="copy-btn" type="button">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M16 1H4c-1.1 0-2 .9-2 2v14h2V3h12V1zm3 4H8c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h11c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm0 16H8V7h11v14z"/></svg>
+                <span>Copy prompt</span>
+              </button>
+            </div>
+          </article>
+
+        </div>
+
+        <div class="archive-empty" id="prompt-empty" style="display:none;">
+          <p>No prompts in that category yet.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+</body>
+</html>
