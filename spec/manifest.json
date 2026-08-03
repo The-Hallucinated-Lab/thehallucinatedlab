@@ -1,0 +1,82 @@
+{
+  "$comment": "Single source of truth for every THL tool. Consumed by toolkit.js (browser runtime + argument docs), nlp.js (parser vocabulary), interface.js (assistant capabilities) and the thehallucinatedlab Python package. Adding a tool here is what makes it appear in all four. Keep python/thehallucinatedlab/data/manifest.json byte-identical: scripts/sync-spec.js copies it and test/manifest.test.js fails the build if they drift.",
+  "specVersion": 1,
+  "version": "0.1.0",
+  "scoring": {
+    "$comment": "How the intent parser scores a tool against an utterance. Weights are additive, capped at 1.0, and a tool is only matched at or above the threshold. Tuned so an action word alone ('convert 100 usd to eur') stays below the bar while an action plus a real signal clears it.",
+    "enumValue": 0.6,
+    "aliasPhrase": 0.5,
+    "actionKeyword": 0.4,
+    "subjectKeyword": 0.2,
+    "threshold": 0.6
+  },
+  "tools": [
+    {
+      "name": "image_convert",
+      "title": "Image Converter",
+      "summary": "Convert an image between formats without uploading it anywhere.",
+      "description": "Re-encodes an image into another format. In the browser this runs on a canvas, so the file never leaves the page; in Python it runs through Pillow. Formats without an alpha channel are flattened onto a background colour first, so a transparent PNG becomes a JPEG with a solid backdrop rather than a black one.",
+      "runtimes": ["browser", "python"],
+      "page": "image-converter.html",
+      "input": {
+        "kind": "image",
+        "accept": ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/bmp"],
+        "maxPixels": 40000000,
+        "maxPixelsNote": "Roughly 40 megapixels. The browser encodes on the main thread, so a larger input would lock the tab."
+      },
+      "aliases": ["image convert", "convert image", "change format", "image converter"],
+      "keywords": {
+        "action": ["convert", "converter", "change", "turn", "make", "transform", "export", "encode", "reencode", "save"],
+        "subject": ["image", "images", "picture", "photo", "pic", "img", "file", "format"]
+      },
+      "params": [
+        {
+          "name": "format",
+          "type": "enum",
+          "required": true,
+          "values": ["png", "jpeg", "webp", "avif"],
+          "aliases": {
+            "jpg": "jpeg",
+            "jpe": "jpeg",
+            "jfif": "jpeg"
+          },
+          "description": "The format to convert to.",
+          "prompt": "Which format do you want — png, jpeg, webp or avif?"
+        },
+        {
+          "name": "quality",
+          "type": "integer",
+          "required": false,
+          "default": 92,
+          "min": 1,
+          "max": 100,
+          "appliesTo": ["jpeg", "webp", "avif"],
+          "keywords": ["quality", "q"],
+          "description": "Encoder quality, 1-100. Higher keeps more detail and produces a larger file. Ignored for PNG, which is lossless."
+        },
+        {
+          "name": "background",
+          "type": "color",
+          "required": false,
+          "default": "#ffffff",
+          "appliesTo": ["jpeg"],
+          "keywords": ["background", "bg", "backdrop", "matte"],
+          "description": "Colour used to flatten transparency when the target format has no alpha channel. Only JPEG needs this."
+        }
+      ],
+      "meta": {
+        "formats": {
+          "png": { "mime": "image/png", "ext": "png", "alpha": true, "lossy": false },
+          "jpeg": { "mime": "image/jpeg", "ext": "jpg", "alpha": false, "lossy": true },
+          "webp": { "mime": "image/webp", "ext": "webp", "alpha": true, "lossy": true },
+          "avif": { "mime": "image/avif", "ext": "avif", "alpha": true, "lossy": true }
+        }
+      },
+      "examples": [
+        { "text": "convert this to png", "args": { "format": "png" } },
+        { "text": "make it a jpg at 80 quality", "args": { "format": "jpeg", "quality": 80 } },
+        { "text": "png to webp, quality 75", "args": { "format": "webp", "quality": 75 } }
+      ]
+    }
+  ]
+}
