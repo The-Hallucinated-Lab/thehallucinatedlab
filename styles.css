@@ -406,3 +406,54 @@ section { padding: 6rem 2rem; position: relative; }
   .nav-links.is-icons a.has-icon svg, .nav-sub { transition: none; }
   .nav-links.is-icons a.has-icon:hover svg { transform: none; }
 }
+
+/* ============ DEV / LIVE MODE ============
+   Hidden by default, revealed only in dev mode — never the other way
+   round. The CSP forbids inline script, so the earliest JS can run is a
+   deferred file, which is after paint. If the rule were "hide when live"
+   every visitor would see a flash of unfinished work before JS removed
+   it. Defaulting to hidden means the worst case is that dev content
+   never appears, which is the safe direction to fail in. */
+[data-status="dev"] { display: none !important; }
+:root[data-mode="dev"] [data-status="dev"] { display: revert !important; }
+
+/* In dev mode unfinished work is marked, not just shown — the whole
+   point is being able to tell at a glance what is real. */
+:root[data-mode="dev"] [data-status="dev"] {
+  outline: 1px dashed var(--dev-border, rgba(217, 140, 43, 0.45));
+  outline-offset: 4px;
+  position: relative;
+}
+:root[data-mode="dev"] [data-status="dev"]::after {
+  content: 'DEV';
+  position: absolute; top: -9px; right: -9px; z-index: 5;
+  font-family: var(--font-body); font-size: 0.55rem; font-weight: 600;
+  letter-spacing: 1.5px; line-height: 1;
+  padding: 4px 7px; border-radius: 4px;
+  color: #d98c2b; background: #1a1206;
+  border: 1px solid rgba(217, 140, 43, 0.45);
+  pointer-events: none;
+}
+
+/* ---- Founder mode switch ---- */
+.mode-switch { display: none; align-items: center; gap: 8px; margin-left: 1rem; }
+.mode-switch.is-founder { display: inline-flex; }
+.mode-switch-label {
+  font-size: 0.55rem; letter-spacing: 1.5px; text-transform: uppercase;
+  color: var(--text-muted); white-space: nowrap;
+}
+.mode-seg { display: inline-flex; border: 1px solid var(--border-subtle); border-radius: 99px; overflow: hidden; }
+.mode-seg button {
+  background: none; border: none; cursor: pointer; font-family: var(--font-body);
+  font-size: 0.58rem; letter-spacing: 1px; text-transform: uppercase;
+  padding: 5px 11px; color: var(--text-muted); transition: var(--transition);
+}
+.mode-seg button.on { background: var(--gold-primary); color: var(--bg-primary); font-weight: 600; }
+.mode-seg button.on.is-dev { background: #d98c2b; }
+
+/* A persistent reminder that the site is not showing its public face. */
+:root[data-mode="dev"] body::before {
+  content: ''; position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 2000;
+  background: linear-gradient(90deg, transparent, #d98c2b, transparent);
+  pointer-events: none;
+}

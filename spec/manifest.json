@@ -1,5 +1,5 @@
 {
-  "$comment": "Single source of truth for every THL tool. Consumed by toolkit.js (browser runtime + argument docs), nlp.js (parser vocabulary), interface.js (assistant capabilities) and the thehallucinatedlab Python package. Adding a tool here is what makes it appear in all four. Keep python/thehallucinatedlab/data/manifest.json byte-identical: scripts/sync-spec.js copies it and test/manifest.test.js fails the build if they drift.",
+  "$comment": "Single source of truth for every THL tool. Consumed by toolkit.js (browser runtime + argument docs), nlp.js (parser vocabulary), interface.js (assistant capabilities) and the thehallucinatedlab Python package. Adding a tool here is what makes it appear in all four. Each tool carries a \"status\": \"live\" tools are public, \"dev\" tools are visible only in dev mode and are never shown to a visitor. Keep python/thehallucinatedlab/data/manifest.json byte-identical: scripts/sync-spec.js copies it and test/manifest.test.js fails the build if they drift.",
   "specVersion": 1,
   "version": "0.1.0",
   "scoring": {
@@ -14,6 +14,7 @@
     {
       "name": "converter",
       "title": "Converter",
+      "status": "live",
       "summary": "Convert an image between formats without uploading it anywhere.",
       "description": "Re-encodes an image into another format. In the browser this runs on a canvas, so the file never leaves the page; in Python it runs through Pillow. Formats without an alpha channel are flattened onto a background colour first, so a transparent PNG becomes a JPEG with a solid backdrop rather than a black one.",
       "runtimes": ["browser", "python"],
