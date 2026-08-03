@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Converter — The Hallucinated Lab</title>
+  <meta name="description" content="Convert images between PNG, JPG, and WebP — entirely in your browser. No upload, no cloud.">
+  <meta name="robots" content="noindex">
+  <link rel="icon" type="image/jpeg" href="../assets/images/logo.jpeg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../pages.css">
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="../" class="nav-logo">
+        <img src="../assets/images/logo.jpeg" alt="The Hallucinated Lab logo" width="36" height="36">
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../">Home</a></li>
+        <li><a href="../utilities.html" class="active">Utilities</a></li>
+        <li><a href="../interface.html">Assistant</a></li>
+        <li><a href="../media.html">Media</a></li>
+        <li><a href="../solutions.html">Solutions</a></li>
+        <li><a href="../#contact">Contact</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main tool-page-main">
+    <div class="tool-page-shell">
+
+      <a href="../utilities.html" class="tool-page-back">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+        <span>Utilities</span>
+      </a>
+
+      <div class="tool-page-header">
+        <h1 class="tool-page-title">Converter</h1>
+        <p class="tool-page-subtitle">Convert between PNG, JPG, and WebP. Your file never leaves the browser — everything happens locally on your machine.</p>
+      </div>
+
+      <section class="tool-card-surface" aria-label="Image converter">
+
+        <!-- Step 1: pick a file -->
+        <label class="dropzone" id="dropzone" for="file-input" tabindex="0">
+          <svg class="dropzone-icon" viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+          <span class="dropzone-label">Drop an image here, or <span class="dropzone-browse">browse</span></span>
+          <span class="dropzone-hint">Accepts PNG, JPG, WebP, BMP, GIF — up to 50&nbsp;MB</span>
+          <input type="file" id="file-input" accept="image/png,image/jpeg,image/webp,image/bmp,image/gif" hidden>
+        </label>
+
+        <!-- File preview (hidden until file picked) -->
+        <div class="file-preview hidden" id="file-preview">
+          <img class="file-preview-thumb" id="file-thumb" alt="Preview">
+          <div class="file-preview-meta">
+            <div class="file-preview-name" id="file-name"></div>
+            <div class="file-preview-size" id="file-size"></div>
+          </div>
+          <button type="button" class="file-preview-clear" id="file-clear" aria-label="Remove file">×</button>
+        </div>
+
+        <!-- Step 2: options -->
+        <div class="tool-options">
+          <div class="tool-option">
+            <span class="tool-option-label">Output format</span>
+            <div class="tool-option-segments" role="radiogroup" aria-label="Output format">
+              <label><input type="radio" name="format" value="png"><span>PNG</span></label>
+              <label><input type="radio" name="format" value="jpg" checked><span>JPG</span></label>
+              <label><input type="radio" name="format" value="webp"><span>WebP</span></label>
+            </div>
+          </div>
+          <div class="tool-option" id="quality-option">
+            <span class="tool-option-label">Quality</span>
+            <div class="tool-option-range">
+              <input type="range" id="quality" min="30" max="100" step="5" value="90">
+              <output for="quality" id="quality-out">90</output>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: convert -->
+        <div class="tool-actions">
+          <button type="button" class="tool-btn tool-btn-primary" id="convert-btn" disabled>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M19.36 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM12 18l-4-4h2.5v-3h3v3H16l-4 4z"/></svg>
+            <span id="convert-label">Convert</span>
+          </button>
+        </div>
+
+        <!-- Result -->
+        <div class="tool-result hidden" id="result">
+          <div class="tool-result-header">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            <span>Conversion complete</span>
+          </div>
+          <div class="tool-result-meta" id="result-meta"></div>
+          <div class="tool-actions">
+            <a class="tool-btn tool-btn-primary" id="download-btn" download>
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+              <span id="download-label">Download</span>
+            </a>
+            <button type="button" class="tool-btn tool-btn-secondary" id="reset-btn">Convert another</button>
+          </div>
+        </div>
+
+        <!-- Error message -->
+        <div class="tool-status-error hidden" id="error" role="alert"></div>
+
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="../script.js" defer></script>
+  <script src="converter.js" defer></script>
+  <script defer>
+  /* ============ IMAGE CONVERTER PAGE (UI only — engine lives in converter.js) ============ */
+  (function () {
+    'use strict';
+
+    const MAX_BYTES = 50 * 1024 * 1024; // 50 MB
+
+    const dropzone      = document.getElementById('dropzone');
+    const fileInput    = document.getElementById('file-input');
+    const filePreview  = document.getElementById('file-preview');
+    const fileThumb    = document.getElementById('file-thumb');
+    const fileName     = document.getElementById('file-name');
+    const fileSize     = document.getElementById('file-size');
+    const fileClear    = document.getElementById('file-clear');
+    const qualityInput = document.getElementById('quality');
+    const qualityOut   = document.getElementById('quality-out');
+    const qualityOpt   = document.getElementById('quality-option');
+    const convertBtn   = document.getElementById('convert-btn');
+    const convertLabel = document.getElementById('convert-label');
+    const result       = document.getElementById('result');
+    const resultMeta   = document.getElementById('result-meta');
+    const downloadBtn  = document.getElementById('download-btn');
+    const downloadLabel= document.getElementById('download-label');
+    const resetBtn     = document.getElementById('reset-btn');
+    const errorBox     = document.getElementById('error');
+
+    // Track every blob URL we mint so we can revoke them deterministically.
+    const liveBlobUrls = new Set();
+    function mintUrl(blob) {
+      const url = URL.createObjectURL(blob);
+      liveBlobUrls.add(url);
+      return url;
+    }
+    function revoke(url) {
+      if (!url) return;
+      URL.revokeObjectURL(url);
+      liveBlobUrls.delete(url);
+    }
+    function revokeAll() {
+      liveBlobUrls.forEach(u => URL.revokeObjectURL(u));
+      liveBlobUrls.clear();
+    }
+
+    let inputFile = null;
+    let inputUrl  = null;
+    let outputUrl = null;
+
+    /* ----- File picking & drag/drop ----- */
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) acceptFile(fileInput.files[0]);
+    });
+    ['dragenter', 'dragover'].forEach(ev =>
+      dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('is-dragover'); })
+    );
+    ['dragleave', 'drop'].forEach(ev =>
+      dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('is-dragover'); })
+    );
+    dropzone.addEventListener('drop', e => {
+      const f = e.dataTransfer.files[0];
+      if (f) acceptFile(f);
+    });
+    dropzone.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
+    });
+    fileClear.addEventListener('click', clearFile);
+
+    function acceptFile(file) {
+      hideError();
+      if (!file.type.startsWith('image/')) {
+        return showError(`That doesn't look like an image (${file.type || 'unknown type'}).`);
+      }
+      if (file.size > MAX_BYTES) {
+        return showError(`File is ${formatBytes(file.size)}. Max is ${formatBytes(MAX_BYTES)}.`);
+      }
+      // Replace any prior input
+      if (inputUrl) revoke(inputUrl);
+      inputFile = file;
+      inputUrl  = mintUrl(file);
+
+      fileThumb.src = inputUrl;
+      fileName.textContent = file.name;
+      fileSize.textContent = `${formatBytes(file.size)} · ${file.type}`;
+
+      filePreview.classList.remove('hidden');
+      dropzone.classList.add('hidden');
+      convertBtn.disabled = false;
+      hideResult();
+    }
+
+    function clearFile() {
+      if (inputUrl)  { revoke(inputUrl);  inputUrl = null; }
+      if (outputUrl) { revoke(outputUrl); outputUrl = null; }
+      inputFile = null;
+      fileInput.value = '';
+      filePreview.classList.add('hidden');
+      dropzone.classList.remove('hidden');
+      convertBtn.disabled = true;
+      hideResult();
+      hideError();
+    }
+
+    /* ----- Quality slider visibility (PNG is lossless) ----- */
+    function selectedFormat() {
+      const checked = document.querySelector('input[name="format"]:checked');
+      return checked ? checked.value : 'jpg';
+    }
+    function syncQualityVisibility() {
+      qualityOpt.style.visibility = selectedFormat() === 'png' ? 'hidden' : 'visible';
+    }
+    document.querySelectorAll('input[name="format"]').forEach(r =>
+      r.addEventListener('change', syncQualityVisibility)
+    );
+    qualityInput.addEventListener('input', () => {
+      qualityOut.value = String(parseInt(qualityInput.value, 10));
+    });
+    qualityOut.value = String(parseInt(qualityInput.value, 10));
+    syncQualityVisibility();
+
+    /* ----- Convert ----- */
+    convertBtn.addEventListener('click', async () => {
+      if (!inputFile) return;
+      hideError();
+      const target = selectedFormat();
+      const quality = target === 'png' ? undefined : parseInt(qualityInput.value, 10) / 100;
+
+      convertBtn.disabled = true;
+      convertLabel.textContent = 'Converting…';
+
+      try {
+        const engine = window.HallucinatedLab && window.HallucinatedLab.converter;
+        if (!engine) throw new Error('Image converter engine failed to load.');
+        const { blob, width, height } = await engine.convert(inputFile, target, quality);
+        if (outputUrl) revoke(outputUrl);
+        outputUrl = mintUrl(blob);
+
+        const baseName = inputFile.name.replace(/\.[^/.]+$/, '') || 'image';
+        const outName = `${baseName}.${target}`;
+        downloadBtn.href = outputUrl;
+        downloadBtn.setAttribute('download', outName);
+        downloadLabel.textContent = `Download ${outName}`;
+
+        const sizeFrom = formatBytes(inputFile.size);
+        const sizeTo   = formatBytes(blob.size);
+        const delta    = blob.size === inputFile.size
+          ? ''
+          : ` (${blob.size < inputFile.size ? '−' : '+'}${formatBytes(Math.abs(blob.size - inputFile.size))})`;
+        resultMeta.replaceChildren();
+        resultMeta.appendChild(metaPill('Dimensions', `${width} × ${height}px`));
+        resultMeta.appendChild(metaPill('Size', `${sizeFrom} → ${sizeTo}${delta}`));
+        resultMeta.appendChild(metaPill('Format', target.toUpperCase()));
+
+        result.classList.remove('hidden');
+      } catch (err) {
+        showError(err.message || 'Conversion failed.');
+      } finally {
+        convertBtn.disabled = false;
+        convertLabel.textContent = 'Convert';
+      }
+    });
+
+    resetBtn.addEventListener('click', clearFile);
+
+    /* ----- UI helpers ----- */
+    function metaPill(label, value) {
+      const span = document.createElement('span');
+      const strong = document.createElement('strong');
+      strong.textContent = value;
+      span.appendChild(document.createTextNode(`${label}: `));
+      span.appendChild(strong);
+      return span;
+    }
+    function showError(msg) {
+      errorBox.textContent = msg;
+      errorBox.classList.remove('hidden');
+    }
+    function hideError()  { errorBox.classList.add('hidden'); errorBox.textContent = ''; }
+    function hideResult() { result.classList.add('hidden'); }
+    function formatBytes(n) {
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+      return `${(n / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    /* ----- Unload: revoke every blob we ever minted ----- */
+    window.addEventListener('beforeunload', revokeAll);
+    window.addEventListener('pagehide', revokeAll);
+  })();
+  </script>
+</body>
+</html>

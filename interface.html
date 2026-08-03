@@ -4,14 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Assistant — The Hallucinated Lab</title>
-  <meta name="description" content="AI-powered local assistant by The Hallucinated Lab. Chat with Ollama running on your machine — no cloud, no API keys, fully private.">
+  <meta name="description" content="In-browser AI assistant. Routes your requests to local-first tools — runs entirely in your browser, no backend, no cloud.">
   <meta property="og:title" content="Assistant — The Hallucinated Lab">
-  <meta property="og:description" content="AI-powered local assistant. Chat with Ollama running on your machine — fully private.">
+  <meta property="og:description" content="In-browser AI assistant that runs everything locally — no backend, no cloud, no API keys.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/interface.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Assistant — The Hallucinated Lab">
-  <meta name="twitter:description" content="AI-powered local assistant. Chat with Ollama on your machine.">
+  <meta name="twitter:description" content="In-browser AI assistant. No backend, no cloud.">
   <link rel="icon" type="image/jpeg" href="assets/images/logo.jpeg">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600&display=swap">
   <link rel="stylesheet" href="styles.css">
@@ -45,62 +45,20 @@
 
     <section class="interface-section" id="interface-section">
 
-      <!-- Setup Panel (shown when Ollama is not detected) -->
-      <div class="chat-setup-panel" id="chat-setup">
-        <div class="setup-status checking" id="setup-status">
-          <span class="status-dot"></span>
-          <span id="setup-status-text">Checking connection...</span>
-        </div>
-        <h2>Local AI Assistant</h2>
-        <p>This interface connects to <strong style="color:var(--gold-primary);">Ollama</strong> running on your machine. No API keys, no cloud, no data leaves your device. Completely local.</p>
-
-        <div class="setup-steps" id="setup-steps" style="display:none;">
-          <div class="setup-step">
-            <div class="setup-step-num">1</div>
-            <div class="setup-step-text">
-              Install Ollama from <a href="https://ollama.com" target="_blank" rel="noopener noreferrer" style="color:var(--gold-primary);">ollama.com</a>
-            </div>
-          </div>
-          <div class="setup-step">
-            <div class="setup-step-num">2</div>
-            <div class="setup-step-text">
-              Pull a model — recommended: <code>ollama pull gemma4:e4b</code><br>
-              <span style="opacity:0.7;font-size:0.8rem;">Any installed model works; the page picks the first one it finds.</span>
-            </div>
-          </div>
-          <div class="setup-step">
-            <div class="setup-step-num">3</div>
-            <div class="setup-step-text">
-              Allow the page to talk to Ollama (CORS). Set this <strong>before</strong> starting Ollama:<br>
-              <strong>Local dev (file:// or localhost):</strong><br>
-              <code>setx OLLAMA_ORIGINS "*"</code> &nbsp;<em>(Windows)</em><br>
-              <code>export OLLAMA_ORIGINS="*"</code> &nbsp;<em>(macOS / Linux)</em><br>
-              <strong>Production site:</strong><br>
-              <code>OLLAMA_ORIGINS=https://thehallucinatedlab.space</code><br>
-              Then restart Ollama.
-            </div>
-          </div>
-          <div class="setup-step">
-            <div class="setup-step-num">4</div>
-            <div class="setup-step-text">
-              Make sure Ollama is running, then click Retry below.
-            </div>
-          </div>
-        </div>
-
-        <button class="setup-retry-btn" id="setup-retry" style="display:none;">
-          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M17.65 6.35A7.958 7.958 0 0012 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0112 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-          Retry Connection
-        </button>
-      </div>
-
-      <!-- Chat Container (shown when Ollama is connected) -->
-      <div class="chat-container hidden" id="chat-container">
+      <!-- Chat (always visible — no setup required) -->
+      <div class="chat-container" id="chat-container">
         <div class="chat-messages" id="chat-messages">
           <div class="chat-empty" id="chat-empty">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
-            <p>Start a conversation. Your AI runs locally via Ollama.</p>
+            <p>Attach a file and tell me what to do — I&rsquo;ll route it to the right tool. Everything runs in your browser.</p>
           </div>
+        </div>
+
+        <div class="chat-quick" id="chat-quick" role="group" aria-label="Quick actions">
+          <button type="button" class="chat-chip" data-fill="convert this to png">convert · png</button>
+          <button type="button" class="chat-chip" data-fill="convert this to jpg">convert · jpg</button>
+          <button type="button" class="chat-chip" data-fill="convert this to webp">convert · webp</button>
+          <button type="button" class="chat-chip" data-fill="reduce the quality by 50%">reduce quality 50%</button>
         </div>
 
         <div class="chat-input-bar">
@@ -124,78 +82,303 @@
   </footer>
 
   <script src="script.js" defer></script>
-  <script>
-  /* ============ INTERFACE CHAT ENGINE ============ */
-  (function() {
+  <script type="module">
+  /* ============ INTERFACE CHAT ENGINE ============
+     Routing pipeline — pure NLP, no model of any kind:
+       1. Small-talk fast-path — greetings and "help".
+       2. Regex intent matching — instant, free, deterministic, offline.
+       3. No match — reply with what the router can actually do.
+     There is deliberately no LLM here. An earlier revision fell back to
+     Qwen2.5-0.5B via Transformers.js, which cost a ~250 MB download on first
+     use; the version before that required a local Ollama install plus CORS
+     setup. Both meant the page did not work on arrival. Every request now
+     resolves instantly with nothing to download and nothing to install.
+     Adding a tool means adding an intent matcher and a dispatch branch.
+     ============================================================ */
+  (function () {
     'use strict';
 
-    const OLLAMA_BASE = 'http://localhost:11434';
-    const PREFERRED_MODELS = ['gemma4:e4b', 'gemma4:e2b', 'gemma3:4b', 'gemma2:2b', 'llama3.2:3b', 'llama3.2:1b'];
-    let MODEL = null; // resolved at connection time from /api/tags
-    let chatHistory = [];
     let attachedFile = null;
-    let isStreaming = false;
+    let isBusy = false;
 
-    document.addEventListener('DOMContentLoaded', () => {
-      checkOllamaConnection();
-      initChatUI();
-    });
+    /* ---- On-demand tool loading + cleanup ---- */
+    const loadedTools = new Map(); // src -> Promise<void>
+    function loadToolScript(src) {
+      if (loadedTools.has(src)) return loadedTools.get(src);
+      const p = new Promise((resolve, reject) => {
+        const s = document.createElement('script');
+        s.src = src; s.async = true;
+        s.dataset.tool = src;
+        s.onload = () => resolve();
+        s.onerror = () => reject(new Error(`Failed to load ${src}`));
+        document.head.appendChild(s);
+      });
+      loadedTools.set(src, p);
+      return p;
+    }
+    const chatBlobUrls = new Set();
+    function revokeChatBlobs() {
+      chatBlobUrls.forEach(u => URL.revokeObjectURL(u));
+      chatBlobUrls.clear();
+    }
+    window.addEventListener('beforeunload', revokeChatBlobs);
+    window.addEventListener('pagehide', revokeChatBlobs);
 
-    function buildSystemPrompt() {
-      return `You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user's machine via Ollama. Be helpful, concise, and technical when needed.`;
+    document.addEventListener('DOMContentLoaded', initChatUI);
+
+    /* ============ ROUTING ============ */
+
+    /* ---- Regex fast-path: image conversion ---- */
+    // Common keyboard transpositions / mistypings → canonical format.
+    const FORMAT_TYPOS = {
+      jgp: 'jpg', jpg: 'jpg', jpeg: 'jpg', jepg: 'jpg', jpge: 'jpg',
+      png: 'png', pgn: 'png', pnj: 'png',
+      webp: 'webp', wepb: 'webp', wbep: 'webp', webbp: 'webp',
+    };
+    function normalizeFormatToken(tok) {
+      tok = tok.toLowerCase();
+      return FORMAT_TYPOS[tok] || null;
     }
 
-    /* ---- Connection Check ---- */
-    async function checkOllamaConnection() {
-      const statusEl = document.getElementById('setup-status');
-      const statusText = document.getElementById('setup-status-text');
-      const setupSteps = document.getElementById('setup-steps');
-      const retryBtn = document.getElementById('setup-retry');
-      const setupPanel = document.getElementById('chat-setup');
-      const chatContainer = document.getElementById('chat-container');
+    function detectImageConvertIntent(text) {
+      if (!text) return null;
+      const lower = text.toLowerCase();
+      // Require an action verb so "what is png?" doesn't match.
+      if (!/(convert|change|turn|make|save|export|to\s+a?\s*\w+)/i.test(lower)) return null;
 
-      statusEl.className = 'setup-status checking';
-      statusText.textContent = 'Checking connection...';
-      setupSteps.style.display = 'none';
-      retryBtn.style.display = 'none';
+      // Match a 3-5 char alphanumeric token after a "to/into/as/make it" phrase first;
+      // fall back to any standalone short token. Then resolve via FORMAT_TYPOS.
+      const phrased = lower.match(/(?:to|into|as|make\s+(?:it|them?)\s+(?:a\s+)?)\s*([a-z]{3,5})\b/i);
+      const standalone = lower.match(/\b([a-z]{3,5})\b/i);
+      for (const m of [phrased, standalone]) {
+        if (!m) continue;
+        const fmt = normalizeFormatToken(m[1]);
+        if (fmt) return { format: fmt };
+      }
+      return null;
+    }
 
+    /* ---- Quality intent ----
+       "by N%" and "to N%" deliberately mean different things. "Reduce quality
+       by 50%" is a relative cut from the default; "reduce quality to 50%" is an
+       absolute target. Collapsing them would silently do the wrong thing for
+       one of the two, so the preposition is what selects the branch. ---- */
+    const DEFAULT_QUALITY = 0.9;
+
+    function clampPct(raw) {
+      const n = parseInt(raw, 10);
+      if (!Number.isFinite(n)) return null;
+      return Math.min(100, Math.max(1, n));
+    }
+    // Quality 0 encodes to unusable mush, and "reduce by 200%" would land there.
+    // Clamping the percentage alone is not enough — the *result* needs the floor.
+    const MIN_QUALITY = 0.05;
+    const round2 = n => Math.max(MIN_QUALITY, Math.round(n * 100) / 100);
+
+    function detectQualityIntent(text) {
+      if (!text) return null;
+      const lower = text.toLowerCase();
+
+      // Relative first — otherwise the absolute pattern would swallow "by 50".
+      let m = lower.match(/(?:reduce|lower|drop|decrease|cut)\s+(?:the\s+)?(?:quality\s+)?by\s+(\d{1,3})\s*%?/);
+      if (m) {
+        const pct = clampPct(m[1]);
+        if (pct === null) return null;
+        return { quality: round2(DEFAULT_QUALITY * (1 - pct / 100)), pct, relative: true };
+      }
+
+      m = lower.match(/quality\s*(?:to|=|:|at|of)?\s*(\d{1,3})\s*%?/)
+       || lower.match(/(\d{1,3})\s*%\s*quality/)
+       || lower.match(/\bat\s+(\d{1,3})\s*%/);
+      if (m) {
+        const pct = clampPct(m[1]);
+        if (pct === null) return null;
+        return { quality: round2(pct / 100), pct, relative: false };
+      }
+
+      // Bare "compress this" — no number given, so state the assumption later.
+      if (/\b(compress|shrink|smaller|lighter)\b/.test(lower)) {
+        return { quality: 0.6, pct: 60, relative: false, assumed: true };
+      }
+      return null;
+    }
+
+    const MIME_TO_FMT = {
+      'image/png': 'png', 'image/jpeg': 'jpg', 'image/jpg': 'jpg', 'image/webp': 'webp',
+    };
+    const formatFromMime = t => MIME_TO_FMT[String(t || '').toLowerCase()] || null;
+
+    function regexRoute(text, file) {
+      // Intent is enough on its own — the dispatcher handles preconditions
+      // (missing file, wrong type) and gives a clean message, so matching on
+      // intent alone still produces a useful reply when the file is wrong.
+      const intent = detectImageConvertIntent(text);
+      const q = detectQualityIntent(text);
+
+      if (intent) {
+        const args = { format: intent.format };
+        if (q) { args.quality = q.quality; args.qualityPct = q.pct; args.qualityAssumed = q.assumed; }
+        return { tool: 'converter', args };
+      }
+
+      // Quality-only request ("reduce the quality by 50%") — re-encode in the
+      // file's own format so the user doesn't have to restate it.
+      if (q) {
+        return {
+          tool: 'converter',
+          args: {
+            format: file ? formatFromMime(file.type) : null,
+            quality: q.quality, qualityPct: q.pct, qualityAssumed: q.assumed, qualityOnly: true,
+          },
+        };
+      }
+      return null;
+    }
+
+    /* ---- Deterministic small-talk: greetings & "help" asks ---- */
+    function detectSmallTalk(text) {
+      if (!text) return null;
+      const lower = text.toLowerCase().trim();
+      if (/^(hi|hello|hey|yo|sup|greetings|good\s+(morning|afternoon|evening))\b/.test(lower)) {
+        return 'greeting';
+      }
+      if (/^(help|what (can|do) you|how (do|can) (i|you)|what'?s? this)/.test(lower)) {
+        return 'help';
+      }
+      return null;
+    }
+    const SMALL_TALK_REPLIES = {
+      greeting: "Hi! I'm a tool router for The Hallucinated Lab. Attach a file and tell me what to do — right now I can convert images between PNG, JPG, and WebP. e.g. \"convert this to webp\".",
+      help: "I route requests to local-first tools. Currently available:\n• Converter — attach a PNG/JPG/WebP and say \"convert to <format>\".\nMore tools coming. Everything runs in your browser, nothing uploads.",
+    };
+
+    /* ---- No-match reply ----
+       With no model behind it, an unmatched request has to explain itself.
+       Naming the attached file makes the difference between "wrong phrasing"
+       and "wrong file" visible without the user having to guess. ---- */
+    function buildNoMatchReply(file) {
+      const lines = ['I did not catch a tool request in that.'];
+      if (file) {
+        lines.push(`You have attached ${file.name}. Try "convert this to webp" (or png, or jpg).`);
+      } else {
+        lines.push('Attach an image and say "convert this to webp" (or png, or jpg).');
+      }
+      lines.push('Type "help" to see everything I can do.');
+      return lines.join('\n');
+    }
+
+    /* ============ TOOL DISPATCH ============ */
+    async function runTool(call, file, bubble) {
+      const contentEl = bubble.querySelector('.bubble-content');
+      if (call.tool === 'converter') {
+        return runImageConvertCall(call.args || {}, file, bubble);
+      }
+      contentEl.textContent = `Tool "${call.tool}" isn't available yet.`;
+    }
+
+    async function runImageConvertCall(args, file, bubble) {
+      const contentEl = bubble.querySelector('.bubble-content');
+      // File checks come before the format check: for a quality-only request
+      // the format is derived from the file, so "no format" is usually really
+      // "no file" and reporting it as a missing format would misdirect.
+      if (!file) {
+        contentEl.textContent = "Attach an image first, then ask me to convert it.";
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        contentEl.textContent = `That doesn't look like an image (${file.type || 'unknown type'}).`;
+        return;
+      }
+      const fmt = String(args.format || '').toLowerCase().replace('jpeg', 'jpg');
+      if (!['png', 'jpg', 'webp'].includes(fmt)) {
+        contentEl.textContent = args.qualityOnly
+          ? `I can't re-encode ${file.type || 'that file'} in place. Tell me a target format — try "convert this to webp at ${args.qualityPct}% quality".`
+          : "I need a target format: png, jpg, or webp.";
+        return;
+      }
+
+      // PNG is lossless, so a quality figure would be silently ignored.
+      const quality = typeof args.quality === 'number' ? args.quality : DEFAULT_QUALITY;
+      const pngIgnoresQuality = fmt === 'png' && typeof args.quality === 'number';
+
+      // A quality-only request against a PNG has no useful action to take —
+      // stop and explain instead of returning an identical file.
+      if (pngIgnoresQuality && args.qualityOnly) {
+        contentEl.textContent = 'PNG is lossless, so quality has no effect on it. Convert to JPG or WebP to make the file smaller.';
+        return;
+      }
+
+      // Otherwise carry the caveat through to the result. Writing it to the
+      // bubble here would be overwritten by the progress line moments later.
+      const ignoredNote = pngIgnoresQuality
+        ? ' PNG is lossless, so the quality setting was ignored.' : '';
+
+      const qualityNote = (fmt !== 'png' && typeof args.quality === 'number')
+        ? ` at ${Math.round(quality * 100)}% quality${args.qualityAssumed ? ' (assumed)' : ''}`
+        : '';
+      contentEl.textContent = `Converting ${file.name} to ${fmt.toUpperCase()}${qualityNote}…`;
       try {
-        const res = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(5000) });
-        if (!res.ok) throw new Error('Not OK');
-        const data = await res.json();
+        await loadToolScript('tools/converter.js');
+        const engine = window.HallucinatedLab && window.HallucinatedLab.converter;
+        if (!engine) throw new Error('Image converter engine failed to register.');
 
-        const installed = (data.models || []).map(m => m.name).filter(Boolean);
-        if (installed.length === 0) {
-          statusEl.className = 'setup-status offline';
-          statusText.textContent = 'No models installed';
-          setupSteps.style.display = 'block';
-          retryBtn.style.display = 'inline-flex';
-        } else {
-          // Prefer one of our recommended models if installed; otherwise use the first one available.
-          MODEL = PREFERRED_MODELS.find(p => installed.includes(p)) || installed[0];
-          statusEl.className = 'setup-status online';
-          statusText.textContent = 'Connected — ' + MODEL;
-          setTimeout(() => {
-            setupPanel.classList.add('hidden');
-            chatContainer.classList.remove('hidden');
-          }, 800);
-        }
-      } catch (e) {
-        console.warn('[Ollama] connection failed:', e);
-        statusEl.className = 'setup-status offline';
-        statusText.textContent = 'Ollama not detected (or CORS blocked)';
-        setupSteps.style.display = 'block';
-        retryBtn.style.display = 'inline-flex';
-      }
+        const result = await engine.convert(file, fmt, quality);
+        const url = URL.createObjectURL(result.blob);
+        chatBlobUrls.add(url);
 
-      // Bind retry once
-      if (!retryBtn.dataset.bound) {
-        retryBtn.addEventListener('click', () => checkOllamaConnection());
-        retryBtn.dataset.bound = '1';
+        const baseName = file.name.replace(/\.[^/.]+$/, '') || 'image';
+        const outName = `${baseName}.${fmt}`;
+
+        contentEl.replaceChildren();
+        const line1 = document.createElement('div');
+        line1.appendChild(document.createTextNode('✅ Converted '));
+        const s1 = document.createElement('strong'); s1.textContent = file.name; line1.appendChild(s1);
+        line1.appendChild(document.createTextNode(' → '));
+        const s2 = document.createElement('strong'); s2.textContent = outName; line1.appendChild(s2);
+        const line2 = document.createElement('div');
+        line2.className = 'chat-tool-meta';
+        // Show the size delta as a percentage — for a "make it smaller" request
+        // the raw byte counts don't answer the question that was actually asked.
+        const delta = file.size > 0 ? Math.round((1 - result.blob.size / file.size) * 100) : 0;
+        const deltaNote = delta > 0 ? ` · ${delta}% smaller` : (delta < 0 ? ` · ${-delta}% larger` : '');
+        const qNote = fmt !== 'png' ? ` · q${Math.round(quality * 100)}` : '';
+        line2.textContent = `${result.width} × ${result.height}${qNote} · ${formatBytes(file.size)} → ${formatBytes(result.blob.size)}${deltaNote}${ignoredNote}`;
+        const dl = document.createElement('a');
+        dl.href = url; dl.download = outName; dl.className = 'chat-tool-download';
+        dl.appendChild(iconSvg('M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z'));
+        const lbl = document.createElement('span');
+        lbl.textContent = `Download ${outName}`;
+        dl.appendChild(lbl);
+        contentEl.appendChild(line1);
+        contentEl.appendChild(line2);
+        contentEl.appendChild(dl);
+        scrollToBottom();
+      } catch (err) {
+        contentEl.textContent = `⚠️ Conversion failed: ${err.message}`;
       }
     }
 
-    /* ---- Chat UI ---- */
+    function iconSvg(d) {
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('viewBox', '0 0 24 24');
+      svg.setAttribute('width', '16');
+      svg.setAttribute('height', '16');
+      svg.setAttribute('fill', 'currentColor');
+      svg.setAttribute('aria-hidden', 'true');
+      const p = document.createElementNS(svgNS, 'path');
+      p.setAttribute('d', d);
+      svg.appendChild(p);
+      return svg;
+    }
+
+    function formatBytes(n) {
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+      return `${(n / (1024 * 1024)).toFixed(2)} MB`;
+    }
+
+    /* ============ CHAT UI ============ */
     function initChatUI() {
       const input = document.getElementById('chat-input');
       const sendBtn = document.getElementById('chat-send');
@@ -213,12 +396,24 @@
       input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' && !e.shiftKey) {
           e.preventDefault();
-          if (!sendBtn.disabled && !isStreaming) sendMessage();
+          if (!sendBtn.disabled && !isBusy) sendMessage();
         }
       });
 
       sendBtn.addEventListener('click', () => {
-        if (!isStreaming) sendMessage();
+        if (!isBusy) sendMessage();
+      });
+
+      // Quick-action chips fill the input rather than sending. The user still
+      // sees and can edit the phrasing, which also teaches what the router
+      // understands — an auto-send would hide that.
+      document.getElementById('chat-quick').addEventListener('click', (e) => {
+        const chip = e.target.closest('.chat-chip');
+        if (!chip) return;
+        input.value = chip.dataset.fill;
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+        input.focus();
+        input.setSelectionRange(input.value.length, input.value.length);
       });
 
       // File attachment
@@ -233,104 +428,71 @@
 
     /* ---- Send Message ---- */
     async function sendMessage() {
+      if (isBusy) return;
       const input = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('chat-send');
+      const fileInput = document.getElementById('chat-file-input');
       const text = input.value.trim();
       if (!text && !attachedFile) return;
 
-      // Remove empty state
+      // Remove empty state on first send
       const emptyEl = document.getElementById('chat-empty');
       if (emptyEl) emptyEl.remove();
 
-      // Display user message
+      // User bubble
       let userContent = text;
-      if (attachedFile) {
-        userContent += `\n📎 ${attachedFile.name}`;
-      }
+      if (attachedFile) userContent += `\n📎 ${attachedFile.name}`;
       addBubble('user', userContent);
 
-      // Build message for API
-      const userMsg = { role: 'user', content: text + (attachedFile ? `\n[Attached file: ${attachedFile.name}, type: ${attachedFile.type}, size: ${attachedFile.size} bytes]` : '') };
-      chatHistory.push(userMsg);
-
-      // Clear input
+      // Snapshot inputs, then clear UI for the next turn
+      const userText = text;
+      const localFile = attachedFile;
       input.value = '';
       input.style.height = 'auto';
-      document.getElementById('chat-send').disabled = true;
+      sendBtn.disabled = true;
+      attachedFile = null;
+      fileInput.value = '';
+      input.placeholder = 'Tell me what to do…';
 
-      // Show typing indicator
-      const typingEl = showTyping();
-
-      isStreaming = true;
-
+      isBusy = true;
       try {
-        const systemMsg = { role: 'system', content: buildSystemPrompt() };
-        const messages = [systemMsg, ...chatHistory];
-
-        const res = await fetch(`${OLLAMA_BASE}/api/chat`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ model: MODEL, messages, stream: true }),
-        });
-
-        if (!res.ok) throw new Error(`Ollama error: ${res.status}`);
-
-        // Remove typing indicator
-        typingEl.remove();
-
-        // Stream response
-        const aiBubble = addBubble('ai', '');
-        const contentEl = aiBubble.querySelector('.bubble-content') || aiBubble;
-        let fullResponse = '';
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder();
-        let buffer = '';
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split('\n');
-          buffer = lines.pop() || '';
-
-          for (const line of lines) {
-            if (!line.trim()) continue;
-            try {
-              const json = JSON.parse(line);
-              if (json.message && json.message.content) {
-                fullResponse += json.message.content;
-                contentEl.innerHTML = formatMarkdown(fullResponse);
-                scrollToBottom();
-              }
-            } catch (e) { /* skip malformed line */ }
-          }
+        // 1. Small-talk fast-path (greetings / help) — no model load.
+        const smallTalk = detectSmallTalk(userText);
+        if (smallTalk && !localFile) {
+          addBubble('ai', SMALL_TALK_REPLIES[smallTalk]);
+          return;
         }
 
-        chatHistory.push({ role: 'assistant', content: fullResponse });
+        // 2. Regex fast-path for tool intent
+        const fastCall = regexRoute(userText, localFile);
+        if (fastCall) {
+          const bubble = addBubble('ai', `Running ${fastCall.tool}…`);
+          await runTool(fastCall, localFile, bubble);
+          return;
+        }
 
-      } catch (err) {
-        typingEl.remove();
-        addBubble('ai', `⚠️ Error: ${err.message}`);
+        // 3. No match. Nothing further to try — say what is actually available.
+        addBubble('ai', buildNoMatchReply(localFile));
+      } finally {
+        isBusy = false;
+        sendBtn.disabled = !document.getElementById('chat-input').value.trim() && !attachedFile;
       }
-
-      isStreaming = false;
-      attachedFile = null;
-      document.getElementById('chat-file-input').value = '';
-      document.getElementById('chat-input').placeholder = 'Type a message...';
     }
 
-    /* ---- UI Helpers ---- */
+    /* ============ UI HELPERS (DOM-only, no innerHTML) ============ */
     function addBubble(role, content) {
       const messages = document.getElementById('chat-messages');
       const bubble = document.createElement('div');
       bubble.className = `chat-bubble chat-bubble-${role}`;
-
       const contentSpan = document.createElement('span');
       contentSpan.className = 'bubble-content';
-      contentSpan.innerHTML = role === 'ai' ? formatMarkdown(content) : escapeHtml(content);
+      // Plain text with explicit <br> for newlines.
+      const parts = String(content).split('\n');
+      parts.forEach((part, i) => {
+        contentSpan.appendChild(document.createTextNode(part));
+        if (i < parts.length - 1) contentSpan.appendChild(document.createElement('br'));
+      });
       bubble.appendChild(contentSpan);
-
       messages.appendChild(bubble);
       scrollToBottom();
       return bubble;
@@ -340,7 +502,7 @@
       const messages = document.getElementById('chat-messages');
       const typing = document.createElement('div');
       typing.className = 'chat-typing';
-      typing.innerHTML = '<span></span><span></span><span></span>';
+      for (let i = 0; i < 3; i++) typing.appendChild(document.createElement('span'));
       messages.appendChild(typing);
       scrollToBottom();
       return typing;
@@ -349,26 +511,6 @@
     function scrollToBottom() {
       const messages = document.getElementById('chat-messages');
       messages.scrollTop = messages.scrollHeight;
-    }
-
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML.replace(/\n/g, '<br>');
-    }
-
-    function formatMarkdown(text) {
-      // Basic markdown: bold, italic, code blocks, inline code, line breaks
-      let html = escapeHtml(text);
-      // Code blocks
-      html = html.replace(/```(\w*)\n([\s\S]*?)```/g, '<pre><code>$2</code></pre>');
-      // Inline code
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      // Bold
-      html = html.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-      // Italic
-      html = html.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-      return html;
     }
 
   })();
