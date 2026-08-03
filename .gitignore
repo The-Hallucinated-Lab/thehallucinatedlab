@@ -49,3 +49,7 @@ node_modules/
 
 # Local Claude Code config
 .claude/
+
+# Nested scratch repo. Committing this as a gitlink (mode 160000) breaks
+# clones and the Pages build - the same failure f7c3200 fixed for worktrees.
+ai-ide/
