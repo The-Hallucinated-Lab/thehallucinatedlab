@@ -51,6 +51,45 @@ jobs:
       - name: Run tests
         run: node --test "test/**/*.test.js"
 
+  python:
+    name: THL library
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    # The site itself stays dependency-free; this job exists only for the
+    # pip package under python/, which necessarily has a dependency
+    # (Pillow) because encoding images is not something to hand-roll.
+    strategy:
+      fail-fast: false
+      matrix:
+        # Floor and ceiling. The versions in between do not fail on their
+        # own, and running five of them costs minutes to learn nothing.
+        python-version: ['3.10', '3.13']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install
+        run: python -m pip install --upgrade pip && pip install -e "python[dev]"
+
+      - name: Lint
+        run: ruff check python/
+
+      - name: Run tests
+        run: pytest python/ -q
+
+      # The wheel carries its own copy of the tool spec. If it ever stops
+      # matching spec/manifest.json, the website starts documenting
+      # arguments the package does not accept.
+      - name: Check the tool spec is in sync
+        run: node scripts/sync-spec.js --check
+
   secrets:
     name: Secret scan
     runs-on: ubuntu-latest

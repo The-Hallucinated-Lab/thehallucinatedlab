@@ -29,6 +29,19 @@ desktop.ini
 *.swo
 *~
 
+# --- Python package (python/) --------------------------------------
+# The site has no build step; the pip package does.
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
 # --- Local tooling -------------------------------------------------
 node_modules/
 .cache/

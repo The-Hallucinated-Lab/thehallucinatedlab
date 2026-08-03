@@ -17,18 +17,28 @@ Do not open a public GitHub issue for a security problem.
 
 ## Scope
 
-This repository is a **static website**. There is no server we run, no
-database, no user accounts, and no session handling. That rules out most
-of the classes of bug people usually look for. What is genuinely in scope:
+This repository is a **static website** plus a **pip package** (`python/`).
+
+There is still no server we run, no database, no user accounts, and no
+session handling. The tools added to the site do not change that: image
+conversion happens on a canvas in the visitor's own tab, so there is no
+endpoint to attack and no upload to intercept. That rules out most of
+the classes of bug people usually look for. What is genuinely in scope:
 
 - Cross-site scripting in any page or in the JavaScript that renders into
-  it — `articles.js`, `interface.js`, `tools.js`, `articles/article.js`
+  it — `articles.js`, `interface.js`, `tools.js`, `toolkit.js`, `nlp.js`,
+  `image-converter.js`, `articles/article.js`
 - A Content-Security-Policy bypass on any page
-- Anything that causes the Assistant page to send data off the visitor's
-  machine (see below)
+- Anything that causes the Assistant page or a tool page to send data off
+  the visitor's machine (see below)
 - Secrets or credentials committed anywhere in this repository or its
   history
 - Subresource or supply-chain problems in `assets/vendor/`
+- In the `thehallucinatedlab` package: path traversal through a
+  destination argument, or anything that executes attacker-controlled
+  input rather than treating it as data
+- Anything that lets a tool write outside the destination the caller
+  asked for
 
 Out of scope: findings against `thehallucinatedlab.space` that are
 properties of GitHub Pages itself, missing response headers we cannot set
