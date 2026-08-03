@@ -4,10 +4,23 @@
    Talks to an Ollama runtime on the visitor's own machine. Nothing
    here reaches a server we control: no keys, no relay, no logging.
 
+   Two engines sit behind one input box:
+
+     1. The intent parser in nlp.js gets every message first. If it
+        recognises a THL tool ("convert this to png"), toolkit.js runs it
+        in this tab and the reply is a real file. No model is involved,
+        so this path works with nothing installed.
+     2. Anything the parser does not recognise goes to Ollama, exactly as
+        it always has.
+
+   That ordering is the point: the common case stops being gated behind
+   a 4GB download, and the setup panel becomes optional rather than a
+   wall.
+
    Lives in its own file rather than inline in interface.html so the
    page's Content-Security-Policy can forbid inline script outright.
 
-   Failure model for this integration (there is exactly one):
+   Failure model for the Ollama integration (there is exactly one):
      - Ollama not running / CORS unset -> fetch rejects with TypeError.
        Show the setup panel, which carries the install and OLLAMA_ORIGINS
        instructions and a Retry button.
@@ -50,7 +63,13 @@
   let watchdogTimer = null;
   let abortReason = null;       // 'timeout' | 'user' | 'overflow' | null
 
+  let toolManifest = null;      // spec/manifest.json, or null if it failed to load
+  let pendingParse = null;      // a tool call still waiting on an argument or a file
+  let ollamaReady = false;
+  let resultUrls = [];          // object URLs handed to download links
+
   document.addEventListener('DOMContentLoaded', () => {
+    loadTools();
     checkOllamaConnection();
     initChatUI();
   });
@@ -59,10 +78,31 @@
      fetch running against the local runtime. */
   window.addEventListener('pagehide', () => {
     abortStream('user');
+    for (const url of resultUrls) URL.revokeObjectURL(url);
+    resultUrls = [];
   });
 
+  /* Tools load independently of Ollama and must never block the chat: a
+     failed manifest fetch costs the tool path, not the page. */
+  function loadTools() {
+    if (!window.THL || !window.THL.toolkit) return;
+    window.THL.toolkit.loadManifest()
+      .then((manifest) => { toolManifest = manifest; })
+      .catch((err) => { console.warn('[THL] tool spec unavailable:', err); });
+  }
+
   function buildSystemPrompt() {
-    return 'You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user\'s machine via Ollama. Be helpful, concise, and technical when needed.';
+    let prompt = 'You are the AI assistant for The Hallucinated Lab — a platform that builds local-first, privacy-respecting developer tools. You are running locally on the user\'s machine via Ollama. Be helpful, concise, and technical when needed.';
+
+    /* Tool requests never reach the model — the parser intercepts them
+       first — but the model still gets told what exists so it can answer
+       "what can this do?" without inventing an answer. */
+    if (toolManifest && toolManifest.tools) {
+      const lines = toolManifest.tools.map((t) => `- ${t.name}: ${t.summary}`);
+      prompt += ' The page itself can run these tools directly, without you: \n' + lines.join('\n') +
+        '\nIf the user asks for one of those, tell them to phrase it as a direct request such as "convert this to png" and attach a file.';
+    }
+    return prompt;
   }
 
   /* ---- Stream lifecycle ----
@@ -96,6 +136,7 @@
     const statusText = document.getElementById('setup-status-text');
     const setupSteps = document.getElementById('setup-steps');
     const retryBtn = document.getElementById('setup-retry');
+    const skipBtn = document.getElementById('setup-skip');
     const setupPanel = document.getElementById('chat-setup');
     const chatContainer = document.getElementById('chat-container');
 
@@ -103,6 +144,7 @@
     statusText.textContent = 'Checking connection...';
     setupSteps.style.display = 'none';
     retryBtn.style.display = 'none';
+    skipBtn.style.display = 'none';
 
     try {
       const res = await fetch(`${OLLAMA_BASE}/api/tags`, { signal: AbortSignal.timeout(CONNECT_TIMEOUT_MS) });
@@ -111,13 +153,16 @@
 
       const installed = (data.models || []).map(m => m.name).filter(Boolean);
       if (installed.length === 0) {
+        ollamaReady = false;
         statusEl.className = 'setup-status offline';
         statusText.textContent = 'No models installed';
         setupSteps.style.display = 'block';
         retryBtn.style.display = 'inline-flex';
+        skipBtn.style.display = 'inline-flex';
       } else {
         // Prefer one of our recommended models if installed; otherwise use the first one available.
         MODEL = PREFERRED_MODELS.find(p => installed.includes(p)) || installed[0];
+        ollamaReady = true;
         statusEl.className = 'setup-status online';
         statusText.textContent = 'Connected — ' + MODEL;
         setTimeout(() => {
@@ -127,16 +172,29 @@
       }
     } catch (e) {
       console.warn('[Ollama] connection failed:', e);
+      ollamaReady = false;
       statusEl.className = 'setup-status offline';
       statusText.textContent = 'Ollama not detected (or CORS blocked)';
       setupSteps.style.display = 'block';
       retryBtn.style.display = 'inline-flex';
+      skipBtn.style.display = 'inline-flex';
     }
 
     // Bind retry once
     if (!retryBtn.dataset.bound) {
       retryBtn.addEventListener('click', () => checkOllamaConnection());
       retryBtn.dataset.bound = '1';
+    }
+
+    /* Ollama is only needed for open-ended chat, so a visitor who just
+       wants to convert a file should not be held at the setup panel
+       reading install instructions they will never act on. */
+    if (!skipBtn.dataset.bound) {
+      skipBtn.addEventListener('click', () => {
+        setupPanel.classList.add('hidden');
+        chatContainer.classList.remove('hidden');
+      });
+      skipBtn.dataset.bound = '1';
     }
   }
 
@@ -228,12 +286,39 @@
 
     // Build message for API
     const userMsg = { role: 'user', content: text + (attachedFile ? `\n[Attached file: ${attachedFile.name}, type: ${attachedFile.type}, size: ${attachedFile.size} bytes]` : '') };
-    chatHistory.push(userMsg);
-    trimHistory();
 
     // Clear input
     input.value = '';
     input.style.height = 'auto';
+
+    /* ---- Tool path ----
+       Runs before the model and returns early when it recognises the
+       request, so a conversion never touches the stream machinery
+       below. Both turns still go into chatHistory: if the visitor
+       switches to open-ended chat later, the model needs a transcript
+       that makes sense. */
+    const outcome = await runToolTurn(text);
+    if (outcome) {
+      chatHistory.push(userMsg, { role: 'assistant', content: outcome.reply });
+      trimHistory();
+      resetComposer(outcome.keepFile);
+      return;
+    }
+
+    chatHistory.push(userMsg);
+    trimHistory();
+
+    /* Nothing recognised and no model to fall back on. Saying what the
+       page can actually do beats a connection error the visitor cannot
+       act on. */
+    if (!ollamaReady) {
+      const reply = capabilityText();
+      addBubble('system', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+      trimHistory();
+      resetComposer(false);
+      return;
+    }
 
     // Show typing indicator
     const typingEl = showTyping();
@@ -360,11 +445,151 @@
       streamController = null;
       isStreaming = false;
       abortReason = null;
-      attachedFile = null;
-      setSendMode('send');
-      document.getElementById('chat-file-input').value = '';
-      document.getElementById('chat-input').placeholder = 'Type a message...';
+      resetComposer(false);
     }
+  }
+
+  function resetComposer(keepFile) {
+    if (!keepFile) {
+      attachedFile = null;
+      document.getElementById('chat-file-input').value = '';
+    }
+    setSendMode('send');
+    document.getElementById('chat-input').placeholder = keepFile && attachedFile
+      ? `📎 ${attachedFile.name} attached. Type a message...`
+      : 'Type a message...';
+  }
+
+  /* ---- Tool path ----
+     Returns { reply, keepFile } when the turn was handled here, or null
+     to hand the message on to the model. */
+  async function runToolTurn(text) {
+    if (!toolManifest || !window.THL || !window.THL.nlp) return null;
+
+    const parse = resolveParse(text);
+    if (!parse.tool) return null;
+
+    const tool = window.THL.toolkit.findTool(toolManifest, parse.tool);
+    if (!tool) return null;
+
+    /* Ask for one thing at a time. Listing every unset argument at once
+       reads like a form, and the parser already knows which one it is
+       actually blocked on. */
+    if (parse.missing.length) {
+      pendingParse = parse;
+      const param = tool.params.find(p => p.name === parse.missing[0]);
+      const question = (param && param.prompt) || `What should ${parse.missing[0]} be?`;
+      addBubble('system', question);
+      return { reply: question, keepFile: true };
+    }
+
+    if (!attachedFile) {
+      pendingParse = parse;
+      const ask = 'Attach an image with the paperclip and I will convert it.';
+      addBubble('system', ask);
+      return { reply: ask, keepFile: false };
+    }
+
+    pendingParse = null;
+    const typingEl = showTyping();
+
+    /* Not setSendMode('stop'): that button aborts a stream, and there is
+       no stream here. Canvas encoding is synchronous once it starts and
+       cannot be cancelled, so the honest state is a disabled button for
+       the second it takes. */
+    const sendBtn = document.getElementById('chat-send');
+    if (sendBtn) sendBtn.disabled = true;
+
+    try {
+      const result = await window.THL.toolkit.run(parse.tool, attachedFile, parse.args, toolManifest);
+      typingEl.remove();
+      addResultBubble(result);
+      return {
+        reply: `Converted ${result.filename} (${result.width}x${result.height}, ${window.THL.toolkit.formatBytes(result.bytes)}).`,
+        keepFile: false,
+      };
+    } catch (err) {
+      typingEl.remove();
+      console.warn('[THL] tool failed:', err);
+      const message = err && err.message ? err.message : 'That conversion failed.';
+      addBubble('system', message);
+      /* Keep the file: the usual cause is an argument the visitor can
+         correct and retry, and making them re-attach would be rude. */
+      return { reply: message, keepFile: true };
+    }
+  }
+
+  /* A pending question must not trap the visitor. A fresh tool match
+     always wins; a merge only applies when the reply actually supplied
+     something, or when the tool was only ever waiting on a file. Any
+     other utterance clears the pending state and goes to the model. */
+  function resolveParse(text) {
+    const fresh = window.THL.nlp.parse(text, toolManifest);
+    if (fresh.tool) { pendingParse = null; return fresh; }
+    if (!pendingParse) return fresh;
+
+    const merged = window.THL.nlp.mergeAnswer(pendingParse, text, toolManifest);
+    const gained = JSON.stringify(merged.args) !== JSON.stringify(pendingParse.args);
+    if (gained) return merged;
+    if (attachedFile && merged.missing.length === 0) return merged;
+
+    pendingParse = null;
+    return fresh;
+  }
+
+  function capabilityText() {
+    const tools = (toolManifest && toolManifest.tools) || [];
+    if (!tools.length) {
+      return 'Ollama is not connected, so I cannot chat right now — the setup steps are on this page.';
+    }
+    const lines = tools.map(t => `• ${t.title} — try "${(t.examples && t.examples[0] && t.examples[0].text) || t.name}"`);
+    return 'I can run these right here, no model needed:\n' + lines.join('\n') +
+      '\n\nFor open-ended conversation, connect Ollama using the setup steps on this page.';
+  }
+
+  /* The result of a tool is a file, not prose, so it gets its own bubble
+     with a thumbnail and a download link rather than being flattened
+     into markdown. */
+  function addResultBubble(result) {
+    const messages = document.getElementById('chat-messages');
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble chat-bubble-ai';
+
+    const url = URL.createObjectURL(result.blob);
+    resultUrls.push(url);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'chat-result';
+
+    const thumb = document.createElement('img');
+    thumb.className = 'chat-result-thumb';
+    thumb.src = url;
+    thumb.alt = '';
+    thumb.width = 56;
+    thumb.height = 56;
+
+    const body = document.createElement('div');
+    body.className = 'chat-result-body';
+
+    const name = document.createElement('p');
+    name.className = 'chat-result-name';
+    name.textContent = result.filename;
+
+    const meta = document.createElement('p');
+    meta.className = 'chat-result-meta';
+    meta.textContent = `${result.width} × ${result.height} · ${window.THL.toolkit.formatBytes(result.bytes)}`;
+
+    const link = document.createElement('a');
+    link.className = 'chat-result-download';
+    link.href = url;
+    link.setAttribute('download', result.filename);
+    link.textContent = 'Download';
+
+    body.append(name, meta, link);
+    wrap.append(thumb, body);
+    bubble.appendChild(wrap);
+    messages.appendChild(bubble);
+    scrollToBottom();
   }
 
   /* Classify before rendering. Echoing err.message put strings like

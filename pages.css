@@ -2811,3 +2811,277 @@
   .page-jump a { font-size: 0.68rem; padding: 5px 13px; }
 }
 
+
+/* ============ TOOL RUNNER (image converter + future THL tools) ============ */
+/* Deliberately thin: the controls reuse the .form-* system from the
+   submission form, so what lives here is only the drop zone, the result
+   panel and the argument table. */
+.tool-panel {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 2rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+}
+
+.tool-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 2.4rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px dashed var(--border-gold);
+  background: rgba(201, 168, 76, 0.02);
+  text-align: center;
+  transition: var(--transition);
+}
+
+/* The drag state has to be obvious enough to read at a glance while a
+   file is hovering over it and the cursor is busy. */
+.tool-drop.is-over {
+  border-color: var(--gold-primary);
+  background: var(--gold-glow);
+}
+
+.tool-drop-icon { color: var(--gold-dark); }
+
+.tool-drop-title {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.tool-drop-hint {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.4rem;
+}
+
+.tool-controls {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.8rem;
+}
+
+.tool-field-note {
+  text-align: left;
+  line-height: 1.5;
+}
+
+.tool-range-value {
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.tool-range {
+  width: 100%;
+  accent-color: var(--gold-primary);
+  cursor: pointer;
+}
+
+.tool-color {
+  width: 100%;
+  height: 38px;
+  padding: 2px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-card);
+  cursor: pointer;
+}
+
+.tool-status {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  min-height: 1.2em;
+  text-align: center;
+}
+
+.tool-status.is-error { color: #e0785c; }
+
+.tool-result {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr);
+  gap: 1.4rem;
+  align-items: center;
+  margin-top: 1.8rem;
+  padding: 1.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: rgba(201, 168, 76, 0.03);
+}
+
+/* The intrinsic width/height attributes carry the real pixel size so the
+   layout does not jump; the box here is what actually gets shown. */
+.tool-result-preview {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: repeating-conic-gradient(#1a1a1a 0% 25%, #101010 0% 50%) 50% / 16px 16px;
+}
+
+.tool-result-name {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.tool-result-facts {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.tool-download { text-decoration: none; }
+
+.tool-privacy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.6rem;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.tool-privacy svg { flex-shrink: 0; color: var(--gold-dark); }
+
+/* ---- Argument reference table ---- */
+.tool-args-wrap {
+  max-width: 900px;
+  margin: 0 auto;
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+}
+
+.tool-args {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.78rem;
+  min-width: 560px;
+}
+
+.tool-args th,
+.tool-args td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: top;
+}
+
+.tool-args th {
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--gold-primary);
+  background: rgba(201, 168, 76, 0.04);
+}
+
+.tool-args tbody tr:last-child td { border-bottom: none; }
+.tool-args td { color: var(--text-secondary); line-height: 1.7; }
+.tool-args code { color: var(--gold-light); }
+
+.tool-arg-required {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 50px;
+  border: 1px solid var(--border-gold);
+  font-size: 0.6rem;
+  letter-spacing: 0.5px;
+  color: var(--gold-primary);
+}
+
+@media (max-width: 768px) {
+  .tool-panel { padding: 1.4rem 1.2rem; }
+  .tool-controls { grid-template-columns: minmax(0, 1fr); }
+  .tool-result { grid-template-columns: minmax(0, 1fr); justify-items: center; text-align: center; }
+  .tool-result-facts { justify-content: center; }
+}
+
+/* ============ ASSISTANT: TOOL RESULTS ============ */
+/* The assistant can answer with a file rather than prose. That reply is
+   a small card instead of a markdown bubble, because the only useful
+   actions on it are "look at it" and "save it". */
+.setup-skip-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 24px; border-radius: 50px;
+  background: transparent; border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); font-family: var(--font-body);
+  font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  transition: var(--transition); margin-top: 0.6rem;
+}
+.setup-skip-btn:hover {
+  border-color: var(--border-gold);
+  color: var(--gold-primary);
+  transform: translateY(-2px);
+}
+
+.chat-result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.chat-result-thumb {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  object-fit: contain;
+  border-radius: var(--radius-sm);
+  background: repeating-conic-gradient(#1a1a1a 0% 25%, #101010 0% 50%) 50% / 12px 12px;
+}
+
+.chat-result-body { min-width: 0; }
+
+.chat-result-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.chat-result-meta {
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+  margin: 2px 0 8px;
+}
+
+.chat-result-download {
+  display: inline-block;
+  padding: 5px 16px;
+  border-radius: 50px;
+  border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.chat-result-download:hover { background: var(--gold-glow); }
+
+/* The hidden attribute is a presentation hint of display:none, and any
+   class rule with display: beats it on specificity. .form-group is
+   display:flex and .tool-result is display:grid, so both stayed visible
+   when JS set hidden — an empty result panel on page load, and quality
+   and background controls that never went away for PNG. */
+.tool-controls .form-group[hidden],
+.tool-result[hidden] {
+  display: none;
+}
