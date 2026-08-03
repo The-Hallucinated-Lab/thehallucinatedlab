@@ -10,7 +10,7 @@ from thehallucinatedlab.cli import main
 def test_tools_lists_every_tool_and_its_arguments(capsys):
     assert main(["tools"]) == 0
     out = capsys.readouterr().out
-    assert "image_convert" in out
+    assert "converter" in out
     assert "--format" in out
     assert "png | jpeg | webp | avif" in out
     assert "thehallucinatedlab.space" in out

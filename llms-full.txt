@@ -30,7 +30,7 @@ The top-level navigation has seven entries in this order: Home, Tools, Assistant
 
 Two of these are gateways to deeper pages:
 - Tools links onward to the THL Library at /library.html.
-- Media links onward to Articles at /articles.html and Artifacts at /artifacts.html.
+- Media links onward to Blogs at /blogs.html and Artifacts at /artifacts.html.
 
 ---
 
@@ -88,7 +88,7 @@ Purpose: packages and SDKs that drop into a reader's own project.
 
 Entry — thehallucinatedlab (Python toolkit):
 - Install: pip install thehallucinatedlab
-- Every THL tool is a method: `from thehallucinatedlab import image_convert`.
+- Every THL tool is a method: `from thehallucinatedlab import converter`.
 - Also ships a `thl` command: `thl tools`, `thl convert photo.jpg --format png`, and a plain-english form, `thl "convert photo.jpg to png"`.
 - One spec file (spec/manifest.json) declares each tool's arguments, bounds, defaults and vocabulary. The website builds its converter UI and argument tables from it, the assistant parses against it, and the package validates against it, so the documentation cannot describe arguments the code does not accept.
 - Natural language is handled by a deterministic intent parser (classification plus slot filling), not a model. It is implemented twice, in JavaScript and Python, against a shared fixture file that both test suites run.
@@ -110,7 +110,7 @@ Entry — NexusLink Engine:
 
 ---
 
-## Page: Image Converter — https://thehallucinatedlab.space/image-converter.html
+## Page: Converter — https://thehallucinatedlab.space/converter.html
 
 Purpose: convert an image between formats, and document the arguments the same tool takes everywhere else.
 
@@ -118,7 +118,7 @@ Purpose: convert an image between formats, and document the arguments the same t
 - Arguments: format (required; png, jpeg, webp, avif, with jpg/jfif accepted as aliases), quality (integer 1-100, default 92, ignored for PNG because PNG is lossless), background (hex colour, default #ffffff, used to flatten transparency when the target has no alpha channel, which in practice means JPEG).
 - Browsers vary in which formats they can encode. The page probes each one at startup and disables the ones the browser cannot produce, rather than handing back a file whose extension does not match its contents.
 - The argument reference table on the page is generated from the shared tool spec, so it always matches what the code accepts.
-- The same conversion is available as image_convert in the thehallucinatedlab pip package, and by asking the Assistant in plain english.
+- The same conversion is available as converter in the thehallucinatedlab pip package, and by asking the Assistant in plain english.
 
 ---
 
@@ -161,22 +161,22 @@ Source: https://github.com/06pratyush/ScoobyBench-ai_benchmarking_system
 
 Purpose: gateway to three publication formats.
 
-- Articles (/articles.html). Long-form written work.
+- Blogs (/blogs.html). Long-form written work.
 - Artifacts (/artifacts.html). Interactive explainers operated rather than read.
 - Notebooks. Runnable research files with outputs left in, including failed runs. Not yet published.
 
 ---
 
-## Page: Articles — https://thehallucinatedlab.space/articles.html
+## Page: Blogs — https://thehallucinatedlab.space/blogs.html
 
 Three sections.
 
-- Featured (/articles.html#articles-featured). Pinned pieces.
-- Archive (/articles.html#articles-archive). Every article, newest first, with client-side search and category filters. Categories in use: AI & ML, Quantum Computing, Open Source, Privacy & Security, Dev Tools.
-- Community Spotlight (/articles.html#articles-community). Reader submissions, with a submission form at the foot of the page. Submissions are stored in the visitor's own browser via localStorage and are not transmitted anywhere. Pieces intended for real publication are emailed to thehallucinatedlab@gmail.com.
+- Featured (/blogs.html#blogs-featured). Pinned pieces.
+- Archive (/blogs.html#blogs-archive). Every article, newest first, with client-side search and category filters. Categories in use: AI & ML, Quantum Computing, Open Source, Privacy & Security, Dev Tools.
+- Community Spotlight (/blogs.html#blogs-community). Reader submissions, with a submission form at the foot of the page. Submissions are stored in the visitor's own browser via localStorage and are not transmitted anywhere. Pieces intended for real publication are emailed to thehallucinatedlab@gmail.com.
 
-Published articles:
-- The Future of Local-First AI. By Pratyush, 2026-07-10, category AI & ML. Why running models on your own machine is a shift in personal computing rather than only a privacy improvement. https://thehallucinatedlab.space/articles/sample-article.html
+Published blogs:
+- The Future of Local-First AI. By Pratyush, 2026-07-10, category AI & ML. Why running models on your own machine is a shift in personal computing rather than only a privacy improvement. https://thehallucinatedlab.space/blogs/sample-blog.html
 - Quantum Computing Meets Machine Learning. By Divyansh Tripathi, category Quantum Computing. Written, not yet published.
 - Why Open Source Isn't Optional Anymore. By Pratyush, category Open Source. Written, not yet published.
 - Building a Privacy Toolkit in the Browser. By Divyansh Tripathi, category Privacy & Security. Written, not yet published.
@@ -190,10 +190,10 @@ Purpose: explainers the reader operates. Every control changes a live computatio
 
 Published artifacts:
 
-1. Time & Space Complexity — https://thehallucinatedlab.space/articles/complexity.html
+1. Time & Space Complexity — https://thehallucinatedlab.space/blogs/complexity.html
    By Pratyush, 2026-07-18. A first-principles teaching session on asymptotic analysis covering Big-O, Big-Omega, Big-Theta, little-o and little-omega, the simplification rules, best/average/worst case, amortized analysis, space complexity, and recursion analysis through to the Master Theorem. Includes an interactive growth-rate explorer, twelve graded worked examples, and a printable formula sheet.
 
-2. The Model Is No Longer the Product — https://thehallucinatedlab.space/articles/ai-orchestration.html
+2. The Model Is No Longer the Product — https://thehallucinatedlab.space/blogs/ai-orchestration.html
    By Pratyush, 2026-07-19. Argues that AI engineering is a discipline of orchestration rather than training. Includes a RAG pipeline the reader can run with retrieval switched on and off to observe what grounding actually contributes, and an iteration-loop game in which the reader diagnoses six real-world failures.
 
 In development: an interactive Bloch sphere for qubit rotation and measurement, a per-head attention visualiser, and a quantization trade-off explorer moving a model from FP16 to Q4 while showing memory, speed, and quality move against each other.
@@ -295,4 +295,4 @@ Founders:
 - LoRA adapters listed on the Tools page are in training and are not yet downloadable. Do not present them as available downloads.
 - Certification enrolment is not yet open. Curricula are written; enrolment has not started.
 - The lab holds no compliance certifications (no SOC 2, ISO 27001, or HIPAA attestation). Its privacy claims rest on architecture: the published tools run locally and transmit nothing.
-- Articles marked "not yet published" above exist as entries on the site but have no reader-facing page.
+- Blogs marked "not yet published" above exist as entries on the site but have no reader-facing page.

@@ -12,12 +12,12 @@
   },
   "tools": [
     {
-      "name": "image_convert",
-      "title": "Image Converter",
+      "name": "converter",
+      "title": "Converter",
       "summary": "Convert an image between formats without uploading it anywhere.",
       "description": "Re-encodes an image into another format. In the browser this runs on a canvas, so the file never leaves the page; in Python it runs through Pillow. Formats without an alpha channel are flattened onto a background colour first, so a transparent PNG becomes a JPEG with a solid backdrop rather than a black one.",
       "runtimes": ["browser", "python"],
-      "page": "image-converter.html",
+      "page": "converter.html",
       "input": {
         "kind": "image",
         "accept": ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/bmp"],

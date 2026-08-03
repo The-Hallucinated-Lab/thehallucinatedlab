@@ -291,14 +291,14 @@
 .media-section { padding: 2rem 2rem 6rem; }
 .media-section--alt { background: var(--bg-secondary); }
 
-/* Articles grid */
-.articles-grid {
+/* Blogs grid */
+.blogs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
   margin-top: 1rem;
 }
-.article-card {
+.blog-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl);
@@ -310,7 +310,7 @@
   overflow: hidden;
   transition: var(--transition);
 }
-.article-card::before {
+.blog-card::before {
   content: '';
   position: absolute;
   top: 0; left: 0; right: 0;
@@ -319,20 +319,20 @@
   opacity: 0;
   transition: var(--transition);
 }
-.article-card:hover {
+.blog-card:hover {
   border-color: var(--border-gold);
   transform: translateY(-4px);
   box-shadow: var(--shadow-gold);
 }
-.article-card:hover::before { opacity: 1; }
+.blog-card:hover::before { opacity: 1; }
 
-.article-card-meta {
+.blog-card-meta {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
 }
-.article-tag {
+.blog-tag {
   font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 1.5px;
@@ -343,25 +343,25 @@
   padding: 3px 10px;
   border-radius: 50px;
 }
-.article-date {
+.blog-date {
   font-size: 0.75rem;
   color: var(--text-muted);
   font-style: normal;
 }
-.article-title {
+.blog-title {
   font-family: var(--font-heading);
   font-size: 1.1rem;
   font-weight: 700;
   line-height: 1.35;
   color: var(--text-primary);
 }
-.article-excerpt {
+.blog-excerpt {
   font-size: 0.82rem;
   color: var(--text-secondary);
   line-height: 1.7;
   flex: 1;
 }
-.article-cta {
+.blog-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -375,7 +375,7 @@
   align-self: flex-start;
   transition: var(--transition);
 }
-.article-cta--disabled {
+.blog-cta--disabled {
   opacity: 0.45;
   cursor: default;
   pointer-events: none;
@@ -472,7 +472,7 @@
     max-width: 95%;
   }
 
-  .articles-grid { grid-template-columns: 1fr; }
+  .blogs-grid { grid-template-columns: 1fr; }
   .visualiser-header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .visualiser-body { min-height: 240px; }
 }
@@ -1586,7 +1586,7 @@
   .spotlight-panel { padding: 1.5rem 1.2rem; }
   .spotlight-points { grid-template-columns: 1fr; gap: 1rem; }
   .spotlight-actions { flex-direction: column; align-items: stretch; text-align: center; }
-  .spotlight-actions .article-cta { justify-content: center; }
+  .spotlight-actions .blog-cta { justify-content: center; }
   .sb-screen { padding: 1rem; }
   .sb-bar-row { grid-template-columns: 76px 1fr 64px; gap: 8px; }
   .sb-tab { flex: 1 1 40%; text-align: center; }
@@ -1815,7 +1815,7 @@
   transition: var(--transition);
 }
 .offer-panel:hover { border-color: var(--border-gold); box-shadow: var(--shadow-gold); }
-.offer-panel .article-tag { align-self: flex-start; }
+.offer-panel .blog-tag { align-self: flex-start; }
 .offer-title {
   font-family: var(--font-heading);
   font-size: 1.35rem;
@@ -1856,7 +1856,7 @@
   color: var(--text-primary);
   margin-bottom: 0.15rem;
 }
-.offer-panel .article-cta { margin-top: 0.4rem; }
+.offer-panel .blog-cta { margin-top: 0.4rem; }
 
 /* ============ TRAIT CARDS (artifacts + consultancy) ============ */
 .trait-grid {
@@ -2291,7 +2291,7 @@
   text-transform: uppercase;
 }
 
-/* Submit form heading (Articles page) */
+/* Submit form heading (Blogs page) */
 .submit-wrapper-compact {
   margin-top: 3.5rem;
   padding: 2.2rem;
@@ -2426,7 +2426,7 @@
   color: var(--gold-dark);
   font-size: 0.55rem;
 }
-.artifact-card .article-cta { align-self: flex-start; }
+.artifact-card .blog-cta { align-self: flex-start; }
 
 /* ============================================================
    CERTIFICATION PAGE

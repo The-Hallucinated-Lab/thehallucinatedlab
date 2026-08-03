@@ -25,7 +25,7 @@ const START = '/* @pure-start';
 const END = '/* @pure-end */';
 
 /**
- * @param {string} relativePath  e.g. 'articles.js'
+ * @param {string} relativePath  e.g. 'blogs.js'
  * @param {string[]} names       identifiers to pull out of the pure block
  * @returns {Record<string, Function|any>}
  */

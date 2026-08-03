@@ -1,5 +1,5 @@
 /* ============================================================
-   image-converter.js — page glue for image-converter.html.
+   converter.js — page glue for converter.html.
 
    Owns the drop zone, the controls and the result panel. Everything
    that decides what an argument means lives in toolkit.js, and
@@ -64,8 +64,8 @@
     toolkit.loadManifest()
       .then(function (loaded) {
         manifest = loaded;
-        tool = toolkit.findTool(manifest, 'image_convert');
-        if (!tool) throw new Error('image_convert is not in the tool spec.');
+        tool = toolkit.findTool(manifest, 'converter');
+        if (!tool) throw new Error('converter is not in the tool spec.');
         toolkit.renderParamTable(tool, el.args);
         applyParamBounds();
         return toolkit.probeEncoders(tool);

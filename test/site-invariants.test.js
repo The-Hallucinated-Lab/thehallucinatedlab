@@ -37,7 +37,7 @@ const BUDGET = {
 
 function htmlFiles() {
   const out = [];
-  for (const dir of ['.', 'articles']) {
+  for (const dir of ['.', 'blogs']) {
     const abs = path.join(ROOT, dir);
     for (const f of fs.readdirSync(abs)) {
       if (f.endsWith('.html')) out.push(path.join(dir, f).replace(/\\/g, '/'));

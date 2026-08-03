@@ -298,10 +298,10 @@
     });
   }
 
-  /* ---- image_convert ---- */
+  /* ---- converter ---- */
   function runImageConvert(file, rawArgs, manifest) {
-    var tool = findTool(manifest, 'image_convert');
-    if (!tool) return Promise.reject(ToolError('image_convert is not in the tool spec.'));
+    var tool = findTool(manifest, 'converter');
+    if (!tool) return Promise.reject(ToolError('converter is not in the tool spec.'));
     if (!file) return Promise.reject(ToolError('Choose an image first.'));
 
     var checked = validateArgs(rawArgs, tool);
@@ -370,7 +370,7 @@
   }
 
   function run(name, file, args, manifest) {
-    if (name === 'image_convert') return runImageConvert(file, args, manifest);
+    if (name === 'converter') return runImageConvert(file, args, manifest);
     return Promise.reject(ToolError('Unknown tool "' + name + '".'));
   }
 

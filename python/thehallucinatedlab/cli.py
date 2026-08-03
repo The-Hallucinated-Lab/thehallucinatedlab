@@ -21,9 +21,14 @@ from . import __version__
 from .errors import THLError
 from .nlp import parse as parse_intent
 from .registry import registry
-from .tools.image_convert import image_convert
+from .tools.converter import converter
 
-_SUBCOMMANDS = ("tools", "convert", "ask")
+# The tool is called "converter" on the website, in the spec, and in the
+# Python API, so the subcommand matches it exactly — one name everywhere.
+# "convert" stays as a hidden alias because it shipped in 0.1.0 and silently
+# breaking an installed CLI is worse than carrying one extra word.
+_SUBCOMMANDS = ("tools", "converter", "convert", "ask")
+_ALIASES = {"convert": "converter"}
 
 
 def _print_tools() -> int:
@@ -52,7 +57,7 @@ def _print_tools() -> int:
 
 
 def _run_convert(args: argparse.Namespace) -> int:
-    result = image_convert(
+    result = converter(
         args.source,
         args.output,
         format=args.format,
@@ -81,11 +86,11 @@ def _run_ask(text: str) -> int:
               file=sys.stderr)
         return 2
 
-    if intent["tool"] != "image_convert":
+    if intent["tool"] != "converter":
         print(f"{intent['tool']} has no command-line form yet.", file=sys.stderr)
         return 2
 
-    result = image_convert(source, **intent["args"])
+    result = converter(source, **intent["args"])
     print(result)
     return 0
 
@@ -114,12 +119,16 @@ def _build_parser() -> argparse.ArgumentParser:
 
     subparsers.add_parser("tools", help="list every tool and its arguments")
 
-    convert = subparsers.add_parser("convert", help="convert an image between formats")
-    convert.add_argument("source", help="path to the image")
-    convert.add_argument("-o", "--output", default=None, help="where to write (default: alongside)")
-    convert.add_argument("-f", "--format", required=True, help="png, jpeg, webp or avif")
-    convert.add_argument("-q", "--quality", type=int, default=None, help="1-100, lossy formats")
-    convert.add_argument(
+    converter = subparsers.add_parser(
+        "converter", aliases=["convert"], help="convert an image between formats"
+    )
+    converter.add_argument("source", help="path to the image")
+    converter.add_argument(
+        "-o", "--output", default=None, help="where to write (default: alongside)"
+    )
+    converter.add_argument("-f", "--format", required=True, help="png, jpeg, webp or avif")
+    converter.add_argument("-q", "--quality", type=int, default=None, help="1-100, lossy formats")
+    converter.add_argument(
         "--background", default=None, help="hex fill for transparency, e.g. #ffffff"
     )
 
@@ -142,11 +151,15 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     parsed = _build_parser().parse_args(args)
 
-    if parsed.command == "tools":
+    # argparse reports whichever spelling was typed, so fold aliases onto the
+    # canonical name before dispatching rather than testing both everywhere.
+    command = _ALIASES.get(parsed.command, parsed.command)
+
+    if command == "tools":
         return _guard(_print_tools)
-    if parsed.command == "convert":
+    if command == "converter":
         return _guard(lambda: _run_convert(parsed))
-    if parsed.command == "ask":
+    if command == "ask":
         return _guard(lambda: _run_ask(" ".join(parsed.text)))
 
     _build_parser().print_help()

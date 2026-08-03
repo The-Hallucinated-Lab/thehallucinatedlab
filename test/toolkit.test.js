@@ -19,10 +19,10 @@ const { validateArgs, filenameFor, describeParams, formatBytes, sizeDelta, findT
     'validateArgs', 'filenameFor', 'describeParams', 'formatBytes', 'sizeDelta', 'findTool',
   ]);
 
-const imageConvert = findTool(manifest, 'image_convert');
+const imageConvert = findTool(manifest, 'converter');
 
 test('the manifest actually contains the tool the site ships', () => {
-  assert.ok(imageConvert, 'image_convert missing from spec/manifest.json');
+  assert.ok(imageConvert, 'converter missing from spec/manifest.json');
   assert.equal(findTool(manifest, 'nope'), null);
 });
 

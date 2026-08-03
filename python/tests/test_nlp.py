@@ -55,7 +55,7 @@ def test_a_follow_up_completes_a_stalled_parse():
     assert pending["missing"] == ["format"]
 
     merged = merge_answer(pending, "png")
-    assert merged["tool"] == "image_convert"
+    assert merged["tool"] == "converter"
     assert merged["args"] == {"format": "png"}
     assert merged["missing"] == []
 

@@ -55,8 +55,8 @@ thehallucinatedlab/
 ├── tools.html            # Tools — Prompts, LoRA Adapters, THL Library
 ├── interface.html        # Assistant — local Ollama chat integration
 ├── solutions.html        # Solutions — shipped products (ScoobyBench)
-├── media.html            # Media — gateway to Articles / Artifacts / Notebooks
-├── articles.html         # Articles — Featured, Archive, Community Spotlight
+├── media.html            # Media — gateway to Blogs / Artifacts / Notebooks
+├── blogs.html         # Blogs — Featured, Archive, Community Spotlight
 ├── artifacts.html        # Artifacts — interactive, playable explainers
 ├── certification.html    # Certification — course tracks and the certificate
 ├── consultancy.html      # Consultancy — individual & business engagements
@@ -70,10 +70,10 @@ thehallucinatedlab/
 ├── fonts.css             # Self-hosted @font-face + metric-matched fallbacks
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
-├── articles.js           # Article data store, archive search, submission form
+├── blogs.js           # Blog data store, archive search, submission form
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
-├── image-converter.html  # Image Converter — the first THL tool
-├── image-converter.js    # Its drop zone, controls, and result panel
+├── converter.html  # Converter — the first THL tool
+├── converter.js    # Its drop zone, controls, and result panel
 ├── toolkit.js            # Shared tool runtime + argument-table renderer
 ├── nlp.js                # Intent parser (classification + slot filling)
 ├── solutions.js          # ScoobyBench screenshot tab switcher
@@ -96,7 +96,7 @@ thehallucinatedlab/
 │   ├── thehallucinatedlab/
 │   │   ├── registry.py           # Reads the manifest, validates arguments
 │   │   ├── nlp/__init__.py       # Python port of nlp.js
-│   │   ├── tools/image_convert.py# Pillow implementation
+│   │   ├── tools/converter.py# Pillow implementation
 │   │   ├── nexuslink.py          # Lazy door onto the NexusLink binding
 │   │   ├── cli.py                # The `thl` command
 │   │   └── data/manifest.json    # Synced copy of spec/manifest.json
@@ -104,14 +104,14 @@ thehallucinatedlab/
 ├── .nojekyll             # Disables Jekyll on GitHub Pages
 ├── CNAME                 # Custom domain configuration
 ├── .gitattributes        # Git config
-├── articles/
-│   ├── article.css           # Article/artifact reading styles
-│   ├── article.js            # Reading progress, TOC, scroll animations
+├── blogs/
+│   ├── blog.css           # Blog/artifact reading styles
+│   ├── blog.js            # Reading progress, TOC, scroll animations
 │   ├── ai-orchestration.html # Artifact — RAG pipeline + iteration game
 │   ├── ai-orchestration.js   # Its interactive figures
 │   ├── complexity.html       # Artifact — complexity explorer
 │   ├── complexity.js         # Its interactive figures
-│   └── sample-article.html   # Article — local-first AI
+│   └── sample-blog.html   # Blog — local-first AI
 └── assets/
     ├── fonts/                # Variable WOFF2, latin + latin-ext subsets
     ├── vendor/               # GSAP 3.12.2 (self-hosted, was cdnjs)
@@ -121,7 +121,7 @@ thehallucinatedlab/
         ├── favicon-32.png / favicon-180.png
         ├── pratyush.jpeg / divyansh.jpeg  # Masters for the variants below
         ├── pratyush-240.{avif,webp,jpg}   # About-page avatar, 120px @2x
-        ├── pratyush-80.{avif,webp,jpg}    # Article byline, 40px @2x
+        ├── pratyush-80.{avif,webp,jpg}    # Blog byline, 40px @2x
         └── divyansh-240.{avif,webp,jpg}
 ```
 
@@ -150,22 +150,22 @@ thehallucinatedlab/
 - **Streaming responses** rendered token-by-token, with a setup panel that surfaces install/CORS instructions when Ollama isn't reachable
 
 ### Tools
-- **Image Converter** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
+- **Converter** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
 - **One spec, four consumers** — `spec/manifest.json` drives the converter UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
 - **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)
 
 ### Media
-- **Articles** — featured picks, a searchable archive, and a community spotlight with a submission form (stored in `localStorage`)
+- **Blogs** — featured picks, a searchable archive, and a community spotlight with a submission form (stored in `localStorage`)
 - **Artifacts** — interactive explainers you operate rather than read
 - **Notebooks** — runnable research, landing soon
 
 ### SEO & AI discoverability
-- **JSON-LD on every page** — an `Organization` / `Person` / `WebSite` identity graph on the home page, with `BreadcrumbList`, `CollectionPage`, `SoftwareApplication`, `WebApplication`, `ProfessionalService`, `Course`, and `Article` / `LearningResource` on the pages they describe
+- **JSON-LD on every page** — an `Organization` / `Person` / `WebSite` identity graph on the home page, with `BreadcrumbList`, `CollectionPage`, `SoftwareApplication`, `WebApplication`, `ProfessionalService`, `Course`, and `Blog` / `LearningResource` on the pages they describe
 - **`llms.txt` and `llms-full.txt`** — Markdown summaries written for LLM crawlers, including an accuracy section stating what is *not* yet available so answer engines don't overstate it
 - **`robots.txt`** explicitly allowing AI agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and others) plus an XML sitemap
-- **Pre-rendered article listings** — the Featured and Archive grids ship as static HTML so crawlers that don't execute JavaScript still see every article; `articles.js` re-renders the same markup and takes over the filtering
+- **Pre-rendered article listings** — the Featured and Archive grids ship as static HTML so crawlers that don't execute JavaScript still see every article; `blogs.js` re-renders the same markup and takes over the filtering
 - Open Graph + Twitter Card meta with images, canonical URLs, and `preconnect` hints for the font origins
 - One `<h1>` per page and no skipped heading levels
 - Descriptive `alt` attributes and explicit `width`/`height` on all images (no layout shift)
@@ -199,7 +199,7 @@ python -m http.server 8000
 npx -y serve .
 ```
 
-> **The tool pages need a server, not `file://`.** `image-converter.html` and the
+> **The tool pages need a server, not `file://`.** `converter.html` and the
 > Assistant fetch `spec/manifest.json`, which the browser blocks over `file://`.
 > Every other page opens fine either way.
 
@@ -240,7 +240,7 @@ change's problem to justify — not a number to raise.**
 |---|---|---|
 | Requests, first load | **≤ 10** | Every page today is 8 or fewer. |
 | Transferred bytes, first load | **≤ 150 KB** | Homepage is well under this after compression. |
-| JavaScript, per page | **≤ 40 KB** uncompressed | Article pages are the exception: GSAP is ~115 KB on top. |
+| JavaScript, per page | **≤ 40 KB** uncompressed | Blog pages are the exception: GSAP is ~115 KB on top. |
 | Third-party origins | **0** | Fonts and GSAP are self-hosted. Adding an origin needs a real reason. |
 | Any single image | **≤ 20 KB** | Serve a variant sized for its container, never the master. |
 | DOM nodes, per page | **≤ 1,500** | Homepage sits around 250. |
@@ -367,7 +367,7 @@ Actions are pinned to commit SHAs rather than mutable tags.
 | **Tools** | Prompts, LoRA adapters, and the THL Library — everything meant to leave with you |
 | **Assistant** | AI chat powered by local Ollama — auto-detects installed model, streaming responses |
 | **Solutions** | Shipped products, led by ScoobyBench (AI hardware benchmarking) |
-| **Media** | Gateway to Articles, Artifacts, and Notebooks |
+| **Media** | Gateway to Blogs, Artifacts, and Notebooks |
 | **Certification** | Six project-graded course tracks and what the certificate actually attests to |
 | **Consultancy** | Engagements for individuals and businesses, plus how we scope and hand over work |
 | **Navbar** | Fixed top bar — Home, Tools, Assistant, Solutions, Media, Certification, Consultancy + mobile hamburger |
