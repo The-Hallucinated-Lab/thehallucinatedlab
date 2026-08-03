@@ -4,7 +4,7 @@
 
 The Hallucinated Lab operates in three modes:
 
-1. **Free artifacts.** Prompts, LoRA adapters, open-source packages, interactive explainers, and a browser-based assistant that talks to a locally running model. All free, all designed to run offline.
+1. **Free artifacts.** Prompts, LoRA adapters, open-source packages, interactive explainers, and a browser-based assistant that understands plain-English tool requests. All free, all designed to run offline.
 2. **Services.** AI consultancy for individuals (mentoring, code and architecture review, research support) and businesses (feasibility audits, RAG and agent system builds, private on-premise deployment, team enablement).
 3. **Certification.** Project-graded course tracks in local-first AI. Every track ends in a build that is reviewed against published criteria before a certificate is issued.
 
@@ -17,7 +17,7 @@ The Hallucinated Lab operates in three modes:
 - [Home](https://thehallucinatedlab.space/): Overview of the lab and a guide to every section of the site.
 - [Tools](https://thehallucinatedlab.space/tools.html): Three sections — a prompt library, LoRA adapters for locally running LLMs, and the THL Library of packages.
 - [Converter](https://thehallucinatedlab.space/converter.html): Converts images between PNG, JPEG, WebP and AVIF entirely in the browser on a canvas. Nothing is uploaded and it works offline. Doubles as the argument reference for the converter method in the thehallucinatedlab pip package.
-- [Assistant](https://thehallucinatedlab.space/interface.html): Browser chat interface that connects to Ollama on the user's own machine. No API keys, no cloud relay.
+- [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
 - [Certification](https://thehallucinatedlab.space/certification.html): Six project-graded course tracks and the criteria a capstone must clear.

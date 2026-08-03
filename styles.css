@@ -66,9 +66,22 @@ body {
   transition: var(--transition);
 }
 .navbar.scrolled { border-bottom-color: var(--border-subtle); background: rgba(5, 5, 5, 0.95); }
-.nav-logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.nav-logo img { height: 36px; width: 36px; border-radius: 50%; }
-.nav-logo span { font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem; background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 0.5px; }
+/* Gap is 0 by design: a collapsed wordmark must not reserve gap space, or
+   the mark sits with a phantom indent. Spacing animates via margin-left. */
+.nav-logo { display: flex; align-items: center; gap: 0; text-decoration: none; }
+.nav-logo img { height: 36px; width: 36px; border-radius: 50%; flex-shrink: 0; }
+.nav-logo span {
+  font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem;
+  background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  letter-spacing: 0.5px;
+  display: inline-block; overflow: hidden; white-space: nowrap;
+  max-width: 0; opacity: 0; margin-left: 0;
+  transition: max-width var(--transition), opacity 0.3s ease, margin-left var(--transition);
+}
+/* Clipped, not removed — the text stays in the DOM so screen readers and
+   search crawlers still get the site name. */
+.nav-logo:hover span, .nav-logo:focus-visible span { max-width: 340px; opacity: 1; margin-left: 12px; }
+@media (prefers-reduced-motion: reduce) { .nav-logo span { transition: none; } }
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; transition: var(--transition); position: relative; }
 .nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--gold-primary); transition: var(--transition); }
@@ -248,6 +261,9 @@ section { padding: 6rem 2rem; position: relative; }
 @media (max-width: 768px) {
   .about-grid { grid-template-columns: 1fr; }
   section { padding: 4rem 1.2rem; }
+  /* Touch devices have no hover, so a hover-only wordmark would be
+     permanently invisible. Show it unconditionally below this breakpoint. */
+  .nav-logo span { max-width: none; opacity: 1; margin-left: 12px; font-size: 0.95rem; }
 }
 
 /* ============================================================
@@ -293,4 +309,55 @@ section { padding: 6rem 2rem; position: relative; }
     transform: none;
     transition-delay: 0s !important;
   }
+}
+
+/* ============ NAV: ICON BAR + INLINE FLYOUT ============
+   Labels collapse to icons so the bar has room to expand a subsection
+   inline. Measured on the prototype: text labels needed 1115px of bar in
+   a 783px window; icons fit. The <ul> is untouched in HTML — script.js
+   enhances it, so with JS off this whole block simply never applies. */
+.nav-links > li { display: inline-flex; align-items: center; }
+.nav-links a.has-icon { display: inline-flex; align-items: center; }
+.nav-links a.has-icon svg {
+  width: 20px; height: 20px; flex-shrink: 0;
+  stroke: currentColor; fill: none;
+  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+}
+/* Clipped rather than hidden: the label is the accessible name. */
+.nav-links a.has-icon .nav-label {
+  display: inline-block; overflow: hidden; white-space: nowrap;
+  max-width: 0; opacity: 0; margin-left: 0;
+  transition: max-width var(--transition), opacity 0.3s ease, margin-left var(--transition);
+}
+.nav-links a.has-icon:hover .nav-label,
+.nav-links a.has-icon:focus-visible .nav-label,
+.nav-links li.is-open > a.has-icon .nav-label,
+.nav-links a.has-icon.active .nav-label { max-width: 160px; opacity: 1; margin-left: 8px; }
+/* The underline is sized to the icon, so suppress it while collapsed. */
+.nav-links a.has-icon::after { display: none; }
+.nav-links li.is-open > a.has-icon { color: var(--gold-primary); }
+
+.nav-flyout {
+  display: inline-flex; overflow: hidden; width: 0;
+  transition: width 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.nav-flyout-inner {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding-left: 0.9rem; white-space: nowrap;
+}
+.nav-flyout-rule {
+  width: 1px; height: 18px; flex-shrink: 0;
+  background: var(--border-gold); margin-right: 0.4rem;
+}
+.nav-sub {
+  font-size: 0.68rem; letter-spacing: 0.8px; text-transform: uppercase;
+  padding: 6px 13px; border-radius: 99px;
+  border: 1px solid var(--border-subtle); color: var(--text-secondary);
+  text-decoration: none; transition: var(--transition);
+}
+.nav-sub:hover { color: var(--gold-primary); border-color: var(--border-gold); background: var(--gold-glow); }
+.nav-sub::after { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-flyout, .nav-links a.has-icon .nav-label { transition: none; }
 }

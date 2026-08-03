@@ -68,82 +68,6 @@
   overflow: hidden;
 }
 
-/* Setup Panel (shown when Ollama is not running) */
-.chat-setup-panel {
-  max-width: 600px; margin: auto; padding: 3rem;
-  text-align: center;
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  backdrop-filter: blur(20px);
-}
-.chat-setup-panel h1,
-.chat-setup-panel h2 {
-  font-family: var(--font-heading); font-size: 1.6rem;
-  font-weight: 700; margin-bottom: 1rem;
-}
-.chat-setup-panel p {
-  color: var(--text-secondary); font-size: 0.88rem;
-  line-height: 1.8; margin-bottom: 1.5rem;
-}
-.setup-status {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 6px 16px; border-radius: 50px;
-  font-size: 0.78rem; font-weight: 600;
-  letter-spacing: 0.5px; text-transform: uppercase;
-  margin-bottom: 2rem;
-}
-.setup-status.checking {
-  background: rgba(241, 196, 15, 0.1); border: 1px solid rgba(241, 196, 15, 0.3);
-  color: #f1c40f;
-}
-.setup-status.offline {
-  background: rgba(231, 76, 60, 0.1); border: 1px solid rgba(231, 76, 60, 0.3);
-  color: #e74c3c;
-}
-.setup-status.online {
-  background: rgba(46, 204, 113, 0.1); border: 1px solid rgba(46, 204, 113, 0.3);
-  color: #2ecc71;
-}
-.setup-status .status-dot {
-  width: 6px; height: 6px; border-radius: 50%;
-  background: currentColor; animation: pulse-dot 2s infinite;
-}
-.setup-steps { text-align: left; margin: 2rem 0; }
-.setup-step {
-  display: flex; align-items: flex-start; gap: 12px;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid var(--border-subtle);
-}
-.setup-step:last-child { border-bottom: none; }
-.setup-step-num {
-  flex-shrink: 0; width: 24px; height: 24px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; background: var(--gold-glow);
-  border: 1px solid var(--border-gold);
-  color: var(--gold-primary); font-size: 0.7rem; font-weight: 800;
-  font-family: var(--font-heading);
-}
-.setup-step-text {
-  color: var(--text-secondary); font-size: 0.82rem; line-height: 1.6;
-}
-.setup-step-text code {
-  display: inline-block; padding: 2px 8px; border-radius: 4px;
-  background: rgba(201, 168, 76, 0.08); border: 1px solid var(--border-subtle);
-  color: var(--gold-light); font-family: var(--font-body);
-  font-size: 0.78rem; font-weight: 500;
-}
-.setup-retry-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 10px 24px; border-radius: 50px;
-  background: transparent; border: 1px solid var(--border-gold);
-  color: var(--gold-primary); font-family: var(--font-body);
-  font-size: 0.82rem; font-weight: 600; cursor: pointer;
-  transition: var(--transition); margin-top: 1rem;
-}
-.setup-retry-btn:hover {
-  background: var(--gold-glow); transform: translateY(-2px);
-}
-
 /* Chat Container */
 .chat-container {
   display: flex; flex-direction: column;
@@ -1598,10 +1522,6 @@
    code, which forces the panel wider than the phone viewport.
    ============================================================ */
 @media (max-width: 700px) {
-  .chat-setup-panel { padding: 2rem 1.2rem; margin: 2rem 1.2rem auto; }
-  .chat-setup-panel h2 { font-size: 1.3rem; }
-  .setup-step-text { overflow-wrap: anywhere; }
-  .setup-step-text code { white-space: normal; word-break: break-all; }
   .chat-bubble { max-width: 90%; }
   .chat-messages { padding: 1.2rem; }
   .chat-input-bar { padding: 0.8rem 1rem; }
@@ -3019,19 +2939,6 @@
 /* The assistant can answer with a file rather than prose. That reply is
    a small card instead of a markdown bubble, because the only useful
    actions on it are "look at it" and "save it". */
-.setup-skip-btn {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 10px 24px; border-radius: 50px;
-  background: transparent; border: 1px solid var(--border-subtle);
-  color: var(--text-secondary); font-family: var(--font-body);
-  font-size: 0.82rem; font-weight: 600; cursor: pointer;
-  transition: var(--transition); margin-top: 0.6rem;
-}
-.setup-skip-btn:hover {
-  border-color: var(--border-gold);
-  color: var(--gold-primary);
-  transform: translateY(-2px);
-}
 
 .chat-result {
   display: flex;
@@ -3084,4 +2991,28 @@
 .tool-controls .form-group[hidden],
 .tool-result[hidden] {
   display: none;
+}
+
+
+/* ---- Assistant quick-action chips ----
+   Horizontal padding matches .chat-input-bar so the chips line up with the
+   text field instead of sitting flush against the container edge. */
+.chat-quick {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  padding: 0 1.5rem 10px;
+}
+.chat-chip {
+  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.5px;
+  padding: 6px 13px; border-radius: 99px; cursor: pointer;
+  background: transparent; border: 1px solid var(--border-subtle);
+  color: var(--text-secondary); transition: var(--transition);
+}
+.chat-chip:hover {
+  color: var(--gold-primary); border-color: var(--border-gold);
+  background: var(--gold-glow);
+}
+@media (max-width: 768px) {
+  .chat-quick { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .chat-quick::-webkit-scrollbar { display: none; }
+  .chat-chip { flex-shrink: 0; }
 }
