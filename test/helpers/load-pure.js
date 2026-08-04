@@ -51,6 +51,13 @@ function loadPure(relativePath, names) {
      normally. `document`, `window` and `localStorage` simply do not
      exist under node, so touching one inside the pure block still throws
      a ReferenceError — which is exactly the guarantee we want. */
+  /* eslint-disable-next-line no-new-func --
+     This is the entire mechanism: the site ships plain <script> files
+     with no module system, so the only way to get a function under test
+     is to evaluate its source. The input is a file from this repo, read
+     off disk at test time - never user input, never anything fetched.
+     The alternative is a bundler, which the site deliberately does not
+     have. */
   const factory = new Function(`${body}\nreturn { ${names.join(', ')} };`);
   const exported = factory();
   for (const name of names) {
