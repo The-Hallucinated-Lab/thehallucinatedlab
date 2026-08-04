@@ -3016,3 +3016,27 @@
   .chat-quick::-webkit-scrollbar { display: none; }
   .chat-chip { flex-shrink: 0; }
 }
+
+/* ============ HTML SITEMAP ============
+   The machine-readable sitemap.xml is what crawlers parse; this page is
+   for people, and gives every page a second internal link so nothing
+   depends solely on the navbar being noticed. */
+.sitemap-list {
+  list-style: none;
+  margin: 0 0 2.5rem;
+  padding: 0;
+}
+.sitemap-list li {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+.sitemap-list li:last-child { border-bottom: none; }
+.sitemap-list a {
+  color: var(--gold-primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+.sitemap-list a:hover { text-decoration: underline; }
