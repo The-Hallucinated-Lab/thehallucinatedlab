@@ -1,5 +1,8 @@
 # Architecture
 
+> Standing constraints live in [STANDARDS.md](STANDARDS.md). This file
+> explains the decisions those constraints came out of.
+
 The short version: **a static site with no server, and a pip package
 that shares one spec file with it.**
 

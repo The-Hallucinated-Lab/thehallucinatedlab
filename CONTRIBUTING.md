@@ -20,6 +20,14 @@ pytest python/ -q
 
 There is **no build step**. What is in the repo is what gets served.
 
+## Read this first
+
+[STANDARDS.md](STANDARDS.md) holds the project's standing constraints —
+the invariants CI enforces, the judgment rules review enforces, and the
+things we have deliberately decided not to do. They do not change when a
+feature does. This file is the practical how-to; that one is the what
+and the why.
+
 ## The rules that are not obvious
 
 These are the ones that cost someone an afternoon when they were
