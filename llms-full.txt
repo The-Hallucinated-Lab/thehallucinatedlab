@@ -110,6 +110,28 @@ Entry — NexusLink Engine:
 
 ---
 
+## Page: Prompts — https://thehallucinatedlab.space/prompts.html
+
+Purpose: a library of eight prompts written for real engineering tasks, free to copy with no account.
+
+- Model-agnostic. Each is written to run on whatever model the reader already has locally, not against a specific hosted API.
+- The eight: Adversarial Code Reviewer, Root-Cause Debugger, Refactor Without Rewrites, Dataset Triage, Plain English to SQL, Socratic Tutor, Paper Distiller, and Local Model Router.
+- Filterable by category, and every prompt has a one-click copy button.
+- Nothing is gated, tracked or rate limited.
+
+---
+
+## Page: LoRA Adapters — https://thehallucinatedlab.space/adapters.html
+
+Purpose: small fine-tuned adapters that stack onto a base model the reader already runs locally.
+
+- Four adapters are described: thl-review-8b, thl-sql-3b, thl-router-1b and thl-notes-7b.
+- Status is stated honestly on the page: these are in training and none are downloadable yet.
+- Usage guides are published for two runtimes - an Ollama Modelfile using the ADAPTER directive, and a Python example loading an adapter through PEFT and hot-swapping between adapters without reloading the base model.
+- An adapter is a few megabytes against a multi-gigabyte base model, which is the reason this approach is offered at all.
+
+---
+
 ## Page: Converter — https://thehallucinatedlab.space/converter.html
 
 Purpose: convert an image between formats, and document the arguments the same tool takes everywhere else.
@@ -124,15 +146,14 @@ Purpose: convert an image between formats, and document the arguments the same t
 
 ## Page: Assistant — https://thehallucinatedlab.space/interface.html
 
-Purpose: a browser chat interface that talks to a large language model running on the visitor's own computer.
+Purpose: a browser chat interface that turns a plain-English request into a tool that runs in the visitor's own tab.
 
-- Connects to Ollama on localhost. No API key, no account, no cloud relay, no request ever leaving the machine.
-- Auto-detects an installed model, preferring gemma4:e4b and falling back through gemma4:e2b, gemma3:4b, gemma2:2b, and llama3.2 variants before using any installed model.
-- Responses stream token by token.
-- If Ollama is unreachable, the page shows a setup panel with install instructions, the model pull command, and the CORS environment variable that must be set before starting Ollama. That panel can be skipped, because tools do not need it.
-- Tool requests are handled before the model and never reach it. A deterministic intent parser reads every message first; if it recognises a THL tool ("convert this to png", "make it a jpg at 80 quality") the conversion runs in the page and the reply is a downloadable file. This works with nothing installed.
+- There is no language model and no model to install. A deterministic intent parser reads every message and matches it against the shared tool spec.
+- Recognised requests ("convert this to png", "make it a jpg at 80 quality") run in the page using the canvas API. The reply is a downloadable file.
+- Nothing is uploaded. No API key, no account, no cloud relay, no request ever leaving the machine. The page works offline after first load.
 - If a required argument is missing the assistant asks for that one argument and merges the answer into the pending request.
-- Anything the parser does not recognise is passed to Ollama as before. With no model available, the assistant replies with what it can actually do instead of a connection error.
+- Anything the parser does not recognise gets a reply listing what the page can actually do, rather than a connection error or silence.
+- An earlier version of this page required a local Ollama runtime to be installed and configured before it did anything. That requirement is gone.
 
 ---
 
