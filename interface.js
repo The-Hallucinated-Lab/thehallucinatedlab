@@ -184,7 +184,7 @@
       attachedFile = null;
       document.getElementById('chat-file-input').value = '';
     }
-    setSendMode('send');
+    setSendMode();
     document.getElementById('chat-input').placeholder = keepFile && attachedFile
       ? `📎 ${attachedFile.name} attached. Type a message...`
       : 'Type a message...';
