@@ -297,6 +297,11 @@ layout shift they exist to prevent.
 Security policy and the headers GitHub Pages cannot set are documented
 in [SECURITY.md](SECURITY.md).
 
+The project's standing engineering constraints — what CI enforces, what
+review enforces, and what we have deliberately rejected — are in
+[STANDARDS.md](STANDARDS.md). Start there before adding a page, a tool,
+or a dependency.
+
 ---
 
 ## 🧪 Tests
