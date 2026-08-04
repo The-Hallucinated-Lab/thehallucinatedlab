@@ -231,7 +231,7 @@ function isReadable(article) {
 }
 
 function sortByNewest(list) {
-  return [...list].sort((a, b) => new Date(b.date) - new Date(a.date));
+  return [...list].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 }
 
 /* ============ RENDER: FEATURED ============ */

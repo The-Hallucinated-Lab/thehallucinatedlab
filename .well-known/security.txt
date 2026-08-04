@@ -1,0 +1,12 @@
+# Responsible disclosure for thehallucinatedlab.space
+# https://www.rfc-editor.org/rfc/rfc9116
+
+Contact: mailto:thehallucinatedlab@gmail.com
+Expires: 2027-08-04T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://thehallucinatedlab.space/.well-known/security.txt
+Policy: https://github.com/The-Hallucinated-Lab/thehallucinatedlab/blob/main/SECURITY.md
+
+# Scope, and what is deliberately out of scope, is in SECURITY.md.
+# Short version: this is a static site with no server, no database and
+# no accounts. The pip package under python/ is in scope.

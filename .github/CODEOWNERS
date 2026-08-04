@@ -1,0 +1,21 @@
+# Every PR gets a review from someone who owns the area it touches.
+# GitHub only enforces this when "Require review from Code Owners" is
+# enabled in branch protection.
+
+# Default owner for anything not matched below.
+*                       @06pratyush
+
+# Security-sensitive paths. The founder gate, the CSP meta tags and the
+# disclosure policy should never change without a second pair of eyes.
+/SECURITY.md            @06pratyush
+/.well-known/           @06pratyush
+/script.js              @06pratyush
+/.github/workflows/     @06pratyush
+
+# The spec is the contract between the site, the Assistant and the pip
+# package. A change here changes all three.
+/spec/                  @06pratyush @TheQMLGuy
+/python/                @06pratyush @TheQMLGuy
+
+# Quantum / ML explainers.
+/blogs/                 @TheQMLGuy

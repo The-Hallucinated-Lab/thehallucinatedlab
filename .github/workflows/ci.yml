@@ -35,10 +35,16 @@ jobs:
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
         with:
           node-version: '22'
+          cache: npm
 
-      # No package.json, no lockfile, no npm install. The test suite uses
-      # node:test and node:assert, both built in. Keeping the repo
-      # dependency-free means there is no supply chain to audit.
+      # The SITE still ships zero runtime dependencies - nothing in
+      # node_modules is served, bundled or referenced by any page. These
+      # are dev tools only. `npm ci` installs the lockfile exactly rather
+      # than resolving ranges afresh, and --ignore-scripts means no
+      # package can run code during install.
+      - name: Install dev tooling
+        run: npm ci --ignore-scripts
+
       - name: Check every script parses
         run: |
           set -e
@@ -47,6 +53,9 @@ jobs:
             node --check "$f"
           done
           echo "all scripts parse"
+
+      - name: Lint
+        run: npm run lint
 
       - name: Run tests
         run: node --test "test/**/*.test.js"
