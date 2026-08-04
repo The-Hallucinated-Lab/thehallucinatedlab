@@ -246,6 +246,17 @@ Capstone acceptance criteria: runs on ordinary consumer hardware from a clean cl
 
 ---
 
+## Page: Sitemap — https://thehallucinatedlab.space/sitemap.html
+
+Purpose: a human-readable index of every page on the site, grouped by section.
+
+- Groups: Start here, Tools, Media, Work with us, and For machines.
+- Each entry carries a one-line description of what that page is for, so this page doubles as a site summary.
+- The "For machines" group links sitemap.xml, llms.txt, llms-full.txt and robots.txt directly.
+- Linked from the footer of every page, so no page depends solely on the navbar being noticed.
+
+---
+
 ## Page: Consultancy — https://thehallucinatedlab.space/consultancy.html
 
 Purpose: paid engagements. The lab works with individuals and with businesses.

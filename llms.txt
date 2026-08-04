@@ -22,6 +22,7 @@ The Hallucinated Lab operates in three modes:
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
 - [Certification](https://thehallucinatedlab.space/certification.html): Six project-graded course tracks and the criteria a capstone must clear.
+- [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.
 - [Consultancy](https://thehallucinatedlab.space/consultancy.html): Engagement models for individuals and businesses, the four-stage process, and how to start.
 
 ## Tools

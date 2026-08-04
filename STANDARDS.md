@@ -23,7 +23,7 @@ The distinction that matters:
 |---|---|
 | Every indexable page has title, description, canonical, `og:url`, `og:title`, `og:image` | A page missing these is invisible or renders as a blank card when shared |
 | `canonical` matches the file's own path, and `og:url` agrees with it | A wrong canonical tells Google to rank a different page |
-| Titles ≤ 70 chars, descriptions 50–165 chars | Past that, Google truncates and writes its own |
+| Titles ≤ 60 chars, descriptions 50–155 chars | Past that, Google truncates and substitutes its own text from the page |
 | No two pages share a title or description | Duplicate-content signal; the crawler can't tell which to rank |
 | `og:image` resolves to a real file | A 404 social image is a blank share card |
 | `sitemap.xml` lists **exactly** the indexable pages — no more, no fewer | Both directions rot: new pages go unlisted, renamed ones 404 |
@@ -39,9 +39,36 @@ breaks them with no visible symptom. It has already happened twice:
 crawlers the Assistant needed a local Ollama install for a full release
 after that stopped being true.
 
-> **When you add or rename a page, update `sitemap.xml`, `llms.txt` and
-> `llms-full.txt` in the same commit.** The tests will tell you, but
-> knowing this saves a round trip.
+> **When you add or rename a page, update `sitemap.xml`, `sitemap.html`,
+> `llms.txt` and `llms-full.txt` in the same commit.** The tests will
+> tell you, but knowing this saves a round trip.
+
+### Document structure — the shared dependency of both stacks
+
+`test/seo-invariants.test.js`
+
+| Rule | Why it exists |
+|---|---|
+| Exactly one `<h1>` per page | Google builds its understanding of a page from the heading outline |
+| Heading levels never skip (no h1 → h3) | RAG chunkers and Safari Reader segment on the outline before reading prose; a broken outline chunks wrong and gets cited less |
+| Every page has a `<main>` landmark | Apple Intelligence and reader modes key off semantic HTML5 |
+| Every `<img>` carries an `alt` attribute | `alt=""` is correct for decorative images — the rule is that it is present and deliberate |
+| `sitemap.html` links every indexable page, and every page links back to it from its footer | A second internal path to every page, so nothing depends on the navbar being noticed |
+
+This is the part that serves **both** Google and the AI engines at once.
+An LLM does not read a page top to bottom — it extracts chunks via
+embeddings, and the heading outline is how it decides where a chunk
+starts and stops.
+
+### Structured data honesty
+
+`FAQPage` markup describing questions that are **not visible on the
+page** is a structured-data violation and can earn a manual action. A
+test compares every `Question` in JSON-LD against the page's rendered
+text and fails if it is not there.
+
+So: write the FAQ into the page first, then mark it up. Never the other
+way round.
 
 ### Security
 
@@ -110,6 +137,18 @@ Not testable. Enforced by review.
 - Timestamps are full ISO 8601 with offset. Never `.split('T')[0]`.
 - Bounds live in `spec/manifest.json` and nowhere else.
 
+**Writing for extraction (GEO)**
+- The first paragraph under any heading must stand alone. If an AI lifts
+  it out with no surrounding context, it still has to make sense.
+- Keep a direct answer to 40–60 words. State the fact immediately, in
+  present tense.
+- Prefer question-format headings where a reader would phrase it as a
+  question. "What is local-first AI?" beats "About local-first".
+- Use a real `<table>` for comparison data. LLMs parse and cite tables
+  far more reliably than prose describing the same numbers.
+- Cut throat-clearing. Retrieval scoring punishes low-density filler,
+  and the intro paragraph nobody reads is exactly that.
+
 **Comments**
 - Explain *why*, not *what*. The diff already says what.
 - A comment that contradicts the code is worse than no comment. When
@@ -131,6 +170,26 @@ Recorded so nobody re-proposes them without new information.
 | `content-visibility: auto` | Measured: off-screen sections collapse to a placeholder, reporting the homepage as 3481px against a real 4205px and putting anchors on guessed positions. |
 | A backend for the converter | `canvas.toBlob` removed an upload endpoint, a size limit, a virus scan, temp storage, a cleanup job and a privacy policy in one decision. |
 
+### Outside the repo — and one real conflict
+
+Some of the 2026 SEO/GEO playbook cannot be a repo rule, and pretending
+otherwise would be theatre:
+
+| Item | Why it is not here |
+|---|---|
+| Search Console / Bing Webmaster submission | Needs account access. Do it once, manually. |
+| Wikidata, Crunchbase, Knowledge Panel | Off-site identity work. |
+| Backlinks, digital PR, Reddit and podcast presence | Off-site, human, and slow. |
+| Keyword research (Ahrefs, Semrush) | Paid tools; no API here. |
+| Share-of-Model citation tracking | External services that query the AI engines. |
+
+**The conflict worth naming:** the playbook says monitor GA4 for AI
+referral traffic. This site has a hard zero-third-party invariant and
+ships no analytics at all — that is a deliberate product claim, stated
+on the pages themselves. **The invariant wins.** If measuring AI
+referrals ever matters more than that claim, it is a product decision
+about what this site is, not an SEO task.
+
 ---
 
 ## 4. Recipes
@@ -139,12 +198,15 @@ Following these satisfies the invariants by construction.
 
 ### Adding a page
 
-1. Copy the `<head>` of an existing page; update `title`, `description`
-   (50–165 chars, unique), `canonical`, `og:url`, `og:title`.
+1. Copy the `<head>` of an existing page; update `title` (≤60 chars),
+   `description` (50–155, unique), `canonical`, `og:url`, `og:title`.
 2. Keep the CSP and `referrer` meta tags exactly as they are.
-3. Add it to `sitemap.xml`.
-4. Add a line to `llms.txt` and a `## Page:` section to `llms-full.txt`.
-5. `npm test` — the SEO invariants will name anything you missed.
+3. Structure: one `<h1>`, a `<main>` landmark, no skipped heading
+   levels, `alt` on every image.
+4. Add it to `sitemap.xml` **and** `sitemap.html`.
+5. Add a line to `llms.txt` and a `## Page:` section to `llms-full.txt`.
+6. Link back to `sitemap.html` from the footer.
+7. `npm test` — the SEO invariants will name anything you missed.
 
 ### Renaming a page
 
