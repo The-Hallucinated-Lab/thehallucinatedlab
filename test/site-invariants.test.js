@@ -169,13 +169,27 @@ test('no shipped image exceeds the per-image budget', () => {
 });
 
 test('page scripts stay within the per-page JS budget', () => {
+  /* Dev tooling lives in the root too but is never served, so it is not
+     part of any page's weight. */
+  const NOT_SHIPPED = new Set(['eslint.config.js']);
   const over = [];
   for (const f of fs.readdirSync(ROOT)) {
-    if (!f.endsWith('.js')) continue;
+    if (!f.endsWith('.js') || NOT_SHIPPED.has(f)) continue;
     const kb = sizeKB(f);
     if (kb > BUDGET.maxPageScriptKB) over.push(`${f} ${kb.toFixed(1)}KB`);
   }
   assert.equal(over.length, 0, `over ${BUDGET.maxPageScriptKB}KB:\n  ${over.join('\n  ')}`);
+});
+
+/* The whole point of the dev tooling is that it stays out of the site.
+   If node_modules ever ends up tracked, or a page starts referencing
+   something from it, the zero-third-party property is gone. */
+test('no page references anything from node_modules', () => {
+  const offenders = [];
+  for (const f of htmlFiles()) {
+    if (/node_modules/.test(read(f))) offenders.push(f);
+  }
+  assert.equal(offenders.length, 0, `pages referencing node_modules:\n  ${offenders.join('\n  ')}`);
 });
 
 test('the homepage stays within its transfer budget', () => {
