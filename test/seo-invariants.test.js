@@ -22,11 +22,14 @@ const { ROOT } = require('./helpers/load-pure');
 
 const ORIGIN = 'https://thehallucinatedlab.space';
 
-/* Google truncates titles past roughly 60 characters and descriptions
-   past roughly 160. These are upper bounds, not targets. */
-const TITLE_MAX = 70;
+/* Google's snippet is measured in pixels, not characters, but these are
+   the character counts that reliably fit. Past them Google truncates and
+   substitutes its own text pulled from the page, so the tail is doing
+   nothing except pushing the useful part out of the result. Upper
+   bounds, not targets. */
+const TITLE_MAX = 60;
 const DESCRIPTION_MIN = 50;
-const DESCRIPTION_MAX = 165;
+const DESCRIPTION_MAX = 155;
 
 const read = p => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
@@ -257,4 +260,127 @@ test('structured data URLs use the canonical origin', () => {
     }
   }
   assert.deepEqual(wrong, [], `unexpected origin in structured data:\n  ${wrong.join('\n  ')}`);
+});
+
+/* ============================================================
+   Document structure.
+
+   Both halves of the 2026 stack depend on this. Google builds its
+   understanding of a page from the heading outline; Apple Intelligence,
+   Safari Reader and most RAG chunkers segment on semantic landmarks and
+   headings before they ever look at the prose. A page with no <h1>, or
+   one that jumps h1 -> h3, gets chunked wrong and cited less.
+   ============================================================ */
+
+const headingLevels = src =>
+  [...src.matchAll(/<h([1-6])[\s>]/g)].map(m => Number(m[1]));
+
+test('every indexable page has exactly one h1', () => {
+  const wrong = [];
+  for (const f of indexablePages()) {
+    const n = headingLevels(read(f)).filter(l => l === 1).length;
+    if (n !== 1) wrong.push(`${f}: ${n} h1 elements`);
+  }
+  assert.deepEqual(wrong, [], `a page needs exactly one h1:\n  ${wrong.join('\n  ')}`);
+});
+
+test('heading levels never skip a step', () => {
+  const skips = [];
+  for (const f of indexablePages()) {
+    const levels = headingLevels(read(f));
+    for (let i = 1; i < levels.length; i++) {
+      if (levels[i] - levels[i - 1] > 1) {
+        skips.push(`${f}: h${levels[i - 1]} -> h${levels[i]}`);
+      }
+    }
+  }
+  assert.deepEqual(skips, [], `broken heading outline:\n  ${skips.join('\n  ')}`);
+});
+
+test('every page has a <main> landmark', () => {
+  const missing = indexablePages().filter(f => !/<main[\s>]/.test(read(f)));
+  assert.deepEqual(missing, [],
+    `no <main> — readers and summarisers cannot find the content:\n  ${missing.join('\n  ')}`);
+});
+
+/* alt="" is correct for decorative images, so the rule is that the
+   attribute is present and deliberate — not that it is always filled. */
+test('every img carries an alt attribute', () => {
+  const missing = [];
+  for (const f of allPages()) {
+    for (const [imgTag] of read(f).matchAll(/<img[^>]*>/g)) {
+      if (!/\salt=/.test(imgTag)) missing.push(`${f}: ${imgTag.trim().slice(0, 80)}`);
+    }
+  }
+  assert.deepEqual(missing, [], `images with no alt attribute:\n  ${missing.join('\n  ')}`);
+});
+
+/* ============================================================
+   Structured data honesty.
+
+   FAQPage markup describing questions that are not visible on the page
+   is a structured-data violation and can earn a manual action. If we
+   ever add FAQ schema, the question text has to actually be on the
+   page.
+   ============================================================ */
+
+function jsonLdBlocks(src) {
+  return [...src.matchAll(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/g)]
+    .map(m => { try { return JSON.parse(m[1]); } catch { return null; } })
+    .filter(Boolean);
+}
+
+function collectTyped(node, type, found = []) {
+  if (Array.isArray(node)) node.forEach(n => collectTyped(n, type, found));
+  else if (node && typeof node === 'object') {
+    if (node['@type'] === type) found.push(node);
+    Object.values(node).forEach(v => collectTyped(v, type, found));
+  }
+  return found;
+}
+
+test('any FAQ schema matches question text that is actually on the page', () => {
+  const invisible = [];
+  for (const f of allPages()) {
+    const src = read(f);
+    // Strip tags so we compare against rendered text, not markup.
+    const visible = src.replace(/<script[\s\S]*?<\/script>/g, '')
+                       .replace(/<[^>]+>/g, ' ')
+                       .replace(/&amp;/g, '&').replace(/&#39;/g, "'").replace(/&quot;/g, '"')
+                       .replace(/\s+/g, ' ');
+    for (const block of jsonLdBlocks(src)) {
+      for (const q of collectTyped(block, 'Question')) {
+        const name = String(q.name || '').replace(/\s+/g, ' ').trim();
+        if (name && !visible.includes(name)) invisible.push(`${f}: "${name}"`);
+      }
+    }
+  }
+  assert.deepEqual(invisible, [],
+    `FAQ schema for questions not visible on the page — this is a structured-data violation:\n  ${invisible.join('\n  ')}`);
+});
+
+/* ============================================================
+   Human-readable sitemap.
+
+   Distributes internal link equity to every page and gives a crawler a
+   second path to anything the XML sitemap misses.
+   ============================================================ */
+
+test('the HTML sitemap links to every indexable page', () => {
+  const src = read('sitemap.html');
+  const linked = new Set(
+    [...src.matchAll(/href="([^"]+)"/g)]
+      .map(m => m[1])
+      .filter(h => !/^(https?:|mailto:|#)/.test(h))
+      .map(h => (h === '/' ? 'index.html' : h.replace(/^\//, '')))
+  );
+  const uncovered = indexablePages().filter(p => p !== 'sitemap.html' && !linked.has(p));
+  assert.deepEqual(uncovered, [],
+    `missing from the HTML sitemap:\n  ${uncovered.join('\n  ')}`);
+});
+
+test('every page links to the HTML sitemap from its footer', () => {
+  const missing = indexablePages().filter(f => !/href="\/?sitemap\.html"|href="\.\.\/sitemap\.html"/.test(read(f)));
+  assert.deepEqual(missing, [],
+    `no footer link to the sitemap:\n  ${missing.join('\n  ')}`);
 });
