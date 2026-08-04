@@ -74,12 +74,54 @@
     return value === undefined || value === null || value === '';
   }
 
+  /* One checker per parameter type, looked up rather than chained
+     through an if/else ladder. Each returns {value} or {error}, so
+     validateArgs stays a loop over parameters and adding a type means
+     adding an entry here rather than another branch in the middle of
+     the loop.
+
+     Bounds come from the manifest, never from constants restated here -
+     that is what keeps the browser and the Python package agreeing. */
+  var CHECKERS = {
+    enum: function (param, value) {
+      var vocab = enumVocabulary(param);
+      var key = String(value).trim().toLowerCase();
+      if (Object.prototype.hasOwnProperty.call(vocab, key)) return { value: vocab[key] };
+      return { error: param.name + ' must be one of ' + (param.values || []).join(', ') + '.' };
+    },
+
+    integer: function (param, value) {
+      var num = Number(value);
+      if (!isFinite(num) || Math.floor(num) !== num) {
+        return { error: param.name + ' must be a whole number.' };
+      }
+      var under = param.min !== undefined && num < param.min;
+      var over = param.max !== undefined && num > param.max;
+      if (under || over) {
+        return { error: param.name + ' must be between ' + param.min + ' and ' + param.max + '.' };
+      }
+      return { value: num };
+    },
+
+    color: function (param, value) {
+      var hex = normalizeHex(value);
+      if (hex) return { value: hex };
+      return { error: param.name + ' must be a hex colour such as #ffffff.' };
+    },
+  };
+
+  /* An unrecognised type is passed through rather than rejected. The
+     manifest is ours, so a new type here means the spec moved ahead of
+     this file - failing closed would break the page on a spec change
+     that the Python package already handles. */
+  function checkParam(param, value) {
+    var checker = CHECKERS[param.type];
+    return checker ? checker(param, value) : { value: value };
+  }
+
   /* Collects every problem rather than throwing on the first one: a form
      that reports "format is required" and then, after you fix it,
-     "quality must be between 1 and 100" wastes a round trip per field.
-
-     Bounds live in the manifest, so the browser and Python enforce the
-     same numbers without either restating them. */
+     "quality must be between 1 and 100" wastes a round trip per field. */
   function validateArgs(rawArgs, tool) {
     var input = rawArgs || {};
     var params = (tool && tool.params) || [];
@@ -102,35 +144,9 @@
         continue;
       }
 
-      if (param.type === 'enum') {
-        var vocab = enumVocabulary(param);
-        var key = String(value).trim().toLowerCase();
-        if (Object.prototype.hasOwnProperty.call(vocab, key)) {
-          args[param.name] = vocab[key];
-        } else {
-          errors.push(param.name + ' must be one of ' + (param.values || []).join(', ') + '.');
-        }
-
-      } else if (param.type === 'integer') {
-        var num = Number(value);
-        if (!isFinite(num) || Math.floor(num) !== num) {
-          errors.push(param.name + ' must be a whole number.');
-        } else if (param.min !== undefined && num < param.min) {
-          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
-        } else if (param.max !== undefined && num > param.max) {
-          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
-        } else {
-          args[param.name] = num;
-        }
-
-      } else if (param.type === 'color') {
-        var hex = normalizeHex(value);
-        if (hex) args[param.name] = hex;
-        else errors.push(param.name + ' must be a hex colour such as #ffffff.');
-
-      } else {
-        args[param.name] = value;
-      }
+      var checked = checkParam(param, value);
+      if (checked.error) errors.push(checked.error);
+      else args[param.name] = checked.value;
     }
 
     for (var name in input) {
