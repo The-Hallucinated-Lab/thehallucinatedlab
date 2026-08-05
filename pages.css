@@ -1004,6 +1004,13 @@
   font-size: 0.85rem;
   transition: var(--transition);
   outline: none;
+  /* An <input> with no width is sized from the `size` attribute, which
+     defaults to 20 characters — a width that grows with the font. At the
+     200% text WCAG 1.4.4 asks for, that came out at 407px on a 375px
+     screen. Filling the container instead, and allowing it to shrink
+     below its intrinsic width, keeps the form inside the viewport. */
+  width: 100%;
+  min-width: 0;
 }
 
 .form-input:focus,

@@ -133,6 +133,12 @@ body {
 .hero-title {
   font-family: var(--font-heading);
   font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 800;
+  /* "Hallucinated" is one unbreakable word at a 44.8px floor. It measures
+     inside the viewport today even under the 0.12em letter-spacing that
+     WCAG 1.4.12 requires a page to survive, so this is insurance rather
+     than a fix — it costs nothing until a longer word or a wider spacing
+     override would otherwise push text under #hero's overflow:hidden. */
+  overflow-wrap: break-word;
   line-height: 1.05; margin-bottom: 1.5rem;
   background: linear-gradient(135deg, var(--text-primary) 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
@@ -289,7 +295,14 @@ section { padding: 6rem 2rem; position: relative; }
   section { padding: 4rem 1.2rem; }
   /* Touch devices have no hover, so a hover-only wordmark would be
      permanently invisible. Show it unconditionally below this breakpoint. */
-  .nav-logo span { max-width: none; opacity: 1; margin-left: 12px; font-size: 0.95rem; }
+  /* nowrap exists for the desktop hover-expand, where the wordmark slides
+     out of a clipped box and must stay on one line. Here it is shown
+     unconditionally, and nowrap becomes a liability: at the 200% text
+     WCAG 1.4.4 asks for, "THE HALLUCINATED LAB" measures 371px on a 375px
+     screen and drags the whole navbar off the side. Allowed to wrap it
+     just gets taller, which is what a page at 200% should do. */
+  .nav-logo span { max-width: none; opacity: 1; margin-left: 12px; font-size: 0.95rem;
+                   white-space: normal; min-width: 0; }
 }
 
 /* ============================================================
