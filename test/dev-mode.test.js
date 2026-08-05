@@ -68,6 +68,15 @@ test('only Ctrl+Alt+Backslash toggles the mode', () => {
   assert.equal(isModeToggle(null), false, 'no event is not a toggle');
 });
 
+test('the toggle flips between exactly two modes', () => {
+  /* A junk value normalises to live first, so it flips to dev — which is
+     the useful direction: the next press then puts it back to live. */
+  assert.equal(otherMode('live'), 'dev');
+  assert.equal(otherMode('dev'), 'live');
+  assert.equal(otherMode('nonsense'), 'dev');
+  assert.equal(otherMode(otherMode('live')), 'live', 'two presses return to the start');
+});
+
 test('the shortcut matches the physical key, not the character', () => {
   /* Alt+backslash produces a different character on several layouts, so
      matching on event.key would work on one keyboard and quietly not on
