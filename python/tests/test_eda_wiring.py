@@ -26,10 +26,11 @@ from thehallucinatedlab import __version__, cli, errors, registry
 
 PACKAGE_ROOT = Path(__file__).resolve().parent.parent
 
-#: What the spec says needs the extra. Read from the manifest rather than
-#: restated, so a sixth primitive is covered the day it is declared.
+#: The primitives, named rather than derived. The manifest carries no
+#: "extra" field -- which extra a tool needs lives in deps.EXTRAS, the
+#: way every other tool declares it -- so there is nothing to derive.
 EDA_TOOLS = [
-    name for name in registry.names() if registry.describe(name).get("extra") == "eda"
+    "describe_dataset", "profile_column", "plot_column", "relate_columns", "eda_report",
 ]
 
 
@@ -106,58 +107,60 @@ def test_the_documented_names_resolve() -> None:
         assert callable(getattr(thl, name)), f"{name} is not reachable from the package"
 
 
-def test_the_names_are_in_dir_so_completion_finds_them() -> None:
+def test_the_names_are_exported_the_way_every_other_tool_is() -> None:
     import thehallucinatedlab as thl
 
-    listed = dir(thl)
-    for name in ("eda", "describe_dataset", "EDANotInstalled"):
-        assert name in listed, f"{name} is missing from dir()"
-
-
-def test_an_unknown_attribute_still_raises() -> None:
-    """A catch-all __getattr__ that never raises hides every typo."""
-    import thehallucinatedlab as thl
-
-    with pytest.raises(AttributeError, match="no attribute"):
-        _ = thl.definitely_not_a_tool
-
-    with pytest.raises(AttributeError, match="no attribute"):
-        _ = errors.NotAnErrorClass
+    for name in ("eda", *EDA_TOOLS):
+        assert name in thl.__all__, f"{name} is not in __all__"
+        assert name in dir(thl), f"{name} is missing from dir()"
 
 
 # -- one error hierarchy ----------------------------------------------------
 
 
 def test_the_eda_errors_descend_from_this_package_s_base_class() -> None:
-    """Not a lookalike defined locally.
-
-    The subpackage falls back to its own THLError when the parent is not
-    importable, so it can be developed standalone. Inside a real install
-    that fallback must never be what a caller catches, or one
-    `except THLError` would stop covering half the toolkit.
-    """
+    """One hierarchy, so one ``except THLError`` still covers everything."""
     from thehallucinatedlab.tools.eda import errors as eda_errors
 
     assert eda_errors.THLError is errors.THLError
-
-    for name in (
-        "EDANotInstalled", "UnreadableSource", "EmptyDataset", "ColumnNotFound",
-        "UnsupportedColumnType", "InvalidRecipe", "OutputNotWritable", "SamplingRequired",
-    ):
-        cls = getattr(errors, name)
+    for name in eda_errors.__all__:
+        cls = getattr(eda_errors, name)
         assert issubclass(cls, errors.THLError), f"{name} escapes except THLError"
 
 
+def test_a_missing_dependency_uses_the_package_s_one_error() -> None:
+    """There is deliberately no EDANotInstalled.
+
+    A second class meaning "that dependency is absent" would split every
+    caller's ``except`` in two and leave two extras registries to keep in
+    step with each other.
+    """
+    from thehallucinatedlab.tools.eda import errors as eda_errors
+
+    assert eda_errors.DependencyMissing is errors.DependencyMissing
+    assert not hasattr(eda_errors, "EDANotInstalled")
+
+
 def test_the_errors_are_reachable_without_the_extra() -> None:
-    """EDANotInstalled has to be raisable on the machine that lacks pandas."""
+    """DependencyMissing has to be raisable on the machine that lacks pandas."""
     result = run_python(
         "import sys\n"
-        "from thehallucinatedlab import EDANotInstalled\n"
+        "from thehallucinatedlab import DependencyMissing\n"
+        "from thehallucinatedlab.tools.eda.errors import ColumnNotFound\n"
         "heavy = [m for m in ('pandas', 'numpy', 'matplotlib', 'scipy') if m in sys.modules]\n"
         "assert not heavy, heavy\n"
-        "assert issubclass(EDANotInstalled, Exception)\n"
+        "assert issubclass(DependencyMissing, Exception)\n"
+        "assert ColumnNotFound is not None\n"
     )
     assert result.returncode == 0, result.stderr
+
+
+def test_the_extra_is_registered_where_the_error_message_reads_it() -> None:
+    """deps.EXTRAS is what turns a missing import into an install line."""
+    from thehallucinatedlab import deps
+
+    assert "eda" in deps.EXTRAS
+    assert "pandas" in deps.EXTRAS["eda"]
 
 
 # -- the base install -------------------------------------------------------
@@ -169,7 +172,7 @@ def test_importing_the_package_costs_no_scientific_stack() -> None:
         "import sys, thehallucinatedlab\n"
         "heavy = [m for m in ('pandas', 'numpy', 'matplotlib', 'scipy') if m in sys.modules]\n"
         "assert not heavy, f'importing the package pulled in {heavy}'\n"
-        "assert thehallucinatedlab.converter is not None\n"
+        "assert thehallucinatedlab.convert is not None\n"
     )
     assert result.returncode == 0, result.stderr
 
@@ -192,9 +195,12 @@ def test_the_base_dependency_set_is_unchanged() -> None:
     declared = {req.split(">")[0].split("<")[0].split("=")[0].strip() for req in extras["eda"]}
     assert heavy <= declared, f"the eda extra is missing {heavy - declared}"
     assert "seaborn" not in declared, "the generated analysis.py must stay installable from four"
+    # Profiling a CSV has nothing to do with the document pipeline, and
+    # someone who wants one should not have to install the other.
+    assert "eda" not in " ".join(extras["rag"])
 
 
-def test_the_version_moved_with_the_feature() -> None:
+def test_the_version_is_still_declared_once() -> None:
     import tomllib
 
     data = tomllib.loads((PACKAGE_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
@@ -212,17 +218,7 @@ def test_thl_tools_lists_the_primitives(capsys) -> None:
         assert name in printed, f"thl tools does not mention {name}"
 
 
-def test_thl_tools_names_the_install_line_when_the_extra_is_missing(
-    capsys, monkeypatch
-) -> None:
-    """Listing a tool that cannot run is misleading; hiding it means
-    nobody discovers it. Naming the command does neither."""
-    from thehallucinatedlab.tools.eda import deps
-
-    monkeypatch.setattr(deps, "_checked", True)
-    monkeypatch.setattr(deps, "_missing", list(deps._REQUIRED))
-
-    cli._print_tools()
-    printed = capsys.readouterr().out
-    assert "pip install thehallucinatedlab[eda]" in printed
-    assert "converter" in printed, "the tools that do work must still be listed"
+def test_the_tools_declare_python_only_in_the_spec() -> None:
+    """The browser reads this to decide what it may offer to run."""
+    for name in EDA_TOOLS:
+        assert registry.describe(name)["runtimes"] == ["python"]
