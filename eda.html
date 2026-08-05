@@ -113,8 +113,7 @@
         <li><a href="tools.html" class="active">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
-        <li><a href="certification.html">Certification</a></li>
-        <li><a href="consultancy.html">Consultancy</a></li>
+
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -258,7 +257,35 @@ thl eda new_month.csv --recipe team.json</code></div>
           <p class="section-intro">Five primitives, each independently callable. These tables are generated from the same tool spec the code validates against, so the page cannot document an argument the package rejects.</p>
         </div>
 
-        <div class="fade-in" id="eda-args"></div>
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>describe_dataset</code></h3>
+          <p class="how-panel-text">Shape, and an inferred type with a confidence for every column.</p>
+          <div class="tool-args-wrap" data-tool="describe_dataset"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>profile_column</code></h3>
+          <p class="how-panel-text">The statistics that fit one column's type. The outlier rule always travels with the count.</p>
+          <div class="tool-args-wrap" data-tool="profile_column"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>plot_column</code></h3>
+          <p class="how-panel-text">One figure, written to one file. A chart that does not apply to the column's type is an error that names the types it does.</p>
+          <div class="tool-args-wrap" data-tool="plot_column"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>relate_columns</code></h3>
+          <p class="how-panel-text">Correlation, missingness, duplicates, or everything against a target.</p>
+          <div class="tool-args-wrap" data-tool="relate_columns"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>eda_report</code></h3>
+          <p class="how-panel-text">The whole report, from a recipe. This is the seam a session, a CI job or a future front-end all reach.</p>
+          <div class="tool-args-wrap" data-tool="eda_report"></div>
+        </div>
       </div>
     </section>
 
@@ -333,6 +360,5 @@ thl eda --list                                    # every chart and statistic</c
   <script src="script.js" defer></script>
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
-  <script src="eda.js" defer></script>
 </body>
 </html>
