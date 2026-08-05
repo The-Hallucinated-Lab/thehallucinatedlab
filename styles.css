@@ -332,8 +332,12 @@ section { padding: 6rem 2rem; position: relative; }
 }
 .nav-links.is-icons a.has-icon svg {
   width: 20px; height: 20px; flex-shrink: 0;
-  stroke: currentColor; fill: none;
-  stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round;
+  /* Gold at rest, not currentColor: the glyph is the whole control once
+     the label is clipped, and a grey one reads as disabled. Depth comes
+     from opacity instead, so the current section still stands out
+     without the icon ever leaving the palette. */
+  fill: var(--gold-primary); stroke: none; opacity: 0.6;
+  transition: opacity var(--transition);
   /* Slight overshoot on the way up: the lift is what makes it feel like
      a control answering rather than a colour swap. */
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -354,14 +358,12 @@ section { padding: 6rem 2rem; position: relative; }
   color: var(--gold-primary);
   box-shadow: 0 0 18px rgba(201, 168, 76, 0.10);
 }
-/* The current section keeps a lit dot even while another menu is open,
-   so opening Tools never makes you lose track of the page you are on. */
-.nav-links.is-icons a.has-icon.active::before {
-  content: ''; position: absolute; left: 50%; bottom: 3px;
-  width: 3px; height: 3px; margin-left: -1.5px;
-  border-radius: 50%; background: var(--gold-primary);
-  box-shadow: 0 0 6px var(--gold-primary);
-}
+.nav-links.is-icons a.has-icon:hover svg,
+.nav-links.is-icons a.has-icon:focus-visible svg,
+.nav-links.is-icons a.has-icon.active svg { opacity: 1; }
+/* No dot under the active icon. The tinted background, gold border and
+   gold glyph already mark the current section three times over; a fourth
+   marker floating under the icon read as a smudge rather than a state. */
 /* Clipped rather than hidden: the label is the accessible name. */
 .nav-links.is-icons a.has-icon .nav-label {
   display: inline-block; overflow: hidden; white-space: nowrap;
