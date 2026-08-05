@@ -5,13 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <!-- status: dev in spec/manifest.json. Reachable by URL but hidden from
-       visitors behind the founder gate, so it must not be indexed until it
-       goes live - and noindex is also what keeps it out of sitemap.xml,
-       llms.txt and the discoverability invariants that check them. -->
-  <meta name="robots" content="noindex">
   <title>Chunk — The Hallucinated Lab</title>
-  <meta name="description" content="Split Markdown into retrieval-sized chunks along its own headings, not at arbitrary character counts. Runs in your browser. Outputs JSONL with heading path and page on every record.">
+  <meta name="description" content="Split Markdown into retrieval-sized chunks along its own headings, not at arbitrary offsets. Outputs JSONL carrying the heading path and page.">
   <meta property="og:title" content="Chunk — The Hallucinated Lab">
   <meta property="og:description" content="Structure-aware chunking to JSONL. Every chunk knows which heading and page it came from.">
   <meta property="og:type" content="website">
@@ -81,8 +76,8 @@
         <li><a href="tools.html" class="active">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
-        <li><a href="certification.html">Certification</a></li>
-        <li><a href="consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -266,6 +261,7 @@ thl tokenize report.jsonl</code></div>
 
   <footer class="footer">
     <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+    <p class="footer-text"><a href="/sitemap.html">Sitemap</a></p>
   </footer>
 
   <script src="script.js" defer></script>

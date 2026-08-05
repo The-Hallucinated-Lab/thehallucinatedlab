@@ -132,6 +132,56 @@ Purpose: small fine-tuned adapters that stack onto a base model the reader alrea
 
 ---
 
+## Page: Extract — https://thehallucinatedlab.space/extract.html
+
+Purpose: Turns PDFs, Word files, slides, spreadsheets and e-books into Markdown that keeps its headings and page boundaries, so the result can be split structurally rather than blindly. Text, Markdown, HTML and CSV parse in the browser; heavier formats go to the local Python package over a loopback bridge.
+
+- Runs locally. Nothing is uploaded and there is no service to be up.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl extract` on the command line.
+- Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
+
+---
+
+## Page: Chunk — https://thehallucinatedlab.space/chunk.html
+
+Purpose: Splits a Markdown document into retrieval-sized chunks along its own heading structure rather than at arbitrary offsets. Every chunk records the heading path and page it came from, which is what lets a retrieved fragment cite its source. Output is JSONL.
+
+- Runs locally. Nothing is uploaded and there is no service to be up.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl chunk` on the command line.
+- Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
+
+---
+
+## Page: Tokenize — https://thehallucinatedlab.space/tokenize.html
+
+Purpose: Counts tokens and reports the distribution, including how many pieces exceed the model's context window and would be silently truncated at embed time. A measuring instrument for planning chunk size and embedding cost, not a stage of the pipeline.
+
+- Runs locally. Nothing is uploaded and there is no service to be up.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tokenize` on the command line.
+- Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
+
+---
+
+## Page: Embed — https://thehallucinatedlab.space/embed.html
+
+Purpose: Turns chunks into vectors locally with BGE-M3 at 1024 dimensions or all-MiniLM-L6-v2 at 384. Vectors are L2-normalised so cosine similarity and dot product agree. Output is a single .npy, not one file per chunk.
+
+- Runs locally. Nothing is uploaded and there is no service to be up.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl embed` on the command line.
+- Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
+
+---
+
+## Page: Index — https://thehallucinatedlab.space/vector-index.html
+
+Purpose: Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy. Records the embedding model, its dimensions and whether vectors were normalised, plus a runnable query snippet - without which the folder cannot be reopened correctly.
+
+- Runs locally. Nothing is uploaded and there is no service to be up.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl index` on the command line.
+- Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
+
+---
+
 ## Page: Convert — https://thehallucinatedlab.space/convert.html
 
 Purpose: convert an image between formats, and document the arguments the same tool takes everywhere else.
@@ -193,12 +243,11 @@ Purpose: gateway to three publication formats.
 Three sections.
 
 - Featured (/blogs.html#blogs-featured). Pinned pieces.
-- Archive (/blogs.html#blogs-archive). Every article, newest first, with client-side search and category filters. Categories in use: AI & ML, Quantum Computing, Open Source, Privacy & Security, Dev Tools.
+- Archive (/blogs.html#blogs-archive). Every article, newest first, with client-side search and category filters. Categories in use: AI & ML, Open Source, Privacy & Security, Dev Tools.
 - Community Spotlight (/blogs.html#blogs-community). Reader submissions, with a submission form at the foot of the page. Submissions are stored in the visitor's own browser via localStorage and are not transmitted anywhere. Pieces intended for real publication are emailed to thehallucinatedlab@gmail.com.
 
 Published blogs:
 - The Future of Local-First AI. By Pratyush, 2026-07-10, category AI & ML. Why running models on your own machine is a shift in personal computing rather than only a privacy improvement. https://thehallucinatedlab.space/blogs/sample-blog.html
-- Quantum Computing Meets Machine Learning. By Divyansh Tripathi, category Quantum Computing. Written, not yet published.
 - Why Open Source Isn't Optional Anymore. By Pratyush, category Open Source. Written, not yet published.
 - Building a Privacy Toolkit in the Browser. By Divyansh Tripathi, category Privacy & Security. Written, not yet published.
 - The Dev Tools Renaissance. By Pratyush, category Dev Tools. Written, not yet published.
@@ -317,7 +366,7 @@ Email thehallucinatedlab@gmail.com. The page provides two pre-structured enquiry
 
 Founders:
 - Pratyush. GitHub https://github.com/06pratyush. LinkedIn https://www.linkedin.com/in/pratyush-p-1226b532b. Second-year B.Tech Computer Science (Data Science) at Manipal University Jaipur. Focus: AI, machine learning, data science, AI video pipelines, blockchain governance.
-- Divyansh Tripathi. GitHub https://github.com/TheQMLGuy. Second-year B.Tech Computer Science (AI and ML) at Manipal University Jaipur. Focus: quantum computing, machine learning, developer experience, quantum ML tooling, CNN visualisation.
+- Divyansh Tripathi. GitHub https://github.com/TheQMLGuy. Second-year B.Tech Computer Science (AI and ML) at Manipal University Jaipur. Focus: machine learning, developer experience, CNN visualisation.
 
 ---
 

@@ -110,8 +110,8 @@
         <li><a href="../tools.html">Tools</a></li>
         <li><a href="../solutions.html">Solutions</a></li>
         <li><a href="../blogs.html" class="active">Media</a></li>
-        <li><a href="../certification.html">Certification</a></li>
-        <li><a href="../consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="../certification.html">Certification</a></li>
+        <li data-status="dev"><a href="../consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -233,7 +233,7 @@ ollama run llama3
 # Or use llama.cpp for maximum control
 git clone https://github.com/ggerganov/llama.cpp
 cd llama.cpp && make -j
-./main -m models/llama-3-8b-q4.gguf -p "Explain quantum computing"</code></pre>
+./main -m models/llama-3-8b-q4.gguf -p "Explain how attention mechanisms work"</code></pre>
 
         <p class="gsap-reveal">These tools have transformed local AI from a research exercise into a one-command setup. The barrier to entry is effectively zero for anyone with a modern computer.</p>
 

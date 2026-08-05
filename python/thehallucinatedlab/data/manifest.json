@@ -82,7 +82,7 @@
     {
       "name": "extract",
       "title": "Extract",
-      "status": "dev",
+      "status": "live",
       "summary": "Turn a document into Markdown with its structure intact.",
       "description": "Reads a PDF, Word file, presentation, spreadsheet, web page or e-book and writes Markdown. Headings stay headings and page boundaries stay marked, because that is exactly what the next stage splits on -- flattening to plain text first would leave structure-aware chunking with no structure to be aware of. In the browser this runs on vendored parsers in your own tab; in Python it runs through LangChain's document loaders, which reach considerably more formats.",
       "runtimes": ["browser", "python"],
@@ -168,7 +168,7 @@
     {
       "name": "chunk",
       "title": "Chunk",
-      "status": "dev",
+      "status": "live",
       "summary": "Split a Markdown document into retrieval-sized pieces along its own structure.",
       "description": "Splits on headings first and size second, so a chunk is a section of the document rather than an arbitrary window of characters. Each piece carries the heading path it came from and the page it started on, which is what lets a retrieved chunk cite its source instead of arriving as anonymous text. Output is JSONL -- one record per line, text plus metadata, the same shape a LangChain Document has.",
       "runtimes": ["browser", "python"],
@@ -261,7 +261,7 @@
     {
       "name": "tokenize",
       "title": "Tokenize",
-      "status": "dev",
+      "status": "live",
       "summary": "Count tokens, so you know what a corpus costs before you embed it.",
       "description": "Reports how many tokens a document or a folder of chunks contains, how they are distributed, and how many pieces exceed the model's context window. This is a measuring instrument, not a stage of the pipeline: an embedding model tokenizes internally with its own vocabulary, so there is no such thing as handing it a pre-tokenized file. What the tokenizer is genuinely for is deciding how to chunk and knowing what embedding will cost.",
       "runtimes": ["browser", "python"],
@@ -312,7 +312,7 @@
     {
       "name": "embed",
       "title": "Embed",
-      "status": "dev",
+      "status": "live",
       "summary": "Turn chunks into vectors with a model that runs on your own machine.",
       "description": "Reads the JSONL that chunk produced and writes one vector per record. BGE-M3 is the default: 1024 dimensions, 8192 context, and multilingual without a separate model per language. Vectors are L2-normalised by default, which makes cosine similarity and dot product the same operation and is what most vector stores assume. Output is a single .npy alongside the ids, not one file per chunk -- a corpus of 40,000 chunks is 40,000 files nobody wants.",
       "runtimes": ["python"],
@@ -387,7 +387,7 @@
     {
       "name": "index",
       "title": "Index",
-      "status": "dev",
+      "status": "live",
       "summary": "Build a portable vector database you own and can query with your own code.",
       "description": "Takes the vectors and the chunks they came from and writes a database directory. Crucially it also writes a sidecar recording which model produced the vectors, how many dimensions they have, and whether they were normalised -- without that, the folder is not actually usable: opening a Chroma collection and calling query_texts reaches for its own default embedder at 384 dimensions, which against 1024-dimension vectors either raises or silently returns nonsense. A query snippet is written alongside, so the first thing you can do with the output is use it.",
       "$pageComment": "vector-index.html, not index.html: the tool is named 'index' but index.html is the site homepage, and the manifest test asserts this file exists -- pointing at it would have invited overwriting 27KB of homepage.",

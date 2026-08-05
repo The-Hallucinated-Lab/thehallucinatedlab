@@ -72,8 +72,8 @@
         <li><a href="tools.html">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
-        <li><a href="certification.html">Certification</a></li>
-        <li><a href="consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -107,6 +107,11 @@
         <h2 class="section-title">Tools</h2>
         <ul class="sitemap-list">
           <li><a href="convert.html">Convert</a> — convert PNG, JPEG, WebP and AVIF in the browser. Nothing is uploaded.</li>
+          <li><a href="extract.html">Extract</a> — Turns PDFs, Word files, slides, spreadsheets and e-books into Markdown that keeps its headings and page boundaries, so the result can be split structurally rather than blindly.</li>
+          <li><a href="chunk.html">Chunk</a> — Splits a Markdown document into retrieval-sized chunks along its own heading structure rather than at arbitrary offsets.</li>
+          <li><a href="tokenize.html">Tokenize</a> — Counts tokens and reports the distribution, including how many pieces exceed the model's context window and would be silently truncated at embed time.</li>
+          <li><a href="embed.html">Embed</a> — Turns chunks into vectors locally with BGE-M3 at 1024 dimensions or all-MiniLM-L6-v2 at 384.</li>
+          <li><a href="vector-index.html">Index</a> — Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy.</li>
           <li><a href="interface.html">Assistant</a> — say what you want in plain English and it runs the tool here in the page.</li>
           <li><a href="prompts.html">Prompts</a> — eight prompts for real engineering work, free to copy.</li>
           <li><a href="adapters.html">LoRA adapters</a> — small adapters that stack onto a base model you already run.</li>
@@ -125,8 +130,8 @@
 
         <h2 class="section-title">Work with us</h2>
         <ul class="sitemap-list">
-          <li><a href="certification.html">Certification</a> — project-graded course tracks and how a capstone is assessed.</li>
-          <li><a href="consultancy.html">Consultancy</a> — engagement models for individuals and businesses.</li>
+          <li data-status="dev"><a href="certification.html">Certification</a> — project-graded course tracks and how a capstone is assessed.</li>
+          <li data-status="dev"><a href="consultancy.html">Consultancy</a> — engagement models for individuals and businesses.</li>
         </ul>
 
         <h2 class="section-title">For machines</h2>
