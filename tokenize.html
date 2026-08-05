@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- status: dev in spec/manifest.json. Reachable by URL but hidden from
+       visitors behind the founder gate, so it must not be indexed until it
+       goes live - and noindex is also what keeps it out of sitemap.xml,
+       llms.txt and the discoverability invariants that check them. -->
+  <meta name="robots" content="noindex">
   <title>Tokenize — The Hallucinated Lab</title>
   <meta name="description" content="Count tokens and see the distribution before you embed. Find the chunks that would be silently truncated. Runs in your browser, nothing uploaded.">
   <meta property="og:title" content="Tokenize — The Hallucinated Lab">

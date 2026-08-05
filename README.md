@@ -34,7 +34,8 @@ We believe that every powerful tool — from AI models and video generators to q
 
 ## 🏗️ Tech Stack
 
-This is a **zero-dependency static website** — no frameworks, no build tools, no package managers.
+The **site** is zero-dependency — no frameworks, no build step, no bundler. Nothing in
+`node_modules` is served, bundled, or referenced by any page. ESLint is dev tooling only.
 
 | Layer | Technology |
 |---|---|
@@ -296,16 +297,28 @@ layout shift they exist to prevent.
 Security policy and the headers GitHub Pages cannot set are documented
 in [SECURITY.md](SECURITY.md).
 
+The project's standing engineering constraints — what CI enforces, what
+review enforces, and what we have deliberately rejected — are in
+[STANDARDS.md](STANDARDS.md). Start there before adding a page, a tool,
+or a dependency.
+
 ---
 
 ## 🧪 Tests
 
-The repo has **no dependencies and no build step**, and the test suite
-keeps it that way — it uses `node:test` and `node:assert`, both built
-into Node. There is no `package.json` and nothing to install.
+The **shipped site** has no dependencies and no build step. The test
+suite keeps it that way — it uses `node:test` and `node:assert`, both
+built into Node, so no test framework is installed.
+
+There is a `package.json`, but it holds **devDependencies only** (ESLint
+and its globals list). Nothing it installs reaches a page.
+`test/site-invariants.test.js` asserts that no page references
+`node_modules`, so the boundary is enforced rather than remembered.
 
 ```bash
-node --test "test/**/*.test.js"
+npm install        # dev tooling only
+npm run check      # lint + tests + spec sync
+npm test           # tests alone — needs no install
 ```
 
 Browser scripts are plain `<script>` files, not modules, so each one

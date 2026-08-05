@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' http://127.0.0.1:* http://localhost:*; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- status: dev in spec/manifest.json. Reachable by URL but hidden from
+       visitors behind the founder gate, so it must not be indexed until it
+       goes live - and noindex is also what keeps it out of sitemap.xml,
+       llms.txt and the discoverability invariants that check them. -->
+  <meta name="robots" content="noindex">
   <title>Extract — The Hallucinated Lab</title>
   <meta name="description" content="Turn PDFs, Word files, slides and spreadsheets into Markdown that keeps its structure. Runs in your browser, or through the local Python package. Nothing is uploaded.">
   <meta property="og:title" content="Extract — The Hallucinated Lab">

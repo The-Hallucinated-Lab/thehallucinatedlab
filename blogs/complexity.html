@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>Time & Space Complexity — Full Teaching Session</title>
-<meta name="description" content="An interactive teaching session on time and space complexity — Big-O through the Master Theorem, with a live growth-rate explorer, twelve graded worked examples, and a printable formula sheet.">
+<meta name="description" content="Interactive session on time and space complexity: Big-O through the Master Theorem, a live growth-rate explorer and worked examples.">
 <meta property="og:title" content="Time &amp; Space Complexity — An Interactive Teaching Session">
 <meta property="og:description" content="Asymptotic analysis from first principles: Big-O, Big-Omega, Big-Theta, amortized analysis, and the Master Theorem — with a growth explorer you can drive yourself.">
 <meta property="og:type" content="article">
@@ -194,6 +194,19 @@
     .grid-2 { grid-template-columns: 1fr; }
     h1 { font-size: 26px; }
   }
+  .page-footer {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 13px;
+    text-align: center;
+  }
+  .page-footer p { margin: 4px 0; }
+  .page-footer a { color: var(--accent); text-decoration: none; }
+  .page-footer a:hover { text-decoration: underline; }
+
   /* Growth explorer */
   .chart-wrap {
     background: var(--panel-2);
@@ -458,7 +471,7 @@
   </script>
 </head>
 <body>
-<div class="wrap">
+<main class="wrap" id="main-content">
 
 <header class="hero">
   <h1>Time &amp; Space Complexity</h1>
@@ -998,7 +1011,12 @@
 </div>
 </section>
 
-</div>
+</main>
+
+  <footer class="page-footer">
+    <p>© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>.</p>
+    <p><a href="../sitemap.html">Sitemap</a> · <a href="../blogs.html">All blogs</a></p>
+  </footer>
 
   <script src="complexity.js" defer></script>
 
