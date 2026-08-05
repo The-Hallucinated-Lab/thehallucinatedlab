@@ -72,8 +72,8 @@ thehallucinatedlab/
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── blogs.js           # Blog data store, archive search, submission form
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
-├── converter.html  # Converter — the first THL tool
-├── converter.js    # Its drop zone, controls, and result panel
+├── convert.html  # Convert — the first THL tool
+├── convert.js    # Its drop zone, controls, and result panel
 ├── toolkit.js            # Shared tool runtime + argument-table renderer
 ├── nlp.js                # Intent parser (classification + slot filling)
 ├── solutions.js          # ScoobyBench screenshot tab switcher
@@ -96,7 +96,7 @@ thehallucinatedlab/
 │   ├── thehallucinatedlab/
 │   │   ├── registry.py           # Reads the manifest, validates arguments
 │   │   ├── nlp/__init__.py       # Python port of nlp.js
-│   │   ├── tools/converter.py# Pillow implementation
+│   │   ├── tools/convert.py# Pillow implementation
 │   │   ├── nexuslink.py          # Lazy door onto the NexusLink binding
 │   │   ├── cli.py                # The `thl` command
 │   │   └── data/manifest.json    # Synced copy of spec/manifest.json
@@ -150,8 +150,8 @@ thehallucinatedlab/
 - **Streaming responses** rendered token-by-token, with a setup panel that surfaces install/CORS instructions when Ollama isn't reachable
 
 ### Tools
-- **Converter** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
-- **One spec, four consumers** — `spec/manifest.json` drives the converter UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
+- **Convert** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
+- **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
 - **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)
@@ -199,7 +199,7 @@ python -m http.server 8000
 npx -y serve .
 ```
 
-> **The tool pages need a server, not `file://`.** `converter.html` and the
+> **The tool pages need a server, not `file://`.** `convert.html` and the
 > Assistant fetch `spec/manifest.json`, which the browser blocks over `file://`.
 > Every other page opens fine either way.
 

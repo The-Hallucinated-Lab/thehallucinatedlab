@@ -2732,7 +2732,7 @@
 }
 
 
-/* ============ TOOL RUNNER (image converter + future THL tools) ============ */
+/* ============ TOOL RUNNER (image convert + future THL tools) ============ */
 /* Deliberately thin: the controls reuse the .form-* system from the
    submission form, so what lives here is only the drop zone, the result
    panel and the argument table. */

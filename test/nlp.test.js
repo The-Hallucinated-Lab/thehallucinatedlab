@@ -75,7 +75,7 @@ test('a follow-up answer completes a parse that stalled on a missing slot', () =
   assert.deepEqual(pending.missing, ['format']);
 
   const merged = mergeAnswer(pending, 'png', manifest);
-  assert.equal(merged.tool, 'converter');
+  assert.equal(merged.tool, 'convert');
   assert.deepEqual(merged.args, { format: 'png' });
   assert.deepEqual(merged.missing, []);
 });
