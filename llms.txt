@@ -1,12 +1,10 @@
 # The Hallucinated Lab
 
-> The Hallucinated Lab is a local-first AI lab and consultancy. It builds AI tools that run entirely on the user's own machine — no cloud dependency, no API keys, no data leaving the device — and provides AI consulting and engineering services to individuals and businesses. It was founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
+> The Hallucinated Lab is a local-first AI lab. It builds AI tools that run entirely on the user's own machine — no cloud dependency, no API keys, no data leaving the device. It was founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
 
 The Hallucinated Lab operates in three modes:
 
 1. **Free artifacts.** Prompts, LoRA adapters, open-source packages, interactive explainers, and a browser-based assistant that understands plain-English tool requests. All free, all designed to run offline.
-2. **Services.** AI consultancy for individuals (mentoring, code and architecture review, research support) and businesses (feasibility audits, RAG and agent system builds, private on-premise deployment, team enablement).
-3. **Certification.** Project-graded course tracks in local-first AI. Every track ends in a build that is reviewed against published criteria before a certificate is issued.
 
 **Core position:** if a model can run on your hardware, you should be able to run it without a subscription, a rate limit, or a third party reading your data. Every tool published here is built to that constraint.
 
@@ -26,9 +24,7 @@ The Hallucinated Lab operates in three modes:
 - [THL Library](https://thehallucinatedlab.space/library.html): The full package shelf - pip-installable packages, embeddable engines and open-source building blocks, with install and usage for each.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
-- [Certification](https://thehallucinatedlab.space/certification.html): Six project-graded course tracks and the criteria a capstone must clear.
 - [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.
-- [Consultancy](https://thehallucinatedlab.space/consultancy.html): Engagement models for individuals and businesses, the four-stage process, and how to start.
 
 ## Tools
 
@@ -50,12 +46,6 @@ The Hallucinated Lab operates in three modes:
 - [Time & Space Complexity](https://thehallucinatedlab.space/blogs/complexity.html): Interactive teaching session on asymptotic analysis, Big-O through the Master Theorem, with a growth-rate explorer and twelve worked examples.
 - [The Model Is No Longer the Product](https://thehallucinatedlab.space/blogs/ai-orchestration.html): Interactive piece on AI engineering as orchestration, with a runnable RAG pipeline and a failure-diagnosis game.
 - [The Future of Local-First AI](https://thehallucinatedlab.space/blogs/sample-blog.html): Blog on the shift from cloud dependency to local-first intelligence.
-
-## Services
-
-- [Consultancy for individuals](https://thehallucinatedlab.space/consultancy.html#individuals): Project mentoring, code and architecture review, research and experiment design, portfolio work. For students, researchers, and solo builders.
-- [Consultancy for businesses](https://thehallucinatedlab.space/consultancy.html#businesses): Fixed-scope feasibility audits, RAG and agent system builds, on-premise and air-gapped deployment, private delivery of certification tracks for internal teams.
-- [Engagement process](https://thehallucinatedlab.space/consultancy.html#process): Free scoping call, written proposal with fixed price where scope allows, build in the open with repo access from day one, handover with documentation and a runbook.
 
 ## Technical capabilities
 

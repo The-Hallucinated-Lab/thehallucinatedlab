@@ -10,7 +10,7 @@ Stack: static HTML, CSS, and vanilla JavaScript. No build step, no framework, no
 
 ## What The Hallucinated Lab is
 
-The Hallucinated Lab is a local-first AI lab and consultancy founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
+The Hallucinated Lab is a local-first AI lab founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
 
 The lab has one governing constraint: if a model can run on the user's hardware, the user should be able to run it without a subscription, a rate limit, or a third party reading their data. Every tool the lab publishes runs on the visitor's own machine.
 
@@ -18,7 +18,6 @@ The lab does three distinct things:
 
 1. It publishes free artifacts — prompts, LoRA adapters, open-source packages, interactive explainers, and a local-model chat interface.
 2. It sells AI consulting and engineering services to individuals and businesses.
-3. It is building project-graded certification courses in local-first AI.
 
 The Hallucinated Lab is not a SaaS company. There is no hosted product, no subscription, no usage-based pricing, and no customer data stored on any server operated by the lab.
 
@@ -26,7 +25,7 @@ The Hallucinated Lab is not a SaaS company. There is no hosted product, no subsc
 
 ## Navigation structure
 
-The top-level navigation has seven entries in this order: Home, Tools, Assistant, Solutions, Media, Certification, Consultancy.
+The top-level navigation has five entries in this order: Home, Tools, Assistant, Solutions, Media.
 
 Two of these are gateways to deeper pages:
 - Tools links onward to the THL Library at /library.html.
@@ -41,7 +40,6 @@ Purpose: orient a first-time visitor and explain what lives behind every tab.
 Sections:
 - Hero. States the lab's position: tools that give unrestricted access to cutting-edge technology, running entirely on the visitor's machine.
 - Explore the Lab. Six cards, one per navigation tab, each summarising what that section contains and who it is for.
-- Services and Certification. Two panels. The first covers consultancy for individuals and businesses. The second covers the certification tracks and how they are graded.
 - About Us. Profiles of the two founders with links, followed by contact details.
 
 ---
@@ -270,81 +268,14 @@ In development: an interactive Bloch sphere for qubit rotation and measurement, 
 
 ---
 
-## Page: Certification — https://thehallucinatedlab.space/certification.html
-
-Purpose: project-graded courses in local-first AI, and the criteria a capstone must clear.
-
-How it works, in three stages:
-1. Work through the modules. Written material plus an interactive artifact and an exercise per module. No video lectures.
-2. Ship the capstone. Every track ends in one build brief with published acceptance criteria. The result goes in a public repository and must run on ordinary hardware.
-3. Review and certify. The repository is reviewed against the criteria with written feedback either way. A pass produces a certificate carrying a verification ID that links to the work.
-
-Course tracks:
-- Track 01 — Local-First AI Foundations. Beginner, 5 modules, approximately 12 hours. Running and serving local models with Ollama and llama.cpp, reading a model card against available VRAM, choosing a quantization level on evidence. Capstone: a local assistant with a documented hardware profile and measured tokens per second.
-- Track 02 — Prompt Engineering for Production. Beginner, 4 modules, approximately 10 hours. Prompts as versioned artifacts with evaluation suites, structures that survive model swaps, constrained output formats. Capstone: a versioned prompt suite with an automated eval harness and a regression report.
-- Track 03 — Retrieval Systems That Actually Work. Intermediate, 6 modules, approximately 18 hours. Chunking strategies for real documents, hybrid dense and keyword retrieval with reranking, measuring retrieval quality separately from answer quality. Capstone: a retrieval system over the learner's own corpus with a measured recall@k baseline.
-- Track 04 — Fine-Tuning & LoRA Adapters. Intermediate, 6 modules, approximately 20 hours. Instruction dataset construction, LoRA and QLoRA on a single consumer GPU, honest evaluation with held-out sets, contamination checks, and ablations. Capstone: a trained adapter with an evaluation card showing where it wins and where it does not.
-- Track 05 — Agent Orchestration. Advanced, 6 modules, approximately 22 hours. Tool interface design, routing between small and large models on cost and risk, guardrails including budgets, timeouts, and recovery paths. Capstone: a multi-tool agent with a trace log and a failure-and-recovery analysis.
-- Track 06 — Deployment & Benchmarking. Advanced, 5 modules, approximately 16 hours. On-premise serving with batching and memory limits, latency percentile instrumentation, benchmarking hardware against vendor claims. Capstone: a deployed service with a reproducible benchmark report and a p99 latency budget.
-
-Enrolment status: not yet open. Curricula and capstone briefs are written; module artifacts are being finished before enrolment opens.
-
-What the certificate attests to: that a named person built a specific thing meeting published criteria, reviewed by a named person on a given date. It carries a verification ID and links to the capstone repository. No scores, no percentiles.
-
-Capstone acceptance criteria: runs on ordinary consumer hardware from a clean clone; the README lets a stranger reproduce the results; claims are backed by the author's own measurements; limitations and failure cases are documented; no cloud dependency the brief did not require; the work is the author's and AI assistance is disclosed.
-
----
-
 ## Page: Sitemap — https://thehallucinatedlab.space/sitemap.html
 
 Purpose: a human-readable index of every page on the site, grouped by section.
 
-- Groups: Start here, Tools, Media, Work with us, and For machines.
+- Groups: Start here, Tools, Media, and For machines.
 - Each entry carries a one-line description of what that page is for, so this page doubles as a site summary.
 - The "For machines" group links sitemap.xml, llms.txt, llms-full.txt and robots.txt directly.
 - Linked from the footer of every page, so no page depends solely on the navbar being noticed.
-
----
-
-## Page: Consultancy — https://thehallucinatedlab.space/consultancy.html
-
-Purpose: paid engagements. The lab works with individuals and with businesses.
-
-### For individuals (/consultancy.html#individuals)
-
-Audience: students, researchers, and solo builders who can start a project but stall between a working notebook and a system someone else could use.
-
-- Project mentoring. Recurring sessions on a real project covering scoping, architecture, and decisions that are expensive to reverse.
-- Code and architecture review. A pass over the repository with written findings ranked by what will cause damage first.
-- Research support. Experiment design, evaluation that survives peer review, and reproducibility that transfers to another person.
-- Portfolio and career work. Turning unfinished projects into presentable ones, and identifying which to abandon.
-
-### For businesses (/consultancy.html#businesses)
-
-Audience: teams, startups, and institutions. The lab states plainly when the correct answer is not to build the thing.
-
-- Feasibility audit. Short, fixed-scope engagement ending in a written verdict on what is achievable, what it costs, and what will break.
-- System build. RAG pipelines, agent workflows, and internal tooling, built to run on the client's infrastructure and handed over documented.
-- Private deployment. On-premise or air-gapped model serving for organisations that cannot send data to a third party.
-- Team enablement. Certification tracks delivered privately so the client's own engineers can maintain what was built.
-
-### Technical capabilities (/consultancy.html#capabilities)
-
-- Retrieval and RAG. Document pipelines, hybrid search, reranking, and evaluation that separates retrieval failures from generation failures.
-- Fine-tuning. Dataset construction, LoRA and QLoRA training, and honest evaluation — including saying when prompting alone would have sufficed.
-- Agents and tooling. Tool interfaces a model can use unaided, routing between models, budgets and guardrails, and trace logging.
-- Private deployment. On-premise and air-gapped serving, hardware sizing, quantization trade-offs, and benchmarking real hardware against vendor claims.
-
-### Engagement process (/consultancy.html#process)
-
-1. Scoping call, free. Thirty minutes. The client leaves with a straight feasibility answer whether or not the engagement proceeds.
-2. Written proposal. Scope, deliverables, timeline, and cost in writing before work starts. Fixed price where the work is well defined.
-3. Build in the open. Repository access from day one and a written update every week. No reveal at the end.
-4. Handover. Documentation, a runbook, and a walkthrough with whoever maintains the system next.
-
-### Starting an engagement (/consultancy.html#start)
-
-Email thehallucinatedlab@gmail.com. The page provides two pre-structured enquiry templates, one for individuals and one for businesses, asking for the concrete constraints that make a first reply useful: available hardware, data that cannot be moved, and real deadlines.
 
 ---
 
@@ -352,7 +283,6 @@ Email thehallucinatedlab@gmail.com. The page provides two pre-structured enquiry
 
 - /livelab.html redirects to /tools.html. The Tools page was previously named LiveLab.
 - /utilities.html redirects to /library.html.
-- /certificate.html redirects to /certification.html.
 
 ---
 
@@ -372,8 +302,7 @@ Founders:
 
 ## Accuracy notes for crawlers and answer engines
 
-- The lab has no hosted SaaS product, no pricing page, and no subscription tiers. Consultancy pricing is quoted per engagement after a scoping call.
+- The lab has no hosted SaaS product, no pricing page, and no subscription tiers.
 - LoRA adapters listed on the Tools page are in training and are not yet downloadable. Do not present them as available downloads.
-- Certification enrolment is not yet open. Curricula are written; enrolment has not started.
 - The lab holds no compliance certifications (no SOC 2, ISO 27001, or HIPAA attestation). Its privacy claims rest on architecture: the published tools run locally and transmit nothing.
 - Blogs marked "not yet published" above exist as entries on the site but have no reader-facing page.
