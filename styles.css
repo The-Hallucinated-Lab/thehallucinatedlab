@@ -5,7 +5,14 @@
   --bg-glass: rgba(15, 15, 15, 0.7);
   --gold-primary: #c9a84c;
   --gold-light: #e8d48b;
-  --gold-dark: #8a7232;
+  /* 4.61:1 on --bg-card. The old #8a7232 was 4.14:1 there, which is fine
+     for the icons and scrollbars it mostly paints but not for the small
+     text it also paints — .course-index is 10.2px, far below the 18.66px
+     that would let bold text use the 3:1 threshold. Raising the token
+     rather than patching that one selector keeps every other small-text
+     use (the ◆ list markers, the blog divider label) from being the next
+     one to fail. */
+  --gold-dark: #94793a;
   --gold-glow: rgba(201, 168, 76, 0.15);
   --text-primary: #f0ece4;
   --text-secondary: #9a9590;
@@ -198,6 +205,19 @@ section { padding: 6rem 2rem; position: relative; }
   border-top-color: var(--border-gold);
   opacity: 0; pointer-events: none;
   transition: opacity 0.25s ease;
+}
+/* The tooltip is absolutely positioned but still contributes to scrollable
+   overflow, and `white-space: nowrap` makes it far wider than the 50px
+   control it hangs off — "thehallucinatedlab@gmail.com" measures ~147px,
+   centred, so ~48px escapes each side. On a 320px viewport that pushed the
+   document to 330px and broke 1.4.10 Reflow.
+
+   Dropped in both places it cannot earn its keep: where there is no hover
+   to trigger it, and where the viewport is too narrow to hold it. Nothing
+   is lost — every .hover-btn already carries an aria-label, and the
+   destination is in the href. */
+@media (hover: none), (max-width: 480px) {
+  .hover-btn::after, .hover-btn::before { content: none; }
 }
 .hover-btn:hover::before { opacity: 1; }
 
