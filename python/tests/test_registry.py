@@ -148,5 +148,16 @@ def test_every_manifest_tool_documents_itself():
             assert tool.get(field), f"{name} is missing {field}"
         for param in tool["params"]:
             assert param.get("description"), f"{name}.{param['name']} has no description"
-            assert param.get("type") in {"enum", "integer", "color"}
+            # Mirrors the same gate in test/manifest.test.js. A type only
+            # belongs here once toolkit.js and registry.py both enforce
+            # it, or the website accepts an argument the package rejects.
+            assert param.get("type") in {
+                "enum",
+                "integer",
+                "color",
+                "string",
+                "path",
+                "boolean",
+                "number",
+            }, f"{name}.{param['name']} is type {param.get('type')!r}"
         assert json.dumps(tool)  # nothing unserialisable leaked in

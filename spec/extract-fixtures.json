@@ -1,0 +1,97 @@
+{
+  "$comment": "Shared extract cases, run by test/extract.test.js and python/tests/test_extract.py. Same pattern as nlp-fixtures.json: the browser and the package each implement stage one of the pipeline, and a document that assembles differently depending on which runtime produced it would chunk differently, embed differently and retrieve differently. If the two drift, both suites go red.",
+  "specVersion": 1,
+  "assembly": [
+    {
+      "name": "frontmatter, one page marker per page change",
+      "blocks": [
+        { "text": "# Chapter 3", "page": 12 },
+        { "text": "Body text.", "page": 12 },
+        { "text": "More body.", "page": 13 }
+      ],
+      "meta": {
+        "source": "report.pdf",
+        "format": "markdown",
+        "pages": 42,
+        "extracted": "2026-08-04T10:22:31Z",
+        "extractor": "test"
+      },
+      "args": { "format": "markdown", "frontmatter": true, "page_markers": true, "tables": true },
+      "expected": "---\nsource: \"report.pdf\"\nformat: \"markdown\"\npages: 42\nextracted: \"2026-08-04T10:22:31Z\"\nextractor: \"test\"\n---\n\n<!-- page: 12 -->\n\n# Chapter 3\n\nBody text.\n\n<!-- page: 13 -->\n\nMore body.\n"
+    },
+    {
+      "name": "frontmatter off leaves the body alone",
+      "blocks": [{ "text": "Just text.", "page": 1 }],
+      "meta": { "source": "a.txt", "format": "markdown" },
+      "args": { "format": "markdown", "frontmatter": false, "page_markers": true, "tables": true },
+      "expected": "<!-- page: 1 -->\n\nJust text.\n"
+    },
+    {
+      "name": "page markers off",
+      "blocks": [
+        { "text": "One.", "page": 1 },
+        { "text": "Two.", "page": 2 }
+      ],
+      "meta": { "source": "a.pdf", "format": "markdown" },
+      "args": { "format": "markdown", "frontmatter": false, "page_markers": false, "tables": true },
+      "expected": "One.\n\nTwo.\n"
+    },
+    {
+      "name": "blank blocks are dropped rather than leaving gaps",
+      "blocks": [
+        { "text": "One." },
+        { "text": "   " },
+        { "text": "" },
+        { "text": "Two." }
+      ],
+      "meta": { "source": "a.txt", "format": "markdown" },
+      "args": { "format": "markdown", "frontmatter": false, "page_markers": true, "tables": true },
+      "expected": "One.\n\nTwo.\n"
+    },
+    {
+      "name": "a quote in the source name cannot close the yaml block early",
+      "blocks": [{ "text": "Body." }],
+      "meta": { "source": "we\"ird\".pdf", "format": "markdown" },
+      "args": { "format": "markdown", "frontmatter": true, "page_markers": true, "tables": true },
+      "expected": "---\nsource: \"we\\\"ird\\\".pdf\"\nformat: \"markdown\"\n---\n\nBody.\n"
+    },
+    {
+      "name": "text format drops frontmatter, markers, hashes and emphasis",
+      "blocks": [
+        { "text": "# Heading", "page": 1 },
+        { "text": "Body **bold** text.", "page": 1 },
+        { "text": "- one\n- two", "page": 2 }
+      ],
+      "meta": { "source": "a.pdf", "format": "text" },
+      "args": { "format": "text", "frontmatter": true, "page_markers": true, "tables": true },
+      "expected": "Heading\n\nBody bold text.\n\none\ntwo"
+    }
+  ],
+  "csv": [
+    {
+      "name": "header rule follows the first row",
+      "input": "a,b\n1,2",
+      "expected": "| a | b |\n| --- | --- |\n| 1 | 2 |"
+    },
+    {
+      "name": "quoted fields may contain commas",
+      "input": "name,city\n\"Doe, J\",London",
+      "expected": "| name | city |\n| --- | --- |\n| Doe, J | London |"
+    },
+    {
+      "name": "doubled quotes collapse to one",
+      "input": "said\n\"say \"\"hi\"\"\"",
+      "expected": "| said |\n| --- |\n| say \"hi\" |"
+    },
+    {
+      "name": "a pipe in a cell is escaped so the table survives",
+      "input": "cmd\n\"ls | wc\"",
+      "expected": "| cmd |\n| --- |\n| ls \\| wc |"
+    },
+    {
+      "name": "ragged rows are padded to the widest",
+      "input": "a,b,c\n1",
+      "expected": "| a | b | c |\n| --- | --- | --- |\n| 1 |  |  |"
+    }
+  ]
+}

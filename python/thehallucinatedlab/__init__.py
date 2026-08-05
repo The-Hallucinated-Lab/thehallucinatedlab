@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from . import nexuslink
 from .errors import (
+    DependencyMissing,
     InvalidArgument,
     MissingArgument,
     NexusLinkNotInstalled,
@@ -37,7 +38,12 @@ from .errors import (
 )
 from .nlp import merge_answer, parse
 from .registry import Registry, registry
+from .tools.chunk import Chunk, ChunkResult, chunk
 from .tools.convert import ConvertResult, convert
+from .tools.embed import EmbedResult, embed
+from .tools.extract import ExtractResult, extract
+from .tools.index import IndexResult, index
+from .tools.tokenize import TokenReport, tokenize
 
 __version__ = "0.1.0"
 
@@ -50,6 +56,17 @@ __all__ = [
     # tools
     "convert",
     "ConvertResult",
+    "extract",
+    "ExtractResult",
+    "chunk",
+    "Chunk",
+    "ChunkResult",
+    "tokenize",
+    "TokenReport",
+    "embed",
+    "EmbedResult",
+    "index",
+    "IndexResult",
     # deprecated, kept for 0.1.0 compatibility
     "image_convert",
     # natural language
@@ -67,5 +84,6 @@ __all__ = [
     "MissingArgument",
     "UnsupportedFormat",
     "NexusLinkNotInstalled",
+    "DependencyMissing",
     "__version__",
 ]
