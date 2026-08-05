@@ -10,6 +10,14 @@ nothing is uploaded anywhere.
 pip install thehallucinatedlab
 ```
 
+Requires **Python 3.10 or newer**. On an older interpreter pip says
+`No matching distribution found for thehallucinatedlab`, which reads like the package
+does not exist — the actual reason is the line above it,
+`Ignored the following versions that require a different python version`. If your
+default `pip` belongs to an older Python, name the one you want:
+`py -3.13 -m pip install thehallucinatedlab` on Windows, or
+`python3.13 -m pip install thehallucinatedlab` elsewhere.
+
 ## Use it
 
 ```python

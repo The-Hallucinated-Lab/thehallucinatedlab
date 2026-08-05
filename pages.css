@@ -2008,6 +2008,27 @@
   margin-bottom: 1.8rem;
   max-width: 720px;
 }
+
+/* A note that belongs to the code block above it. Not .form-note, which
+   centres — centred prose reads as a caption, and this is a sentence
+   someone actually has to read: pip's own error for an old interpreter
+   names the wrong cause, so the install block needs the real one next
+   to it. --text-muted is 4.56:1 on --bg-card, which this panel is. */
+.how-note {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.7;
+  margin: -0.9rem 0 1.4rem;
+  max-width: 720px;
+}
+.how-note code {
+  font-family: var(--font-body);
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 1px 5px;
+}
 .how-block + .how-block { margin-top: 1.4rem; }
 .how-block-label {
   display: block;
