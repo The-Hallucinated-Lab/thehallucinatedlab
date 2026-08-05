@@ -96,7 +96,7 @@
 
      It errs HIGH on purpose. An under-count produces a chunk that
      exceeds the embedding model's context, and an oversized chunk is not
-     rejected at embed time — it is silently truncated, and the tail
+     rejected at embed time - it is silently truncated, and the tail
      never reaches the vector. Over-counting only costs slightly smaller
      chunks, which is the cheap direction to be wrong in.
 
@@ -109,7 +109,12 @@
      no surrogate handling is needed. */
   var DENSE = '぀-ヿ㐀-䶿一-鿿가-힯';
   var LATIN = 'A-Za-zÀ-ɏ';
-  var PIECE = new RegExp('[' + DENSE + ']|[' + LATIN + ']+|\\d+|[^\\s' + LATIN + '0-9' + DENSE + ']', 'g');
+  /* Double-escaped on purpose: this is a STRING being handed to RegExp,
+     and '\d' in a JS string literal is just 'd'. Written singly it
+     silently compiles to /d+/ and stops counting digits at all. */
+  var PIECE = new RegExp(
+    '[' + DENSE + ']|[' + LATIN + ']+|\\d+|[^\\s' + LATIN + '0-9' + DENSE + ']', 'g');
+  var LATIN_ONLY = new RegExp('^[' + LATIN + ']+$');
 
   function estimateTokens(text) {
     var body = String(text === null || text === undefined ? '' : text);
@@ -119,10 +124,10 @@
     var total = 0;
     for (var i = 0; i < pieces.length; i++) {
       var piece = pieces[i];
-      if (new RegExp('^[' + LATIN + ']+$').test(piece)) {
+      if (LATIN_ONLY.test(piece)) {
         total += Math.max(1, Math.ceil(piece.length / 4));
       } else if (/^\d+$/.test(piece)) {
-        /* Digits fragment far more than letters — most vocabularies
+        /* Digits fragment far more than letters - most vocabularies
            carry only short numeric pieces. */
         total += Math.max(1, Math.ceil(piece.length / 2));
       } else {
@@ -132,12 +137,91 @@
     return Math.floor((total * 115 + 99) / 100);
   }
 
+  /* One checker per parameter type, looked up rather than chained
+     through an if/else ladder. Each returns {value} or {error}, so
+     validateArgs stays a loop over parameters and adding a type means
+     adding an entry here rather than another branch in the middle of
+     the loop.
+
+     Bounds come from the manifest, never from constants restated here -
+     that is what keeps the browser and the Python package agreeing. */
+  var CHECKERS = {
+    enum: function (param, value) {
+      var vocab = enumVocabulary(param);
+      var key = String(value).trim().toLowerCase();
+      if (Object.prototype.hasOwnProperty.call(vocab, key)) return { value: vocab[key] };
+      return { error: param.name + ' must be one of ' + (param.values || []).join(', ') + '.' };
+    },
+
+    integer: function (param, value) {
+      var num = Number(value);
+      if (!isFinite(num) || Math.floor(num) !== num) {
+        return { error: param.name + ' must be a whole number.' };
+      }
+      var under = param.min !== undefined && num < param.min;
+      var over = param.max !== undefined && num > param.max;
+      if (under || over) {
+        return { error: param.name + ' must be between ' + param.min + ' and ' + param.max + '.' };
+      }
+      return { value: num };
+    },
+
+    color: function (param, value) {
+      var hex = normalizeHex(value);
+      if (hex) return { value: hex };
+      return { error: param.name + ' must be a hex colour such as #ffffff.' };
+    },
+
+    number: function (param, value) {
+      var real = Number(value);
+      if (!isFinite(real)) return { error: param.name + ' must be a number.' };
+      var under = param.min !== undefined && real < param.min;
+      var over = param.max !== undefined && real > param.max;
+      if (under || over) {
+        return { error: param.name + ' must be between ' + param.min + ' and ' + param.max + '.' };
+      }
+      return { value: real };
+    },
+
+    boolean: function (param, value) {
+      var flag = normalizeBool(value);
+      if (flag === null) return { error: param.name + ' must be true or false.' };
+      return { value: flag };
+    },
+
+    string: function (param, value) {
+      var text = String(value).trim();
+      if (!text) return { error: param.name + ' must not be empty.' };
+      if (param.maxLength !== undefined && text.length > param.maxLength) {
+        return { error: param.name + ' must be at most ' + param.maxLength + ' characters.' };
+      }
+      /* Anchored, or a pattern meant to describe the whole value would
+         pass on any string merely containing a match. */
+      if (param.pattern !== undefined &&
+          !new RegExp('^(?:' + param.pattern + ')$').test(text)) {
+        return { error: param.name + ' must match ' + param.pattern + '.' };
+      }
+      return { value: text };
+    },
+  };
+
+  /* A path is a string as far as the browser is concerned -- it never
+     touches a file system, it hands a File object to the tool. Aliased
+     rather than duplicated so the two cannot drift. */
+  CHECKERS.path = CHECKERS.string;
+
+  /* An unrecognised type is passed through rather than rejected. The
+     manifest is ours, so a new type here means the spec moved ahead of
+     this file - failing closed would break the page on a spec change
+     that the Python package already handles. */
+  function checkParam(param, value) {
+    var checker = CHECKERS[param.type];
+    return checker ? checker(param, value) : { value: value };
+  }
+
   /* Collects every problem rather than throwing on the first one: a form
      that reports "format is required" and then, after you fix it,
-     "quality must be between 1 and 100" wastes a round trip per field.
-
-     Bounds live in the manifest, so the browser and Python enforce the
-     same numbers without either restating them. */
+     "quality must be between 1 and 100" wastes a round trip per field. */
   function validateArgs(rawArgs, tool) {
     var input = rawArgs || {};
     var params = (tool && tool.params) || [];
@@ -160,67 +244,9 @@
         continue;
       }
 
-      if (param.type === 'enum') {
-        var vocab = enumVocabulary(param);
-        var key = String(value).trim().toLowerCase();
-        if (Object.prototype.hasOwnProperty.call(vocab, key)) {
-          args[param.name] = vocab[key];
-        } else {
-          errors.push(param.name + ' must be one of ' + (param.values || []).join(', ') + '.');
-        }
-
-      } else if (param.type === 'integer') {
-        var num = Number(value);
-        if (!isFinite(num) || Math.floor(num) !== num) {
-          errors.push(param.name + ' must be a whole number.');
-        } else if (param.min !== undefined && num < param.min) {
-          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
-        } else if (param.max !== undefined && num > param.max) {
-          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
-        } else {
-          args[param.name] = num;
-        }
-
-      } else if (param.type === 'color') {
-        var hex = normalizeHex(value);
-        if (hex) args[param.name] = hex;
-        else errors.push(param.name + ' must be a hex colour such as #ffffff.');
-
-      } else if (param.type === 'number') {
-        var real = Number(value);
-        if (!isFinite(real)) {
-          errors.push(param.name + ' must be a number.');
-        } else if (param.min !== undefined && real < param.min) {
-          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
-        } else if (param.max !== undefined && real > param.max) {
-          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
-        } else {
-          args[param.name] = real;
-        }
-
-      } else if (param.type === 'boolean') {
-        var flag = normalizeBool(value);
-        if (flag === null) errors.push(param.name + ' must be true or false.');
-        else args[param.name] = flag;
-
-      } else if (param.type === 'string' || param.type === 'path') {
-        var text = String(value).trim();
-        if (!text) {
-          errors.push(param.name + ' must not be empty.');
-        } else if (param.maxLength !== undefined && text.length > param.maxLength) {
-          errors.push(param.name + ' must be at most ' + param.maxLength + ' characters.');
-        } else if (param.pattern !== undefined && !new RegExp('^(?:' + param.pattern + ')$').test(text)) {
-          errors.push(param.name + ' must match ' + param.pattern + '.');
-        } else {
-          args[param.name] = text;
-        }
-
-      } else {
-        /* An unrecognised type would otherwise sail through unvalidated,
-           which is how a typo in the manifest becomes an argument that
-           nothing checks on either side. */
-        errors.push(param.name + ' declares unknown type "' + param.type + '".');
-      }
+      var checked = checkParam(param, value);
+      if (checked.error) errors.push(checked.error);
+      else args[param.name] = checked.value;
     }
 
     for (var name in input) {
@@ -391,10 +417,10 @@
     });
   }
 
-  /* ---- convert ---- */
+  /* ---- converter ---- */
   function runImageConvert(file, rawArgs, manifest) {
-    var tool = findTool(manifest, 'convert');
-    if (!tool) return Promise.reject(ToolError('convert is not in the tool spec.'));
+    var tool = findTool(manifest, 'converter');
+    if (!tool) return Promise.reject(ToolError('converter is not in the tool spec.'));
     if (!file) return Promise.reject(ToolError('Choose an image first.'));
 
     var checked = validateArgs(rawArgs, tool);
@@ -463,7 +489,7 @@
   }
 
   function run(name, file, args, manifest) {
-    if (name === 'convert') return runImageConvert(file, args, manifest);
+    if (name === 'converter') return runImageConvert(file, args, manifest);
     return Promise.reject(ToolError('Unknown tool "' + name + '".'));
   }
 
@@ -521,16 +547,13 @@
   /* Argument tables on pages that have no script of their own.
 
      A python-only tool (embed, index) has nothing to run in the browser,
-     so its page ships no page script — and without this, its Arguments
-     section would render as an empty div. Hard-coding the table in the
-     markup would work and would also be the one thing this project is
-     built to avoid: the table would drift from the manifest the moment
-     an argument changed, and the page would start documenting arguments
-     the package does not accept.
+     so its page ships no page script - and without this, its Arguments
+     section would render as an empty div. Hard-coding the table would
+     work and would also be the one thing this project exists to avoid:
+     it would drift from the manifest the moment an argument changed.
 
      So any container carrying data-tool renders itself from the spec.
-     Pages with their own script (convert, extract, chunk, tokenize) use
-     an id instead and are untouched by this. */
+     Pages with their own script use an id instead and are untouched. */
   document.addEventListener('DOMContentLoaded', function () {
     var targets = document.querySelectorAll('[data-tool]');
     if (!targets.length) return;

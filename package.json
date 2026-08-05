@@ -1,0 +1,31 @@
+{
+  "name": "thehallucinatedlab-site",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Dev tooling for the static site. The site itself ships no runtime dependencies - nothing in node_modules is served, bundled, or referenced by any page.",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "test": "node --test \"test/**/*.test.js\"",
+    "test:coverage": "node --test --experimental-test-coverage \"test/**/*.test.js\"",
+    "check": "npm run lint && npm test && node scripts/sync-spec.js --check",
+    "spec:sync": "node scripts/sync-spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/The-Hallucinated-Lab/thehallucinatedlab.git"
+  },
+  "bugs": {
+    "url": "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/issues"
+  },
+  "homepage": "https://thehallucinatedlab.space",
+  "devDependencies": {
+    "eslint": "9.39.5",
+    "globals": "17.9.0"
+  }
+}

@@ -25,9 +25,9 @@
         "maxPixels": 40000000,
         "maxPixelsNote": "Roughly 40 megapixels. The browser encodes on the main thread, so a larger input would lock the tab."
       },
-      "aliases": ["image convert", "convert image", "change format", "image convert"],
+      "aliases": ["image convert", "convert image", "change format", "image converter"],
       "keywords": {
-        "action": ["convert", "convert", "change", "turn", "make", "transform", "export", "encode", "reencode", "save"],
+        "action": ["convert", "converter", "change", "turn", "make", "transform", "export", "encode", "reencode", "save"],
         "subject": ["image", "images", "picture", "photo", "pic", "img", "file", "format"]
       },
       "params": [

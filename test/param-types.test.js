@@ -124,13 +124,25 @@ test('a non-numeric value is rejected rather than becoming NaN', () => {
 
 /* ---- unknown ---- */
 
-test('an unrecognised type is an error rather than an unchecked passthrough', () => {
-  /* Before this, `else { args[name] = value }` meant a typo like
-     "boolena" produced an argument nothing validated on either side. */
-  const typo = { name: 'x', params: [{ name: 'n', type: 'boolena', required: true, description: 'd' }] };
-  const result = validateArgs({ n: 'anything' }, typo);
-  assert.equal(result.ok, false);
-  assert.ok(result.errors.some(e => e.includes('unknown type')), result.errors.join(' '));
+test('an unrecognised type passes through in the browser, deliberately', () => {
+  /* The one place the two runtimes disagree on purpose, and the reason
+     is a real asymmetry rather than drift.
+
+     The browser FETCHES spec/manifest.json at runtime, so a cached
+     toolkit.js can legitimately be older than the spec it is reading.
+     Failing closed there would break the page on a spec change the
+     Python package already handles — so an unknown type is passed
+     through and the tool decides.
+
+     Python cannot skew: the manifest ships inside the wheel, so the two
+     always move together. An unknown type there is a typo in the
+     manifest, and test_param_types.py asserts it raises.
+
+     If this ever needs revisiting, revisit both together. */
+  const ahead = { name: 'x', params: [{ name: 'n', type: 'duration', required: true, description: 'd' }] };
+  const result = validateArgs({ n: '30s' }, ahead);
+  assert.equal(result.ok, true, result.errors.join(' '));
+  assert.equal(result.args.n, '30s');
 });
 
 /* ---- defaults ---- */

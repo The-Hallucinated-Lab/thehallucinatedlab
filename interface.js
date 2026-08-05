@@ -1,34 +1,29 @@
 /* ============================================================
    interface.js — chat engine for the Assistant page.
 
-   Talks to an Ollama runtime on the visitor's own machine. Nothing
-   here reaches a server we control: no keys, no relay, no logging.
+   There is deliberately no model here, and no network call to one.
+   Nothing reaches a server we control: no keys, no relay, no logging.
 
-   Two engines sit behind one input box:
+   How a message is handled:
 
-     1. The intent parser in nlp.js gets every message first. If it
-        recognises a THL tool ("convert this to png"), toolkit.js runs it
-        in this tab and the reply is a real file. No model is involved,
-        so this path works with nothing installed.
-     2. Anything the parser does not recognise goes to Ollama, exactly as
-        it always has.
+     1. The intent parser in nlp.js scores the utterance against
+        spec/manifest.json. If it recognises a THL tool ("convert this
+        to png"), toolkit.js runs it in this tab and the reply is a real
+        file. Instant, offline, nothing installed.
+     2. If a required argument is missing, the assistant asks for that
+        one argument and merges the answer into the pending request.
+     3. Anything it does not recognise falls to capabilityText(), which
+        states what the page can actually do. With no model to absorb
+        the message, silence would read as breakage.
 
-   That ordering is the point: the common case stops being gated behind
-   a 4GB download, and the setup panel becomes optional rather than a
-   wall.
+   An earlier revision streamed from a local Ollama, which meant
+   installing it and setting OLLAMA_ORIGINS before the page did anything
+   at all. Most visitors met a setup wall rather than an assistant. That
+   path is gone - if you are looking for it in git history, it was
+   removed in "Remove Ollama, add quick actions".
 
    Lives in its own file rather than inline in interface.html so the
    page's Content-Security-Policy can forbid inline script outright.
-
-   There is deliberately no model here. nlp.js scores the utterance
-   against spec/manifest.json and the matched tool runs locally, so every
-   request resolves instantly, offline, with nothing to install.
-
-   An earlier revision streamed from a local Ollama, which meant
-   installing it and setting OLLAMA_ORIGINS before the page did anything.
-   Most visitors met a setup wall rather than an assistant. Unrecognised
-   input now falls to capabilityText(), which states what the page can
-   actually do - with no model to absorb it, silence would be a failure.
    ============================================================ */
 (function () {
   'use strict';
@@ -184,7 +179,7 @@
       attachedFile = null;
       document.getElementById('chat-file-input').value = '';
     }
-    setSendMode('send');
+    setSendMode();
     document.getElementById('chat-input').placeholder = keepFile && attachedFile
       ? `📎 ${attachedFile.name} attached. Type a message...`
       : 'Type a message...';

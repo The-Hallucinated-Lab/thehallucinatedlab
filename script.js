@@ -286,7 +286,13 @@ async function initDevMode() {
     return { key, hash };
   };
   window.THL.forget = () => {
-    try { localStorage.removeItem(IDENTITY_KEY); localStorage.removeItem(MODE_KEY); } catch (e) {}
+    try {
+      localStorage.removeItem(IDENTITY_KEY);
+      localStorage.removeItem(MODE_KEY);
+    } catch (e) {
+      /* Storage blocked or full. Forgetting the key is best-effort; the
+         mode reset below is what the caller actually asked for. */
+    }
     applyMode('live');
   };
 
@@ -311,8 +317,16 @@ function mountModeSwitch() {
     b.type = 'button';
     b.textContent = text;
     b.addEventListener('click', () => {
-      try { localStorage.setItem(MODE_KEY, mode); } catch (e) {}
+      try {
+        localStorage.setItem(MODE_KEY, mode);
+      } catch (e) {
+        /* Storage blocked (private mode). The switch still works for
+           this session - it just will not survive a reload. */
+      }
       applyMode(mode);
+      /* eslint-disable-next-line no-use-before-define --
+         paint is assigned below, before these buttons are ever inserted
+         into the DOM, so this handler cannot run against the TDZ. */
       paint();
     });
     return b;

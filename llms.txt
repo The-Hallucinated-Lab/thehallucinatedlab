@@ -18,9 +18,11 @@ The Hallucinated Lab operates in three modes:
 - [Tools](https://thehallucinatedlab.space/tools.html): Gateway to the four tools — Convert, Assistant, Prompts and LoRA adapters. Each has its own page.
 - [Convert](https://thehallucinatedlab.space/convert.html): Converts images between PNG, JPEG, WebP and AVIF entirely in the browser on a canvas. Nothing is uploaded and it works offline. Doubles as the argument reference for the convert method in the thehallucinatedlab pip package.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
+- [THL Library](https://thehallucinatedlab.space/library.html): The full package shelf - pip-installable packages, embeddable engines and open-source building blocks, with install and usage for each.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
 - [Certification](https://thehallucinatedlab.space/certification.html): Six project-graded course tracks and the criteria a capstone must clear.
+- [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.
 - [Consultancy](https://thehallucinatedlab.space/consultancy.html): Engagement models for individuals and businesses, the four-stage process, and how to start.
 
 ## Tools

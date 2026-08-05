@@ -19,7 +19,7 @@ tabs.forEach(btn => {
 
 // ============ GROWTH EXPLORER ============
 const funcs = [
-  {name: 'O(1)',        f: n => 1,             color: '#6ee7a1', on: true},
+  {name: 'O(1)',        f: _n => 1,            color: '#6ee7a1', on: true},
   {name: 'O(log n)',    f: n => Math.log2(n+1),color: '#7cc4ff', on: true},
   {name: 'O(√n)',       f: n => Math.sqrt(n),  color: '#b78dff', on: false},
   {name: 'O(n)',        f: n => n,             color: '#ffb86b', on: true},
@@ -65,8 +65,8 @@ function drawChart() {
   for (let n = 1; n <= maxN; n += step) {
     active.forEach(f => values.push(f.f(n)));
   }
-  let ymax = Math.max(...values, 1);
-  let ymin = yscale === 'log' ? 0.5 : 0;
+  const ymax = Math.max(...values, 1);
+  const ymin = yscale === 'log' ? 0.5 : 0;
 
   function scaleX(n) { return PAD_L + (n / maxN) * plotW; }
   function scaleY(y) {
@@ -90,8 +90,8 @@ function drawChart() {
   for (let i = 0; i <= 5; i++) {
     const x = PAD_L + (plotW * i / 5);
     svg += '<line x1="'+x+'" x2="'+x+'" y1="'+PAD_T+'" y2="'+(PAD_T+plotH)+'" stroke="#262a35" stroke-dasharray="2,4"/>';
-    const nVal = Math.round(maxN * i / 5);
-    svg += '<text x="'+x+'" y="'+(H-PAD_B+18)+'" fill="#9aa0ac" font-size="11" text-anchor="middle" font-family="ui-monospace,monospace">'+nVal+'</text>';
+    const tickValue = Math.round(maxN * i / 5);
+    svg += '<text x="'+x+'" y="'+(H-PAD_B+18)+'" fill="#9aa0ac" font-size="11" text-anchor="middle" font-family="ui-monospace,monospace">'+tickValue+'</text>';
   }
   // Y-axis labels
   for (let i = 0; i <= 5; i++) {
