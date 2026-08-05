@@ -120,42 +120,74 @@ def run_trial(name, model_cls, X_train, y_train, X_test, y_test):
     }
 
 
+def run_experiment(noise, n_seeds=10):
+    """Run both architectures across multiple seeds at a given noise level."""
+    std_accs, bin_accs = [], []
+    std_losses, bin_losses = [], []
+    std_times, bin_times = [], []
+
+    for seed in range(n_seeds):
+        torch.manual_seed(seed)
+        np.random.seed(seed)
+        X_tr, y_tr, X_te, y_te = make_data(n_samples=1000, noise=noise)
+
+        r_std = run_trial("Standard", StandardMLP, X_tr, y_tr, X_te, y_te)
+        r_bin = run_trial("Binomial", BinomialMLP, X_tr, y_tr, X_te, y_te)
+
+        std_accs.append(r_std["accuracy"])
+        bin_accs.append(r_bin["accuracy"])
+        std_losses.append(r_std["final_loss"])
+        bin_losses.append(r_bin["final_loss"])
+        std_times.append(r_std["train_time"])
+        bin_times.append(r_bin["train_time"])
+
+    return {
+        "noise": noise,
+        "std_acc_mean": np.mean(std_accs),
+        "std_acc_std": np.std(std_accs),
+        "bin_acc_mean": np.mean(bin_accs),
+        "bin_acc_std": np.std(bin_accs),
+        "std_loss_mean": np.mean(std_losses),
+        "bin_loss_mean": np.mean(bin_losses),
+        "std_time_mean": np.mean(std_times),
+        "bin_time_mean": np.mean(bin_times),
+    }
+
+
 def main():
     print("=" * 60)
     print("  BINOMIAL NEURAL ARCHITECTURE — Comparative Test")
     print("=" * 60)
 
-    X_train, y_train, X_test, y_test = make_data(
-        n_samples=1000, noise=0.15
-    )
+    noise_levels = [0.05, 0.15, 0.25, 0.35, 0.45]
 
-    results = [
-        run_trial("Standard (2→10→10→1)", StandardMLP, X_train, y_train, X_test, y_test),
-        run_trial("Binomial (2→4→6→4→1)", BinomialMLP, X_train, y_train, X_test, y_test),
-    ]
+    all_results = []
+    for noise in noise_levels:
+        print(f"\n--- Noise: {noise} ---")
+        r = run_experiment(noise, n_seeds=10)
+        all_results.append(r)
+        print(f"  Standard: acc={r['std_acc_mean']:.4f}+/-{r['std_acc_std']:.4f}  "
+              f"loss={r['std_loss_mean']:.4f}  time={r['std_time_mean']:.3f}s")
+        print(f"  Binomial: acc={r['bin_acc_mean']:.4f}+/-{r['bin_acc_std']:.4f}  "
+              f"loss={r['bin_loss_mean']:.4f}  time={r['bin_time_mean']:.3f}s")
 
-    # ── Results table ──
-    print(f"\n{'Metric':<20} {'Standard':>12} {'Binomial':>12}")
-    print("-" * 46)
-    for r in results:
-        print(f"{'Parameters':<20} {r['params']:>12} {r['params']:>12}")
-    print(f"{'Parameters':<20} {results[0]['params']:>12} {results[1]['params']:>12}")
-    print(f"{'Test Accuracy':<20} {results[0]['accuracy']:>11.4f} {results[1]['accuracy']:>11.4f}")
-    print(f"{'Final Loss':<20} {results[0]['final_loss']:>11.4f} {results[1]['final_loss']:>11.4f}")
-    print(f"{'Train Time (s)':<20} {results[0]['train_time']:>11.3f} {results[1]['train_time']:>11.3f}")
+    # ── Summary table ──
+    print("\n" + "=" * 70)
+    print(f"{'Noise':<8} {'Std Acc':>10} {'Bin Acc':>10} {'Delta':>8} {'Std P':>7} {'Bin P':>7}")
+    print("-" * 70)
+    for r in all_results:
+        delta = (r["bin_acc_mean"] - r["std_acc_mean"]) * 100
+        print(f"{r['noise']:<8.2f} {r['std_acc_mean']:>9.4f} {r['bin_acc_mean']:>9.4f} "
+              f"{delta:>+7.2f}% {'151':>7} {'75':>7}")
     print()
 
     # ── Verdict ──
-    if results[1]["accuracy"] > results[0]["accuracy"]:
-        print("→ Binomial architecture won on accuracy.")
-    elif results[0]["accuracy"] > results[1]["accuracy"]:
-        print("→ Standard architecture won on accuracy.")
-    else:
-        print("→ Tied on accuracy.")
-
-    param_ratio = results[0]["params"] / results[1]["params"]
-    print(f"→ Binomial used {param_ratio:.1f}x fewer parameters for "
-          f"{(results[1]['accuracy'] - results[0]['accuracy'])*100:+.2f}% accuracy delta.")
+    wins = sum(1 for r in all_results if r["bin_acc_mean"] > r["std_acc_mean"])
+    ties = sum(1 for r in all_results if abs(r["bin_acc_mean"] - r["std_acc_mean"]) < 0.001)
+    losses = len(all_results) - wins - ties
+    print(f"=> Binomial won {wins}/{len(all_results)} noise levels, "
+          f"tied {ties}, lost {losses}.")
+    print(f"=> Binomial uses 50% fewer parameters (75 vs 151).")
     print()
 
 
