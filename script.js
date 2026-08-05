@@ -185,42 +185,32 @@ function initParticles() {
 /* ============ DEV / LIVE MODE ============
    Two ideas, kept separate on purpose:
 
-   1. Dev content is hidden by CSS default and revealed by data-mode="dev"
-      on <html>. Nothing here can leak unfinished work, because JS only
-      ever adds visibility, never removes it.
+   1. Dev content is hidden by CSS by default and revealed by
+      data-mode="dev" on <html>. Nothing here can leak unfinished work,
+      because JS only ever adds visibility, never removes it.
 
-   2. The founder gate decides who gets the switch. It is SHA-256 of a
-      random 32-byte key compared against constants below. Those hashes
-      are safe to publish: the input is 256 bits of CSPRNG output, so
-      there is nothing to guess and nothing to reverse.
+   2. Ctrl+Alt+\ toggles it. That is the entire gate.
 
-   What this is NOT: a security boundary. The site is static, so the dev
-   markup ships to every visitor and anyone reading the source can find
-   it. The gate stops accidental discovery, not a determined reader —
-   don't put anything here you would mind being read.
+   What this is NOT, and never was: a security boundary. The site is
+   static, so the dev markup ships to every visitor and anyone reading
+   the source can find it. The shortcut stops accidental discovery, not
+   a determined reader - don't put anything behind it you would mind
+   being read.
 
-   Device fingerprinting was considered and rejected: browsers cannot see
-   device config, the signals they do expose change on a browser update or
-   a second monitor, and two identical laptops produce identical hashes.
-   It fails open and closed at the same time. A random key you can copy
-   between devices is strictly better, and once a key is copyable the
-   fingerprint was never doing the work anyway. */
+   This replaced a per-device founder key (SHA-256 of 32 random bytes,
+   enrolled from the console, hashes committed here). That was a lot of
+   machinery to guard something that was never a boundary, and it needed
+   crypto.subtle, so it silently never opened on file://. A shortcut has
+   none of those failure modes. */
 const MODE_KEY = 'thl_mode';
-const IDENTITY_KEY = 'thl_key';
-
-/* SHA-256 of each founder's key. Publishing these is deliberate. */
-const FOUNDER_HASHES = [
-  // Divyansh — replace with the hash printed by THL.enrol() on his machine
-  '0000000000000000000000000000000000000000000000000000000000000000',
-  // Pratyush — same
-  '1111111111111111111111111111111111111111111111111111111111111111',
-];
+/* Survives the reload below so the toast can be shown afterwards. */
+const FLASH_KEY = 'thl_mode_flash';
 
 /* @pure-start
-   Storage access is kept out of here so the decision itself can be tested
-   under node. Anything unrecognised resolves to 'live': the failure that
-   matters is showing unfinished work to a visitor, so every ambiguous
-   input has to land on the public view. */
+   Storage access is kept out of here so the decisions themselves can be
+   tested under node. Anything unrecognised resolves to 'live': the
+   failure that matters is showing unfinished work to a visitor, so every
+   ambiguous input has to land on the public view. */
 function normalizeMode(raw) {
   return raw === 'dev' ? 'dev' : 'live';
 }
@@ -229,13 +219,34 @@ function normalizeMode(raw) {
 function navEntryVisible(item, mode) {
   return !item || item.status !== 'dev' || mode === 'dev';
 }
+
+function otherMode(mode) {
+  return normalizeMode(mode) === 'dev' ? 'live' : 'dev';
+}
+
+/* Ctrl+Alt+\ and nothing else. Modifiers are checked exhaustively so
+   the shortcut cannot fire as a subset of a larger chord a browser or
+   an OS already owns.
+
+   event.code, not event.key: code is the physical key, and on several
+   keyboard layouts Alt+backslash produces an entirely different
+   character. Matching on key would work on one machine and quietly not
+   on another. */
+function isModeToggle(event) {
+  return !!event &&
+    event.ctrlKey === true &&
+    event.altKey === true &&
+    event.shiftKey !== true &&
+    event.metaKey !== true &&
+    event.code === 'Backslash';
+}
 /* @pure-end */
 
 function readMode() {
   try {
     return normalizeMode(localStorage.getItem(MODE_KEY));
   } catch (e) {
-    return 'live';   // private mode, storage disabled — fail to the public view
+    return 'live';   // private mode, storage disabled - fail to the public view
   }
 }
 
@@ -243,110 +254,60 @@ function applyMode(mode) {
   document.documentElement.setAttribute('data-mode', mode);
 }
 
-function bytesToHex(buf) {
-  return [...new Uint8Array(buf)].map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-async function sha256Hex(text) {
-  const data = new TextEncoder().encode(text);
-  return bytesToHex(await crypto.subtle.digest('SHA-256', data));
-}
-
-/* crypto.subtle needs a secure context. On file:// it is absent, so the
-   gate simply never opens rather than throwing on load. */
-async function isFounder(key) {
-  if (!key || !window.crypto || !crypto.subtle) return false;
-  try {
-    return FOUNDER_HASHES.includes(await sha256Hex(key));
-  } catch (e) {
-    return false;
+/* Without this the toggle is invisible on any page that happens to have
+   no dev content, and you cannot tell whether it fired. */
+function flashMode(mode) {
+  let toast = document.querySelector('.mode-toast');
+  if (!toast) {
+    toast = document.createElement('div');
+    toast.className = 'mode-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    document.body.appendChild(toast);
   }
+  toast.textContent = mode === 'dev' ? 'Dev mode' : 'Live mode';
+  toast.classList.toggle('is-dev', mode === 'dev');
+  toast.classList.add('is-on');
+  clearTimeout(flashMode.timer);
+  flashMode.timer = setTimeout(() => toast.classList.remove('is-on'), 1400);
 }
 
-function storedKey() {
-  try { return localStorage.getItem(IDENTITY_KEY); } catch (e) { return null; }
+function toggleMode() {
+  const next = otherMode(readMode());
+  try {
+    localStorage.setItem(MODE_KEY, next);
+    sessionStorage.setItem(FLASH_KEY, next);
+  } catch (e) { /* storage off - the reload below still applies nothing */ }
+
+  /* Reload rather than repaint. The CSS reveal is instant on its own,
+     but the nav flyout filters its subsections when it is built, so an
+     in-place toggle would leave the bar disagreeing with the page it is
+     sitting on. One reload keeps every surface consistent, and is a far
+     smaller thing to own than a teardown path that exists only for a
+     shortcut nobody presses twice in a row. */
+  location.reload();
 }
 
-async function initDevMode() {
+function initDevMode() {
   applyMode(readMode());
 
-  /* Exposed so a founder can mint a key in the console and paste the same
-     key on a second device — the "export from the laptop" flow, minus a QR
-     dependency the JS budget does not need to carry. */
-  window.THL = window.THL || {};
-  window.THL.enrol = async (existingKey) => {
-    const key = existingKey || bytesToHex(crypto.getRandomValues(new Uint8Array(32)));
-    try { localStorage.setItem(IDENTITY_KEY, key); } catch (e) { /* storage off */ }
-    const hash = await sha256Hex(key);
-    console.log('[THL] key (copy this to your other devices):\n' + key);
-    console.log('[THL] hash (commit this to FOUNDER_HASHES):\n' + hash);
-    console.log(FOUNDER_HASHES.includes(hash)
-      ? '[THL] recognised — reload for the mode switch.'
-      : '[THL] not yet in FOUNDER_HASHES, so the switch stays hidden.');
-    return { key, hash };
-  };
-  window.THL.forget = () => {
-    try {
-      localStorage.removeItem(IDENTITY_KEY);
-      localStorage.removeItem(MODE_KEY);
-    } catch (e) {
-      /* Storage blocked or full. Forgetting the key is best-effort; the
-         mode reset below is what the caller actually asked for. */
+  /* Shown after the reload, not before it. Without this the toggle is
+     invisible on any page that happens to carry no dev content, and
+     "did that work?" has no answer. */
+  try {
+    if (sessionStorage.getItem(FLASH_KEY)) {
+      sessionStorage.removeItem(FLASH_KEY);
+      flashMode(readMode());
     }
-    applyMode('live');
-  };
+  } catch (e) { /* storage off */ }
 
-  if (!(await isFounder(storedKey()))) return;
-  mountModeSwitch();
+  document.addEventListener('keydown', (event) => {
+    if (!isModeToggle(event)) return;
+    event.preventDefault();
+    toggleMode();
+  });
 }
 
-function mountModeSwitch() {
-  const navbar = document.querySelector('.navbar');
-  if (!navbar || document.querySelector('.mode-switch')) return;
-
-  const wrap = document.createElement('div');
-  wrap.className = 'mode-switch is-founder';
-  const label = document.createElement('span');
-  label.className = 'mode-switch-label';
-  label.textContent = 'Founder';
-  const seg = document.createElement('div');
-  seg.className = 'mode-seg';
-
-  const mk = (mode, text) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.textContent = text;
-    b.addEventListener('click', () => {
-      try {
-        localStorage.setItem(MODE_KEY, mode);
-      } catch (e) {
-        /* Storage blocked (private mode). The switch still works for
-           this session - it just will not survive a reload. */
-      }
-      applyMode(mode);
-      /* eslint-disable-next-line no-use-before-define --
-         paint is assigned below, before these buttons are ever inserted
-         into the DOM, so this handler cannot run against the TDZ. */
-      paint();
-    });
-    return b;
-  };
-  const live = mk('live', 'Live');
-  const dev = mk('dev', 'Dev');
-  const paint = () => {
-    const m = readMode();
-    live.className = m === 'live' ? 'on' : '';
-    dev.className = m === 'dev' ? 'on is-dev' : '';
-  };
-  paint();
-
-  seg.append(live, dev);
-  wrap.append(label, seg);
-  /* Before the hamburger so it never covers the menu control on tablet. */
-  const hamburger = navbar.querySelector('.nav-hamburger');
-  if (hamburger) navbar.insertBefore(wrap, hamburger);
-  else navbar.appendChild(wrap);
-}
 
 /* ============ NAV SUBSECTIONS ============
    Keyed by the href already in the markup, so the nav stays declarative in
@@ -355,7 +316,7 @@ function mountModeSwitch() {
    rather than listed with empty arrays. */
 const NAV_CHILDREN = {
   'tools.html': [
-    { label: 'Converter', href: 'converter.html' },
+    { label: 'THL Library', href: 'library.html' },
     { label: 'Assistant', href: 'interface.html' },
     { label: 'Prompts', href: 'prompts.html' },
     { label: 'Adapters', href: 'adapters.html', status: 'dev' },

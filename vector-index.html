@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- status: dev in spec/manifest.json. Reachable by URL but hidden from
+       visitors behind the founder gate, so it must not be indexed until it
+       goes live - and noindex is also what keeps it out of sitemap.xml,
+       llms.txt and the discoverability invariants that check them. -->
+  <meta name="robots" content="noindex">
+  <title>Index - The Hallucinated Lab</title>
+  <meta name="description" content="Build a portable vector database you own, complete with a sidecar that records embedding details.">
+  <meta property="og:title" content="Index - The Hallucinated Lab">
+  <meta property="og:description" content="Build a portable vector database you own, complete with a sidecar that records embedding details.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/vector-index.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/vector-index.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Index - The Hallucinated Lab">
+  <meta name="twitter:description" content="Build a portable vector database you own, complete with a sidecar that records embedding details.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Tools",
+          "item": "https://thehallucinatedlab.space/tools.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Index",
+          "item": "https://thehallucinatedlab.space/vector-index.html"
+        }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "THL Index",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any modern Python environment",
+      "browserRequirements": "None",
+      "description": "Creates a portable vector store with a sidecar that records model, dimensions, normalisation and other metadata.",
+      "url": "https://thehallucinatedlab.space/vector-index.html",
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="tools.html">Tools</a>
+        <span aria-hidden="true">/</span>
+        <span>Index</span>
+      </nav>
+      <span class="section-label">THL Tools . 06 . Pipeline stage 4</span>
+      <h1 class="page-title">Index</h1>
+      <p class="page-subtitle">Writes a portable database directory that you own and can query with your own code.</p>
+    </section>
+
+    <!-- ====== ARGUMENTS ====== -->
+    <section class="media-section media-section-alt" id="arguments">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Reference</span>
+          <h2 class="section-title">Arguments</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">All arguments are documented here, in the Assistant, and the Python package.</p>
+        </div>
+        <div class="tool-args-wrap fade-in" data-tool="index"></div>
+      </div>
+    </section>
+
+    <!-- ====== SIDE CARRIER IMPORTANCE ====== -->
+    <section class="media-section" id="sidecar">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Why the sidecar matters</span>
+          <h2 class="section-title">Metadata sidecar</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">A folder of vectors without a record of which model produced them is unopenable. Chroma’s default embedding function is all‑MiniLM‑L6‑v2 (384‑dim). Pointing it at 1024‑dim BGE‑M3 vectors either raises a dimension error or returns nonsense.</p>
+        </div>
+        <ul class="section-intro">
+          <li>model</li>
+          <li>model_id</li>
+          <li>dimensions</li>
+          <li>normalized</li>
+          <li>count</li>
+          <li>store</li>
+          <li>collection</li>
+          <li>created</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ====== STORE COMPARISON ====== -->
+    <section class="media-section media-section-alt" id="store-comparison">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Store options</span>
+          <h2 class="section-title">Comparing stores</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Choose between a built‑in nearest‑neighbour store or a simple portable file.</p>
+        </div>
+        <div class="tool-args-wrap fade-in">
+          <table class="tool-args">
+            <thead>
+              <tr>
+                <th>Store</th><th>What it provides</th><th>Portability</th><th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>chroma</td>
+                <td>SQLite‑backed collection with NN search</td>
+                <td>Medium – needs the Chroma library</td>
+                <td>Default, convenient for quick queries</td>
+              </tr>
+              <tr>
+                <td>numpy</td>
+                <td>.npy vectors + JSONL metadata, no DB</td>
+                <td>High – plain files readable anywhere</td>
+                <td>Use when you want to load into another system</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="section-intro">FAISS is deliberately omitted because its wrapper pickles the docstore and requires unsafe deserialization.</p>
+      </div>
+    </section>
+
+    <!-- ====== USE IT FROM PYTHON ====== -->
+    <section class="media-section media-section-alt" id="library">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Same tool, other doors</span>
+          <h2 class="section-title">Use It From Python</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Build an index from vectors and metadata produced by the embed stage.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">From the THL library</h3>
+
+          <div class="how-block">
+            <span class="how-block-label">Install</span>
+            <div class="how-code"><code>pip install "thehallucinatedlab[index]"</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Create an index</span>
+            <div class="how-code"><code>from thehallucinatedlab import index
+
+index("chunks.npy", "chunks.jsonl", "mydb", store="chroma")</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Or from the command line</span>
+            <div class="how-code"><code>thl index chunks.npy chunks.jsonl mydb --store chroma</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+  <script src="toolkit.js" defer></script>
+</body>
+</html>

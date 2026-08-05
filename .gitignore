@@ -53,3 +53,7 @@ node_modules/
 # Nested scratch repo. Committing this as a gitlink (mode 160000) breaks
 # clones and the Pages build - the same failure f7c3200 fixed for worktrees.
 ai-ide/
+
+# Founder dev-mode keys. The hashes are committed in script.js; the keys
+# behind them must never be.
+.founder-keys.local.txt

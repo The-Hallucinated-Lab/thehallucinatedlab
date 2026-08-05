@@ -23,7 +23,8 @@ const css = read('styles.css');
 const js = read('script.js');
 const manifest = JSON.parse(read('spec/manifest.json'));
 
-const { normalizeMode, navEntryVisible } = loadPure('script.js', ['normalizeMode', 'navEntryVisible']);
+const { normalizeMode, navEntryVisible, isModeToggle, otherMode } =
+  loadPure('script.js', ['normalizeMode', 'navEntryVisible', 'isModeToggle', 'otherMode']);
 
 test('dev content is hidden by default, not hidden by script', () => {
   assert.match(css, /\[data-status="dev"\]\s*\{\s*display:\s*none\s*!important/,
@@ -51,14 +52,45 @@ test('anything unrecognised resolves to live', () => {
   assert.equal(normalizeMode('dev'), 'dev', 'the exact value is honoured');
 });
 
-test('the founder hashes are digests, not keys', () => {
-  const block = js.match(/const FOUNDER_HASHES = \[([\s\S]*?)\];/);
-  assert.ok(block, 'FOUNDER_HASHES not found');
-  const hashes = [...block[1].matchAll(/'([0-9a-f]+)'/g)].map(m => m[1]);
-  assert.ok(hashes.length >= 2, 'expected one hash per founder');
-  for (const h of hashes) {
-    assert.equal(h.length, 64, 'a SHA-256 hex digest is 64 characters');
-  }
+test('only Ctrl+Alt+Backslash toggles the mode', () => {
+  /* Modifiers are checked exhaustively rather than loosely, so the
+     shortcut cannot fire as a subset of a larger chord the browser or
+     the OS already owns. */
+  const press = extra => Object.assign(
+    { ctrlKey: true, altKey: true, shiftKey: false, metaKey: false, code: 'Backslash' }, extra);
+
+  assert.equal(isModeToggle(press()), true, 'the exact chord fires');
+  assert.equal(isModeToggle(press({ shiftKey: true })), false, 'shift must not fire it');
+  assert.equal(isModeToggle(press({ metaKey: true })), false, 'meta must not fire it');
+  assert.equal(isModeToggle(press({ ctrlKey: false })), false, 'ctrl is required');
+  assert.equal(isModeToggle(press({ altKey: false })), false, 'alt is required');
+  assert.equal(isModeToggle(press({ code: 'Slash' })), false, 'another key must not fire it');
+  assert.equal(isModeToggle(null), false, 'no event is not a toggle');
+});
+
+test('the toggle flips between exactly two modes', () => {
+  /* A junk value normalises to live first, so it flips to dev — which is
+     the useful direction: the next press then puts it back to live. */
+  assert.equal(otherMode('live'), 'dev');
+  assert.equal(otherMode('dev'), 'live');
+  assert.equal(otherMode('nonsense'), 'dev');
+  assert.equal(otherMode(otherMode('live')), 'live', 'two presses return to the start');
+});
+
+test('the shortcut matches the physical key, not the character', () => {
+  /* Alt+backslash produces a different character on several layouts, so
+     matching on event.key would work on one keyboard and quietly not on
+     another. event.code is the physical key. */
+  assert.match(js, /event\.code === 'Backslash'/,
+    'the toggle must key off event.code');
+  assert.doesNotMatch(js, /event\.key === '\\\\'/,
+    'matching the character is layout-dependent');
+});
+
+test('the mode still only ever comes from storage, never from the URL', () => {
+  /* A ?mode=dev switch would put unfinished work one shared link away. */
+  assert.doesNotMatch(js, /searchParams\.get\(\s*['"]mode['"]\s*\)/,
+    'mode must not be settable from the query string');
 });
 
 test('every tool declares a status the site can filter on', () => {
@@ -69,7 +101,7 @@ test('every tool declares a status the site can filter on', () => {
 });
 
 test('nav entries default to live and dev entries need dev mode', () => {
-  assert.equal(navEntryVisible({ label: 'Converter' }, 'live'), true, 'no status means live');
+  assert.equal(navEntryVisible({ label: 'Convert' }, 'live'), true, 'no status means live');
   assert.equal(navEntryVisible({ label: 'X', status: 'dev' }, 'live'), false,
     'a dev entry must not render in live mode');
   assert.equal(navEntryVisible({ label: 'X', status: 'dev' }, 'dev'), true,

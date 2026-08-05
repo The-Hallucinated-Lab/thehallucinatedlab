@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Convert — The Hallucinated Lab</title>
+  <meta name="description" content="Convert JPG, PNG, WebP and AVIF in your browser. Nothing is uploaded — it runs on your own machine and works offline. Free, no account, no limits.">
+  <meta property="og:title" content="Convert — The Hallucinated Lab">
+  <meta property="og:description" content="Convert JPG, PNG, WebP and AVIF in your browser. Nothing is uploaded, nothing leaves your machine.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/convert.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/convert.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Convert — The Hallucinated Lab">
+  <meta name="twitter:description" content="Convert images in your browser. Nothing is uploaded.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Tools",
+          "item": "https://thehallucinatedlab.space/tools.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Convert",
+          "item": "https://thehallucinatedlab.space/convert.html"
+        }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "THL Convert",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "Any modern web browser",
+      "browserRequirements": "Requires JavaScript and canvas support",
+      "description": "Converts images between PNG, JPEG, WebP and AVIF entirely inside the browser using the canvas API. No upload, no server, no account - the file never leaves the visitor's machine, and the tool keeps working offline. The same conversion is available as the convert method in the thehallucinatedlab Python package.",
+      "url": "https://thehallucinatedlab.space/convert.html",
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="tools.html">Tools</a>
+        <span aria-hidden="true">/</span>
+        <span>Convert</span>
+      </nav>
+      <span class="section-label">THL Tools · 01</span>
+      <h1 class="page-title">Convert</h1>
+      <p class="page-subtitle">Convert between PNG, JPEG, WebP and AVIF. The conversion runs on a canvas inside this tab — your file is never uploaded, there is no queue, and it keeps working with the network off.</p>
+    </section>
+
+    <!-- ====== THE TOOL ====== -->
+    <section class="media-section" id="convert">
+      <div class="container">
+        <h2 class="sr-only">Convert an image</h2>
+
+        <div class="tool-panel fade-in">
+
+          <div class="tool-drop" id="drop-zone">
+            <svg class="tool-drop-icon" viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+            </svg>
+            <p class="tool-drop-title" id="drop-title">Drop an image here</p>
+            <p class="tool-drop-hint" id="drop-hint">or choose a file — PNG, JPEG, WebP, AVIF, GIF or BMP</p>
+            <button type="button" class="submit-btn" id="pick-file">Choose an image</button>
+            <input type="file" id="file-input" accept="image/*" hidden>
+          </div>
+
+          <div class="tool-controls" id="tool-controls">
+            <div class="form-group">
+              <label class="form-label" for="opt-format">format <span class="form-required">*</span></label>
+              <select class="form-select" id="opt-format"></select>
+              <p class="form-note tool-field-note" id="format-note"></p>
+            </div>
+
+            <div class="form-group" id="quality-group">
+              <label class="form-label" for="opt-quality">quality <span class="tool-range-value" id="quality-value">92</span></label>
+              <input class="tool-range" type="range" id="opt-quality" min="1" max="100" value="92">
+              <p class="form-note tool-field-note">Higher keeps more detail and makes a bigger file.</p>
+            </div>
+
+            <div class="form-group" id="background-group">
+              <label class="form-label" for="opt-background">background</label>
+              <input class="tool-color" type="color" id="opt-background" value="#ffffff">
+              <p class="form-note tool-field-note">Fills transparency when the target has no alpha channel.</p>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="button" class="submit-btn" id="convert-btn" disabled>Convert</button>
+            <p class="tool-status" id="tool-status" role="status" aria-live="polite"></p>
+          </div>
+
+          <div class="tool-result" id="tool-result" hidden>
+            <img class="tool-result-preview" id="result-preview" alt="Converted image preview" width="320" height="240">
+            <div class="tool-result-body">
+              <p class="tool-result-name" id="result-name"></p>
+              <ul class="tool-result-facts" id="result-facts"></ul>
+              <a class="submit-btn tool-download" id="result-download" download>Download</a>
+            </div>
+          </div>
+
+          <p class="tool-privacy">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+            Nothing here is uploaded. Open your network tab and watch — there is no request to make.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ====== ARGUMENTS ====== -->
+    <section class="media-section media-section-alt" id="arguments">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Reference</span>
+          <h2 class="section-title">Arguments</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">The same arguments work in all three places — this page, the Assistant, and the Python package. This table is generated from the tool spec the code itself reads, so it cannot drift out of date.</p>
+        </div>
+
+        <div class="tool-args-wrap fade-in" id="tool-args"></div>
+      </div>
+    </section>
+
+    <!-- ====== USE IT ELSEWHERE ====== -->
+    <section class="media-section" id="library">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Same Tool, Other Doors</span>
+          <h2 class="section-title">Use It From Python or the Assistant</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">This page is one of three front ends over the same tool. Reach for whichever fits what you are doing.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">From the THL library</h3>
+          <p class="how-panel-text">Install once, then call the tool as an ordinary method. Every tool in the lab lives under the same package.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Install</span>
+            <div class="how-code"><code>pip install thehallucinatedlab</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Convert a file</span>
+            <div class="how-code"><code>from thehallucinatedlab import convert
+
+result = convert(
+    "photo.jpg",
+    format="png",
+)
+print(result.path, result.bytes)</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Or from the command line</span>
+            <div class="how-code"><code>thl convert photo.jpg --format webp --quality 80
+
+# plain english works too
+thl "convert photo.jpg to png"</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">From the Assistant</h3>
+          <p class="how-panel-text">The <a href="interface.html" class="inline-link">Assistant</a> understands these tools in plain english. Attach an image and say what you want — it runs the same conversion in your browser and hands back the file. No model download required.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Try saying</span>
+            <div class="how-code"><code>convert this to png
+make it a jpg at 80 quality
+png to webp, quality 75</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+    <p class="footer-text"><a href="/sitemap.html">Sitemap</a></p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+  <script src="toolkit.js" defer></script>
+  <script src="convert.js" defer></script>
+</body>
+</html>

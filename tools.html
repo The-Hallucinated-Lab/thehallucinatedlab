@@ -8,13 +8,13 @@
   <title>Tools — The Hallucinated Lab</title>
   <meta name="description" content="Tools by The Hallucinated Lab — in-browser image converter, plain-English assistant, prompt library and LoRA adapters. All local, nothing uploaded.">
   <meta property="og:title" content="Tools — The Hallucinated Lab">
-  <meta property="og:description" content="Converter, Assistant, Prompts and LoRA adapters — everything runs on your own machine.">
+  <meta property="og:description" content="Convert, Assistant, Prompts and LoRA adapters — everything runs on your own machine.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/tools.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/tools.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Tools — The Hallucinated Lab">
-  <meta name="twitter:description" content="Converter, Assistant, Prompts and LoRA adapters.">
+  <meta name="twitter:description" content="Convert, Assistant, Prompts and LoRA adapters.">
   <meta property="og:site_name" content="The Hallucinated Lab">
   <meta property="og:locale" content="en_US">
   <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
@@ -56,7 +56,7 @@
       "@id": "https://thehallucinatedlab.space/tools.html#webpage",
       "url": "https://thehallucinatedlab.space/tools.html",
       "name": "Tools - The Hallucinated Lab",
-      "description": "An in-browser image converter, a plain-english assistant, a prompt library, and fine-tuned LoRA adapters. Everything runs locally.",
+      "description": "An in-browser image converter, a plain-English assistant, a prompt library, and fine-tuned LoRA adapters. Everything runs locally.",
       "isPartOf": {
         "@id": "https://thehallucinatedlab.space/#website"
       },
@@ -72,8 +72,8 @@
           {
             "@type": "ListItem",
             "position": 1,
-            "name": "Converter",
-            "url": "https://thehallucinatedlab.space/converter.html",
+            "name": "Convert",
+            "url": "https://thehallucinatedlab.space/convert.html",
             "description": "Convert an image between PNG, JPEG, WebP and AVIF entirely in the browser. The file is never uploaded."
           },
           {
@@ -145,7 +145,7 @@
       <div class="container">
         <div class="gateway-grid">
 
-          <a href="converter.html" class="gateway-card fade-in fade-in-delay-1">
+          <a href="convert.html" class="gateway-card fade-in fade-in-delay-1">
             <div class="gateway-cover" style="background: linear-gradient(135deg, #0d1410 0%, #1a3326 55%, #2a5540 100%);">
               <div class="gateway-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
@@ -153,14 +153,74 @@
               <span class="gateway-count">Runs in your browser</span>
             </div>
             <div class="gateway-body">
-              <h2 class="gateway-title">Converter</h2>
+              <h2 class="gateway-title">Convert</h2>
               <p class="gateway-desc">Convert an image between PNG, JPEG, WebP and AVIF. The file never leaves the page — it is a canvas here, and Pillow in Python.</p>
               <ul class="gateway-list">
                 <li><span>format</span> png, jpeg, webp or avif</li>
                 <li><span>quality</span> 1-100 for the lossy formats</li>
                 <li><span>three doors</span> web page, assistant, or thl convert</li>
               </ul>
-              <span class="gateway-cta">Open the Converter
+              <span class="gateway-cta">Open Convert
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+          <a href="extract.html" class="gateway-card fade-in fade-in-delay-2" data-status="dev">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1014 0%, #14262e 55%, #1f4351 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+              </div>
+              <span class="gateway-count">Pipeline stage 1</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">Extract</h2>
+              <p class="gateway-desc">Documents to Markdown with the structure still attached. Headings stay headings and pages stay marked, because that is what the next stage splits on.</p>
+              <ul class="gateway-list">
+                <li><span>unaided</span> text, markdown, html and csv, right here</li>
+                <li><span>with the package</span> pdf, word, slides, sheets, epub</li>
+                <li><span>never invented</span> no outline means no headings</li>
+              </ul>
+              <span class="gateway-cta">Open Extract
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+          <a href="chunk.html" class="gateway-card fade-in fade-in-delay-3" data-status="dev">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0d0a14 0%, #221a33 55%, #3b2a57 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M3 5h18v3H3zm0 5.5h18v3H3zm0 5.5h18v3H3z"/></svg>
+              </div>
+              <span class="gateway-count">Pipeline stage 2</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">Chunk</h2>
+              <p class="gateway-desc">Split a document along its own headings rather than every 512th character. Size is the constraint, not the organising principle.</p>
+              <ul class="gateway-list">
+                <li><span>citable</span> every chunk knows its heading and page</li>
+                <li><span>jsonl</span> one record per line, greppable and streamable</li>
+                <li><span>in the tab</span> pure logic, nothing to install</li>
+              </ul>
+              <span class="gateway-cta">Open Chunk
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+          <a href="tokenize.html" class="gateway-card fade-in fade-in-delay-4" data-status="dev">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #14100a 0%, #2e2413 55%, #514021 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M4 20h3v-9H4zm6.5 0h3V4h-3zM17 20h3v-6h-3z"/></svg>
+              </div>
+              <span class="gateway-count">Beside the pipeline</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">Tokenize</h2>
+              <p class="gateway-desc">How big is this, and what will it cost to embed? A measuring instrument — not a stage, because embedding models tokenize internally with their own vocabulary.</p>
+              <ul class="gateway-list">
+                <li><span>distribution</span> median, 95th, and the long tail</li>
+                <li><span>overflow</span> which pieces would be truncated silently</li>
+                <li><span>three counters</span> exact, OpenAI, or no download at all</li>
+              </ul>
+              <span class="gateway-cta">Open Tokenize
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
               </span>
             </div>

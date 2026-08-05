@@ -74,6 +74,69 @@
     return value === undefined || value === null || value === '';
   }
 
+  /* What a form control or a parsed utterance actually hands over for a
+     boolean: a real bool from a checkbox, a string from a select or a
+     query param. Returns null when it is none of them, so the caller can
+     report the problem rather than silently reading it as false. */
+  function normalizeBool(value) {
+    if (typeof value === 'boolean') return value;
+    var text = String(value).trim().toLowerCase();
+    if (text === 'true' || text === 'yes' || text === 'on' || text === '1') return true;
+    if (text === 'false' || text === 'no' || text === 'off' || text === '0') return false;
+    return null;
+  }
+
+  /* ---- Token estimation ----
+
+     The browser cannot run BGE-M3's tokenizer without downloading a
+     ~17MB vocabulary, which is out of proportion to a page that budgets
+     40KB for its own script. So chunking in the browser sizes against
+     this heuristic and records that it did; the Python side re-checks
+     with the real tokenizer.
+
+     It errs HIGH on purpose. An under-count produces a chunk that
+     exceeds the embedding model's context, and an oversized chunk is not
+     rejected at embed time - it is silently truncated, and the tail
+     never reaches the vector. Over-counting only costs slightly smaller
+     chunks, which is the cheap direction to be wrong in.
+
+     Mirrors estimate_tokens() in tools/tokenize.py exactly, including
+     the integer arithmetic: a float ceil(total * 1.15) rounds
+     differently in the two languages at some magnitudes. */
+
+  /* Scripts that do not use spaces. SentencePiece rarely merges these
+     below one piece per glyph and frequently produces more. All BMP, so
+     no surrogate handling is needed. */
+  var DENSE = '぀-ヿ㐀-䶿一-鿿가-힯';
+  var LATIN = 'A-Za-zÀ-ɏ';
+  /* Double-escaped on purpose: this is a STRING being handed to RegExp,
+     and '\d' in a JS string literal is just 'd'. Written singly it
+     silently compiles to /d+/ and stops counting digits at all. */
+  var PIECE = new RegExp(
+    '[' + DENSE + ']|[' + LATIN + ']+|\\d+|[^\\s' + LATIN + '0-9' + DENSE + ']', 'g');
+  var LATIN_ONLY = new RegExp('^[' + LATIN + ']+$');
+
+  function estimateTokens(text) {
+    var body = String(text === null || text === undefined ? '' : text);
+    if (!body.trim()) return 0;
+
+    var pieces = body.match(PIECE) || [];
+    var total = 0;
+    for (var i = 0; i < pieces.length; i++) {
+      var piece = pieces[i];
+      if (LATIN_ONLY.test(piece)) {
+        total += Math.max(1, Math.ceil(piece.length / 4));
+      } else if (/^\d+$/.test(piece)) {
+        /* Digits fragment far more than letters - most vocabularies
+           carry only short numeric pieces. */
+        total += Math.max(1, Math.ceil(piece.length / 2));
+      } else {
+        total += 1;
+      }
+    }
+    return Math.floor((total * 115 + 99) / 100);
+  }
+
   /* One checker per parameter type, looked up rather than chained
      through an if/else ladder. Each returns {value} or {error}, so
      validateArgs stays a loop over parameters and adding a type means
@@ -108,7 +171,44 @@
       if (hex) return { value: hex };
       return { error: param.name + ' must be a hex colour such as #ffffff.' };
     },
+
+    number: function (param, value) {
+      var real = Number(value);
+      if (!isFinite(real)) return { error: param.name + ' must be a number.' };
+      var under = param.min !== undefined && real < param.min;
+      var over = param.max !== undefined && real > param.max;
+      if (under || over) {
+        return { error: param.name + ' must be between ' + param.min + ' and ' + param.max + '.' };
+      }
+      return { value: real };
+    },
+
+    boolean: function (param, value) {
+      var flag = normalizeBool(value);
+      if (flag === null) return { error: param.name + ' must be true or false.' };
+      return { value: flag };
+    },
+
+    string: function (param, value) {
+      var text = String(value).trim();
+      if (!text) return { error: param.name + ' must not be empty.' };
+      if (param.maxLength !== undefined && text.length > param.maxLength) {
+        return { error: param.name + ' must be at most ' + param.maxLength + ' characters.' };
+      }
+      /* Anchored, or a pattern meant to describe the whole value would
+         pass on any string merely containing a match. */
+      if (param.pattern !== undefined &&
+          !new RegExp('^(?:' + param.pattern + ')$').test(text)) {
+        return { error: param.name + ' must match ' + param.pattern + '.' };
+      }
+      return { value: text };
+    },
   };
+
+  /* A path is a string as far as the browser is concerned -- it never
+     touches a file system, it hands a File object to the tool. Aliased
+     rather than duplicated so the two cannot drift. */
+  CHECKERS.path = CHECKERS.string;
 
   /* An unrecognised type is passed through rather than rejected. The
      manifest is ours, so a new type here means the spec moved ahead of
@@ -200,6 +300,9 @@
       if (p.type === 'enum') type = (p.values || []).join(' | ');
       else if (p.type === 'integer' && p.min !== undefined) type = 'int ' + p.min + '-' + p.max;
       else if (p.type === 'color') type = 'hex colour';
+      else if (p.type === 'number' && p.min !== undefined) type = 'number ' + p.min + '-' + p.max;
+      else if (p.type === 'boolean') type = 'true | false';
+      else if (p.type === 'path') type = 'file path';
 
       rows.push({
         name: p.name,
@@ -441,11 +544,35 @@
     container.appendChild(table);
   }
 
+  /* Argument tables on pages that have no script of their own.
+
+     A python-only tool (embed, index) has nothing to run in the browser,
+     so its page ships no page script - and without this, its Arguments
+     section would render as an empty div. Hard-coding the table would
+     work and would also be the one thing this project exists to avoid:
+     it would drift from the manifest the moment an argument changed.
+
+     So any container carrying data-tool renders itself from the spec.
+     Pages with their own script use an id instead and are untouched. */
+  document.addEventListener('DOMContentLoaded', function () {
+    var targets = document.querySelectorAll('[data-tool]');
+    if (!targets.length) return;
+    loadManifest().then(function (manifest) {
+      for (var i = 0; i < targets.length; i++) {
+        var tool = findTool(manifest, targets[i].getAttribute('data-tool'));
+        if (tool) renderParamTable(tool, targets[i]);
+      }
+    }).catch(function () {
+      /* The rest of the page is prose and still reads without it. */
+    });
+  });
+
   window.THL = window.THL || {};
   window.THL.toolkit = {
     loadManifest: loadManifest,
     findTool: findTool,
     validateArgs: validateArgs,
+    estimateTokens: estimateTokens,
     probeEncoders: probeEncoders,
     run: run,
     runImageConvert: runImageConvert,

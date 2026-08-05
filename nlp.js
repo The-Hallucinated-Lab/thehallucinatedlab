@@ -2,9 +2,9 @@
    nlp.js — intent parser for THL tools.
 
    Turns "make it a jpg at 80 quality" into
-   { tool: 'converter', args: { format: 'jpeg', quality: 80 } }.
+   { tool: 'convert', args: { format: 'jpeg', quality: 80 } }.
 
-   This is deliberately not a language model. Invoking a converter is
+   This is deliberately not a language model. Invoking a conversion is
    intent classification plus slot filling — a solved, bounded problem —
    and solving it with rules rather than weights buys three things the
    site actually needs: it runs with nothing installed, it answers in

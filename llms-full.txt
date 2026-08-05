@@ -88,9 +88,9 @@ Purpose: packages and SDKs that drop into a reader's own project.
 
 Entry — thehallucinatedlab (Python toolkit):
 - Install: pip install thehallucinatedlab
-- Every THL tool is a method: `from thehallucinatedlab import converter`.
+- Every THL tool is a method: `from thehallucinatedlab import convert`.
 - Also ships a `thl` command: `thl tools`, `thl convert photo.jpg --format png`, and a plain-english form, `thl "convert photo.jpg to png"`.
-- One spec file (spec/manifest.json) declares each tool's arguments, bounds, defaults and vocabulary. The website builds its converter UI and argument tables from it, the assistant parses against it, and the package validates against it, so the documentation cannot describe arguments the code does not accept.
+- One spec file (spec/manifest.json) declares each tool's arguments, bounds, defaults and vocabulary. The website builds its convert UI and argument tables from it, the assistant parses against it, and the package validates against it, so the documentation cannot describe arguments the code does not accept.
 - Natural language is handled by a deterministic intent parser (classification plus slot filling), not a model. It is implemented twice, in JavaScript and Python, against a shared fixture file that both test suites run.
 - Requires Python 3.10+. Only runtime dependency is Pillow.
 - Errors are typed: THLError, ToolNotFound, InvalidArgument, MissingArgument, UnsupportedFormat.
@@ -132,7 +132,7 @@ Purpose: small fine-tuned adapters that stack onto a base model the reader alrea
 
 ---
 
-## Page: Converter — https://thehallucinatedlab.space/converter.html
+## Page: Convert — https://thehallucinatedlab.space/convert.html
 
 Purpose: convert an image between formats, and document the arguments the same tool takes everywhere else.
 
@@ -140,7 +140,7 @@ Purpose: convert an image between formats, and document the arguments the same t
 - Arguments: format (required; png, jpeg, webp, avif, with jpg/jfif accepted as aliases), quality (integer 1-100, default 92, ignored for PNG because PNG is lossless), background (hex colour, default #ffffff, used to flatten transparency when the target has no alpha channel, which in practice means JPEG).
 - Browsers vary in which formats they can encode. The page probes each one at startup and disables the ones the browser cannot produce, rather than handing back a file whose extension does not match its contents.
 - The argument reference table on the page is generated from the shared tool spec, so it always matches what the code accepts.
-- The same conversion is available as converter in the thehallucinatedlab pip package, and by asking the Assistant in plain english.
+- The same conversion is available as convert in the thehallucinatedlab pip package, and by asking the Assistant in plain english.
 
 ---
 
