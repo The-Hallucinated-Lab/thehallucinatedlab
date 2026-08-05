@@ -14,9 +14,11 @@ const { loadPure, ROOT } = require('./helpers/load-pure');
 
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'spec/manifest.json'), 'utf8'));
 
-const { validateArgs, filenameFor, describeParams, formatBytes, sizeDelta, findTool } =
+const { validateArgs, filenameFor, describeParams, formatBytes, sizeDelta, findTool,
+        runsIn } =
   loadPure('toolkit.js', [
     'validateArgs', 'filenameFor', 'describeParams', 'formatBytes', 'sizeDelta', 'findTool',
+    'runsIn',
   ]);
 
 const imageConvert = findTool(manifest, 'convert');
@@ -134,4 +136,47 @@ test('size delta is negative when the conversion actually saved space', () => {
   assert.equal(sizeDelta(1000, 500), -50);
   assert.equal(sizeDelta(1000, 1500), 50);
   assert.equal(sizeDelta(0, 500), null);
+});
+
+/* ============================================================
+   Where a tool runs.
+
+   The spec has carried `runtimes` since embed and index arrived, and
+   nothing read it. The Assistant listed every tool under "what I can run
+   right here in the page" and would take a file attachment before
+   failing on one that needs Python.
+   ============================================================ */
+
+test('every tool says where it runs, and says something real', () => {
+  for (const tool of manifest.tools) {
+    const declared = tool.runtimes || [];
+    assert.ok(declared.length, `${tool.name} does not say where it runs`);
+    for (const runtime of declared) {
+      assert.ok(['browser', 'python'].includes(runtime),
+        `${tool.name} claims an unknown runtime "${runtime}"`);
+      assert.equal(runsIn(tool, runtime), true);
+    }
+  }
+});
+
+test('a tool with no runtimes declared is treated as browser work', () => {
+  /* Every tool written before the field existed ran in the page, so the
+     absent case has to keep meaning that or an older spec would silently
+     stop being offered. */
+  assert.equal(runsIn({ name: 'legacy' }, 'browser'), true);
+  assert.equal(runsIn({ name: 'legacy' }, 'python'), false);
+});
+
+test('the python-only tools are known, and are not offered as browser work', () => {
+  const pythonOnly = manifest.tools.filter(t => !runsIn(t, 'browser')).map(t => t.name);
+  /* Named rather than counted: adding a python-only tool should make
+     somebody read this line and decide, not just bump a number. */
+  assert.deepEqual(pythonOnly.sort(), [
+    'describe_dataset', 'eda_report', 'embed', 'index', 'plot_column',
+    'profile_column', 'relate_columns',
+  ]);
+  for (const name of pythonOnly) {
+    assert.equal(runsIn(findTool(manifest, name), 'python'), true,
+      `${name} runs nowhere at all`);
+  }
 });
