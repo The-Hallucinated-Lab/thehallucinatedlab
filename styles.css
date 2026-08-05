@@ -9,7 +9,13 @@
   --gold-glow: rgba(201, 168, 76, 0.15);
   --text-primary: #f0ece4;
   --text-secondary: #9a9590;
-  --text-muted: #5a5550;
+  /* 4.56:1 on --bg-card, the darkest surface it ever sits on, so it clears
+     WCAG 1.4.3 AA (4.5:1) everywhere rather than only over the page
+     background. The old #5a5550 measured 2.77:1 — below the 3:1 floor even
+     for large text — and it is used for real prose and input placeholders,
+     not just decoration. Kept warm (R>G>B) so the palette still reads as
+     one family. */
+  --text-muted: #807b72;
   --border-subtle: rgba(201, 168, 76, 0.1);
   --border-gold: rgba(201, 168, 76, 0.3);
   --gradient-gold: linear-gradient(135deg, #c9a84c, #e8d48b, #c9a84c);
@@ -407,6 +413,41 @@ section { padding: 6rem 2rem; position: relative; }
   .nav-flyout, .nav-links.is-icons a.has-icon .nav-label,
   .nav-links.is-icons a.has-icon svg, .nav-sub { transition: none; }
   .nav-links.is-icons a.has-icon:hover svg { transform: none; }
+}
+
+/* ============ FORCED COLORS (Windows High Contrast) ============
+   The OS replaces the palette wholesale here, so anything carrying
+   meaning through colour alone stops carrying it. Two things on this
+   site do, and have to be restated in system colours.
+
+   The nav glyphs are the sharper one: forced-colors overrides `color`
+   and `background-color`, but NOT `fill` on an SVG. A glyph filled
+   var(--gold-primary) stays gold while the surface behind it becomes
+   Canvas, which in the light HCM themes is white — gold on white is
+   under 2:1. Handing fill back to CanvasText is what keeps 1.4.11 true
+   in a mode the palette never sees.
+
+   The active state is the other: it is a tinted background plus a
+   translucent border, and both flatten to nothing. Highlight restores
+   the distinction. */
+@media (forced-colors: active) {
+  .nav-links.is-icons a.has-icon svg { fill: CanvasText; opacity: 1; }
+  .nav-links.is-icons a.has-icon:hover svg,
+  .nav-links.is-icons a.has-icon:focus-visible svg,
+  .nav-links.is-icons a.has-icon.active svg { fill: Highlight; }
+  .nav-links.is-icons a.has-icon.active { border-color: Highlight; }
+  /* Custom rings are dropped in this mode; this is the replacement. */
+  a:focus-visible, button:focus-visible,
+  input:focus-visible, textarea:focus-visible, select:focus-visible {
+    outline: 2px solid Highlight; outline-offset: 2px;
+  }
+}
+
+/* Readers who ask the OS for more contrast get the brighter token rather
+   than the muted one. --text-muted already clears AA at 4.56:1; this is
+   for people for whom "clears AA" is still not enough. */
+@media (prefers-contrast: more) {
+  :root { --text-muted: var(--text-secondary); }
 }
 
 /* ============ DEV / LIVE MODE ============
