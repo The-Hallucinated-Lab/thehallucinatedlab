@@ -251,17 +251,13 @@ function renderFeatured() {
     const href = readable ? ` href="${escapeAttr(article.articleUrl)}"` : '';
 
     return `
-    <${tag}${href} class="featured-card${readable ? '' : ' featured-card-locked'} fade-in fade-in-delay-${(idx % 3) + 1}" id="featured-${escapeAttr(article.id)}">
-      <div class="featured-card-cover" style="background: ${safeGradient(article.coverGradient)};">
-        <div class="featured-badge">
-          <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-          Featured
-        </div>
-        <div class="featured-card-overlay">
-          <span class="featured-category">${escapeHtml(article.category)}</span>
-        </div>
+    <${tag}${href} class="featured-card${readable ? '' : ' featured-card-locked'} fade-in fade-in-delay-${(idx % 3) + 1}" id="featured-${escapeAttr(article.id)}" style="--featured-accent: ${safeGradient(article.coverGradient)};">
+      <div class="featured-badge">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+        Featured
       </div>
       <div class="featured-card-body">
+        <span class="featured-category">${escapeHtml(article.category)}</span>
         <h3 class="featured-card-title">${escapeHtml(article.title)}</h3>
         <p class="featured-card-excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="featured-card-meta">
@@ -315,12 +311,10 @@ function renderArchive(filterCategory, searchQuery) {
     const href = readable ? ` href="${escapeAttr(article.articleUrl)}"` : '';
 
     return `
-    <${tag}${href} class="archive-card${readable ? '' : ' archive-card-locked'} fade-in" id="archive-${escapeAttr(article.id)}">
-      <div class="archive-card-cover" style="background: ${safeGradient(article.coverGradient)};">
-        <span class="archive-card-category">${escapeHtml(article.category)}</span>
-        ${readable ? '' : '<span class="archive-card-soon">Draft</span>'}
-      </div>
+    <${tag}${href} class="archive-card${readable ? '' : ' archive-card-locked'} fade-in" id="archive-${escapeAttr(article.id)}" style="--archive-accent: ${safeGradient(article.coverGradient)};">
+      ${readable ? '' : '<span class="archive-card-soon">Draft</span>'}
       <div class="archive-card-body">
+        <span class="archive-card-category">${escapeHtml(article.category)}</span>
         <h3 class="archive-card-title">${escapeHtml(article.title)}</h3>
         <p class="archive-card-excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="archive-card-meta">
