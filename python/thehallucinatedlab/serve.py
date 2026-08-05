@@ -46,9 +46,9 @@ why it has to keep working.
 
 from __future__ import annotations
 
+import http.client
 import json
 import re
-import socket
 import threading
 from email import policy
 from email.parser import BytesParser
@@ -72,6 +72,34 @@ _LOCAL_ORIGIN = re.compile(r"^http://(?:localhost|127\.0\.0\.1)(?::\d+)?$")
 MAX_BODY_BYTES = 104_857_600
 
 _TOOLS = ("extract", "chunk", "tokenize")
+
+# The only Host values that can legitimately reach a loopback bind. An
+# IPv6 literal arrives bracketed, hence the escaped brackets.
+_LOOPBACK_HOST = re.compile(r"^(?:127\.0\.0\.1|localhost|\[::1\])(?::\d+)?$", re.IGNORECASE)
+
+
+def host_allowed(host: str | None) -> bool:
+    """Whether the Host header names this machine's loopback interface.
+
+    The Origin allowlist above cannot see a DNS rebinding attack. An
+    attacker who points evil.com at 127.0.0.1 makes their own page
+    *same-origin* with this server, and browsers omit Origin on
+    same-origin GETs -- so ``origin_allowed(None)`` waves the request
+    through and hands back a capabilities document describing what this
+    machine has installed.
+
+    Host is the header that still tells the truth in that scenario: the
+    browser sends the name it was asked to resolve, which is evil.com,
+    not 127.0.0.1. Refusing anything that is not loopback closes it.
+
+    A missing Host is allowed, for the same reason a missing Origin is:
+    HTTP/1.1 requires one and every browser sends one, so the only
+    clients affected are HTTP/1.0 tools, which are not the attack this
+    defends against.
+    """
+    if host is None:
+        return True
+    return bool(_LOOPBACK_HOST.match(host.strip()))
 
 
 def origin_allowed(origin: str | None, extra: tuple[str, ...] = ()) -> bool:
@@ -148,6 +176,25 @@ def parse_multipart(body: bytes, content_type: str) -> tuple[dict[str, str], dic
     return fields, files
 
 
+def _int_field(fields: dict[str, str], name: str) -> int | None:
+    """Read one integer argument out of a form.
+
+    A form can only carry strings, so ``max_tokens=abc`` arrives as a
+    perfectly well-formed field that ``int()`` then rejects. Letting that
+    ValueError escape turns a caller's typo into a 500 with a traceback
+    in the body, which tells the page the bridge broke when in fact the
+    request was wrong. Raising THLError puts it back on the 400 path with
+    every other argument complaint.
+    """
+    raw = fields.get(name)
+    if not raw:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        raise THLError(f"{name} must be a whole number, not {raw!r}.") from None
+
+
 def run_tool(name: str, fields: dict[str, str], files: dict[str, Any]) -> dict[str, Any]:
     """Dispatch one bridge request onto the real tool.
 
@@ -189,8 +236,8 @@ def run_tool(name: str, fields: dict[str, str], files: dict[str, Any]) -> dict[s
         chunked = chunk(
             upload["content"],
             filename=upload["filename"],
-            max_tokens=int(fields["max_tokens"]) if fields.get("max_tokens") else None,
-            overlap=int(fields["overlap"]) if fields.get("overlap") else None,
+            max_tokens=_int_field(fields, "max_tokens"),
+            overlap=_int_field(fields, "overlap"),
             tokenizer=fields.get("tokenizer") or None,
             heading_context=fields.get("heading_context") or None,
         )
@@ -211,7 +258,7 @@ def run_tool(name: str, fields: dict[str, str], files: dict[str, Any]) -> dict[s
             upload["content"],
             filename=upload["filename"],
             tokenizer=fields.get("tokenizer") or None,
-            limit=int(fields["limit"]) if fields.get("limit") else None,
+            limit=_int_field(fields, "limit"),
         )
         return {"tool": "tokenize", **report.as_dict()}
 
@@ -225,6 +272,14 @@ class BridgeHandler(BaseHTTPRequestHandler):
     extra_origins: tuple[str, ...] = ()
     quiet = True
 
+    # StreamRequestHandler.setup() applies this to the socket. Without it
+    # a client that announces a large Content-Length and then stops
+    # sending holds its worker thread forever, and enough of those starve
+    # the bridge on the machine it is supposed to be helping. This bounds
+    # socket reads and writes, not processing, so a slow extraction is
+    # unaffected -- no socket operation happens while a tool is running.
+    timeout = 30
+
     # -- plumbing ---------------------------------------------------
 
     def log_message(self, fmt: str, *args: Any) -> None:
@@ -233,6 +288,16 @@ class BridgeHandler(BaseHTTPRequestHandler):
 
     def _origin(self) -> str | None:
         return self.headers.get("Origin")
+
+    def _permitted(self) -> bool:
+        """Both gates. Host first: it is the one an attacker cannot forge.
+
+        A rebound request carries a truthful Host and an absent Origin,
+        so checking Origin alone would let it through.
+        """
+        if not host_allowed(self.headers.get("Host")):
+            return False
+        return origin_allowed(self._origin(), self.extra_origins)
 
     def _cors(self, origin: str | None) -> None:
         if origin is None:
@@ -267,7 +332,7 @@ class BridgeHandler(BaseHTTPRequestHandler):
 
     def do_OPTIONS(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler's naming
         origin = self._origin()
-        if not origin_allowed(origin, self.extra_origins):
+        if not self._permitted():
             self._refuse()
             return
         self.send_response(204)
@@ -281,8 +346,7 @@ class BridgeHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self) -> None:  # noqa: N802
-        origin = self._origin()
-        if not origin_allowed(origin, self.extra_origins):
+        if not self._permitted():
             self._refuse()
             return
         if self.path.rstrip("/") == "/thl/v1/capabilities":
@@ -291,8 +355,7 @@ class BridgeHandler(BaseHTTPRequestHandler):
         self._send(404, {"error": "no such endpoint"})
 
     def do_POST(self) -> None:  # noqa: N802
-        origin = self._origin()
-        if not origin_allowed(origin, self.extra_origins):
+        if not self._permitted():
             self._refuse()
             return
 
@@ -379,7 +442,28 @@ def serve(
 
 
 def is_running(port: int = DEFAULT_PORT) -> bool:
-    """Whether something is already listening on the bridge port."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as probe:
-        probe.settimeout(0.3)
-        return probe.connect_ex(("127.0.0.1", port)) == 0
+    """Whether *this* bridge is the thing listening on the port.
+
+    A bare ``connect_ex`` only proves that something accepted a socket,
+    which is a weak claim on a developer's machine: 8787 is not reserved
+    and any other process may hold it. Reporting that as "the bridge is
+    running" sends the caller on to a request that then fails in a much
+    more confusing way than "not running" would have.
+
+    Asking for capabilities and checking the name it answers with means a
+    false positive needs another server that serves this exact endpoint
+    with this exact payload.
+    """
+    try:
+        conn = http.client.HTTPConnection("127.0.0.1", port, timeout=0.5)
+        try:
+            conn.request("GET", "/thl/v1/capabilities")
+            response = conn.getresponse()
+            if response.status != 200:
+                return False
+            payload = json.loads(response.read())
+        finally:
+            conn.close()
+    except (OSError, ValueError, http.client.HTTPException):
+        return False
+    return isinstance(payload, dict) and payload.get("name") == "thehallucinatedlab"

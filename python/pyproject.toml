@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "thehallucinatedlab"
-version = "0.1.0"
+version = "0.2.0"
 description = "The Hallucinated Lab toolkit — local-first tools you can call as ordinary Python methods."
 readme = "README.md"
 requires-python = ">=3.10"
