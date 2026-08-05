@@ -435,21 +435,30 @@ section { padding: 6rem 2rem; position: relative; }
   pointer-events: none;
 }
 
-/* ---- Founder mode switch ---- */
-.mode-switch { display: none; align-items: center; gap: 8px; margin-left: 1rem; }
-.mode-switch.is-founder { display: inline-flex; }
-.mode-switch-label {
-  font-size: 0.55rem; letter-spacing: 1.5px; text-transform: uppercase;
-  color: var(--text-muted); white-space: nowrap;
+/* ---- Mode toggle feedback ----
+   Ctrl+Alt+\ flips dev/live. This is the only chrome that has: the
+   segmented switch it replaced was mounted into the navbar, which meant
+   carrying founder-gate machinery just to decide whether to draw it.
+
+   Shown briefly after the toggle reloads, then faded out. pointer-events
+   is off throughout so it can never intercept a click on whatever it
+   happens to be covering. */
+.mode-toast {
+  position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(8px);
+  z-index: 9999; pointer-events: none;
+  padding: 7px 16px; border-radius: 99px;
+  border: 1px solid var(--border-subtle); background: var(--bg-secondary, #14161a);
+  color: var(--text-muted);
+  font-family: var(--font-body); font-size: 0.6rem;
+  letter-spacing: 1.5px; text-transform: uppercase;
+  opacity: 0; transition: opacity 0.18s ease, transform 0.18s ease;
 }
-.mode-seg { display: inline-flex; border: 1px solid var(--border-subtle); border-radius: 99px; overflow: hidden; }
-.mode-seg button {
-  background: none; border: none; cursor: pointer; font-family: var(--font-body);
-  font-size: 0.58rem; letter-spacing: 1px; text-transform: uppercase;
-  padding: 5px 11px; color: var(--text-muted); transition: var(--transition);
+.mode-toast.is-on { opacity: 1; transform: translateX(-50%) translateY(0); }
+.mode-toast.is-dev { border-color: #d98c2b; color: #d98c2b; }
+
+@media (prefers-reduced-motion: reduce) {
+  .mode-toast { transition: none; }
 }
-.mode-seg button.on { background: var(--gold-primary); color: var(--bg-primary); font-weight: 600; }
-.mode-seg button.on.is-dev { background: #d98c2b; }
 
 /* A persistent reminder that the site is not showing its public face. */
 :root[data-mode="dev"] body::before {
