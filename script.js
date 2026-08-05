@@ -312,7 +312,7 @@ function initDevMode() {
 /* ============ NAV SUBSECTIONS ============
    Keyed by the href already in the markup, so the nav stays declarative in
    HTML and this only enhances it. A page with no entry simply never
-   expands, which is why Home, Certification and Consultancy are absent
+   expands, which is why Home is absent
    rather than listed with empty arrays. */
 const NAV_CHILDREN = {
   'tools.html': [
@@ -341,8 +341,6 @@ const NAV_ICONS = {
   'interface.html': 'M12 3.5l1.7 4.8L18.5 10l-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z',
   'solutions.html': 'M12 3l9 5-9 5-9-5zM3 12.5 12 17l9-4.5M3 17 12 21l9-4',
   'media.html': 'M12 6.5a4 4 0 0 0-4-2H3v13h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v-13h-5a4 4 0 0 0-4 2zM12 6.5v13',
-  'certification.html': 'M12 3l2.3 4.7 5.2.8-3.8 3.6.9 5.1L12 14.8l-4.6 2.4.9-5.1L4.5 8.5l5.2-.8z',
-  'consultancy.html': 'M16 20v-1a4 4 0 0 0-8 0v1M12 11a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7',
 };
 
 /* Collapse each top-level link to its icon and reveal the label on hover,
