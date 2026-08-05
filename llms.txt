@@ -17,6 +17,11 @@ The Hallucinated Lab operates in three modes:
 - [Home](https://thehallucinatedlab.space/): Overview of the lab and a guide to every section of the site.
 - [Tools](https://thehallucinatedlab.space/tools.html): Gateway to the four tools — Convert, Assistant, Prompts and LoRA adapters. Each has its own page.
 - [Convert](https://thehallucinatedlab.space/convert.html): Converts images between PNG, JPEG, WebP and AVIF entirely in the browser on a canvas. Nothing is uploaded and it works offline. Doubles as the argument reference for the convert method in the thehallucinatedlab pip package.
+- [Extract](https://thehallucinatedlab.space/extract.html): Turns PDFs, Word files, slides, spreadsheets and e-books into Markdown that keeps its headings and page boundaries, so the result can be split structurally rather than blindly.
+- [Chunk](https://thehallucinatedlab.space/chunk.html): Splits a Markdown document into retrieval-sized chunks along its own heading structure rather than at arbitrary offsets.
+- [Tokenize](https://thehallucinatedlab.space/tokenize.html): Counts tokens and reports the distribution, including how many pieces exceed the model's context window and would be silently truncated at embed time.
+- [Embed](https://thehallucinatedlab.space/embed.html): Turns chunks into vectors locally with BGE-M3 at 1024 dimensions or all-MiniLM-L6-v2 at 384.
+- [Index](https://thehallucinatedlab.space/vector-index.html): Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
 - [THL Library](https://thehallucinatedlab.space/library.html): The full package shelf - pip-installable packages, embeddable engines and open-source building blocks, with install and usage for each.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
@@ -30,12 +35,17 @@ The Hallucinated Lab operates in three modes:
 - [Prompts](https://thehallucinatedlab.space/prompts.html): Eight model-agnostic prompts for code review, root-cause debugging, refactoring, dataset triage, SQL generation, tutoring, paper review, and model routing. Free to copy, no account.
 - [LoRA adapters](https://thehallucinatedlab.space/adapters.html): Small fine-tuned adapters that stack on a base model already installed locally. Currently in training; none are downloadable yet. Usage guides for Ollama and PEFT are published.
 - [Convert](https://thehallucinatedlab.space/convert.html): The first THL tool. Converts PNG, JPEG, WebP and AVIF client-side using the canvas API - no upload, no server, works offline. Arguments: format (required), quality (1-100, default 92), background (hex, flattens transparency for JPEG).
+- [Extract](https://thehallucinatedlab.space/extract.html): Turns PDFs, Word files, slides, spreadsheets and e-books into Markdown that keeps its headings and page boundaries, so the result can be split structurally rather than blindly. Text, Markdown, HTML and CSV parse in the browser; heavier formats go to the local Python package over a loopback bridge.
+- [Chunk](https://thehallucinatedlab.space/chunk.html): Splits a Markdown document into retrieval-sized chunks along its own heading structure rather than at arbitrary offsets. Every chunk records the heading path and page it came from, which is what lets a retrieved fragment cite its source. Output is JSONL.
+- [Tokenize](https://thehallucinatedlab.space/tokenize.html): Counts tokens and reports the distribution, including how many pieces exceed the model's context window and would be silently truncated at embed time. A measuring instrument for planning chunk size and embedding cost, not a stage of the pipeline.
+- [Embed](https://thehallucinatedlab.space/embed.html): Turns chunks into vectors locally with BGE-M3 at 1024 dimensions or all-MiniLM-L6-v2 at 384. Vectors are L2-normalised so cosine similarity and dot product agree. Output is a single .npy, not one file per chunk.
+- [Index](https://thehallucinatedlab.space/vector-index.html): Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy. Records the embedding model, its dimensions and whether vectors were normalised, plus a runnable query snippet - without which the folder cannot be reopened correctly.
 - [NexusLink Engine](https://thehallucinatedlab.space/solutions.html): Headless Rust SDK for encrypted peer-to-peer LAN/WAN communication. Built from source rather than PyPI for now.
 - Python toolkit: `pip install thehallucinatedlab` gives every tool as a Python method plus a `thl` command.
 
 ## Media
 
-- [Blogs](https://thehallucinatedlab.space/blogs.html): Long-form writing on AI, quantum computing, privacy, and developer tooling. Includes a community section open to reader submissions.
+- [Blogs](https://thehallucinatedlab.space/blogs.html): Long-form writing on AI, privacy, and developer tooling. Includes a community section open to reader submissions.
 - [Artifacts](https://thehallucinatedlab.space/artifacts.html): Interactive explainers the reader operates rather than reads. All computation runs in the browser.
 - [Time & Space Complexity](https://thehallucinatedlab.space/blogs/complexity.html): Interactive teaching session on asymptotic analysis, Big-O through the Master Theorem, with a growth-rate explorer and twelve worked examples.
 - [The Model Is No Longer the Product](https://thehallucinatedlab.space/blogs/ai-orchestration.html): Interactive piece on AI engineering as orchestration, with a runnable RAG pipeline and a failure-diagnosis game.
@@ -59,7 +69,7 @@ The Hallucinated Lab operates in three modes:
 - Email: thehallucinatedlab@gmail.com
 - GitHub organisation: https://github.com/The-Hallucinated-Lab
 - Pratyush: https://github.com/06pratyush — AI, machine learning, data science
-- Divyansh Tripathi: https://github.com/TheQMLGuy — quantum computing, machine learning, developer experience
+- Divyansh Tripathi: https://github.com/TheQMLGuy — machine learning, developer experience
 
 ## Optional
 
