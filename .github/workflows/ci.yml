@@ -63,7 +63,9 @@ jobs:
   python:
     name: THL library
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # The EDA suite draws several hundred figures. Ten minutes was right
+    # when the package was Pillow and a parser.
+    timeout-minutes: 20
 
     # The site itself stays dependency-free; this job exists only for the
     # pip package under python/, which necessarily has a dependency
@@ -84,8 +86,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # [eda] is installed so its suite actually runs. Those tests skip
+      # cleanly without pandas, which is worse than it sounds: several
+      # hundred would go quietly unrun and the job would still be green.
+      # The RAG extras stay out — torch is gigabytes and their tests skip
+      # for the same reason, which is a separate call to make.
       - name: Install
-        run: python -m pip install --upgrade pip && pip install -e "python[dev]"
+        run: python -m pip install --upgrade pip && pip install -e "python[dev,eda,eda-excel]"
 
       - name: Lint
         run: ruff check python/
