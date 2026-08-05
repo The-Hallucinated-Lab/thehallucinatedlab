@@ -32,6 +32,48 @@ dependencies = ["pillow>=10.0"]
 # touched - which is exactly how UP038 landed here.
 dev = ["pytest>=8.0", "ruff>=0.6,<0.13"]
 
+# The RAG pipeline, one extra per stage.
+#
+# The base package depends on Pillow and nothing else, and that is worth
+# protecting: `pip install thehallucinatedlab` is ~3MB today and would be
+# several gigabytes if torch were a hard dependency. Someone who came for
+# `convert` should not pay for an embedding model they will never load.
+#
+# Every tool imports its dependencies inside the function that needs them
+# (see deps.py), so these stay genuinely optional rather than being
+# optional in the metadata and mandatory at import time.
+#
+# `thl serve` is deliberately absent: the bridge is built on stdlib
+# http.server, so it needs nothing installed.
+extract = [
+  "langchain-community>=0.3",
+  "langchain-core>=0.3",
+  "pypdf>=4.0",
+  "python-docx>=1.1",
+  "python-pptx>=0.6",
+  "openpyxl>=3.1",
+  "beautifulsoup4>=4.12",
+  "ebooklib>=0.18",
+  "striprtf>=0.0.26",
+  "odfpy>=1.4",
+]
+chunk = [
+  "langchain-text-splitters>=0.3",
+  "tokenizers>=0.15",
+  "tiktoken>=0.7",
+]
+embed = [
+  "sentence-transformers>=3.0",
+  "numpy>=1.24",
+]
+index = [
+  "chromadb>=0.5",
+  "numpy>=1.24",
+]
+rag = [
+  "thehallucinatedlab[extract,chunk,embed,index]",
+]
+
 [project.scripts]
 thl = "thehallucinatedlab.cli:main"
 

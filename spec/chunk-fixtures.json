@@ -1,0 +1,444 @@
+{
+  "$comment": "Shared chunking cases, run by test/chunk.test.js and python/tests/test_chunk.py. Both runtimes chunk with the same heuristic counter, so identical input must produce byte-identical records -- otherwise a document chunked in the browser and one chunked by the package would embed and retrieve differently. Generated from the Python implementation, whose behaviour is independently asserted in test_chunk.py; regenerate deliberately, never to make a failing test pass.",
+  "specVersion": 1,
+  "tokenizer": "estimate",
+  "cases": [
+    {
+      "name": "headings and pages @ max=512 overlap=0 ctx=True",
+      "document": "---\nsource: \"report.pdf\"\npages: 3\n---\n\n<!-- page: 1 -->\n\n# Chapter 1\n\nOpening paragraph of chapter one.\n\n## Methods\n\nWe measured things carefully.\n\n<!-- page: 2 -->\n\nStill in methods, now on page two.\n\n# Chapter 2\n\nA second chapter entirely.\n",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": true
+      },
+      "expected": [
+        {
+          "text": "Chapter 1\n\nOpening paragraph of chapter one.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 1"
+          ],
+          "page": 1,
+          "chunk_index": 0,
+          "token_count": 15,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "Chapter 1 > Methods\n\nWe measured things carefully.\n\nStill in methods, now on page two.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 1",
+            "Methods"
+          ],
+          "page": 1,
+          "chunk_index": 1,
+          "token_count": 30,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "Chapter 2\n\nA second chapter entirely.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 2"
+          ],
+          "page": 2,
+          "chunk_index": 2,
+          "token_count": 13,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "headings and pages @ max=512 overlap=0 ctx=False",
+      "document": "---\nsource: \"report.pdf\"\npages: 3\n---\n\n<!-- page: 1 -->\n\n# Chapter 1\n\nOpening paragraph of chapter one.\n\n## Methods\n\nWe measured things carefully.\n\n<!-- page: 2 -->\n\nStill in methods, now on page two.\n\n# Chapter 2\n\nA second chapter entirely.\n",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "Opening paragraph of chapter one.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 1"
+          ],
+          "page": 1,
+          "chunk_index": 0,
+          "token_count": 12,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "We measured things carefully.\n\nStill in methods, now on page two.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 1",
+            "Methods"
+          ],
+          "page": 1,
+          "chunk_index": 1,
+          "token_count": 23,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "A second chapter entirely.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 2"
+          ],
+          "page": 2,
+          "chunk_index": 2,
+          "token_count": 10,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "headings and pages @ max=40 overlap=8 ctx=False",
+      "document": "---\nsource: \"report.pdf\"\npages: 3\n---\n\n<!-- page: 1 -->\n\n# Chapter 1\n\nOpening paragraph of chapter one.\n\n## Methods\n\nWe measured things carefully.\n\n<!-- page: 2 -->\n\nStill in methods, now on page two.\n\n# Chapter 2\n\nA second chapter entirely.\n",
+      "args": {
+        "max_tokens": 40,
+        "overlap": 8,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "Opening paragraph of chapter one.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 1"
+          ],
+          "page": 1,
+          "chunk_index": 0,
+          "token_count": 12,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "We measured things carefully.\n\nStill in methods, now on page two.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 1",
+            "Methods"
+          ],
+          "page": 1,
+          "chunk_index": 1,
+          "token_count": 23,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "A second chapter entirely.",
+          "source": "report.pdf",
+          "heading_path": [
+            "Chapter 2"
+          ],
+          "page": 2,
+          "chunk_index": 2,
+          "token_count": 10,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "no headings at all @ max=512 overlap=0 ctx=True",
+      "document": "First paragraph here.\n\nSecond paragraph here.\n",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": true
+      },
+      "expected": [
+        {
+          "text": "First paragraph here.\n\nSecond paragraph here.",
+          "source": "input.md",
+          "heading_path": [],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 17,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "no headings at all @ max=512 overlap=0 ctx=False",
+      "document": "First paragraph here.\n\nSecond paragraph here.\n",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "First paragraph here.\n\nSecond paragraph here.",
+          "source": "input.md",
+          "heading_path": [],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 17,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "no headings at all @ max=40 overlap=8 ctx=False",
+      "document": "First paragraph here.\n\nSecond paragraph here.\n",
+      "args": {
+        "max_tokens": 40,
+        "overlap": 8,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "First paragraph here.\n\nSecond paragraph here.",
+          "source": "input.md",
+          "heading_path": [],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 17,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "fenced code survives @ max=512 overlap=0 ctx=True",
+      "document": "# Tools\n\n```python\ndef f():\n\n    # comment\n    pass\n```\n\nAfter the fence.\n",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": true
+      },
+      "expected": [
+        {
+          "text": "Tools\n\n```python\ndef f():\n\n    # comment\n    pass\n```\n\nAfter the fence.",
+          "source": "input.md",
+          "heading_path": [
+            "Tools"
+          ],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 29,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "fenced code survives @ max=512 overlap=0 ctx=False",
+      "document": "# Tools\n\n```python\ndef f():\n\n    # comment\n    pass\n```\n\nAfter the fence.\n",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "```python\ndef f():\n\n    # comment\n    pass\n```\n\nAfter the fence.",
+          "source": "input.md",
+          "heading_path": [
+            "Tools"
+          ],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "fenced code survives @ max=40 overlap=8 ctx=False",
+      "document": "# Tools\n\n```python\ndef f():\n\n    # comment\n    pass\n```\n\nAfter the fence.\n",
+      "args": {
+        "max_tokens": 40,
+        "overlap": 8,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "```python\ndef f():\n\n    # comment\n    pass\n```\n\nAfter the fence.",
+          "source": "input.md",
+          "heading_path": [
+            "Tools"
+          ],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "oversized section is split @ max=512 overlap=0 ctx=True",
+      "document": "# Long\n\nParagraph 0 carries a handful of ordinary words.\n\nParagraph 1 carries a handful of ordinary words.\n\nParagraph 2 carries a handful of ordinary words.\n\nParagraph 3 carries a handful of ordinary words.\n\nParagraph 4 carries a handful of ordinary words.\n\nParagraph 5 carries a handful of ordinary words.\n\nParagraph 6 carries a handful of ordinary words.\n\nParagraph 7 carries a handful of ordinary words.\n\nParagraph 8 carries a handful of ordinary words.\n\nParagraph 9 carries a handful of ordinary words.\n\nParagraph 10 carries a handful of ordinary words.\n\nParagraph 11 carries a handful of ordinary words.",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": true
+      },
+      "expected": [
+        {
+          "text": "Long\n\nParagraph 0 carries a handful of ordinary words.\n\nParagraph 1 carries a handful of ordinary words.\n\nParagraph 2 carries a handful of ordinary words.\n\nParagraph 3 carries a handful of ordinary words.\n\nParagraph 4 carries a handful of ordinary words.\n\nParagraph 5 carries a handful of ordinary words.\n\nParagraph 6 carries a handful of ordinary words.\n\nParagraph 7 carries a handful of ordinary words.\n\nParagraph 8 carries a handful of ordinary words.\n\nParagraph 9 carries a handful of ordinary words.\n\nParagraph 10 carries a handful of ordinary words.\n\nParagraph 11 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 209,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "oversized section is split @ max=512 overlap=0 ctx=False",
+      "document": "# Long\n\nParagraph 0 carries a handful of ordinary words.\n\nParagraph 1 carries a handful of ordinary words.\n\nParagraph 2 carries a handful of ordinary words.\n\nParagraph 3 carries a handful of ordinary words.\n\nParagraph 4 carries a handful of ordinary words.\n\nParagraph 5 carries a handful of ordinary words.\n\nParagraph 6 carries a handful of ordinary words.\n\nParagraph 7 carries a handful of ordinary words.\n\nParagraph 8 carries a handful of ordinary words.\n\nParagraph 9 carries a handful of ordinary words.\n\nParagraph 10 carries a handful of ordinary words.\n\nParagraph 11 carries a handful of ordinary words.",
+      "args": {
+        "max_tokens": 512,
+        "overlap": 0,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "Paragraph 0 carries a handful of ordinary words.\n\nParagraph 1 carries a handful of ordinary words.\n\nParagraph 2 carries a handful of ordinary words.\n\nParagraph 3 carries a handful of ordinary words.\n\nParagraph 4 carries a handful of ordinary words.\n\nParagraph 5 carries a handful of ordinary words.\n\nParagraph 6 carries a handful of ordinary words.\n\nParagraph 7 carries a handful of ordinary words.\n\nParagraph 8 carries a handful of ordinary words.\n\nParagraph 9 carries a handful of ordinary words.\n\nParagraph 10 carries a handful of ordinary words.\n\nParagraph 11 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 207,
+          "tokenizer": "estimate"
+        }
+      ]
+    },
+    {
+      "name": "oversized section is split @ max=40 overlap=8 ctx=False",
+      "document": "# Long\n\nParagraph 0 carries a handful of ordinary words.\n\nParagraph 1 carries a handful of ordinary words.\n\nParagraph 2 carries a handful of ordinary words.\n\nParagraph 3 carries a handful of ordinary words.\n\nParagraph 4 carries a handful of ordinary words.\n\nParagraph 5 carries a handful of ordinary words.\n\nParagraph 6 carries a handful of ordinary words.\n\nParagraph 7 carries a handful of ordinary words.\n\nParagraph 8 carries a handful of ordinary words.\n\nParagraph 9 carries a handful of ordinary words.\n\nParagraph 10 carries a handful of ordinary words.\n\nParagraph 11 carries a handful of ordinary words.",
+      "args": {
+        "max_tokens": 40,
+        "overlap": 8,
+        "heading_context": false
+      },
+      "expected": [
+        {
+          "text": "Paragraph 0 carries a handful of ordinary words.\n\nParagraph 1 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 0,
+          "token_count": 35,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 2 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 1,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 3 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 2,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 4 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 3,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 5 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 4,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 6 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 5,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 7 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 6,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 8 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 7,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 9 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 8,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 10 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 9,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        },
+        {
+          "text": "handful of ordinary words.\n\nParagraph 11 carries a handful of ordinary words.",
+          "source": "input.md",
+          "heading_path": [
+            "Long"
+          ],
+          "page": null,
+          "chunk_index": 10,
+          "token_count": 27,
+          "tokenizer": "estimate"
+        }
+      ]
+    }
+  ]
+}

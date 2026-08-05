@@ -74,6 +74,64 @@
     return value === undefined || value === null || value === '';
   }
 
+  /* What a form control or a parsed utterance actually hands over for a
+     boolean: a real bool from a checkbox, a string from a select or a
+     query param. Returns null when it is none of them, so the caller can
+     report the problem rather than silently reading it as false. */
+  function normalizeBool(value) {
+    if (typeof value === 'boolean') return value;
+    var text = String(value).trim().toLowerCase();
+    if (text === 'true' || text === 'yes' || text === 'on' || text === '1') return true;
+    if (text === 'false' || text === 'no' || text === 'off' || text === '0') return false;
+    return null;
+  }
+
+  /* ---- Token estimation ----
+
+     The browser cannot run BGE-M3's tokenizer without downloading a
+     ~17MB vocabulary, which is out of proportion to a page that budgets
+     40KB for its own script. So chunking in the browser sizes against
+     this heuristic and records that it did; the Python side re-checks
+     with the real tokenizer.
+
+     It errs HIGH on purpose. An under-count produces a chunk that
+     exceeds the embedding model's context, and an oversized chunk is not
+     rejected at embed time — it is silently truncated, and the tail
+     never reaches the vector. Over-counting only costs slightly smaller
+     chunks, which is the cheap direction to be wrong in.
+
+     Mirrors estimate_tokens() in tools/tokenize.py exactly, including
+     the integer arithmetic: a float ceil(total * 1.15) rounds
+     differently in the two languages at some magnitudes. */
+
+  /* Scripts that do not use spaces. SentencePiece rarely merges these
+     below one piece per glyph and frequently produces more. All BMP, so
+     no surrogate handling is needed. */
+  var DENSE = '぀-ヿ㐀-䶿一-鿿가-힯';
+  var LATIN = 'A-Za-zÀ-ɏ';
+  var PIECE = new RegExp('[' + DENSE + ']|[' + LATIN + ']+|\\d+|[^\\s' + LATIN + '0-9' + DENSE + ']', 'g');
+
+  function estimateTokens(text) {
+    var body = String(text === null || text === undefined ? '' : text);
+    if (!body.trim()) return 0;
+
+    var pieces = body.match(PIECE) || [];
+    var total = 0;
+    for (var i = 0; i < pieces.length; i++) {
+      var piece = pieces[i];
+      if (new RegExp('^[' + LATIN + ']+$').test(piece)) {
+        total += Math.max(1, Math.ceil(piece.length / 4));
+      } else if (/^\d+$/.test(piece)) {
+        /* Digits fragment far more than letters — most vocabularies
+           carry only short numeric pieces. */
+        total += Math.max(1, Math.ceil(piece.length / 2));
+      } else {
+        total += 1;
+      }
+    }
+    return Math.floor((total * 115 + 99) / 100);
+  }
+
   /* Collects every problem rather than throwing on the first one: a form
      that reports "format is required" and then, after you fix it,
      "quality must be between 1 and 100" wastes a round trip per field.
@@ -128,8 +186,40 @@
         if (hex) args[param.name] = hex;
         else errors.push(param.name + ' must be a hex colour such as #ffffff.');
 
+      } else if (param.type === 'number') {
+        var real = Number(value);
+        if (!isFinite(real)) {
+          errors.push(param.name + ' must be a number.');
+        } else if (param.min !== undefined && real < param.min) {
+          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
+        } else if (param.max !== undefined && real > param.max) {
+          errors.push(param.name + ' must be between ' + param.min + ' and ' + param.max + '.');
+        } else {
+          args[param.name] = real;
+        }
+
+      } else if (param.type === 'boolean') {
+        var flag = normalizeBool(value);
+        if (flag === null) errors.push(param.name + ' must be true or false.');
+        else args[param.name] = flag;
+
+      } else if (param.type === 'string' || param.type === 'path') {
+        var text = String(value).trim();
+        if (!text) {
+          errors.push(param.name + ' must not be empty.');
+        } else if (param.maxLength !== undefined && text.length > param.maxLength) {
+          errors.push(param.name + ' must be at most ' + param.maxLength + ' characters.');
+        } else if (param.pattern !== undefined && !new RegExp('^(?:' + param.pattern + ')$').test(text)) {
+          errors.push(param.name + ' must match ' + param.pattern + '.');
+        } else {
+          args[param.name] = text;
+        }
+
       } else {
-        args[param.name] = value;
+        /* An unrecognised type would otherwise sail through unvalidated,
+           which is how a typo in the manifest becomes an argument that
+           nothing checks on either side. */
+        errors.push(param.name + ' declares unknown type "' + param.type + '".');
       }
     }
 
@@ -184,6 +274,9 @@
       if (p.type === 'enum') type = (p.values || []).join(' | ');
       else if (p.type === 'integer' && p.min !== undefined) type = 'int ' + p.min + '-' + p.max;
       else if (p.type === 'color') type = 'hex colour';
+      else if (p.type === 'number' && p.min !== undefined) type = 'number ' + p.min + '-' + p.max;
+      else if (p.type === 'boolean') type = 'true | false';
+      else if (p.type === 'path') type = 'file path';
 
       rows.push({
         name: p.name,
@@ -425,11 +518,38 @@
     container.appendChild(table);
   }
 
+  /* Argument tables on pages that have no script of their own.
+
+     A python-only tool (embed, index) has nothing to run in the browser,
+     so its page ships no page script — and without this, its Arguments
+     section would render as an empty div. Hard-coding the table in the
+     markup would work and would also be the one thing this project is
+     built to avoid: the table would drift from the manifest the moment
+     an argument changed, and the page would start documenting arguments
+     the package does not accept.
+
+     So any container carrying data-tool renders itself from the spec.
+     Pages with their own script (convert, extract, chunk, tokenize) use
+     an id instead and are untouched by this. */
+  document.addEventListener('DOMContentLoaded', function () {
+    var targets = document.querySelectorAll('[data-tool]');
+    if (!targets.length) return;
+    loadManifest().then(function (manifest) {
+      for (var i = 0; i < targets.length; i++) {
+        var tool = findTool(manifest, targets[i].getAttribute('data-tool'));
+        if (tool) renderParamTable(tool, targets[i]);
+      }
+    }).catch(function () {
+      /* The rest of the page is prose and still reads without it. */
+    });
+  });
+
   window.THL = window.THL || {};
   window.THL.toolkit = {
     loadManifest: loadManifest,
     findTool: findTool,
     validateArgs: validateArgs,
+    estimateTokens: estimateTokens,
     probeEncoders: probeEncoders,
     run: run,
     runImageConvert: runImageConvert,

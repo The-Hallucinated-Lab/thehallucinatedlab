@@ -35,3 +35,19 @@ class UnsupportedFormat(THLError):
 
 class NexusLinkNotInstalled(THLError):
     """The NexusLink binding is not importable in this environment."""
+
+
+class DependencyMissing(THLError):
+    """A tool needs an optional dependency that is not installed.
+
+    The base package depends only on Pillow. Document loading, chunking,
+    embedding and indexing each pull in something substantial -- torch
+    alone is larger than everything else here combined -- so they live
+    behind extras and raise this instead of an ImportError traceback that
+    does not say which extra to install.
+    """
+
+    def __init__(self, message: str, *, extra: str | None = None) -> None:
+        super().__init__(message)
+        self.extra = extra
+
