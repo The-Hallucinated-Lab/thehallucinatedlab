@@ -7,6 +7,9 @@ does.
 
 from __future__ import annotations
 
-from .converter import ConvertResult, converter
+from .convert import ConvertResult, convert
 
-__all__ = ["converter", "ConvertResult"]
+__all__ = [
+    "convert",
+    "ConvertResult",
+]

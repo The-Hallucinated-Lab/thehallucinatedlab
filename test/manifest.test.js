@@ -39,7 +39,7 @@ test('the spec declares the scoring weights the parser reads', () => {
   }
   /* If the threshold ever drops to or below the weight of a single
      action word, "convert 100 usd to eur" starts matching the image
-     converter. */
+     convert. */
   assert.ok(scoring.threshold > scoring.actionKeyword,
     'threshold must exceed a lone action keyword');
 });
@@ -112,8 +112,8 @@ test('an optional default is itself a legal value', () => {
   }
 });
 
-test('converter declares encoder metadata for every format it offers', () => {
-  const tool = manifest.tools.find(t => t.name === 'converter');
+test('convert declares encoder metadata for every format it offers', () => {
+  const tool = manifest.tools.find(t => t.name === 'convert');
   const format = tool.params.find(p => p.name === 'format');
   const formats = tool.meta.formats;
 

@@ -4,7 +4,7 @@ Everything the toolkit knows about its own tools -- names, arguments,
 bounds, defaults, the vocabulary the parser matches on -- comes from
 ``data/manifest.json``. That file is a copy of ``spec/manifest.json`` at
 the repository root, which is also what the website reads to build the
-converter UI and the argument reference table. A Node test asserts the
+convert UI and the argument reference table. A Node test asserts the
 two copies are byte-identical, so the documentation on the site cannot
 describe arguments this package does not accept.
 

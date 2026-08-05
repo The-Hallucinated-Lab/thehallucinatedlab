@@ -210,10 +210,10 @@ const IDENTITY_KEY = 'thl_key';
 
 /* SHA-256 of each founder's key. Publishing these is deliberate. */
 const FOUNDER_HASHES = [
-  // Divyansh — replace with the hash printed by THL.enrol() on his machine
-  '0000000000000000000000000000000000000000000000000000000000000000',
-  // Pratyush — same
-  '1111111111111111111111111111111111111111111111111111111111111111',
+  // Divyansh
+  '064f63685f7b16e1b309e162c8143d056411a4c66854034e40ebe1d00c14a4b2',
+  // Pratyush
+  '38f92fb8af4f9c71d52f785defcf5ce93f63b190a2f28eefeb6f739a1ab3d079',
 ];
 
 /* @pure-start
@@ -341,7 +341,7 @@ function mountModeSwitch() {
    rather than listed with empty arrays. */
 const NAV_CHILDREN = {
   'tools.html': [
-    { label: 'Converter', href: 'converter.html' },
+    { label: 'THL Library', href: 'library.html' },
     { label: 'Assistant', href: 'interface.html' },
     { label: 'Prompts', href: 'prompts.html' },
     { label: 'Adapters', href: 'adapters.html', status: 'dev' },

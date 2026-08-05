@@ -69,7 +69,7 @@ test('every tool declares a status the site can filter on', () => {
 });
 
 test('nav entries default to live and dev entries need dev mode', () => {
-  assert.equal(navEntryVisible({ label: 'Converter' }, 'live'), true, 'no status means live');
+  assert.equal(navEntryVisible({ label: 'Convert' }, 'live'), true, 'no status means live');
   assert.equal(navEntryVisible({ label: 'X', status: 'dev' }, 'live'), false,
     'a dev entry must not render in live mode');
   assert.equal(navEntryVisible({ label: 'X', status: 'dev' }, 'dev'), true,

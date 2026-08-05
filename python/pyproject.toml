@@ -10,7 +10,7 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "The Hallucinated Lab", email = "thehallucinatedlab@gmail.com" }]
-keywords = ["image", "converter", "png", "jpeg", "webp", "avif", "local-first", "toolkit"]
+keywords = ["image", "convert", "png", "jpeg", "webp", "avif", "local-first", "toolkit"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -37,7 +37,7 @@ thl = "thehallucinatedlab.cli:main"
 
 [project.urls]
 Homepage = "https://thehallucinatedlab.space"
-Documentation = "https://thehallucinatedlab.space/converter.html"
+Documentation = "https://thehallucinatedlab.space/convert.html"
 Source = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
 Issues = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/issues"
 

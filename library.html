@@ -56,31 +56,6 @@
           "item": "https://thehallucinatedlab.space/library.html"
         }
       ]
-    },
-    {
-      "@type": "SoftwareApplication",
-      "name": "NexusLink Engine",
-      "applicationCategory": "DeveloperApplication",
-      "operatingSystem": "Windows, Linux, macOS",
-      "programmingLanguage": [
-        "Rust",
-        "Python",
-        "C"
-      ],
-      "description": "A headless LAN/WAN communication SDK for local-first, peer-to-peer applications. Provides secure peer discovery, end-to-end-encrypted sessions with X25519 key agreement and ChaCha20-Poly1305, ordered replay-protected messaging, SHA-256-verified chunked file transfer, and Argon2id-encrypted local storage - with no cloud server in the loop.",
-      "url": "https://thehallucinatedlab.space/library.html",
-      "codeRepository": "https://github.com/06pratyush/NexusLinkEngine",
-      "author": {
-        "@id": "https://thehallucinatedlab.space/#pratyush"
-      },
-      "publisher": {
-        "@id": "https://thehallucinatedlab.space/#organization"
-      },
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "USD"
-      }
     }
   ]
 }
@@ -132,6 +107,31 @@
       <div class="container">
         <h2 class="sr-only">Packages in the THL Library</h2>
 
+
+        <a href="convert.html" class="tool-card-link spotlight-panel fade-in" style="text-decoration:none;display:block;">
+          <div class="spotlight-head">
+            <span class="blog-tag">Browser · Python</span>
+            <span class="spotlight-status"><span class="dot" aria-hidden="true"></span>Live</span>
+          </div>
+          <h3 class="spotlight-title">Convert</h3>
+          <p class="spotlight-tagline">Change an image between PNG, JPEG, WebP and AVIF without uploading it anywhere.</p>
+          <p class="spotlight-desc">The same tool through three doors: a page that runs on a canvas, a plain-english request to the assistant, and <code>thl convert</code> in a terminal. One spec describes the arguments, so all three take the same ones and cannot drift apart.</p>
+          <div class="spotlight-points">
+            <div class="spotlight-point">
+              <strong>format</strong>
+              png, jpeg, webp or avif. Required.
+            </div>
+            <div class="spotlight-point">
+              <strong>quality</strong>
+              1-100 for the lossy formats. Defaults to 92.
+            </div>
+          </div>
+          <div class="spotlight-actions">
+            <span class="blog-cta">Open Convert</span>
+            <code class="spotlight-code">thl convert photo.jpg --format webp --quality 70</code>
+          </div>
+        </a>
+
         <div class="spotlight-panel fade-in">
           <div class="spotlight-head">
             <span class="blog-tag">Python · Toolkit</span>
@@ -139,7 +139,7 @@
           </div>
           <h3 class="spotlight-title">thehallucinatedlab</h3>
           <p class="spotlight-tagline">Every tool in the lab, as an ordinary Python method — and as a page you can open in a browser.</p>
-          <p class="spotlight-desc">One spec describes each tool: its arguments, their bounds, and the words that mean it. The website builds its converter and its argument table from that spec, the assistant parses plain english against it, and this package validates against it. There is no second copy to fall out of date.</p>
+          <p class="spotlight-desc">One spec describes each tool: its arguments, their bounds, and the words that mean it. The website builds its convert and its argument table from that spec, the assistant parses plain english against it, and this package validates against it. There is no second copy to fall out of date.</p>
           <div class="spotlight-points">
             <div class="spotlight-point">
               <strong>Runs on your machine</strong>
@@ -163,58 +163,18 @@
             </div>
             <div class="spotlight-point">
               <strong>First tool shipped</strong>
-              <code>converter</code> handles PNG, JPEG, WebP and AVIF, flattening transparency onto a colour you choose.
+              <code>convert</code> handles PNG, JPEG, WebP and AVIF, flattening transparency onto a colour you choose.
             </div>
           </div>
           <div class="spotlight-actions">
-            <a class="blog-cta" href="converter.html">
+            <a class="blog-cta" href="convert.html">
               <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-              Open the Converter
+              Open Convert
             </a>
             <code class="spotlight-code">pip install thehallucinatedlab</code>
           </div>
         </div>
 
-        <div class="spotlight-panel fade-in">
-          <div class="spotlight-head">
-            <span class="blog-tag">SDK · Rust Core</span>
-            <span class="spotlight-status"><span class="dot" aria-hidden="true"></span>Foundation Build</span>
-          </div>
-          <h3 class="spotlight-title">NexusLink Engine</h3>
-          <p class="spotlight-tagline">The networking backbone for local-first, peer-to-peer apps — build the UI, not the plumbing.</p>
-          <p class="spotlight-desc">A headless LAN/WAN communication SDK that gives your app secure peer discovery, end-to-end-encrypted sessions, reliable messaging, verified file transfer, and encrypted storage — behind one clean API. No cloud server anywhere in the loop.</p>
-          <div class="spotlight-points">
-            <div class="spotlight-point">
-              <strong>Zero-server by design</strong>
-              Peers talk directly over LAN or WAN. No hosting bills, no added latency, no single point of failure.
-            </div>
-            <div class="spotlight-point">
-              <strong>Batteries-included encryption</strong>
-              X25519 key agreement with per-direction ChaCha20-Poly1305 and perfect forward secrecy — you never touch the crypto.
-            </div>
-            <div class="spotlight-point">
-              <strong>Reliability you don't have to build</strong>
-              Ordered, replay-protected messaging and chunked, SHA-256-verified file transfer out of the box.
-            </div>
-            <div class="spotlight-point">
-              <strong>Private at rest</strong>
-              Local message history is encrypted with Argon2id-derived keys — sensitive data is never a liability.
-            </div>
-            <div class="spotlight-point">
-              <strong>Embed it anywhere</strong>
-              A Rust crate, a stable C ABI header, and a pip-installable Python SDK — with interop paths for Node, Flutter, and Go.
-            </div>
-            <div class="spotlight-point">
-              <strong>Headless &amp; cross-platform</strong>
-              Windows, Linux, and macOS. The engine handles the plumbing; your app owns the experience.
-            </div>
-          </div>
-          <div class="spotlight-actions">
-            <a class="blog-cta" href="https://github.com/06pratyush/NexusLinkEngine" target="_blank" rel="noopener">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-              View on GitHub
-            </a>
-            <code class="spotlight-code">not on PyPI yet — build from source</code>
           </div>
         </div>
       </div>

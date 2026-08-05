@@ -13,9 +13,9 @@ pip install thehallucinatedlab
 ## Use it
 
 ```python
-from thehallucinatedlab import converter
+from thehallucinatedlab import convert
 
-result = converter("photo.jpg", format="png")
+result = convert("photo.jpg", format="png")
 print(result.path, result.bytes)
 ```
 
@@ -23,7 +23,7 @@ Forgot what a tool takes? The argument reference lives on the website, generated
 same spec this package validates against — so the docs cannot describe an argument the code
 does not accept:
 
-**<https://thehallucinatedlab.space/converter.html>**
+**<https://thehallucinatedlab.space/convert.html>**
 
 ## Plain english works too
 
@@ -33,7 +33,7 @@ The same intent parser that powers the website's assistant ships in the package:
 from thehallucinatedlab import parse
 
 parse("convert it to webp at 80")
-# {'tool': 'converter', 'args': {'format': 'webp', 'quality': 80}, 'missing': [], ...}
+# {'tool': 'convert', 'args': {'format': 'webp', 'quality': 80}, 'missing': [], ...}
 ```
 
 And from a shell:
@@ -46,7 +46,7 @@ thl "convert photo.jpg to webp at 80"
 
 ## Tools
 
-### `converter`
+### `convert`
 
 Convert an image between PNG, JPEG, WebP and AVIF.
 
@@ -57,8 +57,8 @@ Convert an image between PNG, JPEG, WebP and AVIF.
 | `background` | hex colour | `#ffffff` | Fills transparency when the target has no alpha channel (JPEG). |
 
 ```python
-converter("logo.png", format="jpeg", quality=85, background="#000000")
-converter(raw_bytes, "out.webp", format="webp")   # bytes and file objects work too
+convert("logo.png", format="jpeg", quality=85, background="#000000")
+convert(raw_bytes, "out.webp", format="webp")   # bytes and file objects work too
 ```
 
 Converting a transparent PNG to JPEG flattens it onto `background` rather than leaving black

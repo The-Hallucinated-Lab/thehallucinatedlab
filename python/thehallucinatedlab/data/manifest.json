@@ -12,22 +12,22 @@
   },
   "tools": [
     {
-      "name": "converter",
-      "title": "Converter",
+      "name": "convert",
+      "title": "Convert",
       "status": "live",
       "summary": "Convert an image between formats without uploading it anywhere.",
       "description": "Re-encodes an image into another format. In the browser this runs on a canvas, so the file never leaves the page; in Python it runs through Pillow. Formats without an alpha channel are flattened onto a background colour first, so a transparent PNG becomes a JPEG with a solid backdrop rather than a black one.",
       "runtimes": ["browser", "python"],
-      "page": "converter.html",
+      "page": "convert.html",
       "input": {
         "kind": "image",
         "accept": ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/bmp"],
         "maxPixels": 40000000,
         "maxPixelsNote": "Roughly 40 megapixels. The browser encodes on the main thread, so a larger input would lock the tab."
       },
-      "aliases": ["image convert", "convert image", "change format", "image converter"],
+      "aliases": ["image convert", "convert image", "change format", "image convert"],
       "keywords": {
-        "action": ["convert", "converter", "change", "turn", "make", "transform", "export", "encode", "reencode", "save"],
+        "action": ["convert", "convert", "change", "turn", "make", "transform", "export", "encode", "reencode", "save"],
         "subject": ["image", "images", "picture", "photo", "pic", "img", "file", "format"]
       },
       "params": [
