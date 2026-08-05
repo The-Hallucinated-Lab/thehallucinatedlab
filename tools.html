@@ -67,7 +67,7 @@
       "mainEntity": {
         "@type": "ItemList",
         "name": "Tools published by The Hallucinated Lab",
-        "numberOfItems": 4,
+        "numberOfItems": 9,
         "itemListElement": [
           {
             "@type": "ListItem",
@@ -79,20 +79,55 @@
           {
             "@type": "ListItem",
             "position": 2,
+            "name": "Extract",
+            "url": "https://thehallucinatedlab.space/extract.html",
+            "description": "Turn PDFs, Word files, slides and spreadsheets into Markdown that keeps its headings and page boundaries."
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": "Chunk",
+            "url": "https://thehallucinatedlab.space/chunk.html",
+            "description": "Split Markdown into retrieval-sized chunks along its own headings, writing JSONL that records where each came from."
+          },
+          {
+            "@type": "ListItem",
+            "position": 4,
+            "name": "Tokenize",
+            "url": "https://thehallucinatedlab.space/tokenize.html",
+            "description": "Count tokens and see the distribution, including which pieces would be silently truncated at embed time."
+          },
+          {
+            "@type": "ListItem",
+            "position": 5,
+            "name": "Embed",
+            "url": "https://thehallucinatedlab.space/embed.html",
+            "description": "Turn chunks into vectors locally with BGE-M3 or MiniLM. Runs through the Python package."
+          },
+          {
+            "@type": "ListItem",
+            "position": 6,
+            "name": "Index",
+            "url": "https://thehallucinatedlab.space/vector-index.html",
+            "description": "Build a portable vector database that records the model which produced it, so it can be reopened correctly."
+          },
+          {
+            "@type": "ListItem",
+            "position": 7,
             "name": "Assistant",
             "url": "https://thehallucinatedlab.space/interface.html",
             "description": "Describe what you want in plain english and the matching tool runs in the page. Rule-based, no model to install."
           },
           {
             "@type": "ListItem",
-            "position": 3,
+            "position": 8,
             "name": "Prompts",
             "url": "https://thehallucinatedlab.space/prompts.html",
             "description": "Model-agnostic prompts for code review, root-cause debugging, refactoring, dataset triage, SQL generation, tutoring, paper review, and model routing. Free to copy, no account required."
           },
           {
             "@type": "ListItem",
-            "position": 4,
+            "position": 9,
             "name": "LoRA Adapters",
             "url": "https://thehallucinatedlab.space/adapters.html",
             "description": "Small fine-tuned adapters that stack onto a base model already installed locally. Currently in training."
@@ -123,8 +158,8 @@
         <li><a href="tools.html" class="active">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
-        <li><a href="certification.html">Certification</a></li>
-        <li><a href="consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -165,7 +200,7 @@
               </span>
             </div>
           </a>
-          <a href="extract.html" class="gateway-card fade-in fade-in-delay-2" data-status="dev">
+          <a href="extract.html" class="gateway-card fade-in fade-in-delay-2">
             <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1014 0%, #14262e 55%, #1f4351 100%);">
               <div class="gateway-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
@@ -185,7 +220,7 @@
               </span>
             </div>
           </a>
-          <a href="chunk.html" class="gateway-card fade-in fade-in-delay-3" data-status="dev">
+          <a href="chunk.html" class="gateway-card fade-in fade-in-delay-3">
             <div class="gateway-cover" style="background: linear-gradient(135deg, #0d0a14 0%, #221a33 55%, #3b2a57 100%);">
               <div class="gateway-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M3 5h18v3H3zm0 5.5h18v3H3zm0 5.5h18v3H3z"/></svg>
@@ -205,7 +240,7 @@
               </span>
             </div>
           </a>
-          <a href="tokenize.html" class="gateway-card fade-in fade-in-delay-4" data-status="dev">
+          <a href="tokenize.html" class="gateway-card fade-in fade-in-delay-4">
             <div class="gateway-cover" style="background: linear-gradient(135deg, #14100a 0%, #2e2413 55%, #514021 100%);">
               <div class="gateway-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M4 20h3v-9H4zm6.5 0h3V4h-3zM17 20h3v-6h-3z"/></svg>
@@ -221,6 +256,46 @@
                 <li><span>three counters</span> exact, OpenAI, or no download at all</li>
               </ul>
               <span class="gateway-cta">Open Tokenize
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+          <a href="embed.html" class="gateway-card fade-in fade-in-delay-1">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1410 0%, #153326 55%, #215340 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 3l9 5-9 5-9-5zM3 12.5 12 17l9-4.5M3 17 12 21l9-4"/></svg>
+              </div>
+              <span class="gateway-count">Needs the package</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">Embed</h2>
+              <p class="gateway-desc">Chunks to vectors on your own machine. BGE-M3 at 1024 dimensions, or MiniLM at 384 when speed matters more than reach.</p>
+              <ul class="gateway-list">
+                <li><span>normalised</span> cosine and dot product agree</li>
+                <li><span>one file</span> a single .npy, not one per chunk</li>
+                <li><span>python only</span> the model is too large for a tab</li>
+              </ul>
+              <span class="gateway-cta">Open Embed
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+          <a href="vector-index.html" class="gateway-card fade-in fade-in-delay-2">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #140a0d 0%, #331a20 55%, #572a35 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zm0 6c0 1.7 3.6 3 8 3s8-1.3 8-3M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/></svg>
+              </div>
+              <span class="gateway-count">Needs the package</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">Index</h2>
+              <p class="gateway-desc">A portable vector database you own, as Chroma or plain numpy, carrying everything needed to reopen it later.</p>
+              <ul class="gateway-list">
+                <li><span>self-describing</span> records the model and its dimensions</li>
+                <li><span>query snippet</span> written alongside, usable immediately</li>
+                <li><span>no pickle</span> which is why FAISS is not offered</li>
+              </ul>
+              <span class="gateway-cta">Open Index
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
               </span>
             </div>

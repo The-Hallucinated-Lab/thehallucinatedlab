@@ -449,10 +449,15 @@
   box-shadow: 0 12px 40px rgba(201, 168, 76, 0.12), 0 0 60px rgba(201, 168, 76, 0.04);
 }
 
+.featured-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  margin-bottom: 1rem;
+}
+
 .featured-badge {
-  position: absolute;
-  top: 1rem;
-  left: 1rem;
   display: inline-flex;
   align-items: center;
   gap: 5px;
@@ -465,7 +470,6 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  z-index: 2;
 }
 
 .featured-category {
@@ -477,7 +481,6 @@
   font-size: 0.62rem;
   color: var(--gold-light);
   font-weight: 500;
-  margin-bottom: 0.8rem;
 }
 
 .featured-card-body {

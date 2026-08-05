@@ -107,8 +107,8 @@
         <li><a href="tools.html">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html" class="active">Media</a></li>
-        <li><a href="certification.html">Certification</a></li>
-        <li><a href="consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -127,7 +127,7 @@
       </nav>
       <span class="section-label">The Written Work</span>
       <h1 class="page-title">Blogs</h1>
-      <p class="page-subtitle">Long-form writing on AI, quantum computing, privacy, and the tools we build. Pick a card and it opens as a full reading experience.</p>
+      <p class="page-subtitle">Long-form writing on AI, privacy, and the tools we build. Pick a card and it opens as a full reading experience.</p>
       <nav class="page-jump" aria-label="Sections on this page">
         <a href="#blogs-featured">Featured</a>
         <a href="#blogs-archive">Archive</a>
@@ -149,12 +149,14 @@
              then owns it. Keep the two in sync when ARTICLES changes. -->
         <div class="featured-grid" id="featured-grid">
           <a href="blogs/sample-blog.html" class="featured-card fade-in fade-in-delay-1" id="featured-local-first-ai" style="--featured-accent: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
-            <div class="featured-badge">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-              Featured
-            </div>
             <div class="featured-card-body">
-              <span class="featured-category">AI &amp; ML</span>
+              <div class="featured-card-top">
+                <span class="featured-category">AI &amp; ML</span>
+                <span class="featured-badge">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                  Featured
+                </span>
+              </div>
               <h3 class="featured-card-title">The Future of Local-First AI</h3>
               <p class="featured-card-excerpt">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
               <div class="featured-card-meta">
@@ -166,21 +168,6 @@
               <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
             </div>
           </a>
-          <div class="featured-card featured-card-locked fade-in fade-in-delay-2" id="featured-quantum-ml-crossroads" style="--featured-accent: linear-gradient(135deg, #0d0d2b 0%, #1b1464 50%, #3d1f8e 100%);">
-            <div class="featured-badge">
-              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-              Featured
-            </div>
-            <div class="featured-card-body">
-              <span class="featured-category">Quantum Computing</span>
-              <h3 class="featured-card-title">Quantum Computing Meets Machine Learning</h3>
-              <p class="featured-card-excerpt">At the intersection of qubits and gradient descent lies a new paradigm. How quantum-enhanced ML could reshape optimization, drug discovery, and cryptography.</p>
-              <div class="featured-card-meta">
-                <span class="featured-author">Divyansh Tripathi</span>
-                <span class="featured-date">In the works</span>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -205,7 +192,6 @@
           <div class="archive-filters" id="archive-filters">
             <button class="filter-btn active" data-filter="all" type="button">All</button>
             <button class="filter-btn" data-filter="AI &amp; ML" type="button">AI &amp; ML</button>
-            <button class="filter-btn" data-filter="Quantum Computing" type="button">Quantum Computing</button>
             <button class="filter-btn" data-filter="Open Source" type="button">Open Source</button>
             <button class="filter-btn" data-filter="Privacy &amp; Security" type="button">Privacy &amp; Security</button>
             <button class="filter-btn" data-filter="Dev Tools" type="button">Dev Tools</button>
@@ -225,58 +211,6 @@
               </div>
             </div>
           </a>
-          <div class="archive-card archive-card-locked fade-in" id="archive-quantum-ml-crossroads" style="--archive-accent: linear-gradient(135deg, #0d0d2b 0%, #1b1464 50%, #3d1f8e 100%);">
-            <span class="archive-card-soon">Draft</span>
-            <div class="archive-card-body">
-              <span class="archive-card-category">Quantum Computing</span>
-              <h3 class="archive-card-title">Quantum Computing Meets Machine Learning</h3>
-              <p class="archive-card-excerpt">At the intersection of qubits and gradient descent lies a new paradigm. How quantum-enhanced ML could reshape optimization, drug discovery, and cryptography.</p>
-              <div class="archive-card-meta">
-                <span>Divyansh Tripathi</span>
-                <span class="archive-card-dot">·</span>
-                <span>Not published yet</span>
-              </div>
-            </div>
-          </div>
-          <div class="archive-card archive-card-locked fade-in" id="archive-open-source-manifesto" style="--archive-accent: linear-gradient(135deg, #1a0a0a 0%, #2d1f1f 50%, #4a2c2c 100%);">
-            <span class="archive-card-soon">Draft</span>
-            <div class="archive-card-body">
-              <span class="archive-card-category">Open Source</span>
-              <h3 class="archive-card-title">Why Open Source Isn't Optional Anymore</h3>
-              <p class="archive-card-excerpt">From governments to startups, open source has become the backbone of modern software. We argue it's not charity — it's strategy.</p>
-              <div class="archive-card-meta">
-                <span>Pratyush</span>
-                <span class="archive-card-dot">·</span>
-                <span>Not published yet</span>
-              </div>
-            </div>
-          </div>
-          <div class="archive-card archive-card-locked fade-in" id="archive-browser-privacy-toolkit" style="--archive-accent: linear-gradient(135deg, #0a1a0a 0%, #1f2d1f 50%, #2c4a2c 100%);">
-            <span class="archive-card-soon">Draft</span>
-            <div class="archive-card-body">
-              <span class="archive-card-category">Privacy &amp; Security</span>
-              <h3 class="archive-card-title">Building a Privacy Toolkit in the Browser</h3>
-              <p class="archive-card-excerpt">Zero-knowledge proofs, client-side encryption, and local-only processing — the tools exist. Here's how to wire them together.</p>
-              <div class="archive-card-meta">
-                <span>Divyansh Tripathi</span>
-                <span class="archive-card-dot">·</span>
-                <span>Not published yet</span>
-              </div>
-            </div>
-          </div>
-          <div class="archive-card archive-card-locked fade-in" id="archive-dev-tools-renaissance" style="--archive-accent: linear-gradient(135deg, #1a1a0a 0%, #2d2d1f 50%, #4a4a2c 100%);">
-            <span class="archive-card-soon">Draft</span>
-            <div class="archive-card-body">
-              <span class="archive-card-category">Dev Tools</span>
-              <h3 class="archive-card-title">The Dev Tools Renaissance</h3>
-              <p class="archive-card-excerpt">IDEs are getting smarter, CLIs are getting prettier, and AI copilots are everywhere. A tour of the tools shaping the next decade of development.</p>
-              <div class="archive-card-meta">
-                <span>Pratyush</span>
-                <span class="archive-card-dot">·</span>
-                <span>Not published yet</span>
-              </div>
-            </div>
-          </div>
         </div>
         <div class="archive-empty" id="archive-empty" style="display:none;">
           <p>No blogs match your search.</p>
@@ -330,7 +264,6 @@
                 <select id="submit-category" class="form-select">
                   <option value="General">General</option>
                   <option value="AI &amp; ML">AI &amp; ML</option>
-                  <option value="Quantum Computing">Quantum Computing</option>
                   <option value="Open Source">Open Source</option>
                   <option value="Privacy &amp; Security">Privacy &amp; Security</option>
                   <option value="Dev Tools">Dev Tools</option>
