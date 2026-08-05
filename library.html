@@ -80,8 +80,8 @@
         <li><a href="tools.html" class="active">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
-        <li><a href="certification.html">Certification</a></li>
-        <li><a href="consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -132,51 +132,146 @@
           </div>
         </a>
 
-        <div class="spotlight-panel fade-in">
-          <div class="spotlight-head">
-            <span class="blog-tag">Python · Toolkit</span>
-            <span class="spotlight-status"><span class="dot" aria-hidden="true"></span>Live</span>
+
+        <div class="section-header fade-in" style="margin-top:3rem;">
+          <span class="section-label">The RAG Pipeline</span>
+          <h3 class="section-title">Documents to a Vector Database</h3>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Five tools that take a document to a database you own and can query with your own code. Each runs on its own; together they are a pipeline. Every heavy dependency is an optional extra, so the base install stays small.</p>
+        </div>
+
+        <div class="gateway-grid">
+
+          <a href="extract.html" class="gateway-card fade-in fade-in-delay-1">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1014 0%, #14262e 55%, #1f4351 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg>
+              </div>
+              <span class="gateway-count">Pipeline stage 1</span>
+            </div>
+            <div class="gateway-body">
+              <h4 class="gateway-title">Extract</h4>
+              <p class="gateway-desc">PDFs, Word files, slides, spreadsheets and e-books into Markdown that keeps its headings and page boundaries.</p>
+              <ul class="gateway-list">
+                <li><span>in the browser</span> text, markdown, html and csv, unaided</li>
+                <li><span>with the package</span> pdf, word, slides, sheets, epub, rtf, odt, eml</li>
+                <li><span>never invented</span> no outline in the PDF means no headings</li>
+              </ul>
+              <span class="gateway-cta">Open Extract
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+          <a href="chunk.html" class="gateway-card fade-in fade-in-delay-2">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0d0a14 0%, #221a33 55%, #3b2a57 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M3 5h18v3H3zm0 5.5h18v3H3zm0 5.5h18v3H3z"/></svg>
+              </div>
+              <span class="gateway-count">Pipeline stage 2</span>
+            </div>
+            <div class="gateway-body">
+              <h4 class="gateway-title">Chunk</h4>
+              <p class="gateway-desc">Splits along the document's own headings rather than every 512th character, so a chunk is a section and not a window.</p>
+              <ul class="gateway-list">
+                <li><span>citable</span> every chunk carries its heading path and page</li>
+                <li><span>jsonl</span> one record per line, greppable and streamable</li>
+                <li><span>sized</span> against the tokenizer the embedder actually uses</li>
+              </ul>
+              <span class="gateway-cta">Open Chunk
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+          <a href="tokenize.html" class="gateway-card fade-in fade-in-delay-3">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #14100a 0%, #2e2413 55%, #514021 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M4 20h3v-9H4zm6.5 0h3V4h-3zM17 20h3v-6h-3z"/></svg>
+              </div>
+              <span class="gateway-count">Beside the pipeline</span>
+            </div>
+            <div class="gateway-body">
+              <h4 class="gateway-title">Tokenize</h4>
+              <p class="gateway-desc">How big is this and what will it cost to embed — including which pieces would be silently truncated.</p>
+              <ul class="gateway-list">
+                <li><span>distribution</span> median, 95th, and the long tail</li>
+                <li><span>overflow</span> what exceeds the context window</li>
+                <li><span>three counters</span> exact, OpenAI, or no download at all</li>
+              </ul>
+              <span class="gateway-cta">Open Tokenize
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+          <a href="embed.html" class="gateway-card fade-in fade-in-delay-4">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1410 0%, #153326 55%, #215340 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M12 3l9 5-9 5-9-5zM3 12.5 12 17l9-4.5M3 17 12 21l9-4"/></svg>
+              </div>
+              <span class="gateway-count">Pipeline stage 3</span>
+            </div>
+            <div class="gateway-body">
+              <h4 class="gateway-title">Embed</h4>
+              <p class="gateway-desc">Chunks to vectors on your own machine. BGE-M3 at 1024 dimensions, or MiniLM at 384 when speed matters more.</p>
+              <ul class="gateway-list">
+                <li><span>normalised</span> so cosine and dot product agree</li>
+                <li><span>one file</span> a single .npy, not one per chunk</li>
+                <li><span>no prefix</span> BGE-M3 wants none, unlike bge-large-en</li>
+              </ul>
+              <span class="gateway-cta">Open Embed
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+          <a href="vector-index.html" class="gateway-card fade-in fade-in-delay-4">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #140a0d 0%, #331a20 55%, #572a35 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M4 6c0-1.7 3.6-3 8-3s8 1.3 8 3-3.6 3-8 3-8-1.3-8-3zm0 6c0 1.7 3.6 3 8 3s8-1.3 8-3M4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6"/></svg>
+              </div>
+              <span class="gateway-count">Pipeline stage 4</span>
+            </div>
+            <div class="gateway-body">
+              <h4 class="gateway-title">Index</h4>
+              <p class="gateway-desc">A portable database directory you own, as Chroma or as plain numpy, with everything needed to reopen it.</p>
+              <ul class="gateway-list">
+                <li><span>self-describing</span> records the model, dimensions and normalisation</li>
+                <li><span>query snippet</span> written alongside, so it is usable immediately</li>
+                <li><span>no pickle</span> FAISS is skipped for exactly that reason</li>
+              </ul>
+              <span class="gateway-cta">Open Index
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Installing the pipeline</h3>
+          <p class="how-panel-text">Every stage is a method in the same package and a subcommand of the same CLI. The parsers, tokenizers and the embedding model are optional extras, so installing the package does not drag in torch for someone who only wanted to convert an image.</p>
+          <div class="how-block">
+            <span class="how-block-label">One stage at a time</span>
+            <div class="how-code"><code>pip install "thehallucinatedlab[extract]"
+pip install "thehallucinatedlab[chunk]"
+pip install "thehallucinatedlab[embed]"
+pip install "thehallucinatedlab[index]"</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
-          <h3 class="spotlight-title">thehallucinatedlab</h3>
-          <p class="spotlight-tagline">Every tool in the lab, as an ordinary Python method — and as a page you can open in a browser.</p>
-          <p class="spotlight-desc">One spec describes each tool: its arguments, their bounds, and the words that mean it. The website builds its convert and its argument table from that spec, the assistant parses plain english against it, and this package validates against it. There is no second copy to fall out of date.</p>
-          <div class="spotlight-points">
-            <div class="spotlight-point">
-              <strong>Runs on your machine</strong>
-              No API key, no account, no upload, no service to be up. In the browser it is a canvas; in Python it is Pillow.
-            </div>
-            <div class="spotlight-point">
-              <strong>Three doors, one tool</strong>
-              Use the web page, ask the assistant, or import the method. Same arguments, same behaviour, same defaults.
-            </div>
-            <div class="spotlight-point">
-              <strong>Docs that cannot go stale</strong>
-              The argument reference on each tool page is generated from the spec the code validates against.
-            </div>
-            <div class="spotlight-point">
-              <strong>Typed errors, not guesswork</strong>
-              Bounds come from the spec, so a bad argument fails with a sentence naming the argument rather than a stack trace.
-            </div>
-            <div class="spotlight-point">
-              <strong>Plain english included</strong>
-              <code>thl "convert photo.jpg to png"</code> works, and it is rules rather than a model — instant, offline, and tested.
-            </div>
-            <div class="spotlight-point">
-              <strong>First tool shipped</strong>
-              <code>convert</code> handles PNG, JPEG, WebP and AVIF, flattening transparency onto a colour you choose.
-            </div>
-          </div>
-          <div class="spotlight-actions">
-            <a class="blog-cta" href="convert.html">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
-              Open Convert
-            </a>
-            <code class="spotlight-code">pip install thehallucinatedlab</code>
+          <div class="how-block">
+            <span class="how-block-label">Or the whole pipeline</span>
+            <div class="how-code"><code>pip install "thehallucinatedlab[rag]"
+
+thl extract report.pdf
+thl chunk report.md --max-tokens 512
+thl embed report.jsonl
+thl index report.npy report.jsonl mydb</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
         </div>
 
-          </div>
-        </div>
       </div>
     </section>
 

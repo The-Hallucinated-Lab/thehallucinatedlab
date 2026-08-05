@@ -22,50 +22,6 @@ const ARTICLES = [
     featured: true,
     articleUrl: 'blogs/sample-blog.html',
   },
-  {
-    id: 'quantum-ml-crossroads',
-    title: 'Quantum Computing Meets Machine Learning',
-    author: 'Divyansh Tripathi',
-    date: '2026-07-05',
-    category: 'Quantum Computing',
-    excerpt: 'At the intersection of qubits and gradient descent lies a new paradigm. How quantum-enhanced ML could reshape optimization, drug discovery, and cryptography.',
-    coverGradient: 'linear-gradient(135deg, #0d0d2b 0%, #1b1464 50%, #3d1f8e 100%)',
-    featured: true,
-    articleUrl: null,
-  },
-  {
-    id: 'open-source-manifesto',
-    title: 'Why Open Source Isn\'t Optional Anymore',
-    author: 'Pratyush',
-    date: '2026-06-28',
-    category: 'Open Source',
-    excerpt: 'From governments to startups, open source has become the backbone of modern software. We argue it\'s not charity — it\'s strategy.',
-    coverGradient: 'linear-gradient(135deg, #1a0a0a 0%, #2d1f1f 50%, #4a2c2c 100%)',
-    featured: false,
-    articleUrl: null,
-  },
-  {
-    id: 'browser-privacy-toolkit',
-    title: 'Building a Privacy Toolkit in the Browser',
-    author: 'Divyansh Tripathi',
-    date: '2026-06-20',
-    category: 'Privacy & Security',
-    excerpt: 'Zero-knowledge proofs, client-side encryption, and local-only processing — the tools exist. Here\'s how to wire them together.',
-    coverGradient: 'linear-gradient(135deg, #0a1a0a 0%, #1f2d1f 50%, #2c4a2c 100%)',
-    featured: false,
-    articleUrl: null,
-  },
-  {
-    id: 'dev-tools-renaissance',
-    title: 'The Dev Tools Renaissance',
-    author: 'Pratyush',
-    date: '2026-06-15',
-    category: 'Dev Tools',
-    excerpt: 'IDEs are getting smarter, CLIs are getting prettier, and AI copilots are everywhere. A tour of the tools shaping the next decade of development.',
-    coverGradient: 'linear-gradient(135deg, #1a1a0a 0%, #2d2d1f 50%, #4a4a2c 100%)',
-    featured: false,
-    articleUrl: null,
-  },
 ];
 
 /* ============ HELPERS ============ */
@@ -115,7 +71,7 @@ function safeGradient(value) {
    mistakes at once instead of one per attempt, and values are
    normalised before they are stored. */
 const SUBMISSION_CATEGORIES = [
-  'General', 'AI & ML', 'Quantum Computing', 'Open Source',
+  'General', 'AI & ML', 'Open Source',
   'Privacy & Security', 'Dev Tools', 'Research', 'Other',
 ];
 
@@ -252,12 +208,14 @@ function renderFeatured() {
 
     return `
     <${tag}${href} class="featured-card${readable ? '' : ' featured-card-locked'} fade-in fade-in-delay-${(idx % 3) + 1}" id="featured-${escapeAttr(article.id)}" style="--featured-accent: ${safeGradient(article.coverGradient)};">
-      <div class="featured-badge">
-        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-        Featured
-      </div>
       <div class="featured-card-body">
-        <span class="featured-category">${escapeHtml(article.category)}</span>
+        <div class="featured-card-top">
+          <span class="featured-category">${escapeHtml(article.category)}</span>
+          <span class="featured-badge">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            Featured
+          </span>
+        </div>
         <h3 class="featured-card-title">${escapeHtml(article.title)}</h3>
         <p class="featured-card-excerpt">${escapeHtml(article.excerpt)}</p>
         <div class="featured-card-meta">
