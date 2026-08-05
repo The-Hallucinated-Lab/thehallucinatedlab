@@ -57,3 +57,11 @@ ai-ide/
 # Founder dev-mode keys. The hashes are committed in script.js; the keys
 # behind them must never be.
 .founder-keys.local.txt
+
+# Downloaded datasets. torchvision and friends default to ./data, and the
+# MNIST download alone is 63.5MB of binaries that git can never compress
+# and never forget -- it was committed once and had to be taken back out.
+# The data is reproducible from a one-line download; the repo is not.
+data/
+*.idx3-ubyte
+*.idx1-ubyte
