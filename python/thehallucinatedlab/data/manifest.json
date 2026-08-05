@@ -12,13 +12,13 @@
   },
   "tools": [
     {
-      "name": "converter",
-      "title": "Converter",
+      "name": "convert",
+      "title": "Convert",
       "status": "live",
       "summary": "Convert an image between formats without uploading it anywhere.",
       "description": "Re-encodes an image into another format. In the browser this runs on a canvas, so the file never leaves the page; in Python it runs through Pillow. Formats without an alpha channel are flattened onto a background colour first, so a transparent PNG becomes a JPEG with a solid backdrop rather than a black one.",
       "runtimes": ["browser", "python"],
-      "page": "converter.html",
+      "page": "convert.html",
       "input": {
         "kind": "image",
         "accept": ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/bmp"],
@@ -77,6 +77,371 @@
         { "text": "convert this to png", "args": { "format": "png" } },
         { "text": "make it a jpg at 80 quality", "args": { "format": "jpeg", "quality": 80 } },
         { "text": "png to webp, quality 75", "args": { "format": "webp", "quality": 75 } }
+      ]
+    },
+    {
+      "name": "extract",
+      "title": "Extract",
+      "status": "dev",
+      "summary": "Turn a document into Markdown with its structure intact.",
+      "description": "Reads a PDF, Word file, presentation, spreadsheet, web page or e-book and writes Markdown. Headings stay headings and page boundaries stay marked, because that is exactly what the next stage splits on -- flattening to plain text first would leave structure-aware chunking with no structure to be aware of. In the browser this runs on vendored parsers in your own tab; in Python it runs through LangChain's document loaders, which reach considerably more formats.",
+      "runtimes": ["browser", "python"],
+      "page": "extract.html",
+      "input": {
+        "kind": "document",
+        "accept": [".pdf", ".docx", ".pptx", ".xlsx", ".epub", ".rtf", ".odt", ".eml", ".html", ".htm", ".csv", ".md", ".txt"],
+        "maxBytes": 104857600,
+        "maxBytesNote": "100MB. The browser holds the whole file in memory while parsing, so a larger document would exhaust the tab."
+      },
+      "aliases": ["extract text", "document to markdown", "pdf to markdown", "read document"],
+      "keywords": {
+        "action": ["extract", "read", "parse", "pull", "ingest"],
+        "subject": ["pdf", "docx", "document", "doc", "word", "markdown", "epub", "slides", "spreadsheet"]
+      },
+      "params": [
+        {
+          "name": "format",
+          "type": "enum",
+          "required": false,
+          "default": "markdown",
+          "values": ["markdown", "text"],
+          "aliases": {
+            "md": "markdown",
+            "plain": "text",
+            "txt": "text"
+          },
+          "description": "What to write. Markdown keeps headings and tables; text flattens everything. Choosing text means the chunk tool has no structure left to split on, so pick it only when the document is going somewhere else."
+        },
+        {
+          "name": "frontmatter",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "keywords": ["frontmatter", "metadata"],
+          "description": "Write a YAML block at the top recording the source filename, page count and extraction time. Turn it off when the output is going somewhere that would render the block as body text."
+        },
+        {
+          "name": "page_markers",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "keywords": ["pages", "markers"],
+          "description": "Mark page boundaries with an HTML comment. Markdown renderers ignore them and the chunk tool reads them, which is what lets a retrieved chunk cite the page it came from."
+        },
+        {
+          "name": "tables",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "keywords": ["tables"],
+          "description": "Render tables as Markdown tables rather than flattening them to lines of text. Off is occasionally better for documents where the parser mistakes a layout grid for a data table."
+        }
+      ],
+      "meta": {
+        "$comment": "Which formats each runtime can actually read today. browser is what the page parses with no parser at all -- DOMParser, FileReader and a CSV reader -- so it stays true with nothing vendored and nothing installed. python is what the extract extra installs. The page compares the two to decide when to offer the bridge. Vendoring pdf.js and mammoth into assets/vendor would move .pdf and .docx into the browser tier; until something is actually vendored, listing them here would make the page offer a parser it does not have.",
+        "tiers": {
+          "browser": [".html", ".htm", ".csv", ".md", ".markdown", ".txt"],
+          "python": [".pdf", ".docx", ".pptx", ".xlsx", ".epub", ".rtf", ".odt", ".eml", ".html", ".htm", ".csv", ".md", ".markdown", ".txt"]
+        },
+        "structure": {
+          "$comment": "Where headings come from in each format. Anything absent here yields page or section markers only, never invented headings.",
+          ".pdf": "outline",
+          ".docx": "styles",
+          ".pptx": "slide-titles",
+          ".xlsx": "sheet-names",
+          ".epub": "toc",
+          ".html": "tags",
+          ".htm": "tags",
+          ".md": "native",
+          ".odt": "styles",
+          ".rtf": "none",
+          ".eml": "headers",
+          ".csv": "none",
+          ".txt": "none"
+        }
+      },
+      "examples": [
+        { "text": "extract this pdf to markdown", "args": { "format": "markdown" } },
+        { "text": "read the document as plain text", "args": { "format": "text" } }
+      ]
+    },
+    {
+      "name": "chunk",
+      "title": "Chunk",
+      "status": "dev",
+      "summary": "Split a Markdown document into retrieval-sized pieces along its own structure.",
+      "description": "Splits on headings first and size second, so a chunk is a section of the document rather than an arbitrary window of characters. Each piece carries the heading path it came from and the page it started on, which is what lets a retrieved chunk cite its source instead of arriving as anonymous text. Output is JSONL -- one record per line, text plus metadata, the same shape a LangChain Document has.",
+      "runtimes": ["browser", "python"],
+      "page": "chunk.html",
+      "input": {
+        "kind": "document",
+        "accept": [".md", ".markdown", ".txt"],
+        "maxBytes": 104857600,
+        "maxBytesNote": "100MB. Chunking holds the document and its pieces in memory at once."
+      },
+      "aliases": ["split document", "chunk document", "split into chunks"],
+      "keywords": {
+        "action": ["chunk", "split", "divide", "segment"],
+        "subject": ["chunks", "token", "tokens", "pieces", "markdown", "document"]
+      },
+      "params": [
+        {
+          "name": "max_tokens",
+          "type": "integer",
+          "required": false,
+          "default": 512,
+          "min": 64,
+          "max": 8192,
+          "keywords": ["tokens", "token", "size", "max"],
+          "description": "The largest a chunk may be. 512 suits most retrieval; larger chunks carry more context but blur what a match actually matched. The ceiling is BGE-M3's context window."
+        },
+        {
+          "name": "overlap",
+          "type": "integer",
+          "required": false,
+          "default": 64,
+          "min": 0,
+          "max": 1024,
+          "keywords": ["overlap"],
+          "description": "Tokens repeated from the end of one chunk at the start of the next, so a sentence split across a boundary is still whole somewhere. Must be smaller than max_tokens."
+        },
+        {
+          "name": "tokenizer",
+          "type": "enum",
+          "required": false,
+          "default": "bge",
+          "values": ["bge", "openai", "estimate"],
+          "aliases": {
+            "bge-m3": "bge",
+            "m3": "bge",
+            "cl100k": "openai",
+            "cl100k_base": "openai",
+            "tiktoken": "openai",
+            "approx": "estimate",
+            "heuristic": "estimate"
+          },
+          "description": "What counts a token. bge matches the model the embed stage uses, and is the only one whose counts are exact for this pipeline. estimate needs no download and deliberately over-counts."
+        },
+        {
+          "name": "heading_context",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "keywords": ["headings", "context"],
+          "description": "Prepend the heading path to each chunk's text. Costs a few tokens per chunk and makes a fragment from deep in a document embed as what it is rather than as a stray paragraph."
+        }
+      ],
+      "meta": {
+        "$comment": "Real tokenizer identities. The enum values are single alphabetic words because the intent parser tokenizes on [a-z]+ and would split 'bge-m3' into 'bge', 'm', '3', so a hyphenated value could never be matched from an utterance.",
+        "tokenizers": {
+          "bge": {
+            "id": "BAAI/bge-m3",
+            "kind": "huggingface",
+            "context": 8192,
+            "note": "Downloads roughly 17MB -- the tokenizer alone, not the 2.3GB model."
+          },
+          "openai": {
+            "id": "cl100k_base",
+            "kind": "tiktoken",
+            "context": 8191,
+            "note": "For estimating against OpenAI models. Wrong for this pipeline: BGE-M3 uses a different vocabulary entirely."
+          },
+          "estimate": {
+            "id": "heuristic",
+            "kind": "builtin",
+            "context": 8192,
+            "note": "No download and no dependency. Over-counts on purpose, so a chunk sized by it never overflows the real tokenizer."
+          }
+        }
+      },
+      "examples": [
+        { "text": "chunk this into 256 token pieces", "args": { "max_tokens": 256 } }
+      ]
+    },
+    {
+      "name": "tokenize",
+      "title": "Tokenize",
+      "status": "dev",
+      "summary": "Count tokens, so you know what a corpus costs before you embed it.",
+      "description": "Reports how many tokens a document or a folder of chunks contains, how they are distributed, and how many pieces exceed the model's context window. This is a measuring instrument, not a stage of the pipeline: an embedding model tokenizes internally with its own vocabulary, so there is no such thing as handing it a pre-tokenized file. What the tokenizer is genuinely for is deciding how to chunk and knowing what embedding will cost.",
+      "runtimes": ["browser", "python"],
+      "page": "tokenize.html",
+      "input": {
+        "kind": "text",
+        "accept": [".txt", ".md", ".markdown", ".jsonl"],
+        "maxBytes": 104857600
+      },
+      "aliases": ["count tokens", "token count", "how many tokens"],
+      "keywords": {
+        "action": ["count", "tokenize", "measure"],
+        "subject": ["tokens", "token", "cost", "budget"]
+      },
+      "params": [
+        {
+          "name": "tokenizer",
+          "type": "enum",
+          "required": false,
+          "default": "bge",
+          "values": ["bge", "openai", "estimate"],
+          "aliases": {
+            "bge-m3": "bge",
+            "m3": "bge",
+            "cl100k": "openai",
+            "cl100k_base": "openai",
+            "tiktoken": "openai",
+            "approx": "estimate",
+            "heuristic": "estimate"
+          },
+          "description": "What counts a token. bge matches the embed stage exactly; openai is for costing against a different model; estimate needs no download."
+        },
+        {
+          "name": "limit",
+          "type": "integer",
+          "required": false,
+          "default": 8192,
+          "min": 1,
+          "max": 1000000,
+          "keywords": ["limit", "ceiling", "context", "window"],
+          "description": "The context window to measure against. Anything longer is reported as an overflow, because at embed time it would be silently truncated and the tail would simply not be in the vector."
+        }
+      ],
+      "examples": [
+        { "text": "count the tokens in this", "args": {} }
+      ]
+    },
+    {
+      "name": "embed",
+      "title": "Embed",
+      "status": "dev",
+      "summary": "Turn chunks into vectors with a model that runs on your own machine.",
+      "description": "Reads the JSONL that chunk produced and writes one vector per record. BGE-M3 is the default: 1024 dimensions, 8192 context, and multilingual without a separate model per language. Vectors are L2-normalised by default, which makes cosine similarity and dot product the same operation and is what most vector stores assume. Output is a single .npy alongside the ids, not one file per chunk -- a corpus of 40,000 chunks is 40,000 files nobody wants.",
+      "runtimes": ["python"],
+      "page": "embed.html",
+      "input": {
+        "kind": "jsonl",
+        "accept": [".jsonl"],
+        "maxBytes": 1073741824
+      },
+      "aliases": ["embed chunks", "make vectors", "vectorise chunks"],
+      "keywords": {
+        "action": ["embed", "vectorise", "vectorize", "encode"],
+        "subject": ["chunks", "vectors", "embeddings", "vector"]
+      },
+      "params": [
+        {
+          "name": "model",
+          "type": "enum",
+          "required": false,
+          "default": "bge",
+          "values": ["bge", "minilm"],
+          "aliases": {
+            "bge-m3": "bge",
+            "m3": "bge",
+            "mini": "minilm",
+            "minilm": "minilm"
+          },
+          "description": "Which embedding model. bge is BAAI/bge-m3 at 1024 dimensions -- multilingual, 8192 context, roughly 2.3GB. minilm is all-MiniLM-L6-v2 at 384 dimensions: far smaller and faster, English-centric, 512 context. They are not interchangeable after the fact, because an index built with one cannot be queried with the other."
+        },
+        {
+          "name": "batch_size",
+          "type": "integer",
+          "required": false,
+          "default": 16,
+          "min": 1,
+          "max": 256,
+          "keywords": ["batch"],
+          "description": "How many chunks to encode at once. Larger is faster until it exhausts memory; on CPU the useful range is small."
+        },
+        {
+          "name": "normalize",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "keywords": ["normalize", "normalise"],
+          "description": "Scale every vector to unit length, so cosine similarity and dot product agree. Leave it on unless the store you are feeding expects raw magnitudes."
+        }
+      ],
+      "meta": {
+        "$comment": "Dimensions are not a detail. An index built at 1024 and queried at 384 either errors or, worse, silently returns nonsense -- which is why index records the model that produced it.",
+        "models": {
+          "bge": {
+            "id": "BAAI/bge-m3",
+            "dimensions": 1024,
+            "context": 8192,
+            "size": "~2.3GB",
+            "note": "Multilingual. No instruction prefix needed, unlike bge-large-en."
+          },
+          "minilm": {
+            "id": "sentence-transformers/all-MiniLM-L6-v2",
+            "dimensions": 384,
+            "context": 512,
+            "size": "~90MB",
+            "note": "English-centric. Chunks longer than 512 tokens are truncated."
+          }
+        }
+      },
+      "examples": [
+        { "text": "embed these chunks with bge", "args": { "model": "bge" } }
+      ]
+    },
+    {
+      "name": "index",
+      "title": "Index",
+      "status": "dev",
+      "summary": "Build a portable vector database you own and can query with your own code.",
+      "description": "Takes the vectors and the chunks they came from and writes a database directory. Crucially it also writes a sidecar recording which model produced the vectors, how many dimensions they have, and whether they were normalised -- without that, the folder is not actually usable: opening a Chroma collection and calling query_texts reaches for its own default embedder at 384 dimensions, which against 1024-dimension vectors either raises or silently returns nonsense. A query snippet is written alongside, so the first thing you can do with the output is use it.",
+      "$pageComment": "vector-index.html, not index.html: the tool is named 'index' but index.html is the site homepage, and the manifest test asserts this file exists -- pointing at it would have invited overwriting 27KB of homepage.",
+      "runtimes": ["python"],
+      "page": "vector-index.html",
+      "input": {
+        "kind": "jsonl",
+        "accept": [".jsonl"],
+        "maxBytes": 1073741824
+      },
+      "aliases": ["build index", "vector database", "index vectors"],
+      "keywords": {
+        "action": ["index", "store", "build"],
+        "subject": ["database", "vectors", "index", "store", "db"]
+      },
+      "params": [
+        {
+          "name": "store",
+          "type": "enum",
+          "required": false,
+          "default": "chroma",
+          "values": ["chroma", "numpy"],
+          "aliases": {
+            "chromadb": "chroma",
+            "npy": "numpy",
+            "plain": "numpy"
+          },
+          "description": "chroma writes a sqlite-backed collection with nearest-neighbour search built in. numpy writes a .npy plus a JSONL of metadata and no database at all -- portable anywhere, readable in four lines, and the right choice when you intend to load it into something else."
+        },
+        {
+          "name": "collection",
+          "type": "string",
+          "required": false,
+          "default": "thl",
+          "pattern": "[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}",
+          "maxLength": 63,
+          "keywords": ["collection", "name"],
+          "description": "What to call the collection inside the store. Chroma requires 3-63 characters, starting alphanumeric."
+        },
+        {
+          "name": "overwrite",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "keywords": ["overwrite", "replace"],
+          "description": "Replace an existing collection of the same name. Off by default, because appending vectors from a different model to an existing index is the failure that is hardest to notice afterwards."
+        }
+      ],
+      "meta": {
+        "$comment": "FAISS is deliberately absent. LangChain's FAISS wrapper pickles its docstore and now requires allow_dangerous_deserialization=True to load, which is the wrong default for a tool whose entire purpose is handing someone a database to open later.",
+        "sidecar": "thl-index.json"
+      },
+      "examples": [
+        { "text": "index these vectors into chroma", "args": { "store": "chroma" } }
       ]
     }
   ]

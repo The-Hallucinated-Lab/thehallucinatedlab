@@ -15,8 +15,8 @@ The Hallucinated Lab operates in three modes:
 ## Pages
 
 - [Home](https://thehallucinatedlab.space/): Overview of the lab and a guide to every section of the site.
-- [Tools](https://thehallucinatedlab.space/tools.html): Gateway to the four tools — Converter, Assistant, Prompts and LoRA adapters. Each has its own page.
-- [Converter](https://thehallucinatedlab.space/converter.html): Converts images between PNG, JPEG, WebP and AVIF entirely in the browser on a canvas. Nothing is uploaded and it works offline. Doubles as the argument reference for the converter method in the thehallucinatedlab pip package.
+- [Tools](https://thehallucinatedlab.space/tools.html): Gateway to the four tools — Convert, Assistant, Prompts and LoRA adapters. Each has its own page.
+- [Convert](https://thehallucinatedlab.space/convert.html): Converts images between PNG, JPEG, WebP and AVIF entirely in the browser on a canvas. Nothing is uploaded and it works offline. Doubles as the argument reference for the convert method in the thehallucinatedlab pip package.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
 - [THL Library](https://thehallucinatedlab.space/library.html): The full package shelf - pip-installable packages, embeddable engines and open-source building blocks, with install and usage for each.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
@@ -29,7 +29,7 @@ The Hallucinated Lab operates in three modes:
 
 - [Prompts](https://thehallucinatedlab.space/prompts.html): Eight model-agnostic prompts for code review, root-cause debugging, refactoring, dataset triage, SQL generation, tutoring, paper review, and model routing. Free to copy, no account.
 - [LoRA adapters](https://thehallucinatedlab.space/adapters.html): Small fine-tuned adapters that stack on a base model already installed locally. Currently in training; none are downloadable yet. Usage guides for Ollama and PEFT are published.
-- [Converter](https://thehallucinatedlab.space/converter.html): The first THL tool. Converts PNG, JPEG, WebP and AVIF client-side using the canvas API - no upload, no server, works offline. Arguments: format (required), quality (1-100, default 92), background (hex, flattens transparency for JPEG).
+- [Convert](https://thehallucinatedlab.space/convert.html): The first THL tool. Converts PNG, JPEG, WebP and AVIF client-side using the canvas API - no upload, no server, works offline. Arguments: format (required), quality (1-100, default 92), background (hex, flattens transparency for JPEG).
 - [NexusLink Engine](https://thehallucinatedlab.space/solutions.html): Headless Rust SDK for encrypted peer-to-peer LAN/WAN communication. Built from source rather than PyPI for now.
 - Python toolkit: `pip install thehallucinatedlab` gives every tool as a Python method plus a `thl` command.
 

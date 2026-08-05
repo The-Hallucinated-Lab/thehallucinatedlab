@@ -33,6 +33,22 @@ def nlp_fixtures() -> dict[str, Any]:
 
 
 @pytest.fixture(scope="session")
+def extract_fixtures() -> dict[str, Any]:
+    path = _find_repo_file("spec/extract-fixtures.json")
+    if path is None:
+        pytest.skip("spec/extract-fixtures.json is only present in a source checkout")
+    return json.loads(path.read_text("utf-8"))
+
+
+@pytest.fixture(scope="session")
+def chunk_fixtures() -> dict[str, Any]:
+    path = _find_repo_file("spec/chunk-fixtures.json")
+    if path is None:
+        pytest.skip("spec/chunk-fixtures.json is only present in a source checkout")
+    return json.loads(path.read_text("utf-8"))
+
+
+@pytest.fixture(scope="session")
 def repo_manifest() -> dict[str, Any]:
     path = _find_repo_file("spec/manifest.json")
     if path is None:

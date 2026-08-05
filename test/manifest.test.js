@@ -39,7 +39,7 @@ test('the spec declares the scoring weights the parser reads', () => {
   }
   /* If the threshold ever drops to or below the weight of a single
      action word, "convert 100 usd to eur" starts matching the image
-     converter. */
+     convert. */
   assert.ok(scoring.threshold > scoring.actionKeyword,
     'threshold must exceed a lone action keyword');
 });
@@ -59,7 +59,9 @@ test('every tool carries what the website and the package both read', () => {
 });
 
 test('every parameter is a type all three runtimes implement', () => {
-  const supported = new Set(['enum', 'integer', 'color']);
+  const supported = new Set([
+    'enum', 'integer', 'color', 'string', 'path', 'boolean', 'number',
+  ]);
   for (const tool of manifest.tools) {
     for (const param of tool.params) {
       assert.ok(param.name, `${tool.name} has an unnamed param`);
@@ -76,10 +78,19 @@ test('every parameter is a type all three runtimes implement', () => {
         }
       }
 
-      if (param.type === 'integer') {
+      if (param.type === 'integer' || param.type === 'number') {
         assert.equal(typeof param.min, 'number', `${tool.name}.${param.name} has no min`);
         assert.equal(typeof param.max, 'number', `${tool.name}.${param.name} has no max`);
         assert.ok(param.min < param.max, `${tool.name}.${param.name} has min >= max`);
+      }
+
+      /* A pattern that does not compile fails at validation time, in the
+         browser, on a visitor's machine — not here, where it is cheap. */
+      if (param.pattern !== undefined) {
+        assert.ok(param.type === 'string' || param.type === 'path',
+          `${tool.name}.${param.name} has a pattern but is type "${param.type}"`);
+        assert.doesNotThrow(() => new RegExp(`^(?:${param.pattern})$`),
+          `${tool.name}.${param.name} has an uncompilable pattern`);
       }
 
       if (!param.required) {
@@ -100,7 +111,7 @@ test('an optional default is itself a legal value', () => {
         assert.ok(param.values.includes(param.default),
           `${tool.name}.${param.name} defaults to "${param.default}", not one of its values`);
       }
-      if (param.type === 'integer') {
+      if (param.type === 'integer' || param.type === 'number') {
         assert.ok(param.default >= param.min && param.default <= param.max,
           `${tool.name}.${param.name} defaults outside its own bounds`);
       }
@@ -108,12 +119,24 @@ test('an optional default is itself a legal value', () => {
         assert.match(String(param.default), /^#[0-9a-f]{6}$/,
           `${tool.name}.${param.name} defaults to a non-hex colour`);
       }
+      if (param.type === 'boolean') {
+        assert.equal(typeof param.default, 'boolean',
+          `${tool.name}.${param.name} defaults to a non-boolean`);
+      }
+      if (param.type === 'string' || param.type === 'path') {
+        assert.equal(typeof param.default, 'string',
+          `${tool.name}.${param.name} defaults to a non-string`);
+        if (param.pattern !== undefined) {
+          assert.match(param.default, new RegExp(`^(?:${param.pattern})$`),
+            `${tool.name}.${param.name} defaults to a value its own pattern rejects`);
+        }
+      }
     }
   }
 });
 
-test('converter declares encoder metadata for every format it offers', () => {
-  const tool = manifest.tools.find(t => t.name === 'converter');
+test('convert declares encoder metadata for every format it offers', () => {
+  const tool = manifest.tools.find(t => t.name === 'convert');
   const format = tool.params.find(p => p.name === 'format');
   const formats = tool.meta.formats;
 
@@ -141,6 +164,25 @@ test('every tool page named by the spec exists on disk', () => {
   for (const tool of manifest.tools) {
     assert.ok(fs.existsSync(path.join(ROOT, tool.page)),
       `${tool.name} points at ${tool.page}, which does not exist`);
+  }
+});
+
+test('a python-only tool page can still render its own argument table', () => {
+  /* A tool with no browser runtime ships no page script, so nothing
+     would populate its Arguments section — it rendered as an empty div
+     and every invariant still passed. toolkit.js fills any container
+     carrying data-tool, so the page must actually declare one; the
+     alternative is hard-coding the table, which is exactly the drift
+     this whole spec exists to prevent. */
+  for (const tool of manifest.tools) {
+    const runtimes = tool.runtimes || [];
+    if (runtimes.includes('browser')) continue;
+
+    const src = fs.readFileSync(path.join(ROOT, tool.page), 'utf8');
+    assert.match(src, new RegExp(`data-tool="${tool.name}"`),
+      `${tool.page} has no data-tool="${tool.name}" container, so its argument table renders empty`);
+    assert.match(src, /<script src="toolkit\.js"/,
+      `${tool.page} declares data-tool but never loads toolkit.js, which is what fills it`);
   }
 });
 

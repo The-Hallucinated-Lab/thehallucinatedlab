@@ -4,7 +4,7 @@ Everything the toolkit knows about its own tools -- names, arguments,
 bounds, defaults, the vocabulary the parser matches on -- comes from
 ``data/manifest.json``. That file is a copy of ``spec/manifest.json`` at
 the repository root, which is also what the website reads to build the
-converter UI and the argument reference table. A Node test asserts the
+convert UI and the argument reference table. A Node test asserts the
 two copies are byte-identical, so the documentation on the site cannot
 describe arguments this package does not accept.
 
@@ -15,6 +15,7 @@ Nothing here needs editing.
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Callable
 from importlib import resources
 from typing import Any
@@ -25,7 +26,17 @@ _JSON_TYPES = {
     "enum": "string",
     "integer": "integer",
     "color": "string",
+    "string": "string",
+    "path": "string",
+    "boolean": "boolean",
+    "number": "number",
 }
+
+# What a CLI or an HTML form actually hands over for a boolean. A flag
+# arrives as the string "true", a checkbox as "on", a JSON body as a real
+# bool -- and none of them should need the caller to normalise first.
+_TRUE = {"true", "yes", "on", "1"}
+_FALSE = {"false", "no", "off", "0"}
 
 
 def load_manifest() -> dict[str, Any]:
@@ -56,6 +67,17 @@ def _normalize_hex(value: Any) -> str | None:
 
 def _is_blank(value: Any) -> bool:
     return value is None or value == ""
+
+
+def _normalize_bool(value: Any) -> bool | None:
+    if isinstance(value, bool):
+        return value
+    text = str(value).strip().lower()
+    if text in _TRUE:
+        return True
+    if text in _FALSE:
+        return False
+    return None
 
 
 class Registry:
@@ -159,8 +181,46 @@ class Registry:
                 else:
                     cleaned[pname] = normalized
 
+            elif ptype == "number":
+                # bool is an int subclass, same trap as `integer` above.
+                if isinstance(value, bool) or not isinstance(value, int | float):
+                    errors.append(f"{pname} must be a number; got {value!r}.")
+                elif ("min" in param and value < param["min"]) or (
+                    "max" in param and value > param["max"]
+                ):
+                    bounds = f"{param['min']} and {param['max']}"
+                    errors.append(f"{pname} must be between {bounds}.")
+                else:
+                    cleaned[pname] = float(value)
+
+            elif ptype == "boolean":
+                coerced = _normalize_bool(value)
+                if coerced is None:
+                    errors.append(f"{pname} must be true or false; got {value!r}.")
+                else:
+                    cleaned[pname] = coerced
+
+            elif ptype in ("string", "path"):
+                text = str(value).strip()
+                pattern = param.get("pattern")
+                maximum = param.get("maxLength")
+                if not text:
+                    errors.append(f"{pname} must not be empty.")
+                elif maximum is not None and len(text) > maximum:
+                    errors.append(f"{pname} must be at most {maximum} characters.")
+                elif pattern is not None and re.fullmatch(pattern, text) is None:
+                    errors.append(f"{pname} must match {pattern}; got {value!r}.")
+                else:
+                    cleaned[pname] = text
+
             else:
-                cleaned[pname] = value
+                # An unrecognised type would otherwise sail through
+                # unvalidated, which is how a typo in the manifest turns
+                # into an argument nothing checks.
+                errors.append(
+                    f"{pname} declares unknown type {ptype!r}. "
+                    f"Known types: {', '.join(sorted(_JSON_TYPES))}."
+                )
 
         for supplied in args:
             if supplied not in known and not _is_blank(args[supplied]):
@@ -191,13 +251,19 @@ class Registry:
                 "type": _JSON_TYPES.get(param.get("type", ""), "string"),
                 "description": param.get("description", ""),
             }
-            if param.get("type") == "enum":
+            ptype = param.get("type")
+            if ptype == "enum":
                 entry["enum"] = list(param.get("values", []))
-            if param.get("type") == "integer":
+            if ptype in ("integer", "number"):
                 if "min" in param:
                     entry["minimum"] = param["min"]
                 if "max" in param:
                     entry["maximum"] = param["max"]
+            if ptype in ("string", "path"):
+                if "pattern" in param:
+                    entry["pattern"] = param["pattern"]
+                if "maxLength" in param:
+                    entry["maxLength"] = param["maxLength"]
             if "default" in param:
                 entry["default"] = param["default"]
             properties[param["name"]] = entry

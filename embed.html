@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <!-- status: dev in spec/manifest.json. Reachable by URL but hidden from
+       visitors behind the founder gate, so it must not be indexed until it
+       goes live - and noindex is also what keeps it out of sitemap.xml,
+       llms.txt and the discoverability invariants that check them. -->
+  <meta name="robots" content="noindex">
+  <title>Embed - The Hallucinated Lab</title>
+  <meta name="description" content="Turn chunks into vectors locally, ready for similarity search.">
+  <meta property="og:title" content="Embed - The Hallucinated Lab">
+  <meta property="og:description" content="Turn chunks into vectors locally, ready for similarity search.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/embed.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/embed.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Embed - The Hallucinated Lab">
+  <meta name="twitter:description" content="Turn chunks into vectors locally, ready for similarity search.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Tools",
+          "item": "https://thehallucinatedlab.space/tools.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Embed",
+          "item": "https://thehallucinatedlab.space/embed.html"
+        }
+      ]
+    },
+    {
+      "@type": "WebApplication",
+      "name": "THL Embed",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any modern Python environment",
+      "browserRequirements": "None",
+      "description": "Turns chunks into vectors locally, with optional normalisation. Supports BGE-M3 and MiniLM models.",
+      "url": "https://thehallucinatedlab.space/embed.html",
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="certification.html">Certification</a></li>
+        <li><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="tools.html">Tools</a>
+        <span aria-hidden="true">/</span>
+        <span>Embed</span>
+      </nav>
+      <span class="section-label">THL Tools . 05 . Pipeline stage 3</span>
+      <h1 class="page-title">Embed</h1>
+      <p class="page-subtitle">Turns chunks into vectors locally, preparing them for similarity search.</p>
+    </section>
+
+    <!-- ====== ARGUMENTS ====== -->
+    <section class="media-section media-section-alt" id="arguments">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Reference</span>
+          <h2 class="section-title">Arguments</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">All arguments are documented here, in the Assistant, and the Python package. The table below is generated from the tool spec.</p>
+        </div>
+        <div class="tool-args-wrap fade-in" data-tool="embed"></div>
+      </div>
+    </section>
+
+    <!-- ====== MODEL COMPARISON ====== -->
+    <section class="media-section" id="model-comparison">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Model comparison</span>
+          <h2 class="section-title">Embedding models</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Two models are supported. An index built with one cannot be queried with the other.</p>
+        </div>
+        <div class="tool-args-wrap fade-in">
+          <table class="tool-args">
+            <thead>
+              <tr>
+                <th>Model</th><th>Model ID</th><th>Dimensions</th><th>Context</th><th>Size</th><th>Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>bge</td>
+                <td>BAAI/bge-m3</td>
+                <td>1024</td>
+                <td>8192</td>
+                <td>~2.3GB</td>
+                <td>Multilingual, no instruction prefix needed</td>
+              </tr>
+              <tr>
+                <td>minilm</td>
+                <td>sentence-transformers/all-MiniLM-L6-v2</td>
+                <td>384</td>
+                <td>512</td>
+                <td>~90MB</td>
+                <td>English‑centric, truncates >512 tokens</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== NORMALISATION ====== -->
+    <section class="media-section media-section-alt" id="normalisation">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Technical note</span>
+          <h2 class="section-title">L2 normalisation</h2>
+          <div class="section-line" aria-hidden="true"></div>
+        </div>
+        <p class="section-intro">Vectors are L2‑normalised by default, which makes cosine similarity identical to dot product. BGE‑M3 does not require an instruction prefix, unlike the older bge‑large‑en model.</p>
+      </div>
+    </section>
+
+    <!-- ====== USE IT FROM PYTHON ====== -->
+    <section class="media-section media-section-alt" id="library">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Same tool, other doors</span>
+          <h2 class="section-title">Use It From Python</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">The Python tier reads the JSONL produced by the chunk stage and writes a .npy of vectors.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">From the THL library</h3>
+
+          <div class="how-block">
+            <span class="how-block-label">Install</span>
+            <div class="how-code"><code>pip install "thehallucinatedlab[embed]"</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Embed a chunk file</span>
+            <div class="how-code"><code>from thehallucinatedlab import embed
+
+embed("chunks.jsonl", model="bge")</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Or from the command line</span>
+            <div class="how-code"><code>thl embed chunks.jsonl</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+  <script src="toolkit.js" defer></script>
+</body>
+</html>
