@@ -2075,6 +2075,14 @@
   overflow: hidden;
   transition: var(--transition);
 }
+/* A card with nothing behind it yet. It keeps the shape so the grid still
+   reads as one set, and drops every affordance that promises a
+   destination — no lift, no border warm-up, no arrow. Cursor stays
+   default because it is not a control. */
+.gateway-card-planned { cursor: default; }
+.gateway-card-planned:hover { transform: none; border-color: var(--border-subtle); box-shadow: none; }
+.gateway-cta-muted { color: var(--text-muted); }
+
 .gateway-card:hover {
   border-color: var(--border-gold);
   transform: translateY(-6px);
