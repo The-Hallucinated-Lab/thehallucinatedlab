@@ -17,25 +17,65 @@
       "status": "live",
       "summary": "Convert an image between formats without uploading it anywhere.",
       "description": "Re-encodes an image into another format. In the browser this runs on a canvas, so the file never leaves the page; in Python it runs through Pillow. Formats without an alpha channel are flattened onto a background colour first, so a transparent PNG becomes a JPEG with a solid backdrop rather than a black one.",
-      "runtimes": ["browser", "python"],
+      "runtimes": [
+        "browser",
+        "python"
+      ],
       "page": "convert.html",
       "input": {
         "kind": "image",
-        "accept": ["image/png", "image/jpeg", "image/webp", "image/avif", "image/gif", "image/bmp"],
+        "accept": [
+          "image/png",
+          "image/jpeg",
+          "image/webp",
+          "image/avif",
+          "image/gif",
+          "image/bmp"
+        ],
         "maxPixels": 40000000,
         "maxPixelsNote": "Roughly 40 megapixels. The browser encodes on the main thread, so a larger input would lock the tab."
       },
-      "aliases": ["image convert", "convert image", "change format", "image converter"],
+      "aliases": [
+        "image convert",
+        "convert image",
+        "change format",
+        "image converter"
+      ],
       "keywords": {
-        "action": ["convert", "converter", "change", "turn", "make", "transform", "export", "encode", "reencode", "save"],
-        "subject": ["image", "images", "picture", "photo", "pic", "img", "file", "format"]
+        "action": [
+          "convert",
+          "converter",
+          "change",
+          "turn",
+          "make",
+          "transform",
+          "export",
+          "encode",
+          "reencode",
+          "save"
+        ],
+        "subject": [
+          "image",
+          "images",
+          "picture",
+          "photo",
+          "pic",
+          "img",
+          "file",
+          "format"
+        ]
       },
       "params": [
         {
           "name": "format",
           "type": "enum",
           "required": true,
-          "values": ["png", "jpeg", "webp", "avif"],
+          "values": [
+            "png",
+            "jpeg",
+            "webp",
+            "avif"
+          ],
           "aliases": {
             "jpg": "jpeg",
             "jpe": "jpeg",
@@ -51,8 +91,15 @@
           "default": 92,
           "min": 1,
           "max": 100,
-          "appliesTo": ["jpeg", "webp", "avif"],
-          "keywords": ["quality", "q"],
+          "appliesTo": [
+            "jpeg",
+            "webp",
+            "avif"
+          ],
+          "keywords": [
+            "quality",
+            "q"
+          ],
           "description": "Encoder quality, 1-100. Higher keeps more detail and produces a larger file. Ignored for PNG, which is lossless."
         },
         {
@@ -60,23 +107,67 @@
           "type": "color",
           "required": false,
           "default": "#ffffff",
-          "appliesTo": ["jpeg"],
-          "keywords": ["background", "bg", "backdrop", "matte"],
+          "appliesTo": [
+            "jpeg"
+          ],
+          "keywords": [
+            "background",
+            "bg",
+            "backdrop",
+            "matte"
+          ],
           "description": "Colour used to flatten transparency when the target format has no alpha channel. Only JPEG needs this."
         }
       ],
       "meta": {
         "formats": {
-          "png": { "mime": "image/png", "ext": "png", "alpha": true, "lossy": false },
-          "jpeg": { "mime": "image/jpeg", "ext": "jpg", "alpha": false, "lossy": true },
-          "webp": { "mime": "image/webp", "ext": "webp", "alpha": true, "lossy": true },
-          "avif": { "mime": "image/avif", "ext": "avif", "alpha": true, "lossy": true }
+          "png": {
+            "mime": "image/png",
+            "ext": "png",
+            "alpha": true,
+            "lossy": false
+          },
+          "jpeg": {
+            "mime": "image/jpeg",
+            "ext": "jpg",
+            "alpha": false,
+            "lossy": true
+          },
+          "webp": {
+            "mime": "image/webp",
+            "ext": "webp",
+            "alpha": true,
+            "lossy": true
+          },
+          "avif": {
+            "mime": "image/avif",
+            "ext": "avif",
+            "alpha": true,
+            "lossy": true
+          }
         }
       },
       "examples": [
-        { "text": "convert this to png", "args": { "format": "png" } },
-        { "text": "make it a jpg at 80 quality", "args": { "format": "jpeg", "quality": 80 } },
-        { "text": "png to webp, quality 75", "args": { "format": "webp", "quality": 75 } }
+        {
+          "text": "convert this to png",
+          "args": {
+            "format": "png"
+          }
+        },
+        {
+          "text": "make it a jpg at 80 quality",
+          "args": {
+            "format": "jpeg",
+            "quality": 80
+          }
+        },
+        {
+          "text": "png to webp, quality 75",
+          "args": {
+            "format": "webp",
+            "quality": 75
+          }
+        }
       ]
     },
     {
@@ -85,18 +176,56 @@
       "status": "live",
       "summary": "Turn a document into Markdown with its structure intact.",
       "description": "Reads a PDF, Word file, presentation, spreadsheet, web page or e-book and writes Markdown. Headings stay headings and page boundaries stay marked, because that is exactly what the next stage splits on -- flattening to plain text first would leave structure-aware chunking with no structure to be aware of. In the browser this runs on vendored parsers in your own tab; in Python it runs through LangChain's document loaders, which reach considerably more formats.",
-      "runtimes": ["browser", "python"],
+      "runtimes": [
+        "browser",
+        "python"
+      ],
       "page": "extract.html",
       "input": {
         "kind": "document",
-        "accept": [".pdf", ".docx", ".pptx", ".xlsx", ".epub", ".rtf", ".odt", ".eml", ".html", ".htm", ".csv", ".md", ".txt"],
+        "accept": [
+          ".pdf",
+          ".docx",
+          ".pptx",
+          ".xlsx",
+          ".epub",
+          ".rtf",
+          ".odt",
+          ".eml",
+          ".html",
+          ".htm",
+          ".csv",
+          ".md",
+          ".txt"
+        ],
         "maxBytes": 104857600,
         "maxBytesNote": "100MB. The browser holds the whole file in memory while parsing, so a larger document would exhaust the tab."
       },
-      "aliases": ["extract text", "document to markdown", "pdf to markdown", "read document"],
+      "aliases": [
+        "extract text",
+        "document to markdown",
+        "pdf to markdown",
+        "read document"
+      ],
       "keywords": {
-        "action": ["extract", "read", "parse", "pull", "ingest"],
-        "subject": ["pdf", "docx", "document", "doc", "word", "markdown", "epub", "slides", "spreadsheet"]
+        "action": [
+          "extract",
+          "read",
+          "parse",
+          "pull",
+          "ingest"
+        ],
+        "subject": [
+          "pdf",
+          "docx",
+          "document",
+          "doc",
+          "word",
+          "markdown",
+          "epub",
+          "slides",
+          "spreadsheet"
+        ]
       },
       "params": [
         {
@@ -104,7 +233,10 @@
           "type": "enum",
           "required": false,
           "default": "markdown",
-          "values": ["markdown", "text"],
+          "values": [
+            "markdown",
+            "text"
+          ],
           "aliases": {
             "md": "markdown",
             "plain": "text",
@@ -117,7 +249,10 @@
           "type": "boolean",
           "required": false,
           "default": true,
-          "keywords": ["frontmatter", "metadata"],
+          "keywords": [
+            "frontmatter",
+            "metadata"
+          ],
           "description": "Write a YAML block at the top recording the source filename, page count and extraction time. Turn it off when the output is going somewhere that would render the block as body text."
         },
         {
@@ -125,7 +260,10 @@
           "type": "boolean",
           "required": false,
           "default": true,
-          "keywords": ["pages", "markers"],
+          "keywords": [
+            "pages",
+            "markers"
+          ],
           "description": "Mark page boundaries with an HTML comment. Markdown renderers ignore them and the chunk tool reads them, which is what lets a retrieved chunk cite the page it came from."
         },
         {
@@ -133,15 +271,39 @@
           "type": "boolean",
           "required": false,
           "default": true,
-          "keywords": ["tables"],
+          "keywords": [
+            "tables"
+          ],
           "description": "Render tables as Markdown tables rather than flattening them to lines of text. Off is occasionally better for documents where the parser mistakes a layout grid for a data table."
         }
       ],
       "meta": {
         "$comment": "Which formats each runtime can actually read today. browser is what the page parses with no parser at all -- DOMParser, FileReader and a CSV reader -- so it stays true with nothing vendored and nothing installed. python is what the extract extra installs. The page compares the two to decide when to offer the bridge. Vendoring pdf.js and mammoth into assets/vendor would move .pdf and .docx into the browser tier; until something is actually vendored, listing them here would make the page offer a parser it does not have.",
         "tiers": {
-          "browser": [".html", ".htm", ".csv", ".md", ".markdown", ".txt"],
-          "python": [".pdf", ".docx", ".pptx", ".xlsx", ".epub", ".rtf", ".odt", ".eml", ".html", ".htm", ".csv", ".md", ".markdown", ".txt"]
+          "browser": [
+            ".html",
+            ".htm",
+            ".csv",
+            ".md",
+            ".markdown",
+            ".txt"
+          ],
+          "python": [
+            ".pdf",
+            ".docx",
+            ".pptx",
+            ".xlsx",
+            ".epub",
+            ".rtf",
+            ".odt",
+            ".eml",
+            ".html",
+            ".htm",
+            ".csv",
+            ".md",
+            ".markdown",
+            ".txt"
+          ]
         },
         "structure": {
           "$comment": "Where headings come from in each format. Anything absent here yields page or section markers only, never invented headings.",
@@ -161,8 +323,18 @@
         }
       },
       "examples": [
-        { "text": "extract this pdf to markdown", "args": { "format": "markdown" } },
-        { "text": "read the document as plain text", "args": { "format": "text" } }
+        {
+          "text": "extract this pdf to markdown",
+          "args": {
+            "format": "markdown"
+          }
+        },
+        {
+          "text": "read the document as plain text",
+          "args": {
+            "format": "text"
+          }
+        }
       ]
     },
     {
@@ -171,18 +343,41 @@
       "status": "live",
       "summary": "Split a Markdown document into retrieval-sized pieces along its own structure.",
       "description": "Splits on headings first and size second, so a chunk is a section of the document rather than an arbitrary window of characters. Each piece carries the heading path it came from and the page it started on, which is what lets a retrieved chunk cite its source instead of arriving as anonymous text. Output is JSONL -- one record per line, text plus metadata, the same shape a LangChain Document has.",
-      "runtimes": ["browser", "python"],
+      "runtimes": [
+        "browser",
+        "python"
+      ],
       "page": "chunk.html",
       "input": {
         "kind": "document",
-        "accept": [".md", ".markdown", ".txt"],
+        "accept": [
+          ".md",
+          ".markdown",
+          ".txt"
+        ],
         "maxBytes": 104857600,
         "maxBytesNote": "100MB. Chunking holds the document and its pieces in memory at once."
       },
-      "aliases": ["split document", "chunk document", "split into chunks"],
+      "aliases": [
+        "split document",
+        "chunk document",
+        "split into chunks"
+      ],
       "keywords": {
-        "action": ["chunk", "split", "divide", "segment"],
-        "subject": ["chunks", "token", "tokens", "pieces", "markdown", "document"]
+        "action": [
+          "chunk",
+          "split",
+          "divide",
+          "segment"
+        ],
+        "subject": [
+          "chunks",
+          "token",
+          "tokens",
+          "pieces",
+          "markdown",
+          "document"
+        ]
       },
       "params": [
         {
@@ -192,7 +387,12 @@
           "default": 512,
           "min": 64,
           "max": 8192,
-          "keywords": ["tokens", "token", "size", "max"],
+          "keywords": [
+            "tokens",
+            "token",
+            "size",
+            "max"
+          ],
           "description": "The largest a chunk may be. 512 suits most retrieval; larger chunks carry more context but blur what a match actually matched. The ceiling is BGE-M3's context window."
         },
         {
@@ -202,7 +402,9 @@
           "default": 64,
           "min": 0,
           "max": 1024,
-          "keywords": ["overlap"],
+          "keywords": [
+            "overlap"
+          ],
           "description": "Tokens repeated from the end of one chunk at the start of the next, so a sentence split across a boundary is still whole somewhere. Must be smaller than max_tokens."
         },
         {
@@ -210,7 +412,11 @@
           "type": "enum",
           "required": false,
           "default": "bge",
-          "values": ["bge", "openai", "estimate"],
+          "values": [
+            "bge",
+            "openai",
+            "estimate"
+          ],
           "aliases": {
             "bge-m3": "bge",
             "m3": "bge",
@@ -227,7 +433,10 @@
           "type": "boolean",
           "required": false,
           "default": true,
-          "keywords": ["headings", "context"],
+          "keywords": [
+            "headings",
+            "context"
+          ],
           "description": "Prepend the heading path to each chunk's text. Costs a few tokens per chunk and makes a fragment from deep in a document embed as what it is rather than as a stray paragraph."
         }
       ],
@@ -255,7 +464,12 @@
         }
       },
       "examples": [
-        { "text": "chunk this into 256 token pieces", "args": { "max_tokens": 256 } }
+        {
+          "text": "chunk this into 256 token pieces",
+          "args": {
+            "max_tokens": 256
+          }
+        }
       ]
     },
     {
@@ -264,17 +478,38 @@
       "status": "live",
       "summary": "Count tokens, so you know what a corpus costs before you embed it.",
       "description": "Reports how many tokens a document or a folder of chunks contains, how they are distributed, and how many pieces exceed the model's context window. This is a measuring instrument, not a stage of the pipeline: an embedding model tokenizes internally with its own vocabulary, so there is no such thing as handing it a pre-tokenized file. What the tokenizer is genuinely for is deciding how to chunk and knowing what embedding will cost.",
-      "runtimes": ["browser", "python"],
+      "runtimes": [
+        "browser",
+        "python"
+      ],
       "page": "tokenize.html",
       "input": {
         "kind": "text",
-        "accept": [".txt", ".md", ".markdown", ".jsonl"],
+        "accept": [
+          ".txt",
+          ".md",
+          ".markdown",
+          ".jsonl"
+        ],
         "maxBytes": 104857600
       },
-      "aliases": ["count tokens", "token count", "how many tokens"],
+      "aliases": [
+        "count tokens",
+        "token count",
+        "how many tokens"
+      ],
       "keywords": {
-        "action": ["count", "tokenize", "measure"],
-        "subject": ["tokens", "token", "cost", "budget"]
+        "action": [
+          "count",
+          "tokenize",
+          "measure"
+        ],
+        "subject": [
+          "tokens",
+          "token",
+          "cost",
+          "budget"
+        ]
       },
       "params": [
         {
@@ -282,7 +517,11 @@
           "type": "enum",
           "required": false,
           "default": "bge",
-          "values": ["bge", "openai", "estimate"],
+          "values": [
+            "bge",
+            "openai",
+            "estimate"
+          ],
           "aliases": {
             "bge-m3": "bge",
             "m3": "bge",
@@ -301,12 +540,20 @@
           "default": 8192,
           "min": 1,
           "max": 1000000,
-          "keywords": ["limit", "ceiling", "context", "window"],
+          "keywords": [
+            "limit",
+            "ceiling",
+            "context",
+            "window"
+          ],
           "description": "The context window to measure against. Anything longer is reported as an overflow, because at embed time it would be silently truncated and the tail would simply not be in the vector."
         }
       ],
       "examples": [
-        { "text": "count the tokens in this", "args": {} }
+        {
+          "text": "count the tokens in this",
+          "args": {}
+        }
       ]
     },
     {
@@ -315,17 +562,35 @@
       "status": "live",
       "summary": "Turn chunks into vectors with a model that runs on your own machine.",
       "description": "Reads the JSONL that chunk produced and writes one vector per record. BGE-M3 is the default: 1024 dimensions, 8192 context, and multilingual without a separate model per language. Vectors are L2-normalised by default, which makes cosine similarity and dot product the same operation and is what most vector stores assume. Output is a single .npy alongside the ids, not one file per chunk -- a corpus of 40,000 chunks is 40,000 files nobody wants.",
-      "runtimes": ["python"],
+      "runtimes": [
+        "python"
+      ],
       "page": "embed.html",
       "input": {
         "kind": "jsonl",
-        "accept": [".jsonl"],
+        "accept": [
+          ".jsonl"
+        ],
         "maxBytes": 1073741824
       },
-      "aliases": ["embed chunks", "make vectors", "vectorise chunks"],
+      "aliases": [
+        "embed chunks",
+        "make vectors",
+        "vectorise chunks"
+      ],
       "keywords": {
-        "action": ["embed", "vectorise", "vectorize", "encode"],
-        "subject": ["chunks", "vectors", "embeddings", "vector"]
+        "action": [
+          "embed",
+          "vectorise",
+          "vectorize",
+          "encode"
+        ],
+        "subject": [
+          "chunks",
+          "vectors",
+          "embeddings",
+          "vector"
+        ]
       },
       "params": [
         {
@@ -333,7 +598,10 @@
           "type": "enum",
           "required": false,
           "default": "bge",
-          "values": ["bge", "minilm"],
+          "values": [
+            "bge",
+            "minilm"
+          ],
           "aliases": {
             "bge-m3": "bge",
             "m3": "bge",
@@ -349,7 +617,9 @@
           "default": 16,
           "min": 1,
           "max": 256,
-          "keywords": ["batch"],
+          "keywords": [
+            "batch"
+          ],
           "description": "How many chunks to encode at once. Larger is faster until it exhausts memory; on CPU the useful range is small."
         },
         {
@@ -357,7 +627,10 @@
           "type": "boolean",
           "required": false,
           "default": true,
-          "keywords": ["normalize", "normalise"],
+          "keywords": [
+            "normalize",
+            "normalise"
+          ],
           "description": "Scale every vector to unit length, so cosine similarity and dot product agree. Leave it on unless the store you are feeding expects raw magnitudes."
         }
       ],
@@ -381,7 +654,12 @@
         }
       },
       "examples": [
-        { "text": "embed these chunks with bge", "args": { "model": "bge" } }
+        {
+          "text": "embed these chunks with bge",
+          "args": {
+            "model": "bge"
+          }
+        }
       ]
     },
     {
@@ -391,17 +669,35 @@
       "summary": "Build a portable vector database you own and can query with your own code.",
       "description": "Takes the vectors and the chunks they came from and writes a database directory. Crucially it also writes a sidecar recording which model produced the vectors, how many dimensions they have, and whether they were normalised -- without that, the folder is not actually usable: opening a Chroma collection and calling query_texts reaches for its own default embedder at 384 dimensions, which against 1024-dimension vectors either raises or silently returns nonsense. A query snippet is written alongside, so the first thing you can do with the output is use it.",
       "$pageComment": "vector-index.html, not index.html: the tool is named 'index' but index.html is the site homepage, and the manifest test asserts this file exists -- pointing at it would have invited overwriting 27KB of homepage.",
-      "runtimes": ["python"],
+      "runtimes": [
+        "python"
+      ],
       "page": "vector-index.html",
       "input": {
         "kind": "jsonl",
-        "accept": [".jsonl"],
+        "accept": [
+          ".jsonl"
+        ],
         "maxBytes": 1073741824
       },
-      "aliases": ["build index", "vector database", "index vectors"],
+      "aliases": [
+        "build index",
+        "vector database",
+        "index vectors"
+      ],
       "keywords": {
-        "action": ["index", "store", "build"],
-        "subject": ["database", "vectors", "index", "store", "db"]
+        "action": [
+          "index",
+          "store",
+          "build"
+        ],
+        "subject": [
+          "database",
+          "vectors",
+          "index",
+          "store",
+          "db"
+        ]
       },
       "params": [
         {
@@ -409,7 +705,10 @@
           "type": "enum",
           "required": false,
           "default": "chroma",
-          "values": ["chroma", "numpy"],
+          "values": [
+            "chroma",
+            "numpy"
+          ],
           "aliases": {
             "chromadb": "chroma",
             "npy": "numpy",
@@ -424,7 +723,10 @@
           "default": "thl",
           "pattern": "[a-zA-Z0-9][a-zA-Z0-9_-]{1,62}",
           "maxLength": 63,
-          "keywords": ["collection", "name"],
+          "keywords": [
+            "collection",
+            "name"
+          ],
           "description": "What to call the collection inside the store. Chroma requires 3-63 characters, starting alphanumeric."
         },
         {
@@ -432,7 +734,10 @@
           "type": "boolean",
           "required": false,
           "default": false,
-          "keywords": ["overwrite", "replace"],
+          "keywords": [
+            "overwrite",
+            "replace"
+          ],
           "description": "Replace an existing collection of the same name. Off by default, because appending vectors from a different model to an existing index is the failure that is hardest to notice afterwards."
         }
       ],
@@ -441,7 +746,618 @@
         "sidecar": "thl-index.json"
       },
       "examples": [
-        { "text": "index these vectors into chroma", "args": { "store": "chroma" } }
+        {
+          "text": "index these vectors into chroma",
+          "args": {
+            "store": "chroma"
+          }
+        }
+      ]
+    },
+    {
+      "name": "describe_dataset",
+      "title": "Describe dataset",
+      "status": "live",
+      "summary": "Read a data file and report its shape, plus an inferred type and a confidence for every column.",
+      "description": "The cheap first pass over a tabular file. Reports rows, columns, null counts, cardinality and a preview for each column, alongside an inferred type and a confidence score in [0,1]. Anything below 0.7 is flagged rather than asserted, because the failures people actually notice are misclassifications: a zip code read as a quantity, a 0/1/2 encoding given a mean, dates in three formats silently coerced. Nothing is written and nothing is charted.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "eda.html",
+      "input": {
+        "kind": "tabular",
+        "accept": [
+          ".csv",
+          ".tsv",
+          ".txt",
+          ".json",
+          ".jsonl",
+          ".parquet",
+          ".xlsx"
+        ]
+      },
+      "aliases": [
+        "describe dataset",
+        "profile dataset",
+        "what is in this file",
+        "dataset overview"
+      ],
+      "keywords": {
+        "action": [
+          "describe",
+          "profile",
+          "inspect",
+          "overview"
+        ],
+        "subject": [
+          "dataset",
+          "csv",
+          "schema",
+          "shape",
+          "file"
+        ]
+      },
+      "params": [
+        {
+          "name": "sample",
+          "type": "integer",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 100000000,
+          "description": "Rows to sample. Omitted, the file is read whole unless it is large enough to need streaming."
+        },
+        {
+          "name": "delimiter",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Field separator. Sniffed when omitted; what you pass is obeyed rather than treated as a hint."
+        },
+        {
+          "name": "encoding",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Text encoding. Sniffed when omitted."
+        },
+        {
+          "name": "header",
+          "type": "integer",
+          "required": false,
+          "default": 0,
+          "min": -1,
+          "max": 100,
+          "description": "Header row index. Pass -1 for a file with no header row."
+        },
+        {
+          "name": "na_values",
+          "type": "list",
+          "required": false,
+          "default": null,
+          "description": "Extra tokens to read as null, on top of the ones pandas already knows."
+        },
+        {
+          "name": "sheet",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Worksheet name for a spreadsheet, or 'all' to treat each sheet as its own dataset."
+        },
+        {
+          "name": "nrows",
+          "type": "integer",
+          "required": false,
+          "default": null,
+          "min": 1,
+          "max": 1000000000,
+          "description": "Read only the first N rows."
+        },
+        {
+          "name": "types",
+          "type": "mapping",
+          "required": false,
+          "default": null,
+          "description": "Column-to-type overrides applied after inference, for example zip=categorical_high."
+        },
+        {
+          "name": "seed",
+          "type": "integer",
+          "required": false,
+          "default": 42,
+          "min": 0,
+          "max": 2147483647,
+          "description": "Sampling seed, recorded in the recipe so a rerun draws the same rows."
+        }
+      ],
+      "meta": {
+        "columnTypes": [
+          "numeric_continuous",
+          "numeric_discrete",
+          "boolean",
+          "categorical_low",
+          "categorical_high",
+          "datetime",
+          "free_text",
+          "identifier",
+          "constant",
+          "empty",
+          "unsupported"
+        ],
+        "confidenceFloor": 0.7
+      },
+      "examples": [
+        {
+          "text": "describe the dataset",
+          "args": {}
+        },
+        {
+          "text": "profile sales.csv",
+          "args": {}
+        }
+      ]
+    },
+    {
+      "name": "profile_column",
+      "title": "Profile column",
+      "status": "live",
+      "summary": "Compute the summary statistics that fit one column's inferred type.",
+      "description": "Runs the statistics the registry marks default for the column's type, or an explicit list. A statistic that raises is recorded on the result rather than losing the other forty. Outlier counts always ship with the rule that produced them, because a count with no rule attached is not a statistic: the IQR fence and three sigma disagree by a factor of several on the same column.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "eda.html",
+      "input": {
+        "kind": "tabular",
+        "accept": [
+          ".csv",
+          ".tsv",
+          ".txt",
+          ".json",
+          ".jsonl",
+          ".parquet",
+          ".xlsx"
+        ]
+      },
+      "aliases": [
+        "column statistics",
+        "summarise column",
+        "describe column"
+      ],
+      "keywords": {
+        "action": [
+          "summarise",
+          "summarize"
+        ],
+        "subject": [
+          "column",
+          "variable",
+          "statistics"
+        ]
+      },
+      "params": [
+        {
+          "name": "column",
+          "type": "string",
+          "required": true,
+          "description": "Which column to profile.",
+          "prompt": "Which column?"
+        },
+        {
+          "name": "summaries",
+          "type": "list",
+          "required": false,
+          "default": null,
+          "description": "Which statistics to run. Defaults to the ones marked default for the column's type."
+        },
+        {
+          "name": "type_override",
+          "type": "enum",
+          "required": false,
+          "default": null,
+          "values": [
+            "numeric_continuous",
+            "numeric_discrete",
+            "boolean",
+            "categorical_low",
+            "categorical_high",
+            "datetime",
+            "free_text",
+            "identifier",
+            "constant",
+            "empty",
+            "unsupported"
+          ],
+          "description": "Read the column as this type instead of the inferred one."
+        },
+        {
+          "name": "top_n",
+          "type": "integer",
+          "required": false,
+          "default": 15,
+          "min": 1,
+          "max": 200,
+          "description": "Cut-off for level and token listings."
+        },
+        {
+          "name": "outlier_rule",
+          "type": "enum",
+          "required": false,
+          "default": "iqr",
+          "values": [
+            "iqr",
+            "zscore"
+          ],
+          "description": "How outliers are counted. The rule is reported alongside the number."
+        }
+      ],
+      "examples": [
+        {
+          "text": "summarise the column",
+          "args": {}
+        },
+        {
+          "text": "column statistics using zscore outliers",
+          "args": {
+            "outlier_rule": "zscore"
+          }
+        }
+      ]
+    },
+    {
+      "name": "plot_column",
+      "title": "Plot column",
+      "status": "live",
+      "summary": "Draw one figure for one column and write it to a file.",
+      "description": "Charts are matplotlib on the Agg backend, selected per column type. A horizontal bar is the default for a low-cardinality category rather than a pie, because people compare lengths well and angles badly; pie and donut stay available for the cases where share-of-whole is the actual point. Asking for a chart the column's type does not support is an error that names the types it does.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "eda.html",
+      "input": {
+        "kind": "tabular",
+        "accept": [
+          ".csv",
+          ".tsv",
+          ".txt",
+          ".json",
+          ".jsonl",
+          ".parquet",
+          ".xlsx"
+        ]
+      },
+      "aliases": [
+        "chart column",
+        "plot column",
+        "draw histogram",
+        "graph a column"
+      ],
+      "keywords": {
+        "action": [
+          "plot",
+          "chart",
+          "graph",
+          "draw",
+          "visualise",
+          "visualize"
+        ],
+        "subject": [
+          "figure",
+          "distribution",
+          "histogram",
+          "boxplot"
+        ]
+      },
+      "params": [
+        {
+          "name": "column",
+          "type": "string",
+          "required": true,
+          "description": "Which column to plot.",
+          "prompt": "Which column?"
+        },
+        {
+          "name": "chart",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "histogram",
+            "box",
+            "kde",
+            "violin",
+            "ecdf",
+            "count_bar",
+            "bar",
+            "pie",
+            "donut",
+            "hbar",
+            "stacked_vs_target",
+            "top_bar",
+            "coverage_curve",
+            "line",
+            "gap_plot",
+            "period_hist",
+            "length_hist",
+            "top_tokens"
+          ],
+          "aliases": {
+            "boxplot": "box",
+            "density": "kde",
+            "horizontal_bar": "hbar",
+            "barh": "hbar"
+          },
+          "description": "Which chart. Each applies only to certain column types, and the error names which.",
+          "prompt": "Which chart - histogram, box, hbar or line?"
+        },
+        {
+          "name": "out",
+          "type": "path",
+          "required": false,
+          "default": null,
+          "description": "Where to write. Defaults to the figures directory beside the source file."
+        },
+        {
+          "name": "target",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Required by stacked_vs_target, ignored by every other chart."
+        },
+        {
+          "name": "figure_format",
+          "type": "enum",
+          "required": false,
+          "default": "png",
+          "values": [
+            "png",
+            "svg"
+          ],
+          "description": "Image format."
+        },
+        {
+          "name": "dpi",
+          "type": "integer",
+          "required": false,
+          "default": 110,
+          "min": 50,
+          "max": 600,
+          "description": "Resolution, for raster output."
+        },
+        {
+          "name": "top_n",
+          "type": "integer",
+          "required": false,
+          "default": 15,
+          "min": 1,
+          "max": 200,
+          "description": "Cut-off for charts of high-cardinality columns."
+        }
+      ],
+      "examples": [
+        {
+          "text": "plot a histogram",
+          "args": {
+            "chart": "histogram"
+          }
+        },
+        {
+          "text": "draw the boxplot",
+          "args": {
+            "chart": "box"
+          }
+        }
+      ]
+    },
+    {
+      "name": "relate_columns",
+      "title": "Relate columns",
+      "status": "live",
+      "summary": "Measure how columns relate: correlation, missingness, duplicates, or a target.",
+      "description": "The tier that makes this exploratory data analysis rather than a describe() wrapper. Pearson and Spearman for numeric pairs and a bias-corrected Cramer's V for categorical ones; which columns go missing together, since two columns null on the same rows are usually one uncollected fact rather than two gaps; exact and near-duplicate row counts with 'near' defined in the output; and, where a target is named, a mutual-information ranking of every feature against it.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "eda.html",
+      "input": {
+        "kind": "tabular",
+        "accept": [
+          ".csv",
+          ".tsv",
+          ".txt",
+          ".json",
+          ".jsonl",
+          ".parquet",
+          ".xlsx"
+        ]
+      },
+      "aliases": [
+        "correlation matrix",
+        "missing values",
+        "duplicate rows",
+        "feature ranking"
+      ],
+      "keywords": {
+        "action": [
+          "correlate",
+          "relate",
+          "rank"
+        ],
+        "subject": [
+          "correlation",
+          "missingness",
+          "duplicates",
+          "relationship",
+          "features"
+        ]
+      },
+      "params": [
+        {
+          "name": "kind",
+          "type": "enum",
+          "required": true,
+          "values": [
+            "correlation",
+            "missingness",
+            "duplicates",
+            "target"
+          ],
+          "aliases": {
+            "corr": "correlation",
+            "missing": "missingness",
+            "dupes": "duplicates"
+          },
+          "description": "Which analysis to run.",
+          "prompt": "Which - correlation, missingness, duplicates or target?"
+        },
+        {
+          "name": "columns",
+          "type": "list",
+          "required": false,
+          "default": null,
+          "description": "Restrict the analysis to these columns."
+        },
+        {
+          "name": "target",
+          "type": "string",
+          "required": false,
+          "default": null,
+          "description": "Required by kind=target; enables target-versus-feature views elsewhere."
+        },
+        {
+          "name": "out",
+          "type": "path",
+          "required": false,
+          "default": null,
+          "description": "Where figures go. Defaults to the figures directory beside the source file."
+        },
+        {
+          "name": "top_n",
+          "type": "integer",
+          "required": false,
+          "default": 15,
+          "min": 1,
+          "max": 200,
+          "description": "Cut-off for the rankings and the level breakdowns."
+        }
+      ],
+      "examples": [
+        {
+          "text": "show the correlation",
+          "args": {
+            "kind": "correlation"
+          }
+        },
+        {
+          "text": "find duplicates",
+          "args": {
+            "kind": "duplicates"
+          }
+        }
+      ]
+    },
+    {
+      "name": "eda_report",
+      "title": "EDA report",
+      "status": "live",
+      "summary": "Render a complete profile report from a fully specified recipe.",
+      "description": "The seam the design turns on. A recipe holds every decision a run makes - column types, chart selections, the sampling seed, the output format - and this renders one. The interactive session's only job is to produce a recipe; a CI job checks one into a repository; a future browser front-end would build one too. All of them arrive here, so there is one code path rather than three, and a saved recipe replays identically on next month's export.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "eda.html",
+      "input": {
+        "kind": "tabular",
+        "accept": [
+          ".csv",
+          ".tsv",
+          ".txt",
+          ".json",
+          ".jsonl",
+          ".parquet",
+          ".xlsx"
+        ]
+      },
+      "aliases": [
+        "profile report",
+        "eda report",
+        "data report",
+        "replay recipe"
+      ],
+      "keywords": {
+        "action": [
+          "report"
+        ],
+        "subject": [
+          "report",
+          "recipe",
+          "profile"
+        ]
+      },
+      "params": [
+        {
+          "name": "recipe",
+          "type": "path",
+          "required": true,
+          "description": "A recipe file. Produced by --save-recipe or by the interactive session.",
+          "prompt": "Which recipe?"
+        },
+        {
+          "name": "out",
+          "type": "path",
+          "required": false,
+          "default": null,
+          "description": "Output directory. Defaults to a single new directory beside the source file."
+        },
+        {
+          "name": "format",
+          "type": "enum",
+          "required": false,
+          "default": "md",
+          "values": [
+            "md",
+            "html"
+          ],
+          "aliases": {
+            "markdown": "md"
+          },
+          "description": "Markdown diffs in a pull request; a self-contained HTML blob does not."
+        },
+        {
+          "name": "self_contained",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Inline every figure as base64 so the report is one file. HTML only."
+        },
+        {
+          "name": "overwrite",
+          "type": "boolean",
+          "required": false,
+          "default": false,
+          "description": "Write into a directory this tool did not create."
+        }
+      ],
+      "meta": {
+        "outputs": [
+          "report.md",
+          "recipe.json",
+          "analysis.py",
+          "summary.json",
+          "figures/"
+        ],
+        "recipeVersion": "1.0"
+      },
+      "examples": [
+        {
+          "text": "build the eda report",
+          "args": {}
+        },
+        {
+          "text": "report as html",
+          "args": {
+            "format": "html"
+          }
+        }
       ]
     }
   ]

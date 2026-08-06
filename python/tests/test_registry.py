@@ -159,5 +159,7 @@ def test_every_manifest_tool_documents_itself():
                 "path",
                 "boolean",
                 "number",
+                "list",
+                "mapping",
             }, f"{name}.{param['name']} is type {param.get('type')!r}"
         assert json.dumps(tool)  # nothing unserialisable leaked in

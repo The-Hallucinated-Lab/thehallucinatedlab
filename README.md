@@ -74,6 +74,7 @@ thehallucinatedlab/
 ├── blogs.js           # Blog data store, archive search, submission form
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
 ├── convert.html  # Convert — the first THL tool
+├── eda.html              # Exploratory data analysis — the command-line profiler
 ├── convert.js    # Its drop zone, controls, and result panel
 ├── toolkit.js            # Shared tool runtime + argument-table renderer
 ├── nlp.js                # Intent parser (classification + slot filling)
@@ -152,7 +153,9 @@ thehallucinatedlab/
 
 ### Tools
 - **Convert** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
+- **Exploratory data analysis** — `thl eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
 - **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
+- **Tools declare where they run** — the `runtimes` field is respected, so the Assistant names the command for a Python-only tool rather than offering to run something it cannot
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
 - **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)

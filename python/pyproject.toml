@@ -10,7 +10,10 @@ readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [{ name = "The Hallucinated Lab", email = "thehallucinatedlab@gmail.com" }]
-keywords = ["image", "convert", "png", "jpeg", "webp", "avif", "local-first", "toolkit"]
+keywords = [
+  "image", "convert", "png", "jpeg", "webp", "avif", "local-first", "toolkit",
+  "eda", "exploratory-data-analysis", "profiling", "pandas", "data-quality",
+]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Developers",
@@ -22,6 +25,7 @@ classifiers = [
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
   "Topic :: Multimedia :: Graphics :: Graphics Conversion",
+  "Topic :: Scientific/Engineering :: Information Analysis",
   "Topic :: Utilities",
 ]
 dependencies = ["pillow>=10.0"]
@@ -73,6 +77,21 @@ index = [
 rag = [
   "thehallucinatedlab[extract,chunk,embed,index]",
 ]
+
+# Exploratory data analysis. Deliberately not part of [rag]: profiling a
+# CSV has nothing to do with the document pipeline, and someone who wants
+# one should not install the other.
+#
+# No seaborn. `thl eda` emits an analysis.py the user is meant to edit,
+# and it should be installable from the same four packages named here.
+eda = [
+  "pandas>=2.0,<4",
+  "numpy>=1.24,<3",
+  "matplotlib>=3.7,<4",
+  "scipy>=1.10,<2",
+]
+eda-excel = ["openpyxl>=3.1,<4"]
+eda-parquet = ["pyarrow>=14,<26"]
 
 [project.scripts]
 thl = "thehallucinatedlab.cli:main"

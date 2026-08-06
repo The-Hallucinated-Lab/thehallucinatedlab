@@ -74,6 +74,62 @@ where the transparency was. AVIF needs Pillow 11.3+ or `pillow-avif-plugin`; if 
 cannot encode a format, you get an `UnsupportedFormat` error rather than a file whose
 extension lies about its contents.
 
+### `eda` — exploratory data analysis
+
+Profile a data file and get back a report, the figures, a replayable recipe, and the Python
+script that produced all of it.
+
+```bash
+pip install "thehallucinatedlab[eda]"
+thl eda sales.csv
+```
+
+```
+sales.eda/
+├── report.md        the profile, in Markdown so it diffs in a pull request
+├── recipe.json      every decision, replayable
+├── analysis.py      regenerates everything above — and is meant to be edited
+├── summary.json     the same numbers, machine-readable
+└── figures/
+```
+
+```python
+from thehallucinatedlab import eda
+
+result = eda("sales.csv", target="churn", tier2=True)
+result.report      # sales.eda/report.md
+result.script      # sales.eda/analysis.py
+result.warnings    # sampling, low-confidence types, failed columns
+```
+
+Three things worth knowing before relying on it:
+
+- **Every column gets an inferred type *and* a confidence.** Anything below 0.7 is flagged in
+  the report's caveats and in `result.warnings` rather than asserted, and every verdict is
+  overridable. The failures you actually notice in a profiler are misclassifications — a zip
+  code read as a quantity, a 0/1/2 encoding given a mean, dates in three formats coerced.
+- **The emitted `analysis.py` reproduces the report**: the same figures and a byte-identical
+  `summary.json`. It imports nothing from this package, so you can edit it without reading
+  anyone else's library. A test executes it and diffs the output.
+- **Sampling is never silent.** Under 200 MB everything is exact. Above it the file is
+  streamed — counts, nulls, min/max and cardinality stay exact and only the figures use a
+  seeded sample — stated in the report banner, on every affected figure, and in the recipe.
+
+The five primitives underneath are ordinary functions, usable without going near a report:
+
+```python
+from thehallucinatedlab import describe_dataset, relate_columns
+
+describe_dataset("sales.csv").types()["zip"]        # 'numeric_discrete'
+relate_columns("sales.csv", kind="target", target="churn")
+```
+
+`thl eda sales.csv -i` opens a nine-screen session, and every screen prints the flag that
+would have produced the same choice. Full reference:
+**<https://thehallucinatedlab.space/eda.html>**
+
+Optional extras within the extra: `[eda-excel]` for `.xlsx`, `[eda-parquet]` for `.parquet`.
+
 ## Companion projects
 
 [NexusLink Engine](https://github.com/06pratyush/NexusLinkEngine) is reachable through the
@@ -94,7 +150,10 @@ It is built and released separately and is not yet on PyPI, so the import raises
 Everything deliberate inherits from `THLError`:
 
 `ToolNotFound` · `InvalidArgument` · `MissingArgument` · `UnsupportedFormat` ·
-`NexusLinkNotInstalled`
+`NexusLinkNotInstalled` · `DependencyMissing`
+
+From the EDA tools: `UnreadableSource` · `EmptyDataset` · `ColumnNotFound` ·
+`UnsupportedColumnType` · `InvalidRecipe` · `OutputNotWritable` · `SamplingRequired`
 
 ## Licence
 
