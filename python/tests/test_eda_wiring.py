@@ -33,6 +33,25 @@ EDA_TOOLS = [
     "describe_dataset", "profile_column", "plot_column", "relate_columns", "eda_report",
 ]
 
+#: tomllib arrived in 3.11 and the package supports 3.10. pyproject.toml is
+#: the same file on every interpreter, so the newer legs of the matrix check
+#: these two invariants for all of them -- but say so out loud rather than
+#: letting the older leg quietly pass a test it never ran.
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover - 3.10 only
+    tomllib = None
+
+reads_pyproject = pytest.mark.skipif(
+    tomllib is None,
+    reason="tomllib is 3.11+; the 3.11+ legs of the matrix check this file",
+)
+
+
+def pyproject() -> dict:
+    assert tomllib is not None
+    return tomllib.loads((PACKAGE_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+
 
 def run_python(code: str) -> subprocess.CompletedProcess:
     """Run a snippet in a clean interpreter rooted at the package.
@@ -177,6 +196,7 @@ def test_importing_the_package_costs_no_scientific_stack() -> None:
     assert result.returncode == 0, result.stderr
 
 
+@reads_pyproject
 def test_the_base_dependency_set_is_unchanged() -> None:
     """Definition of done: `pip install thehallucinatedlab` stays as cheap.
 
@@ -184,9 +204,7 @@ def test_the_base_dependency_set_is_unchanged() -> None:
     in `dependencies` would be invisible until somebody's install got
     three orders of magnitude larger.
     """
-    import tomllib
-
-    data = tomllib.loads((PACKAGE_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    data = pyproject()
     assert data["project"]["dependencies"] == ["pillow>=10.0"]
 
     extras = data["project"]["optional-dependencies"]
@@ -200,10 +218,9 @@ def test_the_base_dependency_set_is_unchanged() -> None:
     assert "eda" not in " ".join(extras["rag"])
 
 
+@reads_pyproject
 def test_the_version_is_still_declared_once() -> None:
-    import tomllib
-
-    data = tomllib.loads((PACKAGE_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    data = pyproject()
     assert data["project"]["version"] == __version__
     assert __version__ == registry.version
 
