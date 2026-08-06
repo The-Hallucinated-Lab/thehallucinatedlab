@@ -19,12 +19,13 @@ the website's assistant; wiring it to argv was nearly free.
 from __future__ import annotations
 
 import argparse
+import importlib
 import sys
 from collections.abc import Sequence
 from pathlib import Path
 
 from . import __version__
-from .errors import THLError
+from .errors import DependencyMissing, THLError
 from .nlp import parse as parse_intent
 from .registry import registry
 from .tools.chunk import chunk
@@ -338,9 +339,31 @@ def _guard(fn) -> int:
 
     A traceback is the right output for a bug and the wrong output for
     "quality must be between 1 and 100".
+
+    A missing extra is the one error worth trying to fix rather than
+    report. It is the predictable consequence of keeping the base install
+    small, the fix is a single known command, and the person who hit it
+    is sitting right there. So it is offered first and only reported if
+    the offer is declined or impossible -- see autoinstall, which asks
+    nothing when there is no tty to ask.
     """
     try:
         return fn()
+    except DependencyMissing as err:
+        print(f"thl: {err}", file=sys.stderr)
+        from .autoinstall import offer
+
+        if not offer(err):
+            return 1
+        # A package installed after this process started is invisible to
+        # the import system until the path finders drop their cached
+        # directory listings.
+        importlib.invalidate_caches()
+        try:
+            return fn()
+        except THLError as retry_err:
+            print(f"thl: {retry_err}", file=sys.stderr)
+            return 1
     except THLError as err:
         print(f"thl: {err}", file=sys.stderr)
         return 1
