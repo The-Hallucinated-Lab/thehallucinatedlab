@@ -304,21 +304,43 @@
 
   var CHART_W = 640;
   var CHART_H = 400;
-  var GOLD = '#c9a84c';
-  var INK = '#e8e4dc';
-  var MUTED = '#8a857e';
-  var PANEL = '#12120f';
+
+  /* Read from the stylesheet rather than hard-coded, because the site
+     has a light theme in which every one of these roles inverts —
+     --gold-primary is gold on the dark page and near-black on the gold
+     one. Hard-coding the dark values would paint a dark card onto a
+     gold page, and the bars would come out the same colour as the
+     background they sit on.
+
+     Read per chart rather than once, so a theme switch mid-session
+     produces correctly coloured figures on the next run. */
+  var FALLBACK = { panel: '#0f0f0f', ink: '#f0ece4', muted: '#807b72', accent: '#c9a84c' };
+
+  function themeColours() {
+    var css = window.getComputedStyle(document.documentElement);
+    var pick = function (name, fallback) {
+      var value = css.getPropertyValue(name);
+      return value && value.trim() ? value.trim() : fallback;
+    };
+    return {
+      panel: pick('--bg-card', FALLBACK.panel),
+      ink: pick('--text-primary', FALLBACK.ink),
+      muted: pick('--text-muted', FALLBACK.muted),
+      accent: pick('--gold-primary', FALLBACK.accent)
+    };
+  }
 
   function newCanvas() {
     var c = document.createElement('canvas');
     c.width = CHART_W;
     c.height = CHART_H;
     var ctx = c.getContext('2d');
-    ctx.fillStyle = PANEL;
+    var colours = themeColours();
+    ctx.fillStyle = colours.panel;
     ctx.fillRect(0, 0, CHART_W, CHART_H);
     ctx.font = '13px system-ui, sans-serif';
     ctx.textBaseline = 'middle';
-    return { canvas: c, ctx: ctx };
+    return { canvas: c, ctx: ctx, colours: colours };
   }
 
   function drawFigures(prof, corr) {
@@ -342,12 +364,12 @@
     return eda.slugify(column) + '_' + kind;
   }
 
-  function axes(ctx, title, subtitle) {
-    ctx.fillStyle = INK;
+  function axes(ctx, colours, title, subtitle) {
+    ctx.fillStyle = colours.ink;
     ctx.font = '600 15px system-ui, sans-serif';
     ctx.fillText(title, 20, 26);
     if (subtitle) {
-      ctx.fillStyle = MUTED;
+      ctx.fillStyle = colours.muted;
       ctx.font = '12px system-ui, sans-serif';
       ctx.fillText(subtitle, 20, 46);
     }
@@ -357,27 +379,30 @@
   function histogramChart(col) {
     var made = newCanvas();
     var ctx = made.ctx;
+    var colours = made.colours;
     var bins = col.histogram.bins;
     var left = 60, right = 20, top = 66, bottom = 46;
     var w = CHART_W - left - right;
     var h = CHART_H - top - bottom;
     var max = Math.max.apply(null, bins.map(function (b) { return b.count; })) || 1;
 
-    axes(ctx, col.name, 'distribution · n = ' + col.stats.count.toLocaleString('en-US'));
+    axes(ctx, colours, col.name, 'distribution · n = ' + col.stats.count.toLocaleString('en-US'));
 
-    ctx.strokeStyle = '#2a2a24';
+    ctx.strokeStyle = colours.muted;
+    ctx.globalAlpha = 0.35;
     ctx.beginPath();
     ctx.moveTo(left, top); ctx.lineTo(left, top + h); ctx.lineTo(left + w, top + h);
     ctx.stroke();
+    ctx.globalAlpha = 1;
 
     var barW = w / bins.length;
-    ctx.fillStyle = GOLD;
+    ctx.fillStyle = colours.accent;
     bins.forEach(function (b, i) {
       var bh = (b.count / max) * h;
       ctx.fillRect(left + i * barW + 1, top + h - bh, Math.max(1, barW - 2), bh);
     });
 
-    ctx.fillStyle = MUTED;
+    ctx.fillStyle = colours.muted;
     ctx.textAlign = 'center';
     ctx.fillText(fmt(col.histogram.min), left, top + h + 18);
     ctx.fillText(fmt(col.histogram.max), left + w, top + h + 18);
@@ -391,11 +416,11 @@
     var span = col.histogram.max - col.histogram.min;
     if (span > 0 && col.stats.median !== null) {
       var x = left + ((col.stats.median - col.histogram.min) / span) * w;
-      ctx.strokeStyle = '#e8d48b';
+      ctx.strokeStyle = colours.ink;
       ctx.setLineDash([4, 4]);
       ctx.beginPath(); ctx.moveTo(x, top); ctx.lineTo(x, top + h); ctx.stroke();
       ctx.setLineDash([]);
-      ctx.fillStyle = '#e8d48b';
+      ctx.fillStyle = colours.ink;
       ctx.fillText('median ' + fmt(col.stats.median), Math.min(x + 6, CHART_W - 120), top + 12);
     }
     return made.canvas;
@@ -404,6 +429,7 @@
   function barChart(col) {
     var made = newCanvas();
     var ctx = made.ctx;
+    var colours = made.colours;
     var top = col.stats.top.slice(0, 12);
     var left = 150, right = 40, topPad = 66, bottom = 30;
     var w = CHART_W - left - right;
@@ -411,20 +437,20 @@
     var max = Math.max.apply(null, top.map(function (t) { return t.count; })) || 1;
     var rowH = h / top.length;
 
-    axes(ctx, col.name, col.stats.unique.toLocaleString('en-US') + ' distinct values · top ' + top.length);
+    axes(ctx, colours, col.name, col.stats.unique.toLocaleString('en-US') + ' distinct values · top ' + top.length);
 
     top.forEach(function (t, i) {
       var y = topPad + i * rowH;
       var bw = (t.count / max) * w;
-      ctx.fillStyle = GOLD;
+      ctx.fillStyle = colours.accent;
       ctx.fillRect(left, y + 2, bw, Math.max(2, rowH - 6));
-      ctx.fillStyle = INK;
+      ctx.fillStyle = colours.ink;
       ctx.textAlign = 'right';
       var label = t.value === '' ? '(blank)' : t.value;
       if (label.length > 20) label = label.slice(0, 19) + '…';
       ctx.fillText(label, left - 10, y + rowH / 2);
       ctx.textAlign = 'left';
-      ctx.fillStyle = MUTED;
+      ctx.fillStyle = colours.muted;
       ctx.fillText(String(t.count), left + bw + 6, y + rowH / 2);
     });
     return made.canvas;
@@ -433,41 +459,60 @@
   function correlationChart(corr) {
     var made = newCanvas();
     var ctx = made.ctx;
+    var colours = made.colours;
     var names = corr.columns.slice(0, 12);
     var left = 130, top = 76;
     var size = Math.min(CHART_W - left - 60, CHART_H - top - 40);
     var cell = size / names.length;
 
-    axes(ctx, 'Correlation matrix', 'Pearson r · ' + names.length + ' numeric columns');
+    axes(ctx, colours, 'Correlation matrix', 'Pearson r · ' + names.length + ' numeric columns');
 
     names.forEach(function (a, i) {
       names.forEach(function (b, j) {
         var r = corr.matrix[i][j];
-        ctx.fillStyle = correlationColour(r);
+        ctx.fillStyle = correlationColour(r, colours);
         ctx.fillRect(left + j * cell, top + i * cell, cell - 1, cell - 1);
       });
-      ctx.fillStyle = INK;
+      ctx.fillStyle = colours.ink;
       ctx.textAlign = 'right';
       var label = a.length > 16 ? a.slice(0, 15) + '…' : a;
       ctx.fillText(label, left - 8, top + i * cell + cell / 2);
       ctx.textAlign = 'left';
     });
 
-    ctx.fillStyle = MUTED;
-    ctx.fillText('blue −1', left, top + size + 20);
+    ctx.fillStyle = colours.muted;
+    ctx.fillText('−1', left, top + size + 20);
     ctx.textAlign = 'right';
-    ctx.fillText('+1 gold', left + size, top + size + 20);
+    ctx.fillText('+1', left + size, top + size + 20);
     ctx.textAlign = 'left';
     return made.canvas;
   }
 
-  function correlationColour(r) {
-    if (r === null || r === undefined) return '#1a1a16';
+  /* Positive uses the theme accent so it inverts with everything else.
+     Negative keeps a fixed blue: it has to stay distinguishable from the
+     accent in both themes, and the accent is gold in one and near-black
+     in the other, so deriving it would collide with one of them. */
+  function correlationColour(r, colours) {
+    if (r === null || r === undefined) return 'rgba(128, 128, 128, 0.10)';
     var v = Math.max(-1, Math.min(1, r));
-    if (v >= 0) {
-      return 'rgba(201, 168, 76, ' + (0.12 + 0.88 * v).toFixed(3) + ')';
+    if (v >= 0) return withAlpha(colours.accent, 0.12 + 0.88 * v);
+    return 'rgba(64, 116, 180, ' + (0.12 + 0.88 * -v).toFixed(3) + ')';
+  }
+
+  /* The theme tokens are hex, and a heatmap cell needs an alpha. Falls
+     back to the colour untouched for any format this does not know,
+     which loses the shading but never paints something invalid. */
+  function withAlpha(colour, alpha) {
+    var hex = String(colour).trim();
+    var match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex);
+    if (!match) return hex;
+    var body = match[1];
+    if (body.length === 3) {
+      body = body[0] + body[0] + body[1] + body[1] + body[2] + body[2];
     }
-    return 'rgba(108, 160, 220, ' + (0.12 + 0.88 * -v).toFixed(3) + ')';
+    var n = parseInt(body, 16);
+    return 'rgba(' + ((n >> 16) & 255) + ', ' + ((n >> 8) & 255) + ', ' + (n & 255) +
+      ', ' + alpha.toFixed(3) + ')';
   }
 
   function fmt(n) {
