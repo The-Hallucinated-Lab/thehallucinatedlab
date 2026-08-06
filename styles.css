@@ -3,6 +3,13 @@
   --bg-secondary: #0a0a0a;
   --bg-card: #0f0f0f;
   --bg-glass: rgba(15, 15, 15, 0.7);
+  /* The navbar surfaces are translucent, so they cannot reuse --bg-card:
+     they need their own alpha. Kept as tokens rather than literals because
+     a hardcoded rgba(5,5,5,.8) here is invisible to the theme switch — it
+     shipped a black bar with near-black text at 1.32:1 in light mode. */
+  --bg-nav: rgba(5, 5, 5, 0.8);
+  --bg-nav-solid: rgba(5, 5, 5, 0.95);
+  --bg-nav-overlay: rgba(5, 5, 5, 0.55);
   --gold-primary: #c9a84c;
   --gold-light: #e8d48b;
   /* 4.61:1 on --bg-card. The old #8a7232 was 4.14:1 there, which is fine
@@ -35,6 +42,63 @@
   --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   --font-heading: 'Outfit', 'Outfit Fallback', sans-serif;
   --font-body: 'JetBrains Mono', 'JetBrains Mono Fallback', 'Courier New', monospace;
+}
+
+/* ============ LIGHT THEME — the palette inverted ============
+   Set by theme.js on <html> before first paint, so there is no flash of
+   the wrong theme. Dark stays the default in :root above — a stylesheet
+   that loads without its script still renders the site it always did.
+
+   This is a straight swap of the two colours the brand is made of, not a
+   conventional light theme: the gold that was the accent becomes the
+   page, and the near-black that was the page becomes the ink. Everything
+   else follows from that one move, which is why the accent tokens go
+   dark here — left gold, --gold-primary would be painting the page
+   colour onto the page and simply disappear.
+
+   Every token is measured, not eyeballed, because the swap changes which
+   direction contrast runs and old intuitions stop applying. Ratios
+   against --bg-primary / --bg-secondary / --bg-card:
+     text-primary    8.92 / 10.16 / 11.39
+     text-secondary  6.49 /  7.39 /  8.30
+     text-muted      4.79 /  5.46 /  6.12
+     gold-primary    7.35 /  8.37 /  9.39
+     gold-light      8.62 /  9.81 / 11.01
+     gold-dark       5.65 /  6.43 /  7.22
+
+   The resting nav glyph needs no override here: the accent is dark on a
+   mid-tone page, so 0.6 opacity still measures 3.20:1 against the 3:1
+   that 1.4.11 asks of a UI component.
+   ============ */
+:root[data-theme="light"] {
+  /* The page IS the gold. Layering mirrors the dark theme's direction —
+     page darkest of the three, cards lifted — so depth reads the same way
+     in both, and every component that leans on bg-card to separate itself
+     keeps working untouched. */
+  --bg-primary: #c9a84c;
+  --bg-secondary: #d3b45f;
+  --bg-card: #dcbf72;
+  --bg-glass: rgba(201, 168, 76, 0.72);
+  /* Higher alpha than dark's. A translucent bar over bright content leaves
+     too little separation for the text sitting on it. */
+  --bg-nav: rgba(201, 168, 76, 0.88);
+  --bg-nav-solid: rgba(201, 168, 76, 0.97);
+  --bg-nav-overlay: rgba(201, 168, 76, 0.94);
+  /* The accent role inverts with everything else. Left gold it would be
+     invisible: it would be painting the page colour onto the page. */
+  --gold-primary: #231d08;
+  --gold-light: #0d0b03;
+  --gold-dark: #3a3110;
+  --gold-glow: rgba(35, 29, 8, 0.10);
+  --text-primary: #050505;
+  --text-secondary: #2e2712;
+  --text-muted: #453c1d;
+  /* Borders invert too — a light hairline vanishes on gold. */
+  --border-subtle: rgba(35, 29, 8, 0.18);
+  --border-gold: rgba(35, 29, 8, 0.42);
+  --gradient-gold: linear-gradient(135deg, #231d08, #3a3110, #231d08);
+  --gradient-dark: linear-gradient(180deg, #c9a84c 0%, #d3b45f 100%);
+  --shadow-gold: 0 0 40px rgba(35, 29, 8, 0.12);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -74,11 +138,11 @@ body {
   padding: 1rem 2rem;
   display: flex; align-items: center; justify-content: space-between;
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  background: rgba(5, 5, 5, 0.8);
+  background: var(--bg-nav);
   border-bottom: 1px solid transparent;
   transition: var(--transition);
 }
-.navbar.scrolled { border-bottom-color: var(--border-subtle); background: rgba(5, 5, 5, 0.95); }
+.navbar.scrolled { border-bottom-color: var(--border-subtle); background: var(--bg-nav-solid); }
 /* Gap is 0 by design: a collapsed wordmark must not reserve gap space, or
    the mark sits with a phantom indent. Spacing animates via margin-left. */
 .nav-logo { display: flex; align-items: center; gap: 0; text-decoration: none; }
@@ -106,6 +170,39 @@ body {
 .nav-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 .nav-hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .nav-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+/* ============ THEME TOGGLE ============
+   Sits between the links and the hamburger, outside .nav-links, so it
+   survives the mobile breakpoint: the list collapses behind the burger,
+   and a theme control that vanishes into a closed menu is one people
+   cannot find. 38px square clears 2.5.8's 24x24 floor with room. */
+.theme-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  margin-left: 1.4rem;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  color: var(--gold-primary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.theme-toggle:hover { border-color: var(--border-gold); background: var(--gold-glow); }
+.theme-toggle svg { width: 18px; height: 18px; fill: currentColor; display: block; }
+/* Show the icon for the theme the click would move you TO, not the one
+   you are in — the button is a destination, not a status light. */
+.theme-toggle .icon-moon { display: none; }
+.theme-toggle .icon-sun { display: block; }
+:root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
+:root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
+@media (prefers-reduced-motion: reduce) { .theme-toggle { transition: none; } }
+/* Forced colors flattens the tinted border and the gold glyph alike. */
+@media (forced-colors: active) {
+  .theme-toggle { border-color: CanvasText; }
+  .theme-toggle svg { fill: CanvasText; }
+  .theme-toggle:hover svg, .theme-toggle:focus-visible svg { fill: Highlight; }
+}
 
 /* ============ HERO ============ */
 #hero {
@@ -273,7 +370,7 @@ section { padding: 6rem 2rem; position: relative; }
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     height: 100dvh;
-    background: rgba(5, 5, 5, 0.55);
+    background: var(--bg-nav-overlay);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     flex-direction: column;
