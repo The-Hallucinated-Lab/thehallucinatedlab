@@ -197,6 +197,24 @@
     const tool = window.THL.toolkit.findTool(toolManifest, parse.tool);
     if (!tool) return null;
 
+    /* Understood, but it does not run here. Saying so and naming the
+       command beats both pretending and falling through to the
+       capability list, which would read as "I did not understand" for a
+       request that was understood perfectly. */
+    if (!window.THL.toolkit.runsIn(tool, 'browser')) {
+      pendingParse = null;
+      const where = `${tool.title} runs in the Python package rather than the page.
+
+` +
+        `  pip install "thehallucinatedlab[rag]"
+  thl ${tool.name} ...
+
+` +
+        `The full reference is at /${tool.page}.`;
+      addBubble('system', where);
+      return { reply: where, keepFile: true };
+    }
+
     /* Ask for one thing at a time. Listing every unset argument at once
        reads like a form, and the parser already knows which one it is
        actually blocked on. */

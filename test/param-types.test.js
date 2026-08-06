@@ -20,7 +20,8 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { loadPure } = require('./helpers/load-pure');
 
-const { validateArgs } = loadPure('toolkit.js', ['validateArgs']);
+const { validateArgs, describeParams } =
+  loadPure('toolkit.js', ['validateArgs', 'describeParams']);
 
 /* One synthetic tool carrying every new type. */
 const tool = {
@@ -153,4 +154,93 @@ test('defaults are filled in for every new type', () => {
   assert.equal(result.args.slug, 'notes');
   assert.equal(result.args.tables, true);
   assert.equal(result.args.overlap, 0.25);
+});
+
+/* ============================================================
+   list and mapping — added by the EDA tools.
+
+   A profiler takes "which columns" and "read this column as that type",
+   and both arrive as one shell word: --columns a,b,c and
+   --types zip=categorical_high. Neither fits an existing type, and
+   neither should force the caller to split a string before calling the
+   Python API with a real list or dict.
+
+   Same rule as the types above: what the browser accepts, Python must
+   accept identically, or a tool works on the site and fails in a script.
+   The twin cases are in python/tests/test_param_types.py.
+   ============================================================ */
+
+const collections = {
+  name: 'collections',
+  params: [
+    { name: 'columns', type: 'list', required: false, default: null, description: 'a list' },
+    { name: 'types', type: 'mapping', required: false, default: null, description: 'a mapping' },
+  ],
+};
+
+const coll = extra => validateArgs(extra, collections);
+
+test('a list is accepted as a comma-separated string and trimmed', () => {
+  const result = coll({ columns: ' revenue , region ,city ' });
+  assert.ok(result.ok, result.errors.join(' '));
+  assert.deepEqual(result.args.columns, ['revenue', 'region', 'city']);
+});
+
+test('a list is accepted as a real array', () => {
+  const result = coll({ columns: ['revenue', 'region'] });
+  assert.ok(result.ok, result.errors.join(' '));
+  assert.deepEqual(result.args.columns, ['revenue', 'region']);
+});
+
+test('empty entries in a list are dropped rather than kept as blanks', () => {
+  const result = coll({ columns: 'revenue,,region,' });
+  assert.ok(result.ok, result.errors.join(' '));
+  assert.deepEqual(result.args.columns, ['revenue', 'region']);
+});
+
+test('a list of nothing but separators is an error, not an empty list', () => {
+  const result = coll({ columns: ',,,' });
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join(' '), /at least one value/);
+});
+
+test('a mapping is accepted as key=value pairs and trimmed', () => {
+  const result = coll({ types: ' zip = categorical_high , year=numeric_discrete ' });
+  assert.ok(result.ok, result.errors.join(' '));
+  assert.deepEqual(result.args.types, { zip: 'categorical_high', year: 'numeric_discrete' });
+});
+
+test('a mapping is accepted as a real object', () => {
+  const result = coll({ types: { zip: 'categorical_high' } });
+  assert.ok(result.ok, result.errors.join(' '));
+  assert.deepEqual(result.args.types, { zip: 'categorical_high' });
+});
+
+test('a mapping entry with no = is reported rather than read as a bare key', () => {
+  const result = coll({ types: 'zip=categorical_high,oops' });
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join(' '), /key=value/);
+});
+
+test('a mapping entry with no key is reported', () => {
+  const result = coll({ types: '=value' });
+  assert.equal(result.ok, false);
+  assert.match(result.errors.join(' '), /key=value/);
+});
+
+test('a value containing = keeps everything after the first one', () => {
+  /* A pattern or a formula is a legitimate value. Splitting on every =
+     would silently truncate it. */
+  const result = coll({ types: 'expr=a=b' });
+  assert.ok(result.ok, result.errors.join(' '));
+  assert.deepEqual(result.args.types, { expr: 'a=b' });
+});
+
+test('a null default means detected, not the string "null"', () => {
+  /* Distinct from an absent default, which means there is none at all.
+     describeParams renders it, so the argument table says which. */
+  const rows = describeParams(collections);
+  assert.equal(rows.find(r => r.name === 'columns').fallback, 'detected');
+  assert.equal(rows.find(r => r.name === 'columns').type, 'comma-separated list');
+  assert.equal(rows.find(r => r.name === 'types').type, 'key=value pairs');
 });
