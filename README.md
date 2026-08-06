@@ -8,7 +8,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![License](https://img.shields.io/badge/License-MIT-e8d48b?style=for-the-badge)](LICENSE)
 
-We build tools that give you **unrestricted access** to cutting-edge technology — running **entirely on your machine**.
+**Open-source** AI tools that run **entirely on your machine** — free, and limited only by your own hardware.
 
 No cloud lock-ins. No paywalls. No ceilings. Your data stays yours.
 
@@ -26,7 +26,7 @@ We believe that every powerful tool — from AI models and video generators to q
 
 | Principle | What It Means |
 |---|---|
-| **Unrestricted Access** | Every tool we build gives you complete, unlimited access to cutting-edge technology — running entirely on your local machine. |
+| **Open Source, Always** | Every tool we build is open source and runs entirely on your local machine. What you can run is bounded by your hardware, not by a plan. |
 | **Privacy by Default** | When everything runs locally, your data never leaves your hands. No telemetry, no cloud dependency — full sovereignty over your workflow. |
 | **No Paywalls, No Ceilings** | If it can run on your hardware, you should have unrestricted access to use it — always. |
 
