@@ -3036,3 +3036,105 @@
   text-decoration: none;
 }
 .spotlight-credit a:hover { text-decoration: underline; }
+
+/* ============ EDA RUNNER ============
+   The result panel for the in-browser profiler. Reuses .tool-drop,
+   .tool-controls and .tool-status from the converter; only the parts
+   that have no converter equivalent — a schema table, a figure grid —
+   are defined here. */
+.eda-result {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.eda-warnings {
+  list-style: none;
+  margin: 1rem 0 0;
+  padding: 0;
+}
+.eda-warnings li {
+  padding: 0.6rem 0.9rem;
+  margin-bottom: 0.5rem;
+  border-left: 3px solid #e0a85c;
+  background: rgba(224, 168, 92, 0.07);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+/* A wide schema table must scroll inside itself rather than pushing the
+   page sideways on a phone. */
+.eda-table-wrap {
+  margin-top: 1.5rem;
+  overflow-x: auto;
+}
+
+.eda-schema {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+  min-width: 460px;
+}
+.eda-schema caption {
+  caption-side: top;
+  text-align: left;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  padding-bottom: 0.6rem;
+}
+.eda-schema th,
+.eda-schema td {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.5rem 0.7rem;
+  text-align: left;
+}
+.eda-schema thead th {
+  color: var(--gold-primary);
+  font-weight: 600;
+  white-space: nowrap;
+}
+.eda-schema tbody th {
+  font-family: var(--font-body);
+  font-weight: 500;
+  color: var(--text-primary);
+}
+.eda-schema td { color: var(--text-secondary); }
+.eda-schema tr.is-flagged td,
+.eda-schema tr.is-flagged th { color: #e0a85c; }
+
+.eda-figures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin-top: 1.8rem;
+}
+.eda-figure { margin: 0; }
+.eda-figure canvas {
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  display: block;
+}
+.eda-figure figcaption {
+  margin-top: 0.4rem;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.eda-download-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+.eda-bundle-note {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  margin: 0;
+  flex: 1 1 240px;
+  line-height: 1.5;
+}
