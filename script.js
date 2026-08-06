@@ -345,6 +345,9 @@ const NAV_ICONS = {
   'interface.html': 'M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z',
   'solutions.html': 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z',
   'media.html': 'M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z',
+  /* A node-and-branch glyph rather than a map pin: this points at the
+     structure of the site, not a place on it. */
+  '/sitemap.html': 'M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z',
   /* Dev-only sections. They need glyphs for the same reason the live ones
      do: in dev mode the bar is icons, and an entry without one falls back
      to a bare word sitting between two icons. */
@@ -597,6 +600,52 @@ function initTypingEffect() {
 
    Each feature is isolated, and its name is reported if it fails so the
    console says which one rather than just pointing at this file. */
+
+/* ============ THEME TOGGLE ============
+   theme.js has already chosen the theme and painted with it before this
+   file runs. All that is left is the button.
+
+   The accessible name has to say where the click goes, not where you
+   are. A button labelled "dark theme" while the page is dark tells a
+   screen reader user the opposite of what pressing it does, and the
+   icon — which is the same information for everyone else — already
+   shows the destination.
+
+   The system listener is deliberately narrow. Following the OS is only
+   right while the visitor has not chosen for themselves; once they have,
+   an OS change flipping the site out from under them is a bug. It writes
+   the attribute directly rather than going through set(), so watching
+   the system never quietly becomes a stored preference. */
+function initThemeToggle() {
+  const button = document.getElementById('theme-toggle');
+  const theme = window.THLTheme;
+  if (!button || !theme) return;
+
+  function relabel() {
+    const destination = theme.get() === 'light' ? 'dark' : 'light';
+    const text = `Switch to ${destination} theme`;
+    button.setAttribute('aria-label', text);
+    button.setAttribute('title', text);
+  }
+  relabel();
+
+  button.addEventListener('click', () => {
+    theme.set(theme.get() === 'light' ? 'dark' : 'light');
+    relabel();
+  });
+
+  if (!window.matchMedia) return;
+  const query = window.matchMedia('(prefers-color-scheme: light)');
+  const follow = (event) => {
+    if (!theme.isFollowingSystem()) return;
+    document.documentElement.setAttribute('data-theme', event.matches ? 'light' : 'dark');
+    relabel();
+  };
+  // Safari below 14 only has the deprecated addListener.
+  if (query.addEventListener) query.addEventListener('change', follow);
+  else if (query.addListener) query.addListener(follow);
+}
+
 function startFeature(name, init) {
   try {
     init();
@@ -608,6 +657,7 @@ function startFeature(name, init) {
 document.addEventListener('DOMContentLoaded', () => {
   /* First: it decides what the rest of the page is allowed to show. */
   startFeature('dev-mode', initDevMode);
+  startFeature('theme-toggle', initThemeToggle);
   startFeature('particles', initParticles);
   startFeature('navbar', initNavbar);
   startFeature('scroll-animations', initScrollAnimations);
