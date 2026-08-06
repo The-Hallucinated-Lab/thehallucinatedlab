@@ -329,7 +329,7 @@
   transform: translateX(-50%) translateY(4px);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
-  background: rgba(15, 15, 15, 0.95);
+  background: var(--bg-card);
   border: 1px solid var(--border-gold);
   color: var(--gold-light);
   font-size: 0.72rem;
