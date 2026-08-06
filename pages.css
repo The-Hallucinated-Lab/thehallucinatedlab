@@ -3021,3 +3021,18 @@
   font-weight: 500;
 }
 .sitemap-list a:hover { text-decoration: underline; }
+
+/* Attribution line under a Library card. Used where a tool came from a
+   contributor's own repository rather than the org one, so the credit
+   sits with the card instead of being buried in a README. */
+.spotlight-credit {
+  margin: -0.75rem 0 2rem;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: right;
+}
+.spotlight-credit a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+.spotlight-credit a:hover { text-decoration: underline; }
