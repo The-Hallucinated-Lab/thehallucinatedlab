@@ -80,7 +80,8 @@
         <li><a href="tools.html" class="active">Tools</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
-
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
       </ul>
       <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
         <span></span><span></span><span></span>
@@ -131,6 +132,37 @@
           </div>
         </a>
 
+
+        <a href="eda.html" class="tool-card-link spotlight-panel fade-in" style="text-decoration:none;display:block;">
+          <div class="spotlight-head">
+            <span class="blog-tag">Python · CLI</span>
+            <span class="spotlight-status"><span class="dot" aria-hidden="true"></span>Live</span>
+          </div>
+          <h3 class="spotlight-title">Exploratory Data Analysis</h3>
+          <p class="spotlight-tagline">Point it at a data file. Get back a report you can read, the figures behind it, and the script that produced them.</p>
+          <p class="spotlight-desc">Five primitives — describe, profile, plot, relate, report — plus <code>thl eda</code>, which drives them as a session. Every run writes a recipe of the decisions it made, so a rerun matches and a colleague gets the same numbers. Unlike the browser tools this one is Python only, on purpose: profiling a 200&nbsp;MB CSV on a canvas is not something the browser runtime should attempt, and the spec says so rather than rendering a form that would fail.</p>
+          <div class="spotlight-points">
+            <div class="spotlight-point">
+              <strong>analysis.py</strong>
+              Regenerates the whole report, and is meant to be edited.
+            </div>
+            <div class="spotlight-point">
+              <strong>confidence</strong>
+              Column types below 0.7 are flagged, never asserted.
+            </div>
+          </div>
+          <div class="spotlight-actions">
+            <span class="blog-cta">Open Exploratory Data Analysis</span>
+            <code class="spotlight-code">thl eda sales.csv --target churn</code>
+          </div>
+        </a>
+
+        <p class="spotlight-credit">
+          Contributed by
+          <a href="https://github.com/06pratyush" target="_blank" rel="noopener noreferrer">@06pratyush</a>
+          — source at
+          <a href="https://github.com/06pratyush/thl-exploratory_data_analysis_in_CLI" target="_blank" rel="noopener noreferrer">thl-exploratory_data_analysis_in_CLI</a>.
+        </p>
 
         <div class="section-header fade-in" style="margin-top:3rem;">
           <span class="section-label">The RAG Pipeline</span>

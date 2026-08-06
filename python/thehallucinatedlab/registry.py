@@ -30,6 +30,8 @@ _JSON_TYPES = {
     "path": "string",
     "boolean": "boolean",
     "number": "number",
+    "list": "array",
+    "mapping": "object",
 }
 
 # What a CLI or an HTML form actually hands over for a boolean. A flag
@@ -199,6 +201,45 @@ class Registry:
                     errors.append(f"{pname} must be true or false; got {value!r}.")
                 else:
                     cleaned[pname] = coerced
+
+            elif ptype == "list":
+                # A command line hands over "a,b,c" and Python hands over
+                # a list. Both mean the same thing, so both are accepted
+                # and normalised here rather than at every call site.
+                if isinstance(value, str):
+                    items = [part.strip() for part in value.split(",") if part.strip()]
+                elif isinstance(value, list | tuple):
+                    items = [str(item).strip() for item in value if str(item).strip()]
+                else:
+                    items = None
+                if items is None:
+                    errors.append(
+                        f"{pname} must be a list or a comma-separated string; got {value!r}."
+                    )
+                elif not items:
+                    errors.append(f"{pname} must name at least one value.")
+                else:
+                    cleaned[pname] = items
+
+            elif ptype == "mapping":
+                # Same shape for key=value pairs: a shell hands over
+                # "zip=categorical_high", Python hands over a dict.
+                if isinstance(value, dict):
+                    cleaned[pname] = {str(k): str(v) for k, v in value.items()}
+                elif isinstance(value, str):
+                    pairs = [part.strip() for part in value.split(",") if part.strip()]
+                    bad = [pair for pair in pairs if "=" not in pair or pair.startswith("=")]
+                    if bad:
+                        errors.append(f"{pname} takes key=value pairs; got {bad[0]!r}.")
+                    elif not pairs:
+                        errors.append(f"{pname} must name at least one key=value pair.")
+                    else:
+                        cleaned[pname] = {
+                            key.strip(): item.strip()
+                            for key, _, item in (pair.partition("=") for pair in pairs)
+                        }
+                else:
+                    errors.append(f"{pname} must be a mapping or key=value pairs; got {value!r}.")
 
             elif ptype in ("string", "path"):
                 text = str(value).strip()

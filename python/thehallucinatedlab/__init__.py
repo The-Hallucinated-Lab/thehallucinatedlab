@@ -22,6 +22,12 @@ Or from a shell::
     thl tools
     thl convert photo.jpg --format png
     thl "convert photo.jpg to webp at 80"
+    thl eda sales.csv
+
+Some tools need an optional extra. Importing them is always cheap; the
+first call raises ``DependencyMissing`` naming the line to install::
+
+    pip install "thehallucinatedlab[eda]"
 """
 
 from __future__ import annotations
@@ -40,6 +46,14 @@ from .nlp import merge_answer, parse
 from .registry import Registry, registry
 from .tools.chunk import Chunk, ChunkResult, chunk
 from .tools.convert import ConvertResult, convert
+from .tools.eda import (
+    describe_dataset,
+    eda,
+    eda_report,
+    plot_column,
+    profile_column,
+    relate_columns,
+)
 from .tools.embed import EmbedResult, embed
 from .tools.extract import ExtractResult, extract
 from .tools.index import IndexResult, index
@@ -67,6 +81,13 @@ __all__ = [
     "EmbedResult",
     "index",
     "IndexResult",
+    # exploratory data analysis (optional extra: [eda])
+    "eda",
+    "describe_dataset",
+    "profile_column",
+    "plot_column",
+    "relate_columns",
+    "eda_report",
     # deprecated, kept for 0.1.0 compatibility
     "image_convert",
     # natural language
