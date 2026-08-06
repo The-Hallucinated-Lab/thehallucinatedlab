@@ -895,7 +895,19 @@
           "text": "profile sales.csv",
           "args": {}
         }
-      ]
+      ],
+      "inPageRunner": {
+        "page": "eda.html",
+        "formats": [
+          "csv",
+          "tsv",
+          "txt",
+          "json",
+          "jsonl"
+        ],
+        "rowCap": 50000,
+        "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
+      }
     },
     {
       "name": "profile_column",
@@ -1002,7 +1014,19 @@
             "outlier_rule": "zscore"
           }
         }
-      ]
+      ],
+      "inPageRunner": {
+        "page": "eda.html",
+        "formats": [
+          "csv",
+          "tsv",
+          "txt",
+          "json",
+          "jsonl"
+        ],
+        "rowCap": 50000,
+        "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
+      }
     },
     {
       "name": "plot_column",
@@ -1146,7 +1170,19 @@
             "chart": "box"
           }
         }
-      ]
+      ],
+      "inPageRunner": {
+        "page": "eda.html",
+        "formats": [
+          "csv",
+          "tsv",
+          "txt",
+          "json",
+          "jsonl"
+        ],
+        "rowCap": 50000,
+        "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
+      }
     },
     {
       "name": "relate_columns",
@@ -1253,7 +1289,19 @@
             "kind": "duplicates"
           }
         }
-      ]
+      ],
+      "inPageRunner": {
+        "page": "eda.html",
+        "formats": [
+          "csv",
+          "tsv",
+          "txt",
+          "json",
+          "jsonl"
+        ],
+        "rowCap": 50000,
+        "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
+      }
     },
     {
       "name": "eda_report",
@@ -1358,7 +1406,19 @@
             "format": "html"
           }
         }
-      ]
+      ],
+      "inPageRunner": {
+        "page": "eda.html",
+        "formats": [
+          "csv",
+          "tsv",
+          "txt",
+          "json",
+          "jsonl"
+        ],
+        "rowCap": 50000,
+        "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
+      }
     }
   ]
 }

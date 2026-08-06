@@ -203,14 +203,30 @@
        request that was understood perfectly. */
     if (!window.THL.toolkit.runsIn(tool, 'browser')) {
       pendingParse = null;
-      const where = `${tool.title} runs in the Python package rather than the page.
+
+      /* Some of these have a runner on their own page even though the
+         assistant cannot dispatch them - the manifest says which. Send
+         people there rather than to a terminal they may not need. */
+      const runner = tool.inPageRunner;
+      const where = runner
+        ? `${tool.title} does not run inside this chat, but /${runner.page} runs it in your browser.
 
 ` +
-        `  pip install "thehallucinatedlab[rag]"
+          `That handles ${runner.formats.join(', ')} up to ${runner.rowCap.toLocaleString('en-US')} rows. ` +
+          `For anything larger, or for Parquet and Excel:
+
+` +
+          `  pip install "thehallucinatedlab[eda]"
+  thl ${tool.name} ...`
+        : `${tool.title} runs in the Python package rather than the page.
+
+` +
+          `  pip install "thehallucinatedlab[rag]"
   thl ${tool.name} ...
 
 ` +
-        `The full reference is at /${tool.page}.`;
+          `The full reference is at /${tool.page}.`;
+
       addBubble('system', where);
       return { reply: where, keepFile: true };
     }
