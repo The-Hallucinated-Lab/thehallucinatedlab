@@ -52,22 +52,50 @@ jobs:
       # PyPI is append-only: 0.1.0 can never be re-uploaded. Catching a
       # tag/version mismatch here is the difference between fixing a typo
       # and burning a version number.
-      - name: Check the tag matches the package version
+      #
+      # The alias is checked in the same breath. thl.lab pins
+      # thehallucinatedlab==<version>, so a drifted alias would publish a
+      # package that cannot resolve at all -- and that is also unfixable
+      # once uploaded.
+      - name: Check the tag matches both package versions
         run: |
-          set -e
-          tag="${GITHUB_REF_NAME#v}"
-          version=$(python -c "import tomllib,pathlib; print(tomllib.loads(pathlib.Path('python/pyproject.toml').read_text())['project']['version'])")
-          if [ "$tag" != "$version" ]; then
-            echo "::error::tag $GITHUB_REF_NAME does not match pyproject version $version"
-            exit 1
-          fi
-          echo "releasing $version"
+          python - "$GITHUB_REF_NAME" <<'PY'
+          import pathlib, re, sys, tomllib
 
+          tag = sys.argv[1].removeprefix("v")
+          load = lambda p: tomllib.loads(pathlib.Path(p).read_text())["project"]
+          real = load("python/pyproject.toml")
+          alias = load("alias/pyproject.toml")
+
+          pin = None
+          for dep in alias["dependencies"]:
+              m = re.fullmatch(r"thehallucinatedlab==(\S+)", dep)
+              if m:
+                  pin = m.group(1)
+
+          errors = []
+          if tag != real["version"]:
+              errors.append(f"tag {sys.argv[1]} does not match package version {real['version']}")
+          if alias["version"] != real["version"]:
+              errors.append(f"alias version {alias['version']} != package version {real['version']}")
+          if pin != real["version"]:
+              errors.append(f"alias pins thehallucinatedlab=={pin}, expected =={real['version']}")
+
+          for e in errors:
+              print(f"::error::{e}")
+          sys.exit(1) if errors else print(f"releasing {real['version']} (thehallucinatedlab + thl.lab)")
+          PY
+
+      # Kept in separate directories because the publish job uploads them
+      # in two steps: one trusted-publisher exchange per project, so a
+      # rejection names which project was rejected.
       - name: Build sdist and wheel
-        run: python -m build python/ --outdir dist/
+        run: |
+          python -m build python/ --outdir dist/thehallucinatedlab/
+          python -m build alias/  --outdir dist/thl-lab/
 
       - name: Check the metadata renders on PyPI
-        run: twine check --strict dist/*
+        run: twine check --strict dist/thehallucinatedlab/* dist/thl-lab/*
 
       - name: Upload the artifacts
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
@@ -101,5 +129,19 @@ jobs:
           name: dist
           path: dist/
 
-      - name: Publish to PyPI
+      # Two exchanges rather than one bulk upload. Each project has its own
+      # trusted-publisher entry on PyPI, and uploading them separately means
+      # a rejection says which one was rejected instead of failing the whole
+      # release with one opaque 403.
+      - name: Publish thehallucinatedlab
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist/thehallucinatedlab/
+
+      # Second, and deliberately so: the alias pins an exact version of the
+      # package above, so publishing it first would leave a window in which
+      # `pip install thl.lab` resolves to nothing.
+      - name: Publish thl.lab
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        with:
+          packages-dir: dist/thl-lab/

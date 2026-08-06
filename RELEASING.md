@@ -32,12 +32,43 @@ reject the upload if the two do not match.
 A *pending* publisher is the right choice while the project does not exist on PyPI yet; it
 turns into a normal publisher on the first successful upload.
 
+### Do it a second time for the alias
+
+`alias/` publishes a second project, `thl.lab`, whose only job is to make
+`pip install thl.lab` reach the same toolkit. Trusted publishing is configured **per
+project**, so it needs its own pending publisher with every field identical except the
+first:
+
+| Field | Value |
+|---|---|
+| PyPI Project Name | `thl.lab` |
+| Owner | `The-Hallucinated-Lab` |
+| Repository name | `thehallucinatedlab` |
+| Workflow name | `release.yml` |
+| Environment name | `pypi` |
+
+Until that exists, the release will build both packages, publish `thehallucinatedlab`
+successfully, and then fail on the `Publish thl.lab` step with `invalid-publisher`. The
+first upload is not lost — PyPI is append-only in the useful direction here — but the tag
+will show a red run until the publisher is added and the job re-run.
+
+`thl` itself was not available: an unrelated placeholder claimed it in December 2025.
+`thl.lab` is the shortest name that was free. PEP 503 normalises separators, so `thl.lab`,
+`thl-lab` and `thl_lab` are one project and any spelling installs it.
+
 ## Cutting a release
 
-Versions live in two places and CI refuses to publish if they disagree:
+Versions live in **four** places and CI refuses to publish if any of them disagree:
 
 - `python/pyproject.toml` → `project.version`
 - `python/thehallucinatedlab/__init__.py` → `__version__`
+- `alias/pyproject.toml` → `project.version`
+- `alias/pyproject.toml` → the `thehallucinatedlab==` pin in `dependencies`
+
+The alias pins an exact version deliberately. An alias that can resolve to a different
+version than the package it aliases is not an alias — it is a second package that will
+surprise somebody. `test/regressions.test.js` checks the pin on every CI run, and the
+release workflow checks it again against the tag before building anything.
 
 `spec/manifest.json` also carries a `version`, which is the *spec* version — bump it when the
 shape of a tool's arguments changes, not on every release. A test asserts it matches the
