@@ -153,7 +153,7 @@ thehallucinatedlab/
 
 ### Tools
 - **Convert** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
-- **Exploratory data analysis** — `thl eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
+- **Exploratory data analysis** — `thl pipeline eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
 - **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
 - **Tools declare where they run** — the `runtimes` field is respected, so the Assistant names the command for a Python-only tool rather than offering to run something it cannot
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy

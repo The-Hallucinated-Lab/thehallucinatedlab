@@ -6,9 +6,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Exploratory Data Analysis — The Hallucinated Lab</title>
-  <meta name="description" content="Profile a CSV from the command line. thl eda writes a Markdown report, the figures, a replayable recipe, and the Python script that produced all of it.">
+  <meta name="description" content="Profile a CSV from the command line. thl pipeline eda writes a Markdown report, the figures, a replayable recipe, and the script behind it.">
   <meta property="og:title" content="Exploratory Data Analysis — The Hallucinated Lab">
-  <meta property="og:description" content="thl eda profiles a data file and hands you the report, the figures, the recipe and the script that made them. Runs on your machine.">
+  <meta property="og:description" content="thl pipeline eda profiles a data file and hands you the report, the figures, the recipe and the script that made them. Runs on your machine.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/eda.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/eda.html">
@@ -61,12 +61,12 @@
     {
       "@type": "SoftwareApplication",
       "@id": "https://thehallucinatedlab.space/eda.html#software",
-      "name": "thl eda",
+      "name": "thl pipeline eda",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Windows, macOS, Linux",
       "description": "A command-line profiler for tabular data. Infers a type and a confidence for every column, writes a Markdown report with the figures beside it, and emits a runnable analysis.py that reproduces the whole report.",
       "url": "https://thehallucinatedlab.space/eda.html",
-      "softwareVersion": "0.2.0",
+      "softwareVersion": "1.0.0",
       "downloadUrl": "https://pypi.org/project/thehallucinatedlab/",
       "offers": {
         "@type": "Offer",
@@ -82,7 +82,7 @@
       "@id": "https://thehallucinatedlab.space/eda.html#webpage",
       "url": "https://thehallucinatedlab.space/eda.html",
       "name": "Exploratory Data Analysis - The Hallucinated Lab",
-      "description": "thl eda profiles a data file and returns a report, the figures, a replayable recipe and the script that produced them.",
+      "description": "thl pipeline eda profiles a data file and returns a report, the figures, a replayable recipe and the script that produced them.",
       "isPartOf": {
         "@id": "https://thehallucinatedlab.space/#website"
       },
@@ -112,6 +112,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -164,7 +166,7 @@
 
           <div class="how-block">
             <span class="how-block-label">Profile a file</span>
-            <div class="how-code"><code>thl eda sales.csv</code></div>
+            <div class="how-code"><code>thl pipeline eda sales.csv</code></div>
             <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
 
@@ -212,8 +214,8 @@
 
           <div class="how-block">
             <span class="how-block-label">Recipes</span>
-            <div class="how-code"><code>thl eda sales.csv -i --save-recipe team.json
-thl eda new_month.csv --recipe team.json</code></div>
+            <div class="how-code"><code>thl pipeline eda sales.csv -i --save-recipe team.json
+thl pipeline eda new_month.csv --recipe team.json</code></div>
             <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
         </div>
@@ -339,11 +341,11 @@ relate_columns("sales.csv", kind="target", target="churn")</code></div>
 
           <div class="how-block">
             <span class="how-block-label">Common runs</span>
-            <div class="how-code"><code>thl eda sales.csv -i                              # the nine-screen session
-thl eda data/ --pattern "*.csv" --out reports/    # a folder of datasets
-thl eda sales.csv --target churn --tier2 all      # correlation, missingness, ranking
-thl eda sales.csv --format html --self-contained  # one file to email
-thl eda --list                                    # every chart and statistic</code></div>
+            <div class="how-code"><code>thl pipeline eda sales.csv -i                              # the nine-screen session
+thl pipeline eda data/ --pattern "*.csv" --out reports/    # a folder of datasets
+thl pipeline eda sales.csv --target churn --tier2 all      # correlation, missingness, ranking
+thl pipeline eda sales.csv --format html --self-contained  # one file to email
+thl pipeline eda --list                                    # every chart and statistic</code></div>
             <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
 
