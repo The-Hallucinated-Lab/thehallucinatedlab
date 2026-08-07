@@ -21,7 +21,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "thl.lab"
-version = "0.2.0"
+version = "1.0.0"
 description = "Shorter name for thehallucinatedlab — installs the same local-first toolkit."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -40,20 +40,20 @@ classifiers = [
   "Programming Language :: Python :: 3.13",
   "Topic :: Utilities",
 ]
-dependencies = ["thehallucinatedlab==0.2.0"]
+dependencies = ["thehallucinatedlab==1.0.0"]
 
 # Every extra the real package offers is mirrored, or `pip install
 # "thl.lab[extract]"` would fail with "does not provide the extra" and the
 # alias would be a trap rather than a shortcut.
 [project.optional-dependencies]
-extract = ["thehallucinatedlab[extract]==0.2.0"]
-chunk = ["thehallucinatedlab[chunk]==0.2.0"]
-embed = ["thehallucinatedlab[embed]==0.2.0"]
-index = ["thehallucinatedlab[index]==0.2.0"]
-rag = ["thehallucinatedlab[rag]==0.2.0"]
-eda = ["thehallucinatedlab[eda]==0.2.0"]
-eda-excel = ["thehallucinatedlab[eda-excel]==0.2.0"]
-eda-parquet = ["thehallucinatedlab[eda-parquet]==0.2.0"]
+extract = ["thehallucinatedlab[extract]==1.0.0"]
+chunk = ["thehallucinatedlab[chunk]==1.0.0"]
+embed = ["thehallucinatedlab[embed]==1.0.0"]
+index = ["thehallucinatedlab[index]==1.0.0"]
+rag = ["thehallucinatedlab[rag]==1.0.0"]
+eda = ["thehallucinatedlab[eda]==1.0.0"]
+eda-excel = ["thehallucinatedlab[eda-excel]==1.0.0"]
+eda-parquet = ["thehallucinatedlab[eda-parquet]==1.0.0"]
 
 [project.urls]
 Homepage = "https://thehallucinatedlab.space"

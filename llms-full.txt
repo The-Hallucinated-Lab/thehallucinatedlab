@@ -38,7 +38,7 @@ Two of these are gateways to deeper pages:
 Purpose: orient a first-time visitor and explain what lives behind every tab.
 
 Sections:
-- Hero. States the lab's position: open-source AI tools running entirely on the visitor's machine, free, and limited only by their own hardware.
+- Hero. States the lab's position: open-source AI tools running entirely on the visitor's machine, free, and without any rate limits.
 - Explore the Lab. Six cards, one per navigation tab, each summarising what that section contains and who it is for.
 - About Us. Profiles of the two founders with links, followed by contact details.
 

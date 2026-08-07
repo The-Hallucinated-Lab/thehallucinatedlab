@@ -8,7 +8,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![License](https://img.shields.io/badge/License-MIT-e8d48b?style=for-the-badge)](LICENSE)
 
-**Open-source** AI tools that run **entirely on your machine** — free, and limited only by your own hardware.
+**Open-source** AI tools that run **entirely on your machine** — free, and without any rate limits.
 
 No cloud lock-ins. No paywalls. No ceilings. Your data stays yours.
 

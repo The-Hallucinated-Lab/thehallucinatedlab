@@ -8,7 +8,7 @@ from thehallucinatedlab.cli import main
 
 
 def test_tools_lists_every_tool_and_its_arguments(capsys):
-    assert main(["tools"]) == 0
+    assert main(["tool"]) == 0
     out = capsys.readouterr().out
     assert "convert" in out
     assert "--format" in out
@@ -18,7 +18,7 @@ def test_tools_lists_every_tool_and_its_arguments(capsys):
 
 def test_convert_writes_the_file(opaque_image: Path, tmp_path: Path, capsys):
     dest = tmp_path / "out.webp"
-    assert main(["convert", str(opaque_image), "-o", str(dest), "--format", "webp"]) == 0
+    assert main(["tool", "convert", str(opaque_image), "-o", str(dest), "--format", "webp"]) == 0
     assert dest.is_file()
     assert "webp 24x16" in capsys.readouterr().out
 
@@ -30,7 +30,7 @@ def test_plain_english_without_a_subcommand(opaque_image: Path, capsys):
 
 
 def test_the_ask_subcommand_takes_loose_words(opaque_image: Path):
-    assert main(["ask", "convert", str(opaque_image), "to", "webp"]) == 0
+    assert main(["assistant", "convert", str(opaque_image), "to", "webp"]) == 0
     assert opaque_image.with_suffix(".webp").is_file()
 
 
@@ -51,7 +51,7 @@ def test_a_request_missing_an_argument_says_which(capsys):
 
 def test_a_library_error_is_a_message_not_a_traceback(opaque_image: Path, capsys):
     """Exit 1 and one line, rather than a stack trace, for a bad argument."""
-    assert main(["convert", str(opaque_image), "--format", "png", "--quality", "500"]) == 1
+    assert main(["tool", "convert", str(opaque_image), "--format", "png", "--quality", "500"]) == 1
     assert "thl: " in capsys.readouterr().err
 
 
