@@ -40,7 +40,11 @@ def test_the_header_names_the_source_and_the_versions(rendered: dict) -> None:
     text = rendered["text"]
     assert "| Rows |" in text and "| Columns |" in text
     assert "| Generated |" in text
-    assert "thl eda 0.2.0" in text
+    # Against the package version, not a literal. This line used to
+    # read "thl eda 0.2.0" and so asserted the drift it should have
+    # caught: the package was 1.0.0 and the report said otherwise.
+    from thehallucinatedlab import __version__
+    assert f"thl eda {__version__}" in text
     assert "pandas" in text, "the report should say what it was computed with"
 
 

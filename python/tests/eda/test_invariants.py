@@ -343,13 +343,21 @@ def test_the_eda_extra_exists_and_the_docs_name_it():
     pyproject stops declaring the extra, that instruction silently
     becomes an error for everyone who follows it.
     """
+    import re
     from pathlib import Path
 
-    import tomllib
-
+    # Read as text rather than with tomllib: that is stdlib only from
+    # 3.11 and this package supports 3.10, where importing it fails
+    # outright. The question here is whether one key is present and
+    # non-empty, which does not need a parser.
     pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
-    data = tomllib.loads(pyproject.read_text(encoding="utf-8"))
-    extras = data["project"]["optional-dependencies"]
+    text = pyproject.read_text(encoding="utf-8")
 
-    assert "eda" in extras, "pyproject no longer declares the [eda] extra"
-    assert extras["eda"], "the [eda] extra is declared but empty"
+    assert "[project.optional-dependencies]" in text, "no extras table at all"
+
+    declared = re.search(r"^eda\s*=\s*\[(.*?)\]", text, re.MULTILINE | re.DOTALL)
+    assert declared, (
+        "pyproject no longer declares the [eda] extra, but the website and "
+        "this module's docstring both tell people to install it"
+    )
+    assert declared.group(1).strip(), "the [eda] extra is declared but empty"
