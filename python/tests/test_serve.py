@@ -19,6 +19,7 @@ import threading
 import urllib.error
 import urllib.request
 import uuid
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import pytest
 
@@ -26,6 +27,8 @@ from thehallucinatedlab.serve import (
     MAX_BODY_BYTES,
     capabilities,
     create_server,
+    host_allowed,
+    is_running,
     origin_allowed,
     parse_multipart,
     run_tool,
@@ -115,6 +118,100 @@ def test_a_disallowed_origin_is_refused_without_cors_headers(bridge):
 def test_an_extra_origin_can_be_allowed_explicitly():
     assert origin_allowed("https://staging.example", ("https://staging.example",)) is True
     assert origin_allowed("https://staging.example") is False
+
+
+# -- the host boundary ----------------------------------------------
+#
+# The Origin check cannot see a DNS rebinding attack: the attacker's page
+# becomes same-origin with this server, and a same-origin GET carries no
+# Origin header for it to inspect. Host is what still tells the truth.
+
+
+@pytest.mark.parametrize(
+    "host",
+    ["127.0.0.1", "127.0.0.1:8787", "localhost", "localhost:8787", "[::1]:8787", None],
+)
+def test_hosts_that_may_use_the_bridge(host):
+    assert host_allowed(host) is True
+
+
+@pytest.mark.parametrize(
+    "host",
+    [
+        "evil.example",
+        "evil.example:8787",
+        "127.0.0.1.evil.co",   # prefix attack
+        "localhost.evil.co",   # suffix attack
+        "thehallucinatedlab.space",
+    ],
+)
+def test_hosts_that_may_not(host):
+    assert host_allowed(host) is False
+
+
+def test_a_rebound_host_is_refused_even_with_no_origin(bridge):
+    """The rebinding shape, end to end: truthful Host, absent Origin.
+
+    Checking Origin alone answers this request with a document listing
+    the version and every format this machine can read.
+    """
+    status, headers, _ = request(
+        f"{bridge}/thl/v1/capabilities", origin=None, headers={"Host": "evil.example"}
+    )
+
+    assert status == 403
+    assert "Access-Control-Allow-Origin" not in headers
+
+
+def test_a_rebound_host_cannot_reach_a_tool_either(bridge):
+    body, ctype = multipart({}, "note.md", b"# Title\n\ntext\n")
+    status, _, _ = request(
+        f"{bridge}/thl/v1/run/extract",
+        method="POST",
+        origin=None,
+        data=body,
+        headers={"Content-Type": ctype, "Host": "evil.example"},
+    )
+
+    assert status == 403
+
+
+# -- knowing whether the bridge is up -------------------------------
+
+
+def test_is_running_recognises_the_bridge(bridge):
+    assert is_running(int(bridge.rsplit(":", 1)[1])) is True
+
+
+def test_is_running_is_not_fooled_by_an_unrelated_server():
+    """8787 is not reserved, so "something answered" is not "the bridge".
+
+    A bare connect() calls any listener on the port a running bridge, and
+    sends the caller into a request that fails far more confusingly than
+    "not running" would have.
+    """
+
+    class Decoy(BaseHTTPRequestHandler):
+        def do_GET(self):  # noqa: N802
+            self.send_response(200)
+            self.send_header("Content-Length", "2")
+            self.end_headers()
+            self.wfile.write(b"hi")
+
+        def log_message(self, *args):
+            pass
+
+    server = ThreadingHTTPServer(("127.0.0.1", 0), Decoy)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    try:
+        assert is_running(server.server_address[1]) is False
+    finally:
+        server.shutdown()
+        server.server_close()
+
+
+def test_is_running_on_a_port_with_nothing_on_it():
+    assert is_running(9) is False
 
 
 # -- capabilities ---------------------------------------------------
@@ -236,6 +333,27 @@ def test_a_bad_argument_is_a_400_with_the_librarys_own_message(bridge):
     # traceback in the terminal of whoever is running the bridge.
     assert status == 400
     assert "format" in json.loads(response)["error"]
+
+
+@pytest.mark.parametrize("tool,field", [("chunk", "max_tokens"), ("chunk", "overlap"),
+                                        ("tokenize", "limit")])
+def test_a_non_numeric_argument_is_a_400_not_a_500(bridge, tool, field):
+    """The same rule, one layer earlier.
+
+    A form can only carry strings, so `max_tokens=abc` is a well-formed
+    field that int() then rejects. Letting that ValueError escape reports
+    a caller's typo as a crashed bridge.
+    """
+    body, content_type = multipart({field: "abc"}, "note.md", b"# Title\n\ntext\n")
+    status, _, response = request(
+        f"{bridge}/thl/v1/run/{tool}",
+        method="POST",
+        data=body,
+        headers={"Content-Type": content_type},
+    )
+
+    assert status == 400
+    assert field in json.loads(response)["error"]
 
 
 def test_an_unreadable_format_is_reported_rather_than_crashing(bridge):

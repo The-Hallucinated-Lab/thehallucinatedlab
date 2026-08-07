@@ -75,6 +75,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -193,6 +195,8 @@
           <div class="section-line" aria-hidden="true"></div>
           <p class="section-intro">Generated from the tool spec the code itself reads, so it cannot drift out of date.</p>
         </div>
+        <div data-toolbench="chunk" class="fade-in"></div>
+
         <div class="tool-args-wrap fade-in" id="tool-args"></div>
       </div>
     </section>
@@ -227,42 +231,6 @@
     </section>
 
     <!-- ====== USE IT ELSEWHERE ====== -->
-    <section class="media-section" id="library">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Same Tool, Other Doors</span>
-          <h2 class="section-title">Use It From Python</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The package counts with BGE-M3's own tokenizer, so the sizes are exact rather than estimated.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <div class="how-block">
-            <span class="how-block-label">Install</span>
-            <div class="how-code"><code>pip install "thehallucinatedlab[chunk]"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Chunk a document</span>
-            <div class="how-code"><code>from thehallucinatedlab import chunk
-
-result = chunk("report.md", max_tokens=512, overlap=64)
-print(result.path, len(result.chunks), result.total_tokens)</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl extract report.pdf
-thl chunk report.md --max-tokens 512 --overlap 64
-thl tokenize report.jsonl</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </main>
 
@@ -273,6 +241,7 @@ thl tokenize report.jsonl</code></div>
   <script src="script.js" defer></script>
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
+  <script src="toolbench.js" defer></script>
   <script src="chunk.js" defer></script>
 </body>
 </html>

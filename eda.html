@@ -6,9 +6,9 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Exploratory Data Analysis — The Hallucinated Lab</title>
-  <meta name="description" content="Profile a CSV from the command line. thl eda writes a Markdown report, the figures, a replayable recipe, and the Python script that produced all of it.">
+  <meta name="description" content="Profile a CSV from the command line. thl pipeline eda writes a Markdown report, the figures, a replayable recipe, and the script behind it.">
   <meta property="og:title" content="Exploratory Data Analysis — The Hallucinated Lab">
-  <meta property="og:description" content="thl eda profiles a data file and hands you the report, the figures, the recipe and the script that made them. Runs on your machine.">
+  <meta property="og:description" content="thl pipeline eda profiles a data file and hands you the report, the figures, the recipe and the script that made them. Runs on your machine.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/eda.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/eda.html">
@@ -61,12 +61,12 @@
     {
       "@type": "SoftwareApplication",
       "@id": "https://thehallucinatedlab.space/eda.html#software",
-      "name": "thl eda",
+      "name": "thl pipeline eda",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Windows, macOS, Linux",
       "description": "A command-line profiler for tabular data. Infers a type and a confidence for every column, writes a Markdown report with the figures beside it, and emits a runnable analysis.py that reproduces the whole report.",
       "url": "https://thehallucinatedlab.space/eda.html",
-      "softwareVersion": "0.2.0",
+      "softwareVersion": "1.0.0",
       "downloadUrl": "https://pypi.org/project/thehallucinatedlab/",
       "offers": {
         "@type": "Offer",
@@ -82,7 +82,7 @@
       "@id": "https://thehallucinatedlab.space/eda.html#webpage",
       "url": "https://thehallucinatedlab.space/eda.html",
       "name": "Exploratory Data Analysis - The Hallucinated Lab",
-      "description": "thl eda profiles a data file and returns a report, the figures, a replayable recipe and the script that produced them.",
+      "description": "thl pipeline eda profiles a data file and returns a report, the figures, a replayable recipe and the script that produced them.",
       "isPartOf": {
         "@id": "https://thehallucinatedlab.space/#website"
       },
@@ -112,6 +112,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -265,7 +267,7 @@
 
           <div class="how-block">
             <span class="how-block-label">Profile a file</span>
-            <div class="how-code"><code>thl eda sales.csv</code></div>
+            <div class="how-code"><code>thl pipeline eda sales.csv</code></div>
             <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
 
@@ -313,8 +315,8 @@
 
           <div class="how-block">
             <span class="how-block-label">Recipes</span>
-            <div class="how-code"><code>thl eda sales.csv -i --save-recipe team.json
-thl eda new_month.csv --recipe team.json</code></div>
+            <div class="how-code"><code>thl pipeline eda sales.csv -i --save-recipe team.json
+thl pipeline eda new_month.csv --recipe team.json</code></div>
             <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
         </div>
@@ -397,68 +399,15 @@ thl eda new_month.csv --recipe team.json</code></div>
       </div>
     </section>
 
-    <!-- ====== THE OTHER DOORS ====== -->
-    <section class="media-section" id="library">
+
+    <!-- Attribution is not documentation, so it survived the pass that
+         removed the "use it from Python" sections: those restated what
+         the page already shows, this credits the person who wrote it. -->
+    <section class="media-section media-section-alt" id="credit">
       <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Same Tools, Other Doors</span>
-          <h2 class="section-title">From Python, Or A Whole Folder At Once</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The command line is an application over five ordinary functions. Reach for whichever fits what you are doing.</p>
-        </div>
-
         <div class="how-panel fade-in">
-          <h3 class="how-panel-title">From the THL library</h3>
-          <p class="how-panel-text">Non-interactive by definition — it never prompts, never blocks on input and never opens a window, which is what keeps it working over SSH, in Docker, in CI and inside a notebook.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Profile a file</span>
-            <div class="how-code"><code>from thehallucinatedlab import eda
-
-result = eda("sales.csv", target="churn", tier2=True)
-print(result.report)     # sales.eda/report.md
-print(result.script)     # sales.eda/analysis.py
-print(result.warnings)   # sampling, low-confidence types</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Or one primitive at a time</span>
-            <div class="how-code"><code>from thehallucinatedlab import describe_dataset, relate_columns
-
-describe_dataset("sales.csv").types()["zip"]
-# 'numeric_discrete'
-
-relate_columns("sales.csv", kind="target", target="churn")</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h3 class="how-panel-title">More of the command line</h3>
-          <p class="how-panel-text">A folder is treated as N independent datasets, each profiled into its own directory plus an index linking them. One unreadable file does not abort the run — it is recorded, and the exit code says the run was partial.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Common runs</span>
-            <div class="how-code"><code>thl eda sales.csv -i                              # the nine-screen session
-thl eda data/ --pattern "*.csv" --out reports/    # a folder of datasets
-thl eda sales.csv --target churn --tier2 all      # correlation, missingness, ranking
-thl eda sales.csv --format html --self-contained  # one file to email
-thl eda --list                                    # every chart and statistic</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <p class="how-panel-text">The session walks nine screens — source, load options, type review, columns, charts, statistics, relationships, output, confirm — and every screen prints the flag that would have produced the same choice. Walk it once and the next run is one line with no session at all.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h3 class="how-panel-title">Where this came from</h3>
+          <h2 class="how-panel-title">Where this came from</h2>
           <p class="how-panel-text">Contributed by <a href="https://github.com/06pratyush" class="inline-link" target="_blank" rel="noopener noreferrer">@06pratyush</a>. It was built as its own project and folded into the toolkit here; the standalone repository, its tests and the design notes behind the type-inference rules live at <a href="https://github.com/06pratyush/thl-exploratory_data_analysis_in_CLI" class="inline-link" target="_blank" rel="noopener noreferrer">thl-exploratory_data_analysis_in_CLI</a>. Issues and pull requests are welcome there.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h3 class="how-panel-title">Not from the Assistant</h3>
-          <p class="how-panel-text">The <a href="interface.html" class="inline-link">Assistant</a> recognises these requests and tells you the command, rather than offering to run them. For anything past a sample, or for Parquet and Excel, it gives you the command — finding out a tab cannot hold your file after attaching it would be worse than being told up front.</p>
         </div>
       </div>
     </section>

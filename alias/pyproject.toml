@@ -1,0 +1,70 @@
+# thl.lab — a second name for the same toolkit.
+#
+# "thehallucinatedlab" is 18 characters and people mistype it. This package
+# exists so `pip install thl.lab` reaches the same place. It ships no code
+# at all: the wheel is metadata and a single pinned dependency, so there is
+# exactly one import path (`thehallucinatedlab`) and exactly one command
+# (`thl`). Two front doors, one house.
+#
+# `thl` itself was not available — taken in December 2025 by an unrelated
+# placeholder — so this is the shortest name that was actually free. PEP 503
+# normalisation means thl.lab, thl-lab and thl_lab are all the same project,
+# and any of the three installs it.
+#
+# The pin is exact, and CI enforces it. An alias that can resolve to a
+# different version than the package it aliases is not an alias, it is a
+# second package that will surprise somebody at 3am.
+
+[build-system]
+requires = ["hatchling>=1.21"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thl.lab"
+version = "1.0.0"
+description = "Shorter name for thehallucinatedlab — installs the same local-first toolkit."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "The Hallucinated Lab", email = "thehallucinatedlab@gmail.com" }]
+keywords = ["alias", "thehallucinatedlab", "local-first", "toolkit"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Utilities",
+]
+dependencies = ["thehallucinatedlab==1.0.0"]
+
+# Every extra the real package offers is mirrored, or `pip install
+# "thl.lab[extract]"` would fail with "does not provide the extra" and the
+# alias would be a trap rather than a shortcut.
+[project.optional-dependencies]
+extract = ["thehallucinatedlab[extract]==1.0.0"]
+chunk = ["thehallucinatedlab[chunk]==1.0.0"]
+embed = ["thehallucinatedlab[embed]==1.0.0"]
+index = ["thehallucinatedlab[index]==1.0.0"]
+rag = ["thehallucinatedlab[rag]==1.0.0"]
+eda = ["thehallucinatedlab[eda]==1.0.0"]
+eda-excel = ["thehallucinatedlab[eda-excel]==1.0.0"]
+eda-parquet = ["thehallucinatedlab[eda-parquet]==1.0.0"]
+
+[project.urls]
+Homepage = "https://thehallucinatedlab.space"
+Documentation = "https://thehallucinatedlab.space/library.html"
+Source = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
+Issues = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/issues"
+
+# No modules, no packages. bypass-selection tells hatchling that an empty
+# wheel is the intent rather than a misconfiguration it should refuse.
+[tool.hatch.build.targets.wheel]
+bypass-selection = true
+
+[tool.hatch.build.targets.sdist]
+include = ["README.md", "pyproject.toml"]

@@ -1,7 +1,7 @@
 /* ============================================================
    eda-engine.js — the analysis itself, with no DOM in it.
 
-   This is the browser half of `thl eda`. The Python package remains
+   This is the browser half of `thl pipeline eda`. The Python package remains
    the complete implementation; what runs here is the part that can
    honestly run on a delimited text file in a tab:
 

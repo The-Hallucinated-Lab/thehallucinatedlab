@@ -19,12 +19,13 @@ the website's assistant; wiring it to argv was nearly free.
 from __future__ import annotations
 
 import argparse
+import importlib
 import sys
 from collections.abc import Sequence
 from pathlib import Path
 
 from . import __version__
-from .errors import THLError
+from .errors import DependencyMissing, THLError
 from .nlp import parse as parse_intent
 from .registry import registry
 from .tools.chunk import chunk
@@ -39,11 +40,22 @@ from .tools.tokenize import tokenize
 # "converter" stays as a hidden alias: it was the name for one release and
 # silently breaking a CLI someone already scripted against is worse than
 # carrying one extra word.
-_SUBCOMMANDS = (
-    "tools", "convert", "converter", "extract", "chunk", "tokenize",
-    "embed", "index", "eda", "serve", "ask",
-)
-_ALIASES = {"converter": "convert"}
+#: The two namespaces, and the flat commands that are neither.
+#:
+#: A tool does one thing. A pipeline chains tools. Keeping them in
+#: separate namespaces is not tidiness for its own sake -- it is the
+#: only way `thl tool extract` and `thl pipeline rag` can both be true
+#: statements about the same code, where the pipeline is visibly made of
+#: the tools rather than a parallel implementation of them.
+#:
+#: Singular on purpose: `thl tool convert` reads as running one tool.
+#: Bare `thl tool` lists them, which is what the old `thl tools` did.
+_TOOL_NAMES = ("convert", "extract", "chunk", "tokenize", "embed", "index")
+_PIPELINE_NAMES = ("eda", "rag")
+_FLAT_COMMANDS = ("tool", "pipeline", "assistant", "serve")
+
+_SUBCOMMANDS = _FLAT_COMMANDS
+_ALIASES: dict[str, str] = {}
 
 
 def _print_tools() -> int:
@@ -164,6 +176,67 @@ def _run_index(args: argparse.Namespace) -> int:
     return 0
 
 
+def _print_pipelines() -> int:
+    """List the pipelines and the tools each is made of.
+
+    Printing the stages rather than a one-line description is the point:
+    a pipeline is not a black box with a name, it is these tools in this
+    order, and every one of them can be run on its own with `thl tool`.
+    """
+    from .pipelines.rag import STAGES as RAG_STAGES
+
+    print("Pipelines run several tools in order. Each stage writes its")
+    print("artefact, so you can inspect the middle or resume from it.\n")
+    for name, stages, summary in (
+        ("rag", RAG_STAGES, "a document to a searchable index"),
+        ("eda", ("describe_dataset", "profile_column", "plot_column",
+                 "relate_columns", "eda_report"), "a table to a profile report"),
+    ):
+        print(f"  thl pipeline {name}    {summary}")
+        print(f"      {' -> '.join(stages)}\n")
+    print("Run any single stage with: thl tool <name>")
+    return 0
+
+
+def _run_rag(args: argparse.Namespace) -> int:
+    """Run the RAG pipeline and report each stage as it lands."""
+    from .pipelines import rag as run_rag_pipeline
+
+    result = run_rag_pipeline(
+        args.source,
+        args.output,
+        max_tokens=args.max_tokens,
+        overlap=args.overlap,
+        tokenizer=args.tokenizer,
+        model=args.model,
+        store=args.store,
+        collection=args.collection,
+        overwrite=args.overwrite,
+    )
+
+    for stage in result.stages:
+        mark = "ok  " if stage.ok else "FAIL"
+        print(f"  {mark} {stage.name:9} {stage.seconds:5.2f}s  {stage.detail}")
+        if stage.path:
+            print(f"       -> {stage.path}")
+    for warning in result.warnings:
+        print(f"thl: {warning}", file=sys.stderr)
+
+    if result.complete:
+        print(f"\n  {result.directory}")
+        return 0
+
+    # A partial run is not a crash: the stages that finished left real
+    # artefacts. Exit 2 rather than 1 to say so -- same convention the EDA
+    # pipeline already uses for "written, but something inside failed".
+    print(
+        f"\nthl: stopped at {result.resume_from}. What ran is in {result.directory};"
+        f"\n     fix the cause and resume with: thl tool {result.resume_from} ...",
+        file=sys.stderr,
+    )
+    return 2
+
+
 def _run_ask(text: str) -> int:
     """Parse a sentence, find the file it mentions, run the tool."""
     intent = parse_intent(text)
@@ -215,15 +288,23 @@ def _build_parser() -> argparse.ArgumentParser:
         epilog='Plain english also works: thl "convert photo.jpg to png"',
     )
     parser.add_argument("--version", action="version", version=f"thl {__version__}")
-    subparsers = parser.add_subparsers(dest="command")
+    top = parser.add_subparsers(dest="command")
 
-    subparsers.add_parser("tools", help="list every tool and its arguments")
+    # Two namespaces. `thl tool <name>` runs one thing; `thl pipeline
+    # <name>` runs a chain of them. Bare `thl tool` and `thl pipeline`
+    # list what is available, so there is no separate listing command to
+    # remember and nothing that can fall out of sync with the real set.
+    tool_parser = top.add_parser("tool", help="run one tool; bare `thl tool` lists them")
+    subparsers = tool_parser.add_subparsers(dest="name")
+
+    pipeline_parser = top.add_parser(
+        "pipeline", help="run a whole pipeline; bare `thl pipeline` lists them"
+    )
+    pipelines = pipeline_parser.add_subparsers(dest="name")
 
     # Named `sub` rather than `convert` so it cannot shadow the imported
     # convert() in this scope.
-    sub = subparsers.add_parser(
-        "convert", aliases=["converter"], help="convert an image between formats"
-    )
+    sub = subparsers.add_parser("convert", help="convert an image between formats")
     sub.add_argument("source", help="path to the image")
     sub.add_argument("-o", "--output", default=None, help="where to write (default: alongside)")
     sub.add_argument("-f", "--format", required=True, help="png, jpeg, webp or avif")
@@ -276,11 +357,7 @@ def _build_parser() -> argparse.ArgumentParser:
     idx.add_argument("--overwrite", action="store_true", default=None,
                      help="replace an existing index")
 
-    srv = subparsers.add_parser("serve", help="let the website use this install")
-    srv.add_argument("-p", "--port", type=int, default=None, help="default 8787")
-    srv.add_argument("--allow-origin", action="append", default=[],
-                     help="an extra origin to answer, repeatable")
-    srv.add_argument("--verbose", action="store_true", help="log every request")
+    # -- pipelines --------------------------------------------------
 
     # The EDA flags are defined next to the code that reads them, so the
     # parser and the implementation cannot drift. That module imports
@@ -288,10 +365,35 @@ def _build_parser() -> argparse.ArgumentParser:
     # subparser -- stays as fast as it was.
     from .tools.eda.cli import add_subparser as add_eda  # noqa: PLC0415 - see above
 
-    add_eda(subparsers)
+    add_eda(pipelines)
 
-    ask = subparsers.add_parser("ask", help="describe what you want in plain english")
-    ask.add_argument("text", nargs="+", help='e.g. "convert photo.jpg to png"')
+    rag_p = pipelines.add_parser(
+        "rag", help="extract -> chunk -> embed -> index, over one document"
+    )
+    rag_p.add_argument("source", help="the document to make searchable")
+    rag_p.add_argument("-o", "--output", default=None,
+                       help="directory for the artefacts (default: <stem>.rag/)")
+    rag_p.add_argument("--max-tokens", type=int, default=None, help="largest chunk, default 512")
+    rag_p.add_argument("--overlap", type=int, default=None, help="repeated tokens, default 64")
+    rag_p.add_argument("-t", "--tokenizer", default=None, help="bge, openai or estimate")
+    rag_p.add_argument("-m", "--model", default=None, help="bge or minilm")
+    rag_p.add_argument("-s", "--store", default=None, help="chroma or numpy")
+    rag_p.add_argument("-c", "--collection", default=None, help="name inside the store")
+    rag_p.add_argument("--overwrite", action="store_true", default=None,
+                       help="replace an existing index")
+
+    # -- everything that is neither a tool nor a pipeline ------------
+
+    srv = top.add_parser("serve", help="let the website use this install")
+    srv.add_argument("-p", "--port", type=int, default=None, help="default 8787")
+    srv.add_argument("--allow-origin", action="append", default=[],
+                     help="an extra origin to answer, repeatable")
+    srv.add_argument("--verbose", action="store_true", help="log every request")
+
+    assistant = top.add_parser(
+        "assistant", help="describe what you want in plain english"
+    )
+    assistant.add_argument("text", nargs="+", help='e.g. "convert photo.jpg to png"')
 
     return parser
 
@@ -303,30 +405,76 @@ def main(argv: Sequence[str] | None = None) -> int:
         _build_parser().print_help()
         return 0
 
+    # The flat commands moved into namespaces in 1.0. Say so, rather than
+    # letting `thl convert photo.jpg -f png` fall through to the plain
+    # english route -- which would parse it as a sentence and do
+    # something almost right, which is the worst available outcome. An
+    # error that names the new spelling costs one read; silently
+    # different behaviour costs an afternoon.
+    if args[0] in _TOOL_NAMES:
+        print(
+            f"thl: `thl {args[0]}` moved in 1.0. Use:\n"
+            f"       thl tool {' '.join(args)}",
+            file=sys.stderr,
+        )
+        return 2
+    if args[0] in _PIPELINE_NAMES:
+        print(
+            f"thl: `thl {args[0]}` moved in 1.0. Use:\n"
+            f"       thl pipeline {' '.join(args)}",
+            file=sys.stderr,
+        )
+        return 2
+    if args[0] in ("tools", "ask"):
+        moved = {"tools": "thl tool", "ask": 'thl assistant "..."'}[args[0]]
+        print(f"thl: `thl {args[0]}` moved in 1.0. Use: {moved}", file=sys.stderr)
+        return 2
+
     # `thl "convert photo.jpg to png"` with no subcommand at all.
     if args[0] not in _SUBCOMMANDS and not args[0].startswith("-"):
         return _guard(lambda: _run_ask(" ".join(args)))
 
-    parsed = _build_parser().parse_args(args)
-
-    # argparse reports whichever spelling was typed, so fold aliases onto the
-    # canonical name before dispatching rather than testing both everywhere.
-    command = _ALIASES.get(parsed.command, parsed.command)
-
-    if command == "tools":
+    # Bare `thl tool` / `thl pipeline` list what is available. argparse
+    # would otherwise print a bare usage line and exit 2, which is the
+    # right answer for a typo and the wrong one for someone asking what
+    # exists.
+    if args == ["tool"]:
         return _guard(_print_tools)
-    if command == "convert":
-        return _guard(lambda: _run_convert(parsed))
-    if command == "extract":
-        return _guard(lambda: _run_extract(parsed))
-    if command == "chunk":
-        return _guard(lambda: _run_chunk(parsed))
-    if command == "tokenize":
-        return _guard(lambda: _run_tokenize(parsed))
-    if command == "embed":
-        return _guard(lambda: _run_embed(parsed))
-    if command == "index":
-        return _guard(lambda: _run_index(parsed))
+    if args == ["pipeline"]:
+        return _guard(_print_pipelines)
+
+    parsed = _build_parser().parse_args(args)
+    command = parsed.command
+    name = getattr(parsed, "name", None)
+
+    if command == "tool":
+        if name == "convert":
+            return _guard(lambda: _run_convert(parsed))
+        if name == "extract":
+            return _guard(lambda: _run_extract(parsed))
+        if name == "chunk":
+            return _guard(lambda: _run_chunk(parsed))
+        if name == "tokenize":
+            return _guard(lambda: _run_tokenize(parsed))
+        if name == "embed":
+            return _guard(lambda: _run_embed(parsed))
+        if name == "index":
+            return _guard(lambda: _run_index(parsed))
+        return _guard(_print_tools)
+
+    if command == "pipeline":
+        if name == "rag":
+            return _guard(lambda: _run_rag(parsed))
+        if name == "eda":
+            # Returns its own exit code: 2 means the report was written
+            # but something inside it failed, which _guard passes through
+            # untouched because it is neither success nor a refusal to
+            # start.
+            from .tools.eda.cli import run_parsed  # noqa: PLC0415 - deferred with the extra
+
+            return _guard(lambda: run_parsed(parsed))
+        return _guard(_print_pipelines)
+
     if command == "serve":
         from .serve import DEFAULT_PORT, serve
         return _guard(lambda: serve(
@@ -334,14 +482,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             tuple(parsed.allow_origin),
             quiet=not parsed.verbose,
         ))
-    if command == "eda":
-        # Returns its own exit code: 2 means the report was written but
-        # something inside it failed, which _guard passes through
-        # untouched because it is neither success nor a refusal to start.
-        from .tools.eda.cli import run_parsed  # noqa: PLC0415 - deferred with the extra
-
-        return _guard(lambda: run_parsed(parsed))
-    if command == "ask":
+    if command == "assistant":
         return _guard(lambda: _run_ask(" ".join(parsed.text)))
 
     _build_parser().print_help()
@@ -353,9 +494,31 @@ def _guard(fn) -> int:
 
     A traceback is the right output for a bug and the wrong output for
     "quality must be between 1 and 100".
+
+    A missing extra is the one error worth trying to fix rather than
+    report. It is the predictable consequence of keeping the base install
+    small, the fix is a single known command, and the person who hit it
+    is sitting right there. So it is offered first and only reported if
+    the offer is declined or impossible -- see autoinstall, which asks
+    nothing when there is no tty to ask.
     """
     try:
         return fn()
+    except DependencyMissing as err:
+        print(f"thl: {err}", file=sys.stderr)
+        from .autoinstall import offer
+
+        if not offer(err):
+            return 1
+        # A package installed after this process started is invisible to
+        # the import system until the path finders drop their cached
+        # directory listings.
+        importlib.invalidate_caches()
+        try:
+            return fn()
+        except THLError as retry_err:
+            print(f"thl: {retry_err}", file=sys.stderr)
+            return 1
     except THLError as err:
         print(f"thl: {err}", file=sys.stderr)
         return 1

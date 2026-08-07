@@ -355,6 +355,63 @@ test('no committed file is large enough to bloat every clone', () => {
    who needs them arrives
    ============================================================ */
 
+/* ============================================================
+   The thl.lab alias — it is only an alias while it stays pinned
+   ============================================================ */
+
+test('the alias pins the exact version of the package it aliases', () => {
+  const real = read('python/pyproject.toml');
+  const alias = read('alias/pyproject.toml');
+
+  const realVersion = (real.match(/^version\s*=\s*["']([^"']+)["']/m) || [])[1];
+  const aliasVersion = (alias.match(/^version\s*=\s*["']([^"']+)["']/m) || [])[1];
+  assert.ok(realVersion, 'python/pyproject.toml has no version');
+  assert.equal(
+    aliasVersion, realVersion,
+    'alias/pyproject.toml version must match python/pyproject.toml. An alias that\n' +
+    'can resolve to a different version than the package it aliases is not an\n' +
+    'alias, it is a second package that will surprise somebody.',
+  );
+
+  const pin = (alias.match(/dependencies\s*=\s*\[\s*["']thehallucinatedlab==([^"']+)["']/) || [])[1];
+  assert.equal(pin, realVersion, `the alias pins ==${pin}, but the package is ${realVersion}`);
+});
+
+test('the alias mirrors every extra, so no install command dead-ends', () => {
+  const extrasOf = (toml) => {
+    const block = toml.split('[project.optional-dependencies]')[1];
+    if (!block) return [];
+    return [...block.split(/\n\[/)[0].matchAll(/^([A-Za-z0-9_.-]+)\s*=\s*\[/gm)].map(m => m[1]);
+  };
+  // `dev` is the maintainers' toolchain, not something an installer asks for.
+  const real = extrasOf(read('python/pyproject.toml')).filter(e => e !== 'dev').sort();
+  const alias = extrasOf(read('alias/pyproject.toml')).sort();
+
+  assert.deepEqual(
+    alias, real,
+    'Every extra on the real package must exist on the alias, or\n' +
+    '`pip install "thl.lab[extract]"` fails with "does not provide the extra"\n' +
+    'and the shorter name becomes a trap instead of a shortcut.',
+  );
+});
+
+test('the alias ships no code, so there is one import path', () => {
+  const alias = read('alias/pyproject.toml');
+  assert.match(
+    alias, /bypass-selection\s*=\s*true/,
+    'The alias wheel must stay metadata-only. Shipping a module would give the\n' +
+    'library two import names, and tracebacks would start disagreeing with the docs.',
+  );
+  const files = fs.readdirSync(path.join(ROOT, 'alias'));
+  const code = files.filter(f => /\.(py|js)$/.test(f));
+  assert.deepEqual(code, [], `alias/ should contain no source files, found: ${code.join(', ')}`);
+});
+
+test('the alias requires the same Python as the package', () => {
+  const pick = f => (read(f).match(/requires-python\s*=\s*["']([^"']+)["']/) || [])[1];
+  assert.equal(pick('alias/pyproject.toml'), pick('python/pyproject.toml'));
+});
+
 test('the stylesheet still handles forced colors and reduced motion', () => {
   const css = read('styles.css');
   assert.match(

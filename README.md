@@ -8,7 +8,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![License](https://img.shields.io/badge/License-MIT-e8d48b?style=for-the-badge)](LICENSE)
 
-**Open-source** AI tools that run **entirely on your machine** — free, and limited only by your own hardware.
+**Open-source** AI tools that run **entirely on your machine** — free, and without any rate limits.
 
 No cloud lock-ins. No paywalls. No ceilings. Your data stays yours.
 
@@ -53,7 +53,8 @@ The **site** is zero-dependency — no frameworks, no build step, no bundler. No
 ```
 thehallucinatedlab/
 ├── index.html            # Home — hero, "Explore the Lab" tab guide, services, about
-├── tools.html            # Tools — Prompts, LoRA Adapters, THL Library
+├── tools.html            # Tools — one card per tool, plus Prompts and LoRA Adapters
+├── pipelines.html        # Pipelines — RAG and EDA, the tools chained
 ├── interface.html        # Assistant — local Ollama chat integration
 ├── solutions.html        # Solutions — shipped products (ScoobyBench)
 ├── media.html            # Media — gateway to Blogs / Artifacts / Notebooks
@@ -61,9 +62,7 @@ thehallucinatedlab/
 ├── artifacts.html        # Artifacts — interactive, playable explainers
 ├── certification.html    # Certification — course tracks and the certificate
 ├── consultancy.html      # Consultancy — individual & business engagements
-├── library.html          # THL Library — full package shelf (linked from Tools)
 ├── livelab.html          # Redirect → tools.html (old LiveLab URL)
-├── utilities.html        # Redirect → library.html (old Utilities URL)
 ├── certificate.html      # Redirect → certification.html (old URL)
 ├── 404.html              # Custom not-found page (served by GitHub Pages)
 ├── styles.css            # Core stylesheet — design tokens, navbar, hero, about
@@ -139,7 +138,7 @@ thehallucinatedlab/
 - **Responsive design** — mobile hamburger menu, stacked layouts on small screens
 
 ### Design System
-- **Dark theme** with a gold accent palette (`#c9a84c` primary)
+- **Dark theme** with a gold accent palette (`#c9a84c` primary), and a warm sand light theme (`#e8dfcb` page, `#6b5410` accent) chosen before first paint by `theme.js`
 - **CSS custom properties** for consistent theming across all components
 - **Two font families** — Outfit (headings), JetBrains Mono (body/code)
 - **Smooth transitions** using a custom cubic-bezier easing curve
@@ -153,12 +152,11 @@ thehallucinatedlab/
 
 ### Tools
 - **Convert** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
-- **Exploratory data analysis** — `thl eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
+- **Exploratory data analysis** — `thl pipeline eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
 - **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
 - **Tools declare where they run** — the `runtimes` field is respected, so the Assistant names the command for a Python-only tool rather than offering to run something it cannot
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
-- **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)
 
 ### Media
 - **Blogs** — featured picks, a searchable archive, and a community spotlight with a submission form (stored in `localStorage`)
@@ -380,7 +378,8 @@ Actions are pinned to commit SHAs rather than mutable tags.
 | Page | Description |
 |---|---|
 | **Home** | Hero with particle canvas and typing animation, an "Explore the Lab" guide to every tab, services & certification band, and the team/about section at the bottom |
-| **Tools** | Prompts, LoRA adapters, and the THL Library — everything meant to leave with you |
+| **Tools** | One card per tool — convert, extract, chunk, tokenize, embed, index — plus Prompts and LoRA adapters |
+| **Pipelines** | RAG and EDA: the tools chained, with every stage written to disk |
 | **Assistant** | AI chat powered by local Ollama — auto-detects installed model, streaming responses |
 | **Solutions** | Shipped products, led by ScoobyBench (AI hardware benchmarking) |
 | **Media** | Gateway to Blogs, Artifacts, and Notebooks |

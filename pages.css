@@ -3137,4 +3137,157 @@
 .eda-bundle-note {
   color: var(--text-muted); font-size: 0.75rem;
   margin: 0; flex: 1 1 240px; line-height: 1.5;
+
+/* ============================================================
+   TOOLBENCH — the command builder on each tool page.
+
+   One line, one view. Which view is a site-wide preference, flipped
+   from the navbar beside the theme toggle, because "do you think in a
+   terminal or in Python" is the same kind of setting as "light or
+   dark" — you answer it once, not once per page.
+
+   Every colour is a token, so this follows the theme like everything
+   else and needs no light-mode patch.
+   ============================================================ */
+.toolbench {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-card);
+  overflow: hidden;
+  margin: 2rem 0;
+}
+
+.tb-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: rgba(var(--gold-rgb), 0.04);
+}
+.tb-title {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gold-primary);
+  letter-spacing: 0.5px;
+}
+.tb-hint { font-size: 0.68rem; color: var(--text-muted); }
+
+.tb-body {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  line-height: 2.2;
+  padding: 1.3rem 1.2rem 0.4rem;
+  overflow-x: auto;
+}
+
+/* The command is one line that wraps like a terminal wraps, rather than
+   one flag per row — the stacked form read as a script instead of as
+   the thing you would type. */
+.tb-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.tb-cmd { color: var(--text-primary); font-weight: 600; white-space: nowrap; }
+.tb-flag { color: var(--gold-primary); white-space: nowrap; }
+.tb-kw { color: var(--gold-primary); white-space: nowrap; }
+/* The comma belongs to the argument before it, so it must not be
+   separated from it by the flex gap or pushed onto the next line. */
+.tb-punct { color: var(--text-muted); margin-left: -6px; }
+
+/* The [+] button is the one control that changes what the command is
+   *about*, so it reads as a slot to fill rather than as a value. */
+.tb-file {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  padding: 2px 12px;
+  border-radius: 50px;
+  border: 1px dashed var(--border-gold);
+  background: rgba(var(--gold-rgb), 0.06);
+  color: var(--gold-light);
+  cursor: pointer;
+  transition: var(--transition);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tb-file:hover { background: rgba(var(--gold-rgb), 0.14); border-style: solid; }
+
+.tb-control {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  padding: 1px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  transition: var(--transition);
+}
+.tb-control:hover, .tb-control:focus { border-color: var(--border-gold); outline: none; }
+.tb-select { cursor: pointer; }
+.tb-number { width: 5.5em; }
+.tb-color { width: 2.4em; padding: 1px 2px; cursor: pointer; }
+.tb-check { width: 14px; height: 14px; accent-color: var(--gold-primary); cursor: pointer; }
+
+.tb-copy {
+  margin: 0 1.2rem 1.2rem;
+  padding: 5px 16px;
+  border-radius: 50px;
+  border: 1px solid var(--border-gold);
+  background: transparent;
+  color: var(--gold-primary);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.tb-copy:hover { background: var(--gold-glow); }
+.tb-copy.is-copied {
+  background: rgba(46, 204, 113, 0.1);
+  border-color: rgba(46, 204, 113, 0.35);
+  color: #2ecc71;
+}
+
+/* ---- The navbar switch ----
+   Deliberately identical to .theme-toggle: two controls that sit next
+   to each other and do the same kind of job should not look like two
+   different kinds of control. */
+.nav-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-left: 1.4rem;
+  flex-shrink: 0;
+}
+/* Inside the wrapper the gap does the spacing, so the margin the theme
+   toggle carries for the un-wrapped case has to come back off. */
+.nav-controls .theme-toggle { margin-left: 0; }
+
+.codeview-toggle {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 38px; height: 38px;
+  margin-left: 0;
+  flex-shrink: 0;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  color: var(--gold-primary);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.codeview-toggle:hover { border-color: var(--border-gold); background: var(--gold-glow); }
+.codeview-toggle svg { width: 18px; height: 18px; fill: currentColor; display: block; }
+@media (prefers-reduced-motion: reduce) { .codeview-toggle { transition: none; } }
+@media (forced-colors: active) {
+  .codeview-toggle { border-color: CanvasText; }
+  .codeview-toggle svg { fill: CanvasText; }
+  .codeview-toggle:hover svg, .codeview-toggle:focus-visible svg { fill: Highlight; }
 }

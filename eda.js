@@ -114,7 +114,7 @@
 
     if (BINARY_EXT[ext]) {
       setStatus(BINARY_EXT[ext] + ' files need a binary parser this page does not ship. ' +
-        'Export it as CSV, or run `thl eda` from the Python package — that reads ' + ext + ' directly.', true);
+        'Export it as CSV, or run `thl pipeline eda` from the Python package — that reads ' + ext + ' directly.', true);
       return;
     }
     if (TEXT_EXT.indexOf(ext) === -1) {

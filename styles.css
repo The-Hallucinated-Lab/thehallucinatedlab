@@ -11,6 +11,13 @@
   --bg-nav-solid: rgba(5, 5, 5, 0.95);
   --bg-nav-overlay: rgba(5, 5, 5, 0.55);
   --gold-primary: #c9a84c;
+  /* The accent's channels on their own, for the places that need it at
+     some other alpha. A custom property cannot carry a colour and have
+     its opacity changed later, so without this every tint has to write
+     the literal out again — which is how a page full of gold washes
+     ended up staying dark-theme gold when the light theme arrived.
+     Anything written as rgba(var(--gold-rgb), …) follows the theme. */
+  --gold-rgb: 201, 168, 76;
   --gold-light: #e8d48b;
   /* 4.61:1 on --bg-card. The old #8a7232 was 4.14:1 there, which is fine
      for the icons and scrollbars it mostly paints but not for the small
@@ -44,61 +51,71 @@
   --font-body: 'JetBrains Mono', 'JetBrains Mono Fallback', 'Courier New', monospace;
 }
 
-/* ============ LIGHT THEME — the palette inverted ============
+/* ============ LIGHT THEME — "Sand" ============
    Set by theme.js on <html> before first paint, so there is no flash of
    the wrong theme. Dark stays the default in :root above — a stylesheet
    that loads without its script still renders the site it always did.
 
-   This is a straight swap of the two colours the brand is made of, not a
-   conventional light theme: the gold that was the accent becomes the
-   page, and the near-black that was the page becomes the ink. Everything
-   else follows from that one move, which is why the accent tokens go
-   dark here — left gold, --gold-primary would be painting the page
-   colour onto the page and simply disappear.
+   The page is a warm sand, not the brand gold: the gold-as-page
+   inversion this replaced painted the accent colour onto the page, which
+   left the accent nowhere to go and every gold-tinted component reading
+   as a flat field. Sand keeps the brand warmth in the paper and lets the
+   gold stay gold — just the darker side of it, the side that can sit on
+   a light surface.
 
-   Every token is measured, not eyeballed, because the swap changes which
-   direction contrast runs and old intuitions stop applying. Ratios
-   against --bg-primary / --bg-secondary / --bg-card:
-     text-primary    8.92 / 10.16 / 11.39
-     text-secondary  6.49 /  7.39 /  8.30
-     text-muted      4.79 /  5.46 /  6.12
-     gold-primary    7.35 /  8.37 /  9.39
-     gold-light      8.62 /  9.81 / 11.01
-     gold-dark       5.65 /  6.43 /  7.22
+   Layering direction matches dark (page darkest of the three, cards
+   lifted), so every component that leans on --bg-card to separate itself
+   keeps working untouched, and only the token values change.
 
-   The resting nav glyph needs no override here: the accent is dark on a
-   mid-tone page, so 0.6 opacity still measures 3.20:1 against the 3:1
-   that 1.4.11 asks of a UI component.
+   Every token is measured, not eyeballed. Ratios against
+   --bg-primary / --bg-secondary / --bg-card:
+     text-primary    13.08 / 14.20 / 15.78
+     text-secondary   7.47 /  8.11 /  9.01
+     text-muted       4.72 /  5.12 /  5.69
+     gold-primary     5.46 /  5.93 /  6.59
+     gold-light       7.16 /  7.77 /  8.64
+     gold-dark        4.67 /  5.07 /  5.63
+
+   The accents sit lower on the gold ramp than a sand page alone would
+   ask for: --gold-dark paints 10.2px text in .course-index and the ◆
+   list markers, so it is held to the 4.5:1 body-text floor like the rest
+   rather than the 3:1 an icon-only token could use.
+
+   Unlike the gold page, this one does need a resting nav-glyph override
+   — see the bottom of this file. Fading a dark accent toward a light
+   page collapses its contrast, where fading it toward black barely moved
+   it.
    ============ */
 :root[data-theme="light"] {
-  /* The page IS the gold. Layering mirrors the dark theme's direction —
-     page darkest of the three, cards lifted — so depth reads the same way
-     in both, and every component that leans on bg-card to separate itself
-     keeps working untouched. */
-  --bg-primary: #c9a84c;
-  --bg-secondary: #d3b45f;
-  --bg-card: #dcbf72;
-  --bg-glass: rgba(201, 168, 76, 0.72);
+  --bg-primary: #e8dfcb;
+  --bg-secondary: #efe8d8;
+  --bg-card: #f8f4ea;
+  --bg-glass: rgba(248, 244, 234, 0.72);
   /* Higher alpha than dark's. A translucent bar over bright content leaves
      too little separation for the text sitting on it. */
-  --bg-nav: rgba(201, 168, 76, 0.88);
-  --bg-nav-solid: rgba(201, 168, 76, 0.97);
-  --bg-nav-overlay: rgba(201, 168, 76, 0.94);
-  /* The accent role inverts with everything else. Left gold it would be
-     invisible: it would be painting the page colour onto the page. */
-  --gold-primary: #231d08;
-  --gold-light: #0d0b03;
-  --gold-dark: #3a3110;
-  --gold-glow: rgba(35, 29, 8, 0.10);
-  --text-primary: #050505;
-  --text-secondary: #2e2712;
-  --text-muted: #453c1d;
-  /* Borders invert too — a light hairline vanishes on gold. */
-  --border-subtle: rgba(35, 29, 8, 0.18);
-  --border-gold: rgba(35, 29, 8, 0.42);
-  --gradient-gold: linear-gradient(135deg, #231d08, #3a3110, #231d08);
-  --gradient-dark: linear-gradient(180deg, #c9a84c 0%, #d3b45f 100%);
-  --shadow-gold: 0 0 40px rgba(35, 29, 8, 0.12);
+  --bg-nav: rgba(232, 223, 203, 0.86);
+  --bg-nav-solid: rgba(232, 223, 203, 0.97);
+  --bg-nav-overlay: rgba(232, 223, 203, 0.94);
+  /* The accent darkens rather than inverting to black — it is still gold,
+     just the side of it that can sit on a light page. */
+  --gold-primary: #6b5410;
+  --gold-rgb: 107, 84, 16;
+  --gold-light: #57430b;
+  --gold-dark: #775e12;
+  --gold-glow: rgba(107, 84, 16, 0.10);
+  --text-primary: #1f1a0d;
+  --text-secondary: #4b4230;
+  --text-muted: #68604a;
+  /* Borders invert too — a light hairline vanishes on sand. */
+  --border-subtle: rgba(31, 26, 13, 0.16);
+  --border-gold: rgba(107, 84, 16, 0.45);
+  /* The middle stop is a real value, not decoration: .nav-logo span is
+     painted with this gradient through background-clip, so the lightest
+     point of it is text. 4.52:1 on the page. */
+  --gradient-gold: linear-gradient(135deg, #6b5410, #7a6012, #6b5410);
+  --gradient-dark: linear-gradient(180deg, #e8dfcb 0%, #efe8d8 100%);
+  /* Shadows on a light page read as depth, not glow — warm and tighter. */
+  --shadow-gold: 0 12px 34px rgba(75, 60, 20, 0.18);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -638,4 +655,79 @@ section { padding: 6rem 2rem; position: relative; }
   content: ''; position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 2000;
   background: linear-gradient(90deg, transparent, #d98c2b, transparent);
   pointer-events: none;
+}
+
+/* ============================================================
+   LIGHT THEME — the places the token swap cannot reach.
+
+   Kept at the end of the file, together, rather than beside each rule:
+   these exist only because a literal rgba(201,168,76,…) is written
+   somewhere instead of a token, and collecting them makes the list of
+   outstanding hardcoded golds visible. Anything moved onto a token can
+   be deleted from here.
+
+   Left gold, each of these washes out on sand — a gold tint over a warm
+   light page is very nearly the page itself.
+   ============================================================ */
+
+/* Hero glow and badge fill (styles.css literals). */
+:root[data-theme="light"] .hero-gradient {
+  background: radial-gradient(circle, rgba(107, 84, 16, 0.12) 0%, transparent 70%);
+}
+:root[data-theme="light"] .hero-badge { background: rgba(107, 84, 16, 0.08); }
+
+/* Tooltip bubble on the social/hover buttons. */
+:root[data-theme="light"] .hover-btn::after {
+  background: rgba(107, 84, 16, 0.12);
+  color: var(--gold-light);
+}
+
+/* Open / current state in the icon nav bar. */
+:root[data-theme="light"] .nav-links.is-icons li.is-open > a.has-icon,
+:root[data-theme="light"] .nav-links.is-icons a.has-icon.active {
+  background: rgba(107, 84, 16, 0.10);
+  box-shadow: 0 0 18px rgba(107, 84, 16, 0.10);
+}
+
+/* The resting nav glyph. 0.6 is tuned for gold fading toward black,
+   where contrast barely moves; fading a dark accent toward a light page
+   collapses it — 0.6 measures 2.51:1 here, under the 3:1 that 1.4.11
+   asks of a UI component. 0.85 measures 4.03:1, and the icon bar still
+   reads as depth rather than a row of equally loud glyphs because the
+   active pill carries its own background and border. */
+:root[data-theme="light"] .nav-links.is-icons a.has-icon svg { opacity: 0.85; }
+
+/* Primary hero button hover (pages.css literal). */
+:root[data-theme="light"] .hero-btn-primary:hover {
+  box-shadow: 0 8px 30px rgba(75, 60, 20, 0.18);
+}
+
+/* The dev badge is a dark chip built for a dark page. */
+:root[data-theme="light"][data-mode="dev"] [data-status="dev"]::after {
+  color: #6b4409; background: #f3e6c8;
+}
+
+/* ---- Islands that stay dark in both themes ----
+   Card covers and article heroes are dark gradients set inline per item,
+   as art direction rather than as theme. The page around them changes;
+   they do not. Left alone, the light theme painted its dark accent and
+   dark ink straight onto them — the blog hero title measured under 1.5:1
+   and the gateway badges vanished into their covers.
+
+   Handled by re-declaring the dark palette on the island rather than by
+   restyling each child: every descendant already reads these tokens, so
+   the surface and its ink stay in agreement, and a new child inside one
+   of them inherits the right values without another patch here. */
+:root[data-theme="light"] .gateway-cover,
+:root[data-theme="light"] .blog-hero-content {
+  --gold-primary: #c9a84c;
+  --gold-rgb: 201, 168, 76;
+  --gold-light: #e8d48b;
+  --gold-dark: #94793a;
+  --gold-glow: rgba(201, 168, 76, 0.15);
+  --border-subtle: rgba(201, 168, 76, 0.1);
+  --border-gold: rgba(201, 168, 76, 0.3);
+  --text-primary: #f0ece4;
+  --text-secondary: #9a9590;
+  --text-muted: #807b72;
 }

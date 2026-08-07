@@ -96,6 +96,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -209,6 +211,8 @@
           <p class="section-intro">The same arguments work in all three places — this page, the Assistant, and the Python package. This table is generated from the tool spec the code itself reads, so it cannot drift out of date.</p>
         </div>
 
+        <div data-toolbench="extract" class="fade-in"></div>
+
         <div class="tool-args-wrap fade-in" id="tool-args"></div>
       </div>
     </section>
@@ -248,53 +252,6 @@
     </section>
 
     <!-- ====== USE IT ELSEWHERE ====== -->
-    <section class="media-section media-section-alt" id="library">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Same Tool, Other Doors</span>
-          <h2 class="section-title">Use It From Python</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The Python tier reads every format on the list. It is also what this page talks to when you run the bridge.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h3 class="how-panel-title">From the THL library</h3>
-          <p class="how-panel-text">Document loaders are an optional extra, so the base install stays small for anyone who only wanted to convert an image.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Install</span>
-            <div class="how-code"><code>pip install "thehallucinatedlab[extract]"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Extract a document</span>
-            <div class="how-code"><code>from thehallucinatedlab import extract
-
-result = extract("report.pdf")
-print(result.path, result.pages, result.headings)</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl extract report.pdf --format markdown
-
-# plain english works too
-thl "extract this pdf to markdown"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Let this page use it</span>
-            <div class="how-code"><code>thl serve</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-          <p class="how-panel-text">The bridge listens on loopback only and accepts requests from this origin alone. Nothing is uploaded — the file goes from your disk to a process on the same machine and back. Close the terminal and the page carries on with the formats it reads unaided.</p>
-        </div>
-      </div>
-    </section>
 
   </main>
 
@@ -305,6 +262,7 @@ thl "extract this pdf to markdown"</code></div>
   <script src="script.js" defer></script>
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
+  <script src="toolbench.js" defer></script>
   <script src="extract.js" defer></script>
 </body>
 </html>

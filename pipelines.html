@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Pipelines — The Hallucinated Lab</title>
+  <meta name="description" content="A pipeline runs several tools in order and writes every stage to disk. thl pipeline rag makes a document searchable; thl pipeline eda profiles a table.">
+  <meta property="og:title" content="Pipelines — The Hallucinated Lab">
+  <meta property="og:description" content="Tools chained in the order that gets you somewhere. Every stage writes its artefact, so you can read the middle and resume from it.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/pipelines.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/pipelines.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Pipelines — The Hallucinated Lab">
+  <meta name="twitter:description" content="Tools chained in the order that gets you somewhere, with every stage written to disk.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script src="theme.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Pipelines",
+          "item": "https://thehallucinatedlab.space/pipelines.html"
+        }
+      ]
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://thehallucinatedlab.space/pipelines.html#webpage",
+      "url": "https://thehallucinatedlab.space/pipelines.html",
+      "name": "Pipelines - The Hallucinated Lab",
+      "description": "Pipelines chain the individual tools in the order that produces a result, writing every intermediate stage to disk.",
+      "isPartOf": {
+        "@id": "https://thehallucinatedlab.space/#website"
+      },
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="pipelines.html" class="active">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="/sitemap.html">Sitemap</a></li>
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Run The Whole Thing</span>
+      <h1 class="page-title">Pipelines</h1>
+      <p class="page-subtitle">A tool does one thing. A pipeline runs several of them in the order that actually gets you somewhere — and writes every stage to disk on the way, so the middle is something you can read rather than something you have to trust.</p>
+      <div class="page-jump">
+        <a href="#why">Why every stage is a file</a>
+      </div>
+    </section>
+
+    <section class="media-section">
+      <div class="container">
+        <div class="gateway-grid">
+
+          <a href="pipelines.html#rag" class="gateway-card fade-in fade-in-delay-1">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1014 0%, #14262e 55%, #1f4351 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M15.5 5H11l5 7-5 7h4.5l5-7zM8.5 5H4l5 7-5 7h4.5l5-7z"/></svg>
+              </div>
+              <span class="gateway-count">Four stages</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">RAG</h2>
+              <p class="gateway-desc">A document in, a searchable index out. Extract, chunk, embed, index — the same four tools you can run yourself, in the order that gets you there.</p>
+              <ul class="gateway-list">
+                <li><span>one command</span> thl pipeline rag report.pdf</li>
+                <li><span>every stage on disk</span> read the chunks, not just the answer</li>
+                <li><span>resumable</span> a stop keeps what it made</li>
+              </ul>
+              <span class="gateway-cta">How RAG runs
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+          <a href="eda.html" class="gateway-card fade-in fade-in-delay-2">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1016 0%, #12283a 55%, #1e4560 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+              </div>
+              <span class="gateway-count">Five stages</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">EDA</h2>
+              <p class="gateway-desc">A table in, a report you can hand to someone out — with the figures, a replayable recipe, and the Python script that produced all of it.</p>
+              <ul class="gateway-list">
+                <li><span>one command</span> thl pipeline eda sales.csv</li>
+                <li><span>reproducible</span> the recipe replays every choice</li>
+                <li><span>five primitives</span> each callable on its own</li>
+              </ul>
+              <span class="gateway-cta">Open EDA
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="media-section media-section--alt" id="rag">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">Pipeline · RAG</span>
+          <h2 class="section-title">extract → chunk → embed → index</h2>
+          <div class="section-line"></div>
+          <p class="section-intro">The pipeline owns no logic of its own. It calls the same four tools the Tools page documents, so a fix to the chunker is a fix to both and the two cannot drift apart. What it removes is the typing, not the transparency.</p>
+        </div>
+
+        <div class="trait-grid trait-grid-4">
+          <div class="trait-card">
+            <h3 class="trait-title">extract</h3>
+            <p class="trait-text">The document becomes markdown, headings intact — because headings are what the next stage splits on.</p>
+          </div>
+          <div class="trait-card">
+            <h3 class="trait-title">chunk</h3>
+            <p class="trait-text">Markdown becomes JSONL you can open and read. This is the stage worth looking at when an answer is wrong.</p>
+          </div>
+          <div class="trait-card">
+            <h3 class="trait-title">embed</h3>
+            <p class="trait-text">Chunks become vectors, with the model recorded alongside them so a later query cannot use the wrong one.</p>
+          </div>
+          <div class="trait-card">
+            <h3 class="trait-title">index</h3>
+            <p class="trait-text">Vectors become a portable store, with a query script written beside it.</p>
+          </div>
+        </div>
+
+        <div class="how-panel">
+          <h3 class="how-panel-title">Running it</h3>
+          <div class="how-code"><code>thl pipeline rag report.pdf
+thl pipeline rag notes.md --max-tokens 512 --tokenizer estimate</code></div>
+          <p class="how-note">Needs <strong>Python 3.10 or newer</strong> and <code>pip install "thehallucinatedlab[rag]"</code>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="media-section" id="why">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-label">The Point</span>
+          <h2 class="section-title">Why every stage is a file</h2>
+          <div class="section-line"></div>
+          <p class="section-intro">The intermediate files are not debris to be cleaned up afterwards. They are the output.</p>
+        </div>
+
+        <div class="trait-grid">
+          <div class="trait-card">
+            <h3 class="trait-title">The middle is where it goes wrong</h3>
+            <p class="trait-text">A bad answer out of a RAG system is nearly always a bad chunk. You cannot see a bad chunk in a vector store. You can read one in a JSONL file.</p>
+          </div>
+          <div class="trait-card">
+            <h3 class="trait-title">Redoing the expensive step is cheap</h3>
+            <p class="trait-text">Embedding is the slow stage and the one people redo, because the model is the thing they are experimenting with. With the chunks already written, a second model costs one command, not a re-parse of the PDF.</p>
+          </div>
+          <div class="trait-card">
+            <h3 class="trait-title">A partial run is still a result</h3>
+            <p class="trait-text">If a stage fails — a missing extra, usually — the pipeline stops, keeps everything the earlier stages produced, and tells you which command to resume from. Nothing is deleted to tidy up after a failure.</p>
+          </div>
+        </div>
+
+        <div class="how-panel">
+          <h3 class="how-panel-title">What a stopped run looks like</h3>
+          <div class="how-code"><code>$ thl pipeline rag notes.md
+  ok   extract    0.01s  markdown, 4 headings
+       -&gt; notes.rag/extracted.md
+  ok   chunk      0.02s  9 chunks, estimate (estimated)
+       -&gt; notes.rag/chunks.jsonl
+  FAIL embed      0.00s  holding vectors needs numpy, which is not installed
+
+thl: stopped at embed. What ran is in notes.rag;
+     fix the cause and resume with: thl tool embed ...</code></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+  <script src="toolkit.js" defer></script>
+</body>
+</html>

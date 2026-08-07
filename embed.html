@@ -96,6 +96,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -134,6 +136,8 @@
           <div class="section-line" aria-hidden="true"></div>
           <p class="section-intro">All arguments are documented here, in the Assistant, and the Python package. The table below is generated from the tool spec.</p>
         </div>
+        <div data-toolbench="embed" class="fade-in"></div>
+
         <div class="tool-args-wrap fade-in" data-tool="embed"></div>
       </div>
     </section>
@@ -190,42 +194,6 @@
     </section>
 
     <!-- ====== USE IT FROM PYTHON ====== -->
-    <section class="media-section media-section-alt" id="library">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Same tool, other doors</span>
-          <h2 class="section-title">Use It From Python</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The Python tier reads the JSONL produced by the chunk stage and writes a .npy of vectors.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h3 class="how-panel-title">From the THL library</h3>
-
-          <div class="how-block">
-            <span class="how-block-label">Install</span>
-            <div class="how-code"><code>pip install "thehallucinatedlab[embed]"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Embed a chunk file</span>
-            <div class="how-code"><code>from thehallucinatedlab import embed
-
-embed("chunks.jsonl", model="bge")</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl embed chunks.jsonl</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-        </div>
-
-      </div>
-    </section>
 
   </main>
 
@@ -236,5 +204,6 @@ embed("chunks.jsonl", model="bge")</code></div>
   <script src="script.js" defer></script>
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
+  <script src="toolbench.js" defer></script>
 </body>
 </html>
