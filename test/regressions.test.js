@@ -187,6 +187,41 @@ test('every page with the navbar offers the theme toggle and a Sitemap link', ()
   );
 });
 
+test('the icon nav cannot be enhanced into the hamburger overlay', () => {
+  /* Shipped bug: script.js added .is-icons at min-width 769px while the
+     CSS turned .nav-links into the full-screen overlay all the way up to
+     1024px. Between those two numbers the hamburger opened onto a column
+     of bare glyphs — .is-icons clips every label to max-width:0, and the
+     icon is meaningless once it is not sitting in the bar. It read as
+     "half the menu items are missing" on any tablet, and on a phone in
+     landscape.
+
+     The two numbers are a single decision expressed in two files, so
+     lock them together: enhance only from one pixel above wherever the
+     overlay stops. */
+  const js = fs.readFileSync(path.join(ROOT, 'script.js'), 'utf8');
+  const css = fs.readFileSync(path.join(ROOT, 'styles.css'), 'utf8');
+
+  const enhanceAt = Number(
+    (js.match(/is-icons[\s\S]{0,400}?min-width:\s*(\d+)px/) ||
+     js.match(/min-width:\s*(\d+)px[\s\S]{0,400}?is-icons/) || [])[1],
+  );
+  assert.ok(enhanceAt > 0, 'could not find the min-width that gates .is-icons in script.js');
+
+  const overlayTo = Number(
+    (css.match(/@media\s*\(max-width:\s*(\d+)px\)[\s\S]{0,2500}?\.nav-hamburger\s*\{[^}]*display:\s*flex/) || [])[1],
+  );
+  assert.ok(overlayTo > 0, 'could not find the max-width that shows the hamburger in styles.css');
+
+  assert.equal(
+    enhanceAt, overlayTo + 1,
+    `script.js enhances the nav to icons at ${enhanceAt}px, but the hamburger overlay ` +
+    `is still the nav up to ${overlayTo}px.\nEvery width in between opens the overlay ` +
+    'with .is-icons applied, which clips the labels to nothing.\n' +
+    `Set the JS gate to ${overlayTo + 1}px, or move the CSS breakpoint to match.`,
+  );
+});
+
 /* ============================================================
    4.1.2 / 3.3.2 Accessible names — the chat-input regression
    ============================================================ */
