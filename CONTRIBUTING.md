@@ -215,30 +215,49 @@ git reset --hard origin/main
 ## Repo settings this all assumes
 
 These live in GitHub's settings, not in the repo, so they have to be
-switched on by hand — and they are what make the rules above enforceable
-rather than advisory.
+switched on by hand. They are recorded here because a setting nobody
+wrote down is a setting nobody can check.
 
 **Settings → General → Pull Requests**
 
-- ✅ *Automatically delete head branches.* Without it, merged branches
-  pile up; we had seven at once, and it stops being obvious which
-  branches are alive.
+- ✅ **Allow squash merging** — and *only* squash merging. Every PR
+  lands as exactly one commit, so `main` stays a straight line. This is
+  the setting that does the most for us: with linear history there is
+  never an ambiguous merge base, which is where the confusing conflicts
+  come from.
+- ❌ Allow merge commits — off.
+- ❌ Allow rebase merging — off.
+- ✅ **Automatically delete head branches.** Without it, merged branches
+  pile up; we hit seven at once and it stopped being obvious which
+  branches were alive.
 
-**Settings → Branches → branch protection rule for `main`**
+**Settings → Branches → rule for `main`**
 
-- ✅ Require a pull request before merging — 1 approval. With two of us,
-  each approves the other.
-- ✅ Require status checks to pass: `Tests and site invariants`,
+- ✅ **Block force pushes.** The single most important one. A history
+  rewrite is what stranded every clone and orphaned a branch entirely;
+  see above.
+- ✅ **Require status checks to pass:** `Tests and site invariants`,
   `Secret scan`, `THL library (3.10)`, `THL library (3.13)`.
-- ✅ **Require branches to be up to date before merging.** This is the
-  one that prevents the nastiest case: two PRs that are each green
-  alone, and broken together. It costs an "Update branch" click on the
-  second PR, which is the point.
-- ✅ Require review from Code Owners.
-- ✅ **Block force pushes.** See above for why.
 
-If the up-to-date requirement starts to feel like ceremony, the upgrade
-is a merge queue rather than turning it off.
+### Deliberately not enabled
+
+These were considered and turned down, so nobody has to re-litigate them
+by accident:
+
+- **Required approvals.** With two people, requiring an approval means
+  whoever is awake cannot ship. Read each other's PRs anyway — the
+  review is the point, the enforcement was the cost.
+- **Require branches to be up to date before merging.** Would catch the
+  case of two PRs that are green alone and broken together. Not free:
+  it forces an "Update branch" click on whichever lands second. If we
+  ever get burned by that case, this is the fix, and a merge queue is
+  the fix after that.
+- **Require Code Owner review.** `CODEOWNERS` still routes the review
+  request; it just is not a gate.
+
+Since none of the above is enforced, `npm run sync` before you push is
+doing the work instead. It is the only thing standing between us and
+the two-green-PRs-one-broken-`main` case.
 
 ## Working with an AI agent on this repo
 
