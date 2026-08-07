@@ -23,7 +23,6 @@ The Hallucinated Lab operates in three modes:
 - [Index](https://thehallucinatedlab.space/vector-index.html): Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy.
 - [Exploratory data analysis](https://thehallucinatedlab.space/eda.html): Profiles a tabular file from the command line. `thl pipeline eda sales.csv` writes a Markdown report, the figures, a replayable recipe and a runnable analysis.py that reproduces the report.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
-- [THL Library](https://thehallucinatedlab.space/library.html): The full package shelf - pip-installable packages, embeddable engines and open-source building blocks, with install and usage for each.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
 - [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.

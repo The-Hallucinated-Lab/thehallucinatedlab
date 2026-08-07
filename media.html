@@ -209,6 +209,28 @@
               <span class="gateway-cta gateway-cta-disabled">Landing soon</span>
             </div>
           </div>
+          <!-- Simulators is a <div>, not an <a>: there is no page behind it
+               yet, and a card that looks clickable but leads nowhere is worse
+               than one that plainly says it is not ready. Swap it for an <a>
+               with an href once the page exists. -->
+          <div class="gateway-card gateway-card-planned fade-in fade-in-delay-4" data-status="dev">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0b1016 0%, #14283a 55%, #1d4159 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M15.96 4H8.04c-.42 0-.65.48-.39.81L9 6.5v4.17L3.2 18.4c-.49.66-.02 1.6.8 1.6h16c.82 0 1.29-.94.8-1.6L15 10.67V6.5l1.35-1.69c.26-.33.03-.81-.39-.81z"/></svg>
+              </div>
+              <span class="gateway-count">Planned</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">Simulators</h2>
+              <p class="gateway-desc">Interactive models you run in the page and steer yourself — parameters on one side, the system responding on the other.</p>
+              <ul class="gateway-list">
+                <li><span>in the page</span> no runtime, no install</li>
+                <li><span>steerable</span> change a parameter, watch it move</li>
+                <li><span>status</span> shell only, nothing wired up yet</li>
+              </ul>
+              <span class="gateway-cta gateway-cta-muted">Not built yet</span>
+            </div>
+          </div>
 
         </div>
       </div>
