@@ -25,10 +25,15 @@ The Hallucinated Lab is not a SaaS company. There is no hosted product, no subsc
 
 ## Navigation structure
 
-The top-level navigation has five entries in this order: Home, Tools, Assistant, Solutions, Media.
+The top-level navigation has seven entries in this order: Home, Tools, Pipelines, Assistant, Solutions, Media, Sitemap.
 
-Two of these are gateways to deeper pages:
+Tools and Pipelines are the two halves of the same toolkit: a tool does one thing, a pipeline
+chains several tools in order. Both are exposed by the `thl` command under matching namespaces,
+`thl tool <name>` and `thl pipeline <name>`.
+
+Three of these are gateways to deeper pages:
 - Tools links onward to the THL Library at /library.html.
+- Pipelines documents the RAG and EDA pipelines, and links onward to /eda.html.
 - Media links onward to Blogs at /blogs.html and Artifacts at /artifacts.html.
 
 ---
@@ -38,7 +43,7 @@ Two of these are gateways to deeper pages:
 Purpose: orient a first-time visitor and explain what lives behind every tab.
 
 Sections:
-- Hero. States the lab's position: open-source AI tools running entirely on the visitor's machine, free, and limited only by their own hardware.
+- Hero. States the lab's position: open-source AI tools running entirely on the visitor's machine, free, and without any rate limits.
 - Explore the Lab. Six cards, one per navigation tab, each summarising what that section contains and who it is for.
 - About Us. Profiles of the two founders with links, followed by contact details.
 
@@ -87,7 +92,7 @@ Purpose: packages and SDKs that drop into a reader's own project.
 Entry — thehallucinatedlab (Python toolkit):
 - Install: pip install thehallucinatedlab
 - Every THL tool is a method: `from thehallucinatedlab import convert`.
-- Also ships a `thl` command: `thl tools`, `thl convert photo.jpg --format png`, and a plain-english form, `thl "convert photo.jpg to png"`.
+- Also ships a `thl` command: `thl tool`, `thl tool convert photo.jpg --format png`, and a plain-english form, `thl "convert photo.jpg to png"`.
 - One spec file (spec/manifest.json) declares each tool's arguments, bounds, defaults and vocabulary. The website builds its convert UI and argument tables from it, the assistant parses against it, and the package validates against it, so the documentation cannot describe arguments the code does not accept.
 - Natural language is handled by a deterministic intent parser (classification plus slot filling), not a model. It is implemented twice, in JavaScript and Python, against a shared fixture file that both test suites run.
 - Requires Python 3.10+. Only runtime dependency is Pillow.
@@ -135,7 +140,7 @@ Purpose: small fine-tuned adapters that stack onto a base model the reader alrea
 Purpose: Turns PDFs, Word files, slides, spreadsheets and e-books into Markdown that keeps its headings and page boundaries, so the result can be split structurally rather than blindly. Text, Markdown, HTML and CSV parse in the browser; heavier formats go to the local Python package over a loopback bridge.
 
 - Runs locally. Nothing is uploaded and there is no service to be up.
-- The same tool is available as a method in the thehallucinatedlab pip package and as `thl extract` on the command line.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tool extract` on the command line.
 - Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
 
 ---
@@ -145,7 +150,7 @@ Purpose: Turns PDFs, Word files, slides, spreadsheets and e-books into Markdown 
 Purpose: Splits a Markdown document into retrieval-sized chunks along its own heading structure rather than at arbitrary offsets. Every chunk records the heading path and page it came from, which is what lets a retrieved fragment cite its source. Output is JSONL.
 
 - Runs locally. Nothing is uploaded and there is no service to be up.
-- The same tool is available as a method in the thehallucinatedlab pip package and as `thl chunk` on the command line.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tool chunk` on the command line.
 - Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
 
 ---
@@ -155,7 +160,7 @@ Purpose: Splits a Markdown document into retrieval-sized chunks along its own he
 Purpose: Counts tokens and reports the distribution, including how many pieces exceed the model's context window and would be silently truncated at embed time. A measuring instrument for planning chunk size and embedding cost, not a stage of the pipeline.
 
 - Runs locally. Nothing is uploaded and there is no service to be up.
-- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tokenize` on the command line.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tool tokenize` on the command line.
 - Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
 
 ---
@@ -165,7 +170,7 @@ Purpose: Counts tokens and reports the distribution, including how many pieces e
 Purpose: Turns chunks into vectors locally with BGE-M3 at 1024 dimensions or all-MiniLM-L6-v2 at 384. Vectors are L2-normalised so cosine similarity and dot product agree. Output is a single .npy, not one file per chunk.
 
 - Runs locally. Nothing is uploaded and there is no service to be up.
-- The same tool is available as a method in the thehallucinatedlab pip package and as `thl embed` on the command line.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tool embed` on the command line.
 - Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
 
 ---
@@ -175,7 +180,7 @@ Purpose: Turns chunks into vectors locally with BGE-M3 at 1024 dimensions or all
 Purpose: Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy. Records the embedding model, its dimensions and whether vectors were normalised, plus a runnable query snippet - without which the folder cannot be reopened correctly.
 
 - Runs locally. Nothing is uploaded and there is no service to be up.
-- The same tool is available as a method in the thehallucinatedlab pip package and as `thl index` on the command line.
+- The same tool is available as a method in the thehallucinatedlab pip package and as `thl tool index` on the command line.
 - Arguments, bounds and defaults come from one shared spec, so the page, the assistant and the package cannot disagree.
 
 ---
@@ -184,7 +189,7 @@ Purpose: Writes vectors and their chunks into a portable database directory you 
 
 Purpose: profile a tabular data file from the command line and hand back the report, the figures, a replayable recipe, and the Python script that produced them.
 
-- `pip install "thehallucinatedlab[eda]"`, then `thl eda sales.csv`. Zero flags required. Output is one directory beside the input: report.md, recipe.json, analysis.py, summary.json and figures/.
+- `pip install "thehallucinatedlab[eda]"`, then `thl pipeline eda sales.csv`. Zero flags required. Output is one directory beside the input: report.md, recipe.json, analysis.py, summary.json and figures/.
 - Command line only. It is not a page widget and the Assistant does not offer to run it, because profiling a 200 MB CSV is pandas work rather than canvas work; the Assistant recognises the request and names the command instead.
 - Every column gets an inferred type from a taxonomy of eleven - numeric_continuous, numeric_discrete, boolean, categorical_low, categorical_high, datetime, free_text, identifier, constant, empty, unsupported - together with a confidence in [0,1]. Anything below 0.7 is flagged in the review screen, in the report's caveats and in result.warnings, and every verdict is overridable from --types, from the session, or by editing the recipe.
 - The emitted analysis.py reproduces the report it came from: the same figures and a byte-identical summary.json. It imports nothing from the toolkit - the statistics and plots are ordinary pandas and matplotlib copied in, so it can be edited without reading anyone else's library.
@@ -192,7 +197,7 @@ Purpose: profile a tabular data file from the command line and hand back the rep
 - Sampling is never silent. Under 200 MB everything is exact; above it the file is streamed, counts, nulls, min/max and cardinality stay exact, and only figures use a seeded sample - stated in the pre-run plan, in a banner atop the report, on every affected figure, in the warnings and in the recipe.
 - Two tiers. Tier 1 is per-column charts and statistics, with outlier counts always reporting the rule that produced them. Tier 2 is dataset relationships: Pearson, Spearman and a bias-corrected Cramer's V; which columns go missing together; exact and near-duplicate row counts; and a mutual-information ranking of features against a named target.
 - A folder is treated as N independent datasets, each profiled into its own directory plus an index. One unreadable file does not abort the run: the failure is recorded and the exit code is 2, meaning partial success.
-- Five primitives are registered in the shared tool spec and are independently callable from Python: describe_dataset, profile_column, plot_column, relate_columns and eda_report. `thl eda` is an application over them, not a tool itself.
+- Five primitives are registered in the shared tool spec and are independently callable from Python: describe_dataset, profile_column, plot_column, relate_columns and eda_report. `thl pipeline eda` is an application over them, not a tool itself.
 - Optional extras within the extra: [eda-excel] for .xlsx, [eda-parquet] for .parquet. A workbook is treated as N datasets; by default the first sheet is profiled and the report names the sheets it did not read.
 
 ---
@@ -206,6 +211,17 @@ Purpose: convert an image between formats, and document the arguments the same t
 - Browsers vary in which formats they can encode. The page probes each one at startup and disables the ones the browser cannot produce, rather than handing back a file whose extension does not match its contents.
 - The argument reference table on the page is generated from the shared tool spec, so it always matches what the code accepts.
 - The same conversion is available as convert in the thehallucinatedlab pip package, and by asking the Assistant in plain english.
+
+---
+
+## Page: Pipelines — https://thehallucinatedlab.space/pipelines.html
+
+Purpose: the pipelines, which run several tools in order. A pipeline contains no logic of its own — it calls the same public tools documented on the individual tool pages, so the two cannot drift apart.
+
+- RAG (`thl pipeline rag <document>`): extract, then chunk, then embed, then index. Turns one document into a searchable vector store. Needs `pip install "thehallucinatedlab[rag]"` and Python 3.10 or newer.
+- EDA (`thl pipeline eda <table>`): describe_dataset, profile_column, plot_column, relate_columns, eda_report. Turns a tabular file into a Markdown report with figures, a replayable recipe, and the Python script that produced it. Needs `pip install "thehallucinatedlab[eda]"`.
+- Every stage writes its artefact to disk rather than passing data only in memory. This is deliberate: the intermediate files are the output, not debris. A bad RAG answer is nearly always a bad chunk, which is unreadable in a vector store and readable in a JSONL file.
+- A run that fails part-way keeps everything the earlier stages produced, reports which stage stopped it, and names the command to resume from. Nothing is deleted to tidy up after a failure.
 
 ---
 

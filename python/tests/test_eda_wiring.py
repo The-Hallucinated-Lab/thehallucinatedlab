@@ -74,14 +74,15 @@ def run_python(code: str) -> subprocess.CompletedProcess:
 
 def test_thl_eda_is_a_subcommand() -> None:
     parser = cli._build_parser()
-    args = parser.parse_args(["eda", "data.csv", "--tier2", "all"])
-    assert args.command == "eda"
+    args = parser.parse_args(["pipeline", "eda", "data.csv", "--tier2", "all"])
+    assert args.command == "pipeline"
+    assert args.name == "eda"
     assert args.source == "data.csv"
     assert args.tier2 == "all"
 
 
 def test_thl_help_lists_eda() -> None:
-    assert "eda" in cli._build_parser().format_help()
+    assert "pipeline" in cli._build_parser().format_help()
 
 
 def test_building_the_parser_costs_no_pandas() -> None:
@@ -110,7 +111,7 @@ def test_the_cli_runs_a_file_end_to_end(tmp_path: Path) -> None:
     )
 
     out = tmp_path / "out"
-    assert cli.main(["eda", str(source), "--out", str(out), "--quiet"]) == 0
+    assert cli.main(["pipeline", "eda", str(source), "--out", str(out), "--quiet"]) == 0
     for artefact in ("report.md", "recipe.json", "analysis.py", "summary.json"):
         assert (out / artefact).exists(), f"{artefact} was not written"
     assert list((out / "figures").glob("*.png"))

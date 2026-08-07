@@ -100,7 +100,7 @@ release. That is why the tag/version check runs before the build rather than aft
 
 ```bash
 python -m venv /tmp/thl && /tmp/thl/bin/pip install thehallucinatedlab
-/tmp/thl/bin/thl tools
+/tmp/thl/bin/thl tool
 /tmp/thl/bin/python -c "from thehallucinatedlab import convert; print(convert)"
 ```
 

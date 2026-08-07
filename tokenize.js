@@ -201,7 +201,7 @@
       var counts = [];
       for (var i = 0; i < pieces.length; i++) counts.push(toolkit.estimateTokens(pieces[i]));
       render(analyze(pieces, validated.args.limit, toolkit.estimateTokens), counts);
-      setStatus('Estimated in this tab. For exact BGE-M3 counts: thl tokenize ' +
+      setStatus('Estimated in this tab. For exact BGE-M3 counts: thl tool tokenize ' +
         sourceFile.name, 'ok');
     }).catch(function (err) {
       setStatus(err.message || 'Counting failed.', 'error');

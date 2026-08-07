@@ -96,6 +96,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -192,8 +194,10 @@
           <span class="section-label">Reference</span>
           <h2 class="section-title">Arguments</h2>
           <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The same arguments work in all three places — this page, the Assistant, and the Python package. This table is generated from the tool spec the code itself reads, so it cannot drift out of date.</p>
+          <p class="section-intro">The same arguments work in all three places — this page, the Assistant, and the Python package. Both the builder and the table below are generated from the tool spec the code itself reads, so they cannot drift out of date.</p>
         </div>
+
+        <div data-toolbench="convert" class="fade-in"></div>
 
         <div class="tool-args-wrap fade-in" id="tool-args"></div>
       </div>
@@ -234,7 +238,7 @@ print(result.path, result.bytes)</code></div>
 
           <div class="how-block">
             <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl convert photo.jpg --format webp --quality 80
+            <div class="how-code"><code>thl tool convert photo.jpg --format webp --quality 80
 
 # plain english works too
 thl "convert photo.jpg to png"</code></div>
@@ -266,6 +270,7 @@ png to webp, quality 75</code></div>
   <script src="script.js" defer></script>
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
+  <script src="toolbench.js" defer></script>
   <script src="convert.js" defer></script>
 </body>
 </html>

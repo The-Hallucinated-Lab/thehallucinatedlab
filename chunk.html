@@ -75,6 +75,8 @@
       <ul class="nav-links" id="nav-links">
         <li><a href="/">Home</a></li>
         <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
@@ -193,6 +195,8 @@
           <div class="section-line" aria-hidden="true"></div>
           <p class="section-intro">Generated from the tool spec the code itself reads, so it cannot drift out of date.</p>
         </div>
+        <div data-toolbench="chunk" class="fade-in"></div>
+
         <div class="tool-args-wrap fade-in" id="tool-args"></div>
       </div>
     </section>
@@ -255,9 +259,9 @@ print(result.path, len(result.chunks), result.total_tokens)</code></div>
 
           <div class="how-block">
             <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl extract report.pdf
-thl chunk report.md --max-tokens 512 --overlap 64
-thl tokenize report.jsonl</code></div>
+            <div class="how-code"><code>thl tool extract report.pdf
+thl tool chunk report.md --max-tokens 512 --overlap 64
+thl tool tokenize report.jsonl</code></div>
             <button type="button" class="copy-btn"><span>Copy</span></button>
           </div>
         </div>
@@ -273,6 +277,7 @@ thl tokenize report.jsonl</code></div>
   <script src="script.js" defer></script>
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
+  <script src="toolbench.js" defer></script>
   <script src="chunk.js" defer></script>
 </body>
 </html>

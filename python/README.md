@@ -47,8 +47,8 @@ parse("convert it to webp at 80")
 And from a shell:
 
 ```bash
-thl tools                                    # every tool and its arguments
-thl convert photo.jpg --format webp -q 80
+thl tool                                    # every tool and its arguments
+thl tool convert photo.jpg --format webp -q 80
 thl "convert photo.jpg to webp at 80"
 ```
 
@@ -81,7 +81,7 @@ script that produced all of it.
 
 ```bash
 pip install "thehallucinatedlab[eda]"
-thl eda sales.csv
+thl pipeline eda sales.csv
 ```
 
 ```
@@ -124,7 +124,7 @@ describe_dataset("sales.csv").types()["zip"]        # 'numeric_discrete'
 relate_columns("sales.csv", kind="target", target="churn")
 ```
 
-`thl eda sales.csv -i` opens a nine-screen session, and every screen prints the flag that
+`thl pipeline eda sales.csv -i` opens a nine-screen session, and every screen prints the flag that
 would have produced the same choice. Full reference:
 **<https://thehallucinatedlab.space/eda.html>**
 
