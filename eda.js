@@ -233,20 +233,25 @@
     el.run.disabled = true;
     setStatus('Analysing…');
 
-    /* Yield a frame first so the status actually paints before the
-       synchronous pass starts. Without this the page looks frozen. */
-    requestAnimationFrame(function () {
-      setTimeout(function () {
-        try {
-          analyse();
-        } catch (err) {
-          console.error('[eda] analysis failed:', err);
-          setStatus(err.message || 'The analysis failed.', true);
-        }
-        busy = false;
-        el.run.disabled = !table;
-      }, 0);
-    });
+    /* Yield before the synchronous pass so the status paints instead of
+       the page looking frozen.
+
+       setTimeout rather than requestAnimationFrame, which this used to
+       wrap it in: rAF does not fire in a hidden tab. Anyone who clicked
+       Analyse and switched away — the obvious thing to do while a big
+       file is working — came back to "Analysing…" forever, with the
+       button disabled and no way out but a reload. A timer fires either
+       way, and when the tab is hidden there is no paint to wait for. */
+    setTimeout(function () {
+      try {
+        analyse();
+      } catch (err) {
+        console.error('[eda] analysis failed:', err);
+        setStatus(err.message || 'The analysis failed.', true);
+      }
+      busy = false;
+      el.run.disabled = !table;
+    }, 0);
   }
 
   function analyse() {
