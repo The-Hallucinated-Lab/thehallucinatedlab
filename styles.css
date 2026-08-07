@@ -556,6 +556,34 @@ section { padding: 6rem 2rem; position: relative; }
 }
 .nav-sub::after { display: none; }
 
+/* ---- The icon bar has no business inside the hamburger overlay ----
+   script.js decides once, at load, whether to add .is-icons. Its
+   breakpoint now matches this one, but a window resized (or a tablet
+   rotated) from wide into this range keeps the class, and the rules
+   above then clip every label to max-width:0 — the overlay renders as
+   a column of unlabelled glyphs, which is exactly the "half the items
+   are hidden" report this fixes.
+
+   This block has to sit AFTER the .is-icons rules, not up in the
+   RESPONSIVE section: the selectors match theirs on specificity, so
+   source order is the only thing deciding the winner. */
+@media (max-width: 1024px) {
+  .nav-links.is-icons { gap: 1.8rem; }
+  .nav-links.is-icons > li { display: list-item; }
+  .nav-links.is-icons a.has-icon {
+    padding: 0; border: none; background: none; box-shadow: none;
+  }
+  /* The label is the control here, so the glyph is redundant weight. */
+  .nav-links.is-icons a.has-icon svg { display: none; }
+  .nav-links.is-icons a.has-icon .nav-label,
+  .nav-links.is-icons a.has-icon.active .nav-label,
+  .nav-links.is-icons li.is-open > a.has-icon .nav-label {
+    max-width: none; opacity: 1; margin-left: 0; overflow: visible;
+  }
+  /* Built to expand sideways in the bar; meaningless stacked vertically. */
+  .nav-flyout { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .nav-flyout, .nav-links.is-icons a.has-icon .nav-label,
   .nav-links.is-icons a.has-icon svg, .nav-sub { transition: none; }
