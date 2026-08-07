@@ -187,6 +187,41 @@ test('every page with the navbar offers the theme toggle and a Sitemap link', ()
   );
 });
 
+test('the icon nav cannot be enhanced into the hamburger overlay', () => {
+  /* Shipped bug: script.js added .is-icons at min-width 769px while the
+     CSS turned .nav-links into the full-screen overlay all the way up to
+     1024px. Between those two numbers the hamburger opened onto a column
+     of bare glyphs — .is-icons clips every label to max-width:0, and the
+     icon is meaningless once it is not sitting in the bar. It read as
+     "half the menu items are missing" on any tablet, and on a phone in
+     landscape.
+
+     The two numbers are a single decision expressed in two files, so
+     lock them together: enhance only from one pixel above wherever the
+     overlay stops. */
+  const js = fs.readFileSync(path.join(ROOT, 'script.js'), 'utf8');
+  const css = fs.readFileSync(path.join(ROOT, 'styles.css'), 'utf8');
+
+  const enhanceAt = Number(
+    (js.match(/is-icons[\s\S]{0,400}?min-width:\s*(\d+)px/) ||
+     js.match(/min-width:\s*(\d+)px[\s\S]{0,400}?is-icons/) || [])[1],
+  );
+  assert.ok(enhanceAt > 0, 'could not find the min-width that gates .is-icons in script.js');
+
+  const overlayTo = Number(
+    (css.match(/@media\s*\(max-width:\s*(\d+)px\)[\s\S]{0,2500}?\.nav-hamburger\s*\{[^}]*display:\s*flex/) || [])[1],
+  );
+  assert.ok(overlayTo > 0, 'could not find the max-width that shows the hamburger in styles.css');
+
+  assert.equal(
+    enhanceAt, overlayTo + 1,
+    `script.js enhances the nav to icons at ${enhanceAt}px, but the hamburger overlay ` +
+    `is still the nav up to ${overlayTo}px.\nEvery width in between opens the overlay ` +
+    'with .is-icons applied, which clips the labels to nothing.\n' +
+    `Set the JS gate to ${overlayTo + 1}px, or move the CSS breakpoint to match.`,
+  );
+});
+
 /* ============================================================
    4.1.2 / 3.3.2 Accessible names — the chat-input regression
    ============================================================ */
@@ -437,4 +472,84 @@ test('hover-only affordances are suppressed where there is no hover', () => {
     'A tooltip that cannot be triggered on touch still takes up layout and\n' +
     'can break Reflow. Keep it suppressed under (hover: none).',
   );
+});
+
+/* ============================================================
+   Tool names the code looks up must exist in the manifest.
+
+   The convert tool shipped broken: every conversion failed with
+   "converter is not in the tool spec." 23b1e86 renamed the tool from
+   "converter" to "convert" across the manifest, the page, the CLI and
+   the Python package, but the rename was lost from toolkit.js when the
+   rag-toolchain branch merged, and nothing caught it. runImageConvert
+   kept asking the manifest for a tool called "converter", which the
+   manifest no longer had, so it rejected before it ever reached a
+   canvas.
+
+   Nothing failed loudly enough to notice: the page still loaded, the
+   drop zone still took a file, the argument table still rendered, and
+   the whole 202-test suite still passed - because everything it covers
+   is reachable without ever naming a tool. The one string that names a
+   tool sits outside the @pure block, so no unit test could see it.
+
+   Hence a source-level check. Every tool name the browser code looks
+   up, dispatches on, or mounts a widget for is read out of the source
+   and matched against the spec. A rename that misses a file now fails
+   the build rather than the tool.
+   ============================================================ */
+
+/* Names kept working on purpose after a rename, so a bookmark or a
+   script written against the old name does not break. These are the
+   only names allowed to have no manifest entry. */
+const LEGACY_TOOL_ALIASES = new Set(['converter']);
+
+const manifestTools = new Set(
+  JSON.parse(read('spec/manifest.json')).tools.map(t => t.name),
+);
+
+/* Root-level .js only: the site ships plain <script> files, and test/
+   and scripts/ are dev tooling that never reaches a browser. */
+const siteScripts = fs.readdirSync(ROOT, { withFileTypes: true })
+  .filter(e => e.isFile() && e.name.endsWith('.js') && e.name !== 'eslint.config.js')
+  .map(e => e.name);
+
+test('every tool name the code looks up exists in the manifest', () => {
+  const misses = [];
+  for (const file of siteScripts) {
+    const src = read(file);
+    /* findTool(manifest, 'convert') — the lookup that broke. */
+    for (const m of src.matchAll(/findTool\(\s*[\w$.]+\s*,\s*['"]([^'"]+)['"]\s*\)/g)) {
+      if (!manifestTools.has(m[1])) misses.push(`${file}: findTool(…, '${m[1]}')`);
+    }
+  }
+  assert.ok(siteScripts.includes('toolkit.js'), 'toolkit.js was not scanned');
+  assert.deepEqual(misses, [], 'These names are not in spec/manifest.json:\n' + misses.join('\n'));
+});
+
+test('every tool the runtime dispatches on exists in the manifest', () => {
+  /* run() maps a name onto an implementation. A name here that the
+     manifest does not carry is a tool the Assistant can never invoke. */
+  const src = read('toolkit.js');
+  const body = src.slice(src.indexOf('function run(name'));
+  const dispatched = [...body.slice(0, body.indexOf('\n  }')).matchAll(/name\s*===\s*['"]([^'"]+)['"]/g)]
+    .map(m => m[1]);
+
+  assert.ok(dispatched.length, 'run() dispatches on nothing — did it get renamed?');
+  assert.ok(dispatched.includes('convert'),
+    'run() must accept the canonical manifest name "convert".');
+  for (const name of dispatched) {
+    assert.ok(manifestTools.has(name) || LEGACY_TOOL_ALIASES.has(name),
+      `run() dispatches on "${name}", which is neither in the manifest nor a declared legacy alias.`);
+  }
+});
+
+test('every tool widget mounted in the markup names a real tool', () => {
+  const misses = [];
+  for (const file of fs.readdirSync(ROOT).filter(f => f.endsWith('.html'))) {
+    const html = read(file);
+    for (const m of html.matchAll(/data-tool(?:bench)?=["']([^"']+)["']/g)) {
+      if (!manifestTools.has(m[1])) misses.push(`${file}: ${m[0]}`);
+    }
+  }
+  assert.deepEqual(misses, [], 'These widgets name a tool the manifest does not have:\n' + misses.join('\n'));
 });

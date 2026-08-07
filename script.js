@@ -389,7 +389,13 @@ const NAV_ICONS = {
    JS off (or for a crawler) it is still a plain list of working links. */
 function initNavFlyout() {
   const list = document.querySelector('.nav-links');
-  if (!list || !window.matchMedia('(min-width: 769px)').matches) return;
+  /* 1025px, not 769px: the CSS turns .nav-links into the full-screen
+     hamburger overlay everywhere up to 1024px. Enhancing at 769px meant
+     that between 769 and 1024 the overlay opened with .is-icons applied,
+     which clips every label to max-width:0 — the menu rendered as a
+     column of bare glyphs with no text. Enhance only where the inline
+     bar is actually the nav. */
+  if (!list || !window.matchMedia('(min-width: 1025px)').matches) return;
 
   /* Scoping class: the icon styling must not apply to the plain text list
      that mobile and no-JS get. CSS keys off .nav-links.is-icons, so the
