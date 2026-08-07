@@ -42,7 +42,7 @@ from .tools.tokenize import tokenize
 # carrying one extra word.
 _SUBCOMMANDS = (
     "tools", "convert", "converter", "extract", "chunk", "tokenize",
-    "embed", "index", "serve", "ask",
+    "embed", "index", "eda", "serve", "ask",
 )
 _ALIASES = {"converter": "convert"}
 
@@ -283,6 +283,14 @@ def _build_parser() -> argparse.ArgumentParser:
                      help="an extra origin to answer, repeatable")
     srv.add_argument("--verbose", action="store_true", help="log every request")
 
+    # The EDA flags are defined next to the code that reads them, so the
+    # parser and the implementation cannot drift. That module imports
+    # nothing heavier than argparse, so `thl --help` -- which builds every
+    # subparser -- stays as fast as it was.
+    from .tools.eda.cli import add_subparser as add_eda  # noqa: PLC0415 - see above
+
+    add_eda(subparsers)
+
     ask = subparsers.add_parser("ask", help="describe what you want in plain english")
     ask.add_argument("text", nargs="+", help='e.g. "convert photo.jpg to png"')
 
@@ -327,6 +335,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             tuple(parsed.allow_origin),
             quiet=not parsed.verbose,
         ))
+    if command == "eda":
+        # Returns its own exit code: 2 means the report was written but
+        # something inside it failed, which _guard passes through
+        # untouched because it is neither success nor a refusal to start.
+        from .tools.eda.cli import run_parsed  # noqa: PLC0415 - deferred with the extra
+
+        return _guard(lambda: run_parsed(parsed))
     if command == "ask":
         return _guard(lambda: _run_ask(" ".join(parsed.text)))
 

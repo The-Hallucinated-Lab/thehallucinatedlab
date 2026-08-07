@@ -8,7 +8,7 @@
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://pages.github.com/)
 [![License](https://img.shields.io/badge/License-MIT-e8d48b?style=for-the-badge)](LICENSE)
 
-We build tools that give you **unrestricted access** to cutting-edge technology — running **entirely on your machine**.
+**Open-source** AI tools that run **entirely on your machine** — free, and limited only by your own hardware.
 
 No cloud lock-ins. No paywalls. No ceilings. Your data stays yours.
 
@@ -26,7 +26,7 @@ We believe that every powerful tool — from AI models and video generators to q
 
 | Principle | What It Means |
 |---|---|
-| **Unrestricted Access** | Every tool we build gives you complete, unlimited access to cutting-edge technology — running entirely on your local machine. |
+| **Open Source, Always** | Every tool we build is open source and runs entirely on your local machine. What you can run is bounded by your hardware, not by a plan. |
 | **Privacy by Default** | When everything runs locally, your data never leaves your hands. No telemetry, no cloud dependency — full sovereignty over your workflow. |
 | **No Paywalls, No Ceilings** | If it can run on your hardware, you should have unrestricted access to use it — always. |
 
@@ -74,6 +74,7 @@ thehallucinatedlab/
 ├── blogs.js           # Blog data store, archive search, submission form
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
 ├── convert.html  # Convert — the first THL tool
+├── eda.html              # Exploratory data analysis — the command-line profiler
 ├── convert.js    # Its drop zone, controls, and result panel
 ├── toolkit.js            # Shared tool runtime + argument-table renderer
 ├── nlp.js                # Intent parser (classification + slot filling)
@@ -138,7 +139,7 @@ thehallucinatedlab/
 - **Responsive design** — mobile hamburger menu, stacked layouts on small screens
 
 ### Design System
-- **Dark theme** with a gold accent palette (`#c9a84c` primary)
+- **Dark theme** with a gold accent palette (`#c9a84c` primary), and a warm sand light theme (`#e8dfcb` page, `#6b5410` accent) chosen before first paint by `theme.js`
 - **CSS custom properties** for consistent theming across all components
 - **Two font families** — Outfit (headings), JetBrains Mono (body/code)
 - **Smooth transitions** using a custom cubic-bezier easing curve
@@ -152,7 +153,9 @@ thehallucinatedlab/
 
 ### Tools
 - **Convert** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
+- **Exploratory data analysis** — `thl eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
 - **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
+- **Tools declare where they run** — the `runtimes` field is respected, so the Assistant names the command for a Python-only tool rather than offering to run something it cannot
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
 - **THL Library** — pip-installable packages and embeddable engines (NexusLink Engine)

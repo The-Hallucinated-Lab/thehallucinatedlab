@@ -1,2 +1,51 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# ============================================================
+# Merge behaviour. This file exists because two people work on this
+# repo at once, and most of what looked like "git being difficult"
+# was really git being asked to merge things it cannot merge.
+# ============================================================
+
+# ---- Line endings ----
+#
+# `text=auto` on its own normalises to LF *in the repository* but lets
+# each checkout use whatever its platform prefers. Two machines with
+# different preferences then produce diffs where every line has
+# changed, and a one-line edit becomes a whole-file conflict. `eol=lf`
+# pins the working tree as well, so both sides always see the same
+# bytes.
+#
+# Every tracked text file here is already LF, so this normalises
+# nothing today and changes no content. It stops the problem starting.
+* text=auto eol=lf
+
+# ---- Binaries ----
+#
+# Git must never attempt a line-wise merge on these, and a textual
+# diff of a WOFF2 is noise. Marked binary so a clash is reported
+# honestly as "both changed, pick one" instead of a corrupted file.
+*.woff2 binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.avif  binary
+*.ico   binary
+*.pdf   binary
+
+# ---- Generated files ----
+#
+# Never hand-resolve a conflict in either of these. Take one side and
+# regenerate:
+#
+#   package-lock.json                  git checkout --theirs -- package-lock.json && npm install
+#   python/.../data/manifest.json      npm run spec:sync
+#
+# The manifest copy inside the package is written by scripts/sync-spec.js
+# from spec/manifest.json, which is the only one to edit by hand. CI
+# fails if the two have drifted, so regenerating is always correct.
+package-lock.json                          -diff linguist-generated
+python/thehallucinatedlab/data/manifest.json -diff linguist-generated
+
+# ---- Vendored ----
+#
+# GSAP is checked in deliberately (self-hosted, was cdnjs). It is not
+# our code; keep it out of diffs and out of the language stats.
+assets/vendor/** -diff linguist-vendored

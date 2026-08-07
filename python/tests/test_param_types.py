@@ -199,3 +199,89 @@ def test_the_json_schema_carries_the_new_types_and_their_constraints():
     assert props["slug"]["pattern"] == "[a-z0-9-]+"
     assert props["slug"]["maxLength"] == 12
     assert sorted(schema["required"]) == ["source", "title"]
+
+
+# -- list and mapping, added by the EDA tools -------------------------
+#
+# A profiler takes "which columns" and "read this column as that type",
+# and both arrive as one shell word: --columns a,b,c and
+# --types zip=categorical_high. Neither fits an existing type, and
+# neither should force the caller to split a string before calling the
+# Python API with a real list or dict.
+#
+# The twin cases are in test/param-types.test.js. What one accepts, the
+# other must accept identically.
+
+COLLECTIONS = Registry(
+    {
+        "version": "test",
+        "tools": [
+            {
+                "name": "collections",
+                "title": "Collections",
+                "page": "tools.html",
+                "params": [
+                    {"name": "columns", "type": "list", "required": False,
+                     "default": None, "description": "a list"},
+                    {"name": "types", "type": "mapping", "required": False,
+                     "default": None, "description": "a mapping"},
+                ],
+            }
+        ],
+    }
+)
+
+
+def test_a_list_is_accepted_as_a_comma_separated_string_and_trimmed():
+    got = COLLECTIONS.validate("collections", columns=" revenue , region ,city ")
+    assert got["columns"] == ["revenue", "region", "city"]
+
+
+def test_a_list_is_accepted_as_a_real_list():
+    got = COLLECTIONS.validate("collections", columns=["revenue", "region"])
+    assert got["columns"] == ["revenue", "region"]
+
+
+def test_empty_entries_in_a_list_are_dropped():
+    got = COLLECTIONS.validate("collections", columns="revenue,,region,")
+    assert got["columns"] == ["revenue", "region"]
+
+
+def test_a_list_of_nothing_but_separators_is_an_error():
+    with pytest.raises(InvalidArgument, match="at least one value"):
+        COLLECTIONS.validate("collections", columns=",,,")
+
+
+def test_a_mapping_is_accepted_as_key_value_pairs_and_trimmed():
+    got = COLLECTIONS.validate(
+        "collections", types=" zip = categorical_high , year=numeric_discrete "
+    )
+    assert got["types"] == {"zip": "categorical_high", "year": "numeric_discrete"}
+
+
+def test_a_mapping_is_accepted_as_a_real_dict():
+    got = COLLECTIONS.validate("collections", types={"zip": "categorical_high"})
+    assert got["types"] == {"zip": "categorical_high"}
+
+
+def test_a_mapping_entry_with_no_equals_is_reported():
+    with pytest.raises(InvalidArgument, match="key=value"):
+        COLLECTIONS.validate("collections", types="zip=categorical_high,oops")
+
+
+def test_a_mapping_entry_with_no_key_is_reported():
+    with pytest.raises(InvalidArgument, match="key=value"):
+        COLLECTIONS.validate("collections", types="=value")
+
+
+def test_a_value_containing_equals_keeps_everything_after_the_first():
+    """A pattern or a formula is a legitimate value; splitting on every
+    '=' would silently truncate it."""
+    got = COLLECTIONS.validate("collections", types="expr=a=b")
+    assert got["types"] == {"expr": "a=b"}
+
+
+def test_the_json_schema_carries_the_collection_types():
+    schema = COLLECTIONS.json_schema("collections")
+    assert schema["properties"]["columns"]["type"] == "array"
+    assert schema["properties"]["types"]["type"] == "object"

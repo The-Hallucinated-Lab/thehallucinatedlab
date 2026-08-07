@@ -36,6 +36,7 @@ EXTRAS: dict[str, str] = {
     "embed": "BGE-M3 through sentence-transformers (pulls in torch)",
     "index": "the Chroma vector store",
     "rag": "everything above, the whole pipeline",
+    "eda": "pandas, matplotlib and scipy, for profiling tabular data",
 }
 
 _cache: dict[str, Any] = {}

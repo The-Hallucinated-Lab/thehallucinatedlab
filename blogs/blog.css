@@ -13,7 +13,7 @@
   width: 0%;
   z-index: 1001;
   border-radius: 0 2px 2px 0;
-  box-shadow: 0 0 10px rgba(201, 168, 76, 0.4);
+  box-shadow: 0 0 10px rgba(var(--gold-rgb), 0.4);
 }
 
 /* ============ ARTICLE LAYOUT ============ */
@@ -88,7 +88,7 @@
 .blog-category-badge {
   padding: 4px 12px;
   border-radius: 50px;
-  background: rgba(201, 168, 76, 0.15);
+  background: rgba(var(--gold-rgb), 0.15);
   border: 1px solid var(--border-gold);
   color: var(--gold-primary);
   font-size: 0.7rem;
@@ -290,7 +290,7 @@
 .blog-content a {
   color: var(--gold-primary);
   text-decoration: none;
-  border-bottom: 1px solid rgba(201, 168, 76, 0.3);
+  border-bottom: 1px solid var(--border-gold);
   transition: var(--transition);
 }
 
@@ -300,7 +300,7 @@
 
 /* ============ ANIMATED HIGHLIGHT ============ */
 .highlight {
-  background: linear-gradient(120deg, rgba(201, 168, 76, 0.25) 0%, rgba(201, 168, 76, 0.25) 100%);
+  background: linear-gradient(120deg, rgba(var(--gold-rgb), 0.25) 0%, rgba(var(--gold-rgb), 0.25) 100%);
   background-repeat: no-repeat;
   background-size: 0% 100%;
   transition: background-size 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -317,7 +317,7 @@
 .tooltip-term {
   position: relative;
   color: var(--gold-primary);
-  border-bottom: 1px dashed rgba(201, 168, 76, 0.4);
+  border-bottom: 1px dashed rgba(var(--gold-rgb), 0.4);
   cursor: help;
 }
 
@@ -329,7 +329,7 @@
   transform: translateX(-50%) translateY(4px);
   padding: 8px 14px;
   border-radius: var(--radius-sm);
-  background: rgba(15, 15, 15, 0.95);
+  background: var(--bg-card);
   border: 1px solid var(--border-gold);
   color: var(--gold-light);
   font-size: 0.72rem;
@@ -405,7 +405,7 @@
   margin: 2rem 0;
   padding: 1.5rem 2rem;
   border-left: 3px solid var(--gold-primary);
-  background: rgba(201, 168, 76, 0.04);
+  background: rgba(var(--gold-rgb), 0.04);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
@@ -427,7 +427,7 @@
 
 /* ============ CODE BLOCKS ============ */
 .blog-content code {
-  background: rgba(201, 168, 76, 0.08);
+  background: rgba(var(--gold-rgb), 0.08);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.85em;
@@ -521,7 +521,7 @@
 
 .deep-dive[open] {
   border-color: var(--border-gold);
-  box-shadow: 0 0 30px rgba(201, 168, 76, 0.06);
+  box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.06);
 }
 
 .deep-dive summary {
@@ -552,7 +552,7 @@
 }
 
 .deep-dive summary:hover {
-  background: rgba(201, 168, 76, 0.04);
+  background: rgba(var(--gold-rgb), 0.04);
 }
 
 .deep-dive-content {
@@ -649,7 +649,7 @@
 .blog-back-link:hover {
   background: var(--gold-glow);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(201, 168, 76, 0.12);
+  box-shadow: 0 8px 30px rgba(var(--gold-rgb), 0.12);
 }
 
 /* ============ GSAP INITIAL STATE ============ */

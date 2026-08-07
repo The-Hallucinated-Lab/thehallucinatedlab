@@ -203,6 +203,43 @@
       }
       return { value: text };
     },
+
+    /* A command line hands over "a,b,c" and a caller hands over an array.
+       Both mean the same thing, so both are accepted and normalised here
+       rather than at every call site. */
+    list: function (param, value) {
+      var items;
+      if (Array.isArray(value)) {
+        items = value.map(function (item) { return String(item).trim(); });
+      } else {
+        items = String(value).split(',').map(function (item) { return item.trim(); });
+      }
+      items = items.filter(function (item) { return item !== ''; });
+      if (!items.length) return { error: param.name + ' must name at least one value.' };
+      return { value: items };
+    },
+
+    /* Same shape for key=value pairs: --types zip=categorical_high from a
+       shell, a real object from Python. A pair with no '=' is a mistake
+       worth reporting, not a key with an empty value. */
+    mapping: function (param, value) {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        return { value: value };
+      }
+      var out = {};
+      var pairs = String(value).split(',');
+      for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].trim();
+        if (!pair) continue;
+        var at = pair.indexOf('=');
+        if (at < 1) return { error: param.name + ' takes key=value pairs; got "' + pair + '".' };
+        out[pair.slice(0, at).trim()] = pair.slice(at + 1).trim();
+      }
+      if (!Object.keys(out).length) {
+        return { error: param.name + ' must name at least one key=value pair.' };
+      }
+      return { value: out };
+    },
   };
 
   /* A path is a string as far as the browser is concerned -- it never
@@ -291,6 +328,25 @@
   /* The row model behind the argument table on the page. Kept pure so a
      test can assert the docs stay in step with the manifest rather than
      going stale in hand-written HTML. */
+  /* Where a tool can actually execute.
+
+     The spec has said this since embed and index arrived, and nothing
+     read it: the Assistant lists every tool under "here is what I can
+     run, right here in the page" and then takes a file attachment before
+     failing. Offering something the browser cannot do is worse than not
+     recognising the request, because the visitor only finds out after
+     doing work.
+
+     A tool with no runtimes declared is treated as browser work, because
+     every tool written before the field existed was. */
+  function runsIn(tool, runtime) {
+    var runtimes = (tool && tool.runtimes) || ['browser'];
+    for (var i = 0; i < runtimes.length; i++) {
+      if (runtimes[i] === runtime) return true;
+    }
+    return false;
+  }
+
   function describeParams(tool) {
     var params = (tool && tool.params) || [];
     var rows = [];
@@ -303,12 +359,24 @@
       else if (p.type === 'number' && p.min !== undefined) type = 'number ' + p.min + '-' + p.max;
       else if (p.type === 'boolean') type = 'true | false';
       else if (p.type === 'path') type = 'file path';
+      else if (p.type === 'list') type = 'comma-separated list';
+      else if (p.type === 'mapping') type = 'key=value pairs';
+
+      /* null is a real default meaning "work it out from the input" - a
+         sniffed delimiter, an output directory derived from the source
+         path. It has to read differently from "-", which means the
+         parameter has no default at all. */
+      var fallback;
+      if (p.required) fallback = 'required';
+      else if (p.default === undefined) fallback = '-';
+      else if (p.default === null) fallback = 'detected';
+      else fallback = String(p.default);
 
       rows.push({
         name: p.name,
         type: type,
         required: !!p.required,
-        fallback: p.required ? 'required' : (p.default === undefined ? '-' : String(p.default)),
+        fallback: fallback,
         description: p.description || ''
       });
     }
@@ -578,6 +646,7 @@
     runImageConvert: runImageConvert,
     renderParamTable: renderParamTable,
     describeParams: describeParams,
+    runsIn: runsIn,
     filenameFor: filenameFor,
     formatBytes: formatBytes,
     sizeDelta: sizeDelta

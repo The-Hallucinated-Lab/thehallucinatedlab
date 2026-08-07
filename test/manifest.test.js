@@ -60,7 +60,7 @@ test('every tool carries what the website and the package both read', () => {
 
 test('every parameter is a type all three runtimes implement', () => {
   const supported = new Set([
-    'enum', 'integer', 'color', 'string', 'path', 'boolean', 'number',
+    'enum', 'integer', 'color', 'string', 'path', 'boolean', 'number', 'list', 'mapping',
   ]);
   for (const tool of manifest.tools) {
     for (const param of tool.params) {
@@ -107,6 +107,12 @@ test('an optional default is itself a legal value', () => {
   for (const tool of manifest.tools) {
     for (const param of tool.params) {
       if (param.required || param.default === undefined) continue;
+      /* An explicit null is "there is no fixed default - it is worked out
+         from the input": a sniffed delimiter, an output directory derived
+         from the source path. Bounds cannot apply to a value that is
+         computed, and it is distinct from an absent default, which means
+         the parameter simply has none. */
+      if (param.default === null) continue;
       if (param.type === 'enum') {
         assert.ok(param.values.includes(param.default),
           `${tool.name}.${param.name} defaults to "${param.default}", not one of its values`);

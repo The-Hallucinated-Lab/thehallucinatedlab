@@ -1,11 +1,19 @@
 /* ============ CONFIG ============ */
 const CONFIG = {
   particles: {
-    color: [201, 168, 76],      // RGB gold
+    color: [201, 168, 76],      // RGB gold, on the dark page
+    /* The light page is sand, and gold on sand measures under 1.3:1 —
+       the field simply disappears. The canvas is decoration, so this is
+       cosmetic rather than an a11y failure, but an empty hero is not
+       what the light theme is meant to look like. */
+    colorLight: [107, 84, 16],
     maxCount: 80,
     densityFactor: 15000,
     connectionDistance: 150,
     connectionOpacity: 0.06,
+    /* The connecting lines are drawn at a fixed alpha, so on the lighter
+       page they need a little more of it to survive the same blur. */
+    connectionOpacityLight: 0.10,
     sizeRange: [0.5, 2.0],
     speedRange: 0.3,
     opacityRange: [0.1, 0.5],
@@ -62,9 +70,27 @@ function initParticles() {
   if (!ctx) return;
 
   const particles = [];
-  const { color, maxCount, densityFactor, connectionDistance, connectionOpacity, sizeRange, speedRange, opacityRange } = CONFIG.particles;
+  const { color, colorLight, maxCount, densityFactor, connectionDistance, connectionOpacity, connectionOpacityLight, sizeRange, speedRange, opacityRange } = CONFIG.particles;
   const connectionDistanceSq = connectionDistance * connectionDistance;
-  const rgb = `${color[0]}, ${color[1]}, ${color[2]}`;
+
+  /* Read from the attribute rather than taken once at startup: the theme
+     toggle swaps themes live, without a reload, and a canvas still
+     painting the other page's gold is the one thing on the page that
+     would not follow. theme.js sets the attribute before first paint, so
+     this is already correct on the first frame. */
+  let rgb = '';
+  let lineOpacity = connectionOpacity;
+  function readTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const c = isLight ? colorLight : color;
+    rgb = `${c[0]}, ${c[1]}, ${c[2]}`;
+    lineOpacity = isLight ? connectionOpacityLight : connectionOpacity;
+  }
+  readTheme();
+  new MutationObserver(readTheme).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
 
   let width = 0;
   let height = 0;
@@ -136,7 +162,7 @@ function initParticles() {
         if (distSq < connectionDistanceSq) {
           const dist = Math.sqrt(distSq);
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(${rgb}, ${connectionOpacity * (1 - dist / connectionDistance)})`;
+          ctx.strokeStyle = `rgba(${rgb}, ${lineOpacity * (1 - dist / connectionDistance)})`;
           ctx.lineWidth = 0.5;
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
@@ -334,13 +360,25 @@ const NAV_CHILDREN = {
    owns section status. */
 const navVisible = item => navEntryVisible(item, readMode());
 
-/* 20px stroke glyphs, drawn on the 24-grid the rest of the site uses. */
+/* 20px solid glyphs on the 24-grid, filled rather than stroked so they
+   match every other icon on the site — the inline SVGs in the page bodies
+   are all filled Material paths, and outlined nav glyphs beside them read
+   as a different icon set rather than the same one at a smaller size.
+   These must stay closed paths: an open subpath fills into a wedge. */
 const NAV_ICONS = {
-  '/': 'M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
-  'tools.html': 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.1-.5-.5-2.1z',
-  'interface.html': 'M12 3.5l1.7 4.8L18.5 10l-4.8 1.7L12 16.5l-1.7-4.8L5.5 10l4.8-1.7z',
-  'solutions.html': 'M12 3l9 5-9 5-9-5zM3 12.5 12 17l9-4.5M3 17 12 21l9-4',
-  'media.html': 'M12 6.5a4 4 0 0 0-4-2H3v13h5a4 4 0 0 1 4 2 4 4 0 0 1 4-2h5v-13h-5a4 4 0 0 0-4 2zM12 6.5v13',
+  '/': 'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
+  'tools.html': 'M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z',
+  'interface.html': 'M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z',
+  'solutions.html': 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z',
+  'media.html': 'M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z',
+  /* A node-and-branch glyph rather than a map pin: this points at the
+     structure of the site, not a place on it. */
+  '/sitemap.html': 'M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z',
+  /* Dev-only sections. They need glyphs for the same reason the live ones
+     do: in dev mode the bar is icons, and an entry without one falls back
+     to a bare word sitting between two icons. */
+  'certification.html': 'M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z',
+  'consultancy.html': 'M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z',
 };
 
 /* Collapse each top-level link to its icon and reveal the label on hover,
@@ -588,6 +626,52 @@ function initTypingEffect() {
 
    Each feature is isolated, and its name is reported if it fails so the
    console says which one rather than just pointing at this file. */
+
+/* ============ THEME TOGGLE ============
+   theme.js has already chosen the theme and painted with it before this
+   file runs. All that is left is the button.
+
+   The accessible name has to say where the click goes, not where you
+   are. A button labelled "dark theme" while the page is dark tells a
+   screen reader user the opposite of what pressing it does, and the
+   icon — which is the same information for everyone else — already
+   shows the destination.
+
+   The system listener is deliberately narrow. Following the OS is only
+   right while the visitor has not chosen for themselves; once they have,
+   an OS change flipping the site out from under them is a bug. It writes
+   the attribute directly rather than going through set(), so watching
+   the system never quietly becomes a stored preference. */
+function initThemeToggle() {
+  const button = document.getElementById('theme-toggle');
+  const theme = window.THLTheme;
+  if (!button || !theme) return;
+
+  function relabel() {
+    const destination = theme.get() === 'light' ? 'dark' : 'light';
+    const text = `Switch to ${destination} theme`;
+    button.setAttribute('aria-label', text);
+    button.setAttribute('title', text);
+  }
+  relabel();
+
+  button.addEventListener('click', () => {
+    theme.set(theme.get() === 'light' ? 'dark' : 'light');
+    relabel();
+  });
+
+  if (!window.matchMedia) return;
+  const query = window.matchMedia('(prefers-color-scheme: light)');
+  const follow = (event) => {
+    if (!theme.isFollowingSystem()) return;
+    document.documentElement.setAttribute('data-theme', event.matches ? 'light' : 'dark');
+    relabel();
+  };
+  // Safari below 14 only has the deprecated addListener.
+  if (query.addEventListener) query.addEventListener('change', follow);
+  else if (query.addListener) query.addListener(follow);
+}
+
 function startFeature(name, init) {
   try {
     init();
@@ -599,6 +683,7 @@ function startFeature(name, init) {
 document.addEventListener('DOMContentLoaded', () => {
   /* First: it decides what the rest of the page is allowed to show. */
   startFeature('dev-mode', initDevMode);
+  startFeature('theme-toggle', initThemeToggle);
   startFeature('particles', initParticles);
   startFeature('navbar', initNavbar);
   startFeature('scroll-animations', initScrollAnimations);

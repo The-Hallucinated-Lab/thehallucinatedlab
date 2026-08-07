@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Exploratory Data Analysis — The Hallucinated Lab</title>
+  <meta name="description" content="Profile a CSV from the command line. thl eda writes a Markdown report, the figures, a replayable recipe, and the Python script that produced all of it.">
+  <meta property="og:title" content="Exploratory Data Analysis — The Hallucinated Lab">
+  <meta property="og:description" content="thl eda profiles a data file and hands you the report, the figures, the recipe and the script that made them. Runs on your machine.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/eda.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/eda.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Exploratory Data Analysis — The Hallucinated Lab">
+  <meta name="twitter:description" content="Profile a data file with one command and get the script that reproduces it.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script src="theme.js"></script>
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Tools",
+          "item": "https://thehallucinatedlab.space/tools.html"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "Exploratory Data Analysis",
+          "item": "https://thehallucinatedlab.space/eda.html"
+        }
+      ]
+    },
+    {
+      "@type": "SoftwareApplication",
+      "@id": "https://thehallucinatedlab.space/eda.html#software",
+      "name": "thl eda",
+      "applicationCategory": "DeveloperApplication",
+      "operatingSystem": "Windows, macOS, Linux",
+      "description": "A command-line profiler for tabular data. Infers a type and a confidence for every column, writes a Markdown report with the figures beside it, and emits a runnable analysis.py that reproduces the whole report.",
+      "url": "https://thehallucinatedlab.space/eda.html",
+      "softwareVersion": "0.2.0",
+      "downloadUrl": "https://pypi.org/project/thehallucinatedlab/",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      },
+      "author": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      }
+    },
+    {
+      "@type": "WebPage",
+      "@id": "https://thehallucinatedlab.space/eda.html#webpage",
+      "url": "https://thehallucinatedlab.space/eda.html",
+      "name": "Exploratory Data Analysis - The Hallucinated Lab",
+      "description": "thl eda profiles a data file and returns a report, the figures, a replayable recipe and the script that produced them.",
+      "isPartOf": {
+        "@id": "https://thehallucinatedlab.space/#website"
+      },
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "inLanguage": "en"
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html" class="active">Tools</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="/sitemap.html">Sitemap</a></li>
+
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <nav class="page-breadcrumb" aria-label="Breadcrumb">
+        <a href="tools.html">Tools</a>
+        <span aria-hidden="true">/</span>
+        <span>Exploratory Data Analysis</span>
+      </nav>
+      <span class="section-label">THL Tools · 02</span>
+      <h1 class="page-title">Exploratory Data Analysis</h1>
+      <p class="page-subtitle">Point it at a data file. Get back a report you can read, the figures behind it, a recipe that replays every choice, and the Python script that produced all of it. It runs on your machine and nothing uploads.</p>
+    </section>
+
+    <!-- ====== ONE COMMAND ====== -->
+    <section class="media-section" id="start">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Start Here</span>
+          <h2 class="section-title">One Command, No Flags</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">This is a command-line tool, not a page widget. Profiling a 200 MB CSV is pandas work — the browser is the wrong place for it, and pretending otherwise would waste your time before failing.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Install and run</h3>
+          <p class="how-panel-text">The base package is 20 kB and pulls only Pillow. pandas, numpy, matplotlib and scipy live behind an extra, so converting a PNG never costs you a scientific stack.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Install</span>
+            <div class="how-code"><code>pip install "thehallucinatedlab[eda]"</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Profile a file</span>
+            <div class="how-code"><code>thl eda sales.csv</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">What it writes</span>
+            <div class="how-code"><code>sales.eda/
+├── report.md        the profile, in Markdown so it diffs in a pull request
+├── recipe.json      every decision, replayable
+├── analysis.py      regenerates everything above — and is meant to be edited
+├── summary.json     the same numbers, machine-readable
+└── figures/         01_revenue_histogram.png, ...</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== THE DIFFERENTIATOR ====== -->
+    <section class="media-section media-section-alt" id="script">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">The Point</span>
+          <h2 class="section-title">The Report Is A Starting Point, Not An Artefact</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Every run emits an <code>analysis.py</code> that reproduces the report it came from, imports nothing from this package, and is meant to be edited. Nothing else in this space hands you the code.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Run the script it gave you</h3>
+          <p class="how-panel-text">Same figures, and a <code>summary.json</code> identical to the original. That is not a claim in a README — a test executes the generated file in a clean interpreter and diffs the output, which passes because the script contains the same code that ran, copied in rather than reimplemented.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Reproduce, then edit</span>
+            <div class="how-code"><code>python sales.eda/analysis.py
+
+# then open it. It is ordinary pandas and matplotlib.
+# Delete what you do not need; the report was the starting point.</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Design once, replay forever</h3>
+          <p class="how-panel-text">Everything a run decides is written to a recipe: column types, chart selections, the sampling seed, the top-N cut-off. A team standard is a recipe checked into a repository.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Recipes</span>
+            <div class="how-code"><code>thl eda sales.csv -i --save-recipe team.json
+thl eda new_month.csv --recipe team.json</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== TYPE INFERENCE ====== -->
+    <section class="media-section" id="types">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">What Usually Goes Wrong</span>
+          <h2 class="section-title">Every Column Gets A Type And A Confidence</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Every failure you actually notice in a profiler is a misclassification: a zip code read as a continuous quantity, a 0/1/2 label encoding given a mean, dates in three formats silently coerced, a 99%-null float described as though it had a distribution.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Nothing is asserted without a score</h3>
+          <p class="how-panel-text">Anything below 0.70 is flagged in three places — the review screen, the report's caveats, and <code>result.warnings</code> — and every verdict is overridable from the session, from <code>--types</code>, or by editing the recipe. An override is recorded as a decision, so a replay uses it rather than re-inferring and disagreeing with the report it is meant to reproduce.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">From a real report</span>
+            <div class="how-code"><code>| Column   | Type                 | Confidence | Null      |
+|----------|----------------------|------------|-----------|
+| revenue  | Numeric - continuous | 0.95       | 90 (10%)  |
+| zip      | Numeric - discrete   | 0.85       | 0 (0%)    |
+| us_date  | Datetime             | 0.60 !     | 0 (0%)    |</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <p class="how-panel-text">That last row is a date column where day-first and month-first both parse and <em>disagree about the dates</em>. The tool says so instead of quietly picking one.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Sampling is never silent</h3>
+          <p class="how-panel-text">Under 200 MB everything is exact. Above it the file is streamed: counts, nulls, minimum, maximum and cardinality stay exact, and only the figures come from a seeded sample. When that happens it is stated in the pre-run plan, as a banner atop the report, as a caption on <em>every affected figure</em>, in the warnings, and in the recipe with its seed. A report that does not say it sampled is a report that gets screenshotted into someone's real deliverable with the wrong numbers on it.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== ARGUMENTS ====== -->
+    <section class="media-section media-section-alt" id="arguments">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Reference</span>
+          <h2 class="section-title">Arguments</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Five primitives, each independently callable. These tables are generated from the same tool spec the code validates against, so the page cannot document an argument the package rejects.</p>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>describe_dataset</code></h3>
+          <p class="how-panel-text">Shape, and an inferred type with a confidence for every column.</p>
+          <div class="tool-args-wrap" data-tool="describe_dataset"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>profile_column</code></h3>
+          <p class="how-panel-text">The statistics that fit one column's type. The outlier rule always travels with the count.</p>
+          <div class="tool-args-wrap" data-tool="profile_column"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>plot_column</code></h3>
+          <p class="how-panel-text">One figure, written to one file. A chart that does not apply to the column's type is an error that names the types it does.</p>
+          <div class="tool-args-wrap" data-tool="plot_column"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>relate_columns</code></h3>
+          <p class="how-panel-text">Correlation, missingness, duplicates, or everything against a target.</p>
+          <div class="tool-args-wrap" data-tool="relate_columns"></div>
+        </div>
+
+        <div class="tool-args-group fade-in">
+          <h3 class="how-panel-title"><code>eda_report</code></h3>
+          <p class="how-panel-text">The whole report, from a recipe. This is the seam a session, a CI job or a future front-end all reach.</p>
+          <div class="tool-args-wrap" data-tool="eda_report"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== THE OTHER DOORS ====== -->
+    <section class="media-section" id="library">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Same Tools, Other Doors</span>
+          <h2 class="section-title">From Python, Or A Whole Folder At Once</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">The command line is an application over five ordinary functions. Reach for whichever fits what you are doing.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">From the THL library</h3>
+          <p class="how-panel-text">Non-interactive by definition — it never prompts, never blocks on input and never opens a window, which is what keeps it working over SSH, in Docker, in CI and inside a notebook.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Profile a file</span>
+            <div class="how-code"><code>from thehallucinatedlab import eda
+
+result = eda("sales.csv", target="churn", tier2=True)
+print(result.report)     # sales.eda/report.md
+print(result.script)     # sales.eda/analysis.py
+print(result.warnings)   # sampling, low-confidence types</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Or one primitive at a time</span>
+            <div class="how-code"><code>from thehallucinatedlab import describe_dataset, relate_columns
+
+describe_dataset("sales.csv").types()["zip"]
+# 'numeric_discrete'
+
+relate_columns("sales.csv", kind="target", target="churn")</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">More of the command line</h3>
+          <p class="how-panel-text">A folder is treated as N independent datasets, each profiled into its own directory plus an index linking them. One unreadable file does not abort the run — it is recorded, and the exit code says the run was partial.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Common runs</span>
+            <div class="how-code"><code>thl eda sales.csv -i                              # the nine-screen session
+thl eda data/ --pattern "*.csv" --out reports/    # a folder of datasets
+thl eda sales.csv --target churn --tier2 all      # correlation, missingness, ranking
+thl eda sales.csv --format html --self-contained  # one file to email
+thl eda --list                                    # every chart and statistic</code></div>
+            <button type="button" class="copy-btn"><span>Copy</span></button>
+          </div>
+
+          <p class="how-panel-text">The session walks nine screens — source, load options, type review, columns, charts, statistics, relationships, output, confirm — and every screen prints the flag that would have produced the same choice. Walk it once and the next run is one line with no session at all.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Where this came from</h3>
+          <p class="how-panel-text">Contributed by <a href="https://github.com/06pratyush" class="inline-link" target="_blank" rel="noopener noreferrer">@06pratyush</a>. It was built as its own project and folded into the toolkit here; the standalone repository, its tests and the design notes behind the type-inference rules live at <a href="https://github.com/06pratyush/thl-exploratory_data_analysis_in_CLI" class="inline-link" target="_blank" rel="noopener noreferrer">thl-exploratory_data_analysis_in_CLI</a>. Issues and pull requests are welcome there.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h3 class="how-panel-title">Not from the Assistant</h3>
+          <p class="how-panel-text">The <a href="interface.html" class="inline-link">Assistant</a> recognises these requests and tells you the command, rather than offering to run them. A browser tab is the wrong place to load a million rows, and finding that out after attaching a file would be worse than being told up front.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script src="tools.js" defer></script>
+  <script src="toolkit.js" defer></script>
+</body>
+</html>
