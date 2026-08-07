@@ -110,81 +110,93 @@
       <h1 class="page-title">Pipelines</h1>
       <p class="page-subtitle">A tool does one thing. A pipeline runs several of them in the order that actually gets you somewhere — and writes every stage to disk on the way, so the middle is something you can read rather than something you have to trust.</p>
       <div class="page-jump">
-        <a href="#rag">RAG</a>
-        <a href="#eda">EDA</a>
-        <a href="#why">Why the stages are files</a>
+        <a href="#why">Why every stage is a file</a>
       </div>
     </section>
 
-    <section class="media-section" id="rag">
+    <section class="media-section">
+      <div class="container">
+        <div class="gateway-grid">
+
+          <a href="pipelines.html#rag" class="gateway-card fade-in fade-in-delay-1">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1014 0%, #14262e 55%, #1f4351 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M15.5 5H11l5 7-5 7h4.5l5-7zM8.5 5H4l5 7-5 7h4.5l5-7z"/></svg>
+              </div>
+              <span class="gateway-count">Four stages</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">RAG</h2>
+              <p class="gateway-desc">A document in, a searchable index out. Extract, chunk, embed, index — the same four tools you can run yourself, in the order that gets you there.</p>
+              <ul class="gateway-list">
+                <li><span>one command</span> thl pipeline rag report.pdf</li>
+                <li><span>every stage on disk</span> read the chunks, not just the answer</li>
+                <li><span>resumable</span> a stop keeps what it made</li>
+              </ul>
+              <span class="gateway-cta">How RAG runs
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+          <a href="eda.html" class="gateway-card fade-in fade-in-delay-2">
+            <div class="gateway-cover" style="background: linear-gradient(135deg, #0a1016 0%, #12283a 55%, #1e4560 100%);">
+              <div class="gateway-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg>
+              </div>
+              <span class="gateway-count">Five stages</span>
+            </div>
+            <div class="gateway-body">
+              <h2 class="gateway-title">EDA</h2>
+              <p class="gateway-desc">A table in, a report you can hand to someone out — with the figures, a replayable recipe, and the Python script that produced all of it.</p>
+              <ul class="gateway-list">
+                <li><span>one command</span> thl pipeline eda sales.csv</li>
+                <li><span>reproducible</span> the recipe replays every choice</li>
+                <li><span>five primitives</span> each callable on its own</li>
+              </ul>
+              <span class="gateway-cta">Open EDA
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+              </span>
+            </div>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <section class="media-section media-section--alt" id="rag">
       <div class="container">
         <div class="section-header">
-          <span class="section-label">Pipeline · 01</span>
-          <h2 class="section-title">RAG</h2>
+          <span class="section-label">Pipeline · RAG</span>
+          <h2 class="section-title">extract → chunk → embed → index</h2>
           <div class="section-line"></div>
-          <p class="section-intro">A document in, a searchable index out. Four tools, in order, each one the same command you could run yourself.</p>
+          <p class="section-intro">The pipeline owns no logic of its own. It calls the same four tools the Tools page documents, so a fix to the chunker is a fix to both and the two cannot drift apart. What it removes is the typing, not the transparency.</p>
         </div>
 
-        <div class="spotlight-panel">
-          <div class="spotlight-head">
-            <span class="spotlight-status"><span class="dot"></span>Python</span>
+        <div class="trait-grid trait-grid-4">
+          <div class="trait-card">
+            <h3 class="trait-title">extract</h3>
+            <p class="trait-text">The document becomes markdown, headings intact — because headings are what the next stage splits on.</p>
           </div>
-          <h3 class="spotlight-title">thl pipeline rag</h3>
-          <p class="spotlight-tagline">extract → chunk → embed → index</p>
-          <p class="spotlight-desc">The pipeline owns no logic of its own. It calls the same <code>extract</code>, <code>chunk</code>, <code>embed</code> and <code>index</code> that the Tools page documents, so a fix to the chunker is a fix to both and the two cannot drift apart. What it removes is the typing, not the transparency.</p>
-
-          <div class="spotlight-points">
-            <div class="spotlight-point"><strong>extract</strong> the document becomes markdown, headings intact</div>
-            <div class="spotlight-point"><strong>chunk</strong> markdown becomes JSONL you can open and read</div>
-            <div class="spotlight-point"><strong>embed</strong> chunks become vectors, with the model recorded</div>
-            <div class="spotlight-point"><strong>index</strong> vectors become a portable store you can query</div>
+          <div class="trait-card">
+            <h3 class="trait-title">chunk</h3>
+            <p class="trait-text">Markdown becomes JSONL you can open and read. This is the stage worth looking at when an answer is wrong.</p>
           </div>
+          <div class="trait-card">
+            <h3 class="trait-title">embed</h3>
+            <p class="trait-text">Chunks become vectors, with the model recorded alongside them so a later query cannot use the wrong one.</p>
+          </div>
+          <div class="trait-card">
+            <h3 class="trait-title">index</h3>
+            <p class="trait-text">Vectors become a portable store, with a query script written beside it.</p>
+          </div>
+        </div>
 
+        <div class="how-panel">
+          <h3 class="how-panel-title">Running it</h3>
           <div class="how-code"><code>thl pipeline rag report.pdf
 thl pipeline rag notes.md --max-tokens 512 --tokenizer estimate</code></div>
-
-          <div class="spotlight-actions">
-            <code class="spotlight-code">pip install "thehallucinatedlab[rag]"</code>
-          </div>
-          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="media-section media-section--alt" id="eda">
-      <div class="container">
-        <div class="section-header">
-          <span class="section-label">Pipeline · 02</span>
-          <h2 class="section-title">EDA</h2>
-          <div class="section-line"></div>
-          <p class="section-intro">A table in, a report you can hand to someone out — plus the script that reproduces it.</p>
-        </div>
-
-        <div class="spotlight-panel">
-          <div class="spotlight-head">
-            <span class="spotlight-status"><span class="dot"></span>Python</span>
-          </div>
-          <h3 class="spotlight-title">thl pipeline eda</h3>
-          <p class="spotlight-tagline">describe → profile → plot → relate → report</p>
-          <p class="spotlight-desc">Five primitives, driven as one session. Every run writes a recipe of the decisions it made, so a rerun matches and a colleague gets the same numbers. Each primitive is also callable on its own from Python when you want one answer rather than the whole report.</p>
-
-          <div class="spotlight-points">
-            <div class="spotlight-point"><strong>describe_dataset</strong> shape, types, and a confidence for each</div>
-            <div class="spotlight-point"><strong>profile_column</strong> the distribution, the outliers, the gaps</div>
-            <div class="spotlight-point"><strong>plot_column</strong> the figure that shows it</div>
-            <div class="spotlight-point"><strong>relate_columns</strong> what moves with what</div>
-            <div class="spotlight-point"><strong>eda_report</strong> all of it, assembled and reproducible</div>
-          </div>
-
-          <div class="how-code"><code>thl pipeline eda sales.csv
-thl pipeline eda sales.csv --target churn --tier2 all</code></div>
-
-          <div class="spotlight-actions">
-            <a href="eda.html" class="blog-cta">Full EDA reference
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </a>
-            <code class="spotlight-code">pip install "thehallucinatedlab[eda]"</code>
-          </div>
+          <p class="how-note">Needs <strong>Python 3.10 or newer</strong> and <code>pip install "thehallucinatedlab[rag]"</code>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
         </div>
       </div>
     </section>

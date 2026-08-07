@@ -32,7 +32,6 @@ chains several tools in order. Both are exposed by the `thl` command under match
 `thl tool <name>` and `thl pipeline <name>`.
 
 Three of these are gateways to deeper pages:
-- Tools links onward to the THL Library at /library.html.
 - Pipelines documents the RAG and EDA pipelines, and links onward to /eda.html.
 - Media links onward to Blogs at /blogs.html and Artifacts at /artifacts.html.
 
@@ -51,7 +50,9 @@ Sections:
 
 ## Page: Tools — https://thehallucinatedlab.space/tools.html
 
-Purpose: everything the lab publishes that is meant to be taken away and run elsewhere. Three sections.
+Purpose: everything the lab publishes that is meant to be taken away and run elsewhere, as one flat grid of cards — one card per tool.
+
+Cards: Convert, Extract, Chunk, Tokenize, Embed, Index, Prompts, LoRA Adapters. Each links to its own page. Every tool card corresponds to a `thl tool <name>` command; the pipelines that chain them live at /pipelines.html.
 
 ### Section 1 — Prompts (/tools.html#prompts)
 
@@ -78,38 +79,6 @@ Status: none are downloadable yet. All four are in training or queued. Each card
 - thl-notes-7b. Base Mistral 7B Instruct v0.3, rank 16 alpha 32, attention, approximately 38 MB. Turns transcripts into structured notes with claims, open questions, and action items kept separate.
 
 The section also publishes working usage guides for two runtimes: an Ollama Modelfile with an ADAPTER directive, and a Python example loading an adapter through PEFT and hot-swapping between adapters without reloading the base model.
-
-### Section 3 — THL Library (/tools.html#library)
-
-Reusable code extracted from the lab's own projects. Full shelf at /library.html.
-
----
-
-## Page: THL Library — https://thehallucinatedlab.space/library.html
-
-Purpose: packages and SDKs that drop into a reader's own project.
-
-Entry — thehallucinatedlab (Python toolkit):
-- Install: pip install thehallucinatedlab
-- Every THL tool is a method: `from thehallucinatedlab import convert`.
-- Also ships a `thl` command: `thl tool`, `thl tool convert photo.jpg --format png`, and a plain-english form, `thl "convert photo.jpg to png"`.
-- One spec file (spec/manifest.json) declares each tool's arguments, bounds, defaults and vocabulary. The website builds its convert UI and argument tables from it, the assistant parses against it, and the package validates against it, so the documentation cannot describe arguments the code does not accept.
-- Natural language is handled by a deterministic intent parser (classification plus slot filling), not a model. It is implemented twice, in JavaScript and Python, against a shared fixture file that both test suites run.
-- Requires Python 3.10+. Only runtime dependency is Pillow.
-- Errors are typed: THLError, ToolNotFound, InvalidArgument, MissingArgument, UnsupportedFormat.
-- Source: https://github.com/The-Hallucinated-Lab/thehallucinatedlab
-
-Entry — NexusLink Engine:
-- A headless LAN and WAN communication SDK for local-first, peer-to-peer applications. Written in Rust.
-- Zero-server by design. Peers communicate directly; no relay, no hosting cost, no single point of failure.
-- Encryption: X25519 key agreement, per-direction ChaCha20-Poly1305, perfect forward secrecy.
-- Reliability: ordered, replay-protected messaging and chunked, SHA-256-verified file transfer.
-- Storage: local message history encrypted with Argon2id-derived keys.
-- Distribution: a Rust crate, a stable C ABI header, and a pip-installable Python SDK, with interop paths for Node, Flutter, and Go.
-- Platforms: Windows, Linux, macOS.
-- Install: not published to PyPI yet; build from source.
-- Source: https://github.com/06pratyush/NexusLinkEngine
-- Reachable through the toolkit namespace once its binding is installed: `from thehallucinatedlab import nexuslink`.
 
 ---
 
@@ -261,11 +230,12 @@ Source: https://github.com/06pratyush/ScoobyBench-ai_benchmarking_system
 
 ## Page: Media — https://thehallucinatedlab.space/media.html
 
-Purpose: gateway to three publication formats.
+Purpose: gateway to four publication formats, as a flat grid of cards.
 
 - Blogs (/blogs.html). Long-form written work.
 - Artifacts (/artifacts.html). Interactive explainers operated rather than read.
 - Notebooks. Runnable research files with outputs left in, including failed runs. Not yet published.
+- Simulators. Interactive models run in the page and steered by the reader: parameters on one side, the system responding on the other. Not yet published.
 
 ---
 
@@ -315,7 +285,7 @@ Purpose: a human-readable index of every page on the site, grouped by section.
 ## Redirects
 
 - /livelab.html redirects to /tools.html. The Tools page was previously named LiveLab.
-- /utilities.html redirects to /library.html.
+- /utilities.html redirects to /tools.html.
 
 ---
 

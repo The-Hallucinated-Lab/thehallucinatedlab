@@ -129,17 +129,15 @@
      what is shown, so both are derived from the same two functions the
      renderer uses rather than scraped back out of the DOM. */
   function terminalText(tool, values, filename) {
-    var parts = terminalCommand(tool, values, filename);
-    if (parts.length === 1) return parts[0];
-    return parts[0] + ' \\\n  ' + parts.slice(1).join(' \\\n  ');
+    /* One line, because that is what the page shows and what is copied
+       has to be what is shown. The stacked backslash form read as a
+       script rather than as the thing you would type. */
+    return terminalCommand(tool, values, filename).join(' ');
   }
 
   function pythonText(tool, values, filename) {
     var call = pythonCall(tool, values, filename);
-    if (call.args.length === 1) {
-      return 'result = thl.' + call.name + '(' + call.args[0] + ')';
-    }
-    return 'result = thl.' + call.name + '(\n    ' + call.args.join(',\n    ') + ',\n)';
+    return 'result = thl.' + call.name + '(' + call.args.join(', ') + ')';
   }
 
   function defaultsFor(tool) {
@@ -212,6 +210,152 @@
     return input;
   }
 
+  /* ---- View mode ----
+
+     One preference for the whole site, not one per widget. Someone who
+     thinks in a terminal thinks in a terminal on every page, and a
+     per-widget switch would make them say so again on each one.
+
+     Kept beside the theme in localStorage and surfaced in the same place
+     in the navbar, because it is the same kind of setting: how you want
+     the site to talk to you. */
+  var MODE_KEY = 'thl_codeview';
+  var MODES = ['terminal', 'python'];
+
+  function readMode() {
+    try {
+      var v = localStorage.getItem(MODE_KEY);
+      return MODES.indexOf(v) === -1 ? 'terminal' : v;
+    } catch (err) {
+      /* Private mode throws rather than returning null. A view
+         preference is not worth breaking the page over. */
+      return 'terminal';
+    }
+  }
+
+  function writeMode(value) {
+    try { localStorage.setItem(MODE_KEY, value); } catch (err) { /* session only */ }
+  }
+
+  var listeners = [];
+  function onModeChange(fn) { listeners.push(fn); }
+  function setMode(value) {
+    writeMode(value);
+    document.documentElement.setAttribute('data-codeview', value);
+    for (var i = 0; i < listeners.length; i++) listeners[i](value);
+  }
+
+  var ICONS = {
+    /* A terminal prompt, and the Python two-snake mark reduced to
+       something legible at 18px. Both filled, to match the nav glyphs. */
+    terminal: 'M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v10zM6.5 9.5L10 13l-3.5 3.5L5.4 15.4 7.8 13 5.4 10.6 6.5 9.5zM12 15h5v1.5h-5V15z',
+    python: 'M12 2C9.5 2 8 3 8 5v2h4v1H6c-2 0-3 1.5-3 4s1 4 3 4h1v-2.5C7 11.7 8.7 10 10.5 10h4c1.4 0 2.5-1.1 2.5-2.5V5c0-2-1.5-3-3-3h-2zm-1.8 1.6a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8zM17 8v2.5c0 1.8-1.7 3.5-3.5 3.5h-4C8.1 14 7 15.1 7 16.5V19c0 2 1.5 3 3 3h2c2.5 0 4-1 4-3v-2h-4v-1h6c2 0 3-1.5 3-4s-1-4-3-4h-1zm-3.2 10.6a.9.9 0 1 1 0 1.8.9.9 0 0 1 0-1.8z',
+  };
+
+  /* The switch lives in the navbar, immediately left of the theme
+     toggle, and is only built when the page actually has a builder on
+     it. A control that changes nothing on the page it is sitting on is
+     worse than no control. */
+  function mountSwitch() {
+    var navbar = document.querySelector('.navbar');
+    var themeToggle = document.getElementById('theme-toggle');
+    if (!navbar || document.getElementById('codeview-toggle')) return;
+
+    var button = document.createElement('button');
+    button.id = 'codeview-toggle';
+    button.className = 'codeview-toggle';
+    button.type = 'button';
+
+    var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    svg.appendChild(path);
+    button.appendChild(svg);
+
+    function relabel(mode) {
+      var next = mode === 'terminal' ? 'Python' : 'terminal';
+      /* Show the icon for where the click takes you, not where you are —
+         the same rule the theme toggle follows, so the two controls
+         beside each other do not contradict one another. */
+      path.setAttribute('d', mode === 'terminal' ? ICONS.python : ICONS.terminal);
+      var text = 'Show commands as ' + next;
+      button.setAttribute('aria-label', text);
+      button.title = text;
+    }
+    relabel(readMode());
+    onModeChange(relabel);
+
+    button.addEventListener('click', function () {
+      setMode(readMode() === 'terminal' ? 'python' : 'terminal');
+    });
+
+    /* Both controls go into one wrapper rather than straight into the
+       navbar. The bar is justify-content: space-between, so a fifth
+       child would redistribute every gap in it and drift the two
+       toggles apart -- they belong together at the right-hand end.
+       One wrapper keeps the bar at the four items it was laid out for. */
+    if (themeToggle && themeToggle.parentNode === navbar) {
+      var group = document.createElement('div');
+      group.className = 'nav-controls';
+      navbar.insertBefore(group, themeToggle);
+      group.appendChild(button);
+      group.appendChild(themeToggle);
+    } else {
+      navbar.appendChild(button);
+    }
+  }
+
+  /* ---- Rendering ---- */
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function controlFor(param, values, onChange) {
+    var input;
+    if (param.type === 'enum') {
+      input = el('select', 'tb-control tb-select');
+      for (var i = 0; i < (param.values || []).length; i++) {
+        var opt = el('option', null, param.values[i]);
+        opt.value = param.values[i];
+        input.appendChild(opt);
+      }
+      input.value = values[param.name];
+    } else if (param.type === 'integer' || param.type === 'number') {
+      input = el('input', 'tb-control tb-number');
+      input.type = 'number';
+      if (param.min !== undefined) input.min = param.min;
+      if (param.max !== undefined) input.max = param.max;
+      input.value = values[param.name] !== undefined ? values[param.name] : '';
+    } else if (param.type === 'color') {
+      input = el('input', 'tb-control tb-color');
+      input.type = 'color';
+      input.value = values[param.name] || '#ffffff';
+    } else if (param.type === 'boolean') {
+      input = el('input', 'tb-control tb-check');
+      input.type = 'checkbox';
+      input.checked = Boolean(values[param.name]);
+    } else {
+      input = el('input', 'tb-control tb-text');
+      input.type = 'text';
+      input.value = values[param.name] || '';
+    }
+
+    input.setAttribute('aria-label', param.name + (param.description ? ' - ' + param.description : ''));
+    if (param.description) input.title = param.description;
+
+    input.addEventListener(param.type === 'boolean' ? 'change' : 'input', function () {
+      var v = param.type === 'boolean' ? input.checked : input.value;
+      if ((param.type === 'integer' || param.type === 'number') && v !== '') v = Number(v);
+      onChange(param.name, v);
+    });
+    return input;
+  }
+
   function render(tool, mount) {
     var values = defaultsFor(tool);
     var filename = '';
@@ -219,35 +363,18 @@
     var wrap = el('div', 'toolbench');
 
     var head = el('div', 'tb-head');
-    head.appendChild(el('span', 'tb-title', 'thl ' + tool.name));
+    var label = el('span', 'tb-title');
+    head.appendChild(label);
     head.appendChild(el('span', 'tb-hint', 'builds the command - nothing runs, nothing uploads'));
     wrap.appendChild(head);
 
-    var grid = el('div', 'tb-grid');
+    var body = el('div', 'tb-body');
+    wrap.appendChild(body);
 
-    var termPane = el('div', 'tb-pane');
-    termPane.appendChild(el('span', 'tb-pane-label', 'Terminal'));
-    var termBody = el('div', 'tb-body tb-term');
-    termPane.appendChild(termBody);
-    var termCopy = el('button', 'tb-copy', 'Copy');
-    termCopy.type = 'button';
-    termPane.appendChild(termCopy);
-    grid.appendChild(termPane);
+    var copy = el('button', 'tb-copy', 'Copy');
+    copy.type = 'button';
+    wrap.appendChild(copy);
 
-    var codePane = el('div', 'tb-pane');
-    codePane.appendChild(el('span', 'tb-pane-label', 'Python'));
-    var codeBody = el('div', 'tb-body tb-code');
-    codePane.appendChild(codeBody);
-    var codeCopy = el('button', 'tb-copy', 'Copy');
-    codeCopy.type = 'button';
-    codePane.appendChild(codeCopy);
-    grid.appendChild(codePane);
-
-    wrap.appendChild(grid);
-
-    /* One file input, shared by both views: the two panes are two
-       renderings of one state, so a file picked in either is the same
-       file. */
     var picker = el('input');
     picker.type = 'file';
     picker.className = 'sr-only';
@@ -270,75 +397,65 @@
 
     function set(name, value) { values[name] = value; paint(); }
 
+    /* One line, wrapping like a real terminal rather than one flag per
+       row. The stacked form read as a script; this reads as the thing
+       you would type. */
     function paint() {
-      termBody.textContent = '';
-      codeBody.textContent = '';
+      var mode = readMode();
+      body.textContent = '';
       var params = applicable(tool.params || [], values);
+      var line = el('div', 'tb-line');
       var i, p;
 
-      /* -- terminal -- */
-      var line = el('div', 'tb-line');
-      line.appendChild(el('span', 'tb-cmd', 'thl tool ' + tool.name));
-      line.appendChild(fileButton());
-      termBody.appendChild(line);
-      for (i = 0; i < params.length; i++) {
-        p = params[i];
-        var row = el('div', 'tb-line tb-arg');
-        row.appendChild(el('span', 'tb-flag',
-          p.type === 'boolean' ? booleanFlag(p, values[p.name]) : '--' + flagName(p.name)));
-        row.appendChild(controlFor(p, values, set));
-        if (!p.required && p.default !== undefined
-            && String(values[p.name]) === String(p.default)) {
-          row.appendChild(el('span', 'tb-default', 'default'));
+      if (mode === 'python') {
+        label.textContent = 'thl.' + tool.name;
+        line.appendChild(el('span', 'tb-cmd', 'result = thl.' + tool.name + '('));
+        line.appendChild(fileButton());
+        for (i = 0; i < params.length; i++) {
+          p = params[i];
+          line.appendChild(el('span', 'tb-punct', ','));
+          line.appendChild(el('span', 'tb-kw', p.name + '='));
+          line.appendChild(controlFor(p, values, set));
         }
-        termBody.appendChild(row);
+        line.appendChild(el('span', 'tb-cmd', ')'));
+      } else {
+        label.textContent = 'thl ' + tool.name;
+        line.appendChild(el('span', 'tb-cmd', 'thl tool ' + tool.name));
+        line.appendChild(fileButton());
+        for (i = 0; i < params.length; i++) {
+          p = params[i];
+          line.appendChild(el('span', 'tb-flag',
+            p.type === 'boolean' ? booleanFlag(p, values[p.name]) : '--' + flagName(p.name)));
+          if (p.type !== 'boolean') line.appendChild(controlFor(p, values, set));
+        }
       }
-
-      /* -- python -- */
-      var open = el('div', 'tb-line');
-      open.appendChild(el('span', 'tb-cmd', 'result = thl.' + tool.name + '('));
-      codeBody.appendChild(open);
-      var argRow = el('div', 'tb-line tb-arg');
-      argRow.appendChild(fileButton());
-      argRow.appendChild(el('span', 'tb-punct', ','));
-      codeBody.appendChild(argRow);
-      for (i = 0; i < params.length; i++) {
-        p = params[i];
-        var crow = el('div', 'tb-line tb-arg');
-        crow.appendChild(el('span', 'tb-kw', p.name + '='));
-        crow.appendChild(controlFor(p, values, set));
-        crow.appendChild(el('span', 'tb-punct', ','));
-        codeBody.appendChild(crow);
-      }
-      codeBody.appendChild(el('div', 'tb-line', ')'));
+      body.appendChild(line);
     }
 
-    function copier(button, textFn) {
-      button.addEventListener('click', function () {
-        var text = textFn();
-        var done = function () {
-          button.textContent = 'Copied';
-          button.classList.add('is-copied');
-          setTimeout(function () {
-            button.textContent = 'Copy';
-            button.classList.remove('is-copied');
-          }, 1600);
-        };
-        /* clipboard.writeText needs a secure context, which file:// and
-           plain http are not. Falling back keeps the button honest
-           rather than silently doing nothing. */
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(text).then(done, function () {
-            button.textContent = 'Press Ctrl+C';
-          });
-        } else {
-          button.textContent = 'Press Ctrl+C';
-        }
-      });
-    }
-    copier(termCopy, function () { return terminalText(tool, values, filename); });
-    copier(codeCopy, function () { return pythonText(tool, values, filename); });
+    copy.addEventListener('click', function () {
+      var text = readMode() === 'python'
+        ? pythonText(tool, values, filename)
+        : terminalText(tool, values, filename);
+      var done = function () {
+        copy.textContent = 'Copied';
+        copy.classList.add('is-copied');
+        setTimeout(function () {
+          copy.textContent = 'Copy';
+          copy.classList.remove('is-copied');
+        }, 1600);
+      };
+      /* clipboard.writeText needs a secure context, which file:// and
+         plain http are not. Say so rather than silently doing nothing. */
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done, function () {
+          copy.textContent = 'Press Ctrl+C';
+        });
+      } else {
+        copy.textContent = 'Press Ctrl+C';
+      }
+    });
 
+    onModeChange(paint);
     paint();
     mount.textContent = '';
     mount.appendChild(wrap);
@@ -349,14 +466,16 @@
     if (!mounts.length) return;
     if (!window.THL || !window.THL.toolkit) return;
 
+    document.documentElement.setAttribute('data-codeview', readMode());
+    mountSwitch();
+
     window.THL.toolkit.loadManifest().then(function (manifest) {
       for (var i = 0; i < mounts.length; i++) {
         var tool = window.THL.toolkit.findTool(manifest, mounts[i].getAttribute('data-toolbench'));
         if (tool) render(tool, mounts[i]);
       }
     }).catch(function () {
-      /* The page documents the same arguments in prose and in the table
-         below; losing the builder costs convenience, not information. */
+      /* The argument table below documents the same thing. */
     });
   });
 
@@ -366,6 +485,8 @@
     pythonText: pythonText,
     applicable: applicable,
     isInteresting: isInteresting,
-    defaultsFor: defaultsFor
+    defaultsFor: defaultsFor,
+    readMode: readMode,
+    setMode: setMode
   };
 })();

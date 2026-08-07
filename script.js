@@ -340,25 +340,16 @@ function initDevMode() {
    HTML and this only enhances it. A page with no entry simply never
    expands, which is why Home is absent
    rather than listed with empty arrays. */
-const NAV_CHILDREN = {
-  /* Assistant is deliberately absent: it is a top-level entry now, and
-     listing it here too rendered it twice in the same bar. A nav that
-     offers the same destination in two places makes the visitor decide
-     which one is the real one, and there is no right answer. */
-  'tools.html': [
-    { label: 'THL Library', href: 'library.html' },
-    { label: 'Prompts', href: 'prompts.html' },
-    { label: 'Adapters', href: 'adapters.html', status: 'dev' },
-  ],
-  'pipelines.html': [
-    { label: 'RAG', href: 'pipelines.html#rag' },
-    { label: 'EDA', href: 'eda.html' },
-  ],
-  'media.html': [
-    { label: 'Blogs', href: 'blogs.html' },
-    { label: 'Artifacts', href: 'artifacts.html' },
-  ],
-};
+/* Empty on purpose, and kept rather than deleted: the flyout machinery
+   below still works, and a future section with genuinely hidden depth
+   can switch it back on by adding one line here.
+
+   Nothing nests today. Tools, Pipelines and Media are each a flat grid
+   of cards, so an expanding subsection in the bar was a second, smaller
+   copy of the page you were one click from anyway -- and the smaller
+   copy was the one you had to discover by hovering. The page is the
+   menu. */
+const NAV_CHILDREN = {};
 
 /* Nav entries carry their own status. This list stays here rather than in
    spec/manifest.json for one reason: the nav must render synchronously.
