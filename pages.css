@@ -3191,6 +3191,175 @@
   color: #2ecc71;
 }
 
+/* ============================================================
+   The live builder.
+
+   Where the tool can actually execute in the page, the builder stops
+   being a picture of a command and becomes the command. The layout is a
+   terminal session with one editable line in it: the command on top,
+   its output underneath, in the order a terminal prints them.
+
+   The output area is the page's whole argument — the documentation and
+   the tool are the same object — so it gets the vertical room to be the
+   thing you look at, not a footnote under a code sample.
+   ============================================================ */
+.toolbench.is-live { border-color: var(--border-gold); }
+
+/* Dragging anywhere over the widget arms it. Someone dragging a file at
+   a terminal aims at the terminal, not at a box inside it. */
+.toolbench.is-live.is-over {
+  border-color: var(--gold-primary);
+  box-shadow: 0 0 0 3px var(--gold-glow);
+}
+
+.tb-stage {
+  padding: 0 1.2rem;
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+}
+
+/* A caveat about this browser, not about the tool. Muted, because the
+   command it is qualifying is still correct everywhere else. */
+.tb-note {
+  margin: 0.5rem 0 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+/* ---- The empty state: one big target ---- */
+.tb-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: 100%;
+  min-height: 190px;
+  padding: 1.8rem 1rem;
+  border: 1.5px dashed var(--border-gold);
+  border-radius: var(--radius-md);
+  background: rgba(var(--gold-rgb), 0.03);
+  color: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.tb-drop:hover,
+.tb-drop:focus-visible {
+  background: rgba(var(--gold-rgb), 0.08);
+  border-color: var(--gold-primary);
+  outline: none;
+}
+.tb-drop-plus {
+  font-size: 2.6rem;
+  line-height: 1;
+  font-weight: 300;
+  color: var(--gold-primary);
+}
+.tb-drop-title {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.tb-drop-hint { font-size: 0.7rem; color: var(--text-muted); }
+
+/* ---- Output ---- */
+
+/* The line the CLI would have printed, before anything the page adds of
+   its own. It is prefixed rather than styled as a heading because in a
+   terminal that is what output looks like: no ceremony, just the line. */
+.tb-out-line {
+  margin: 0 0 0.9rem;
+  color: var(--text-secondary);
+  word-break: break-all;
+}
+.tb-out-wait { margin: 0; padding: 1.4rem 0; color: var(--text-muted); }
+.tb-out-error {
+  margin: 0 0 0.8rem;
+  padding: 0.7rem 0.9rem;
+  border-left: 2px solid #e0785c;
+  background: rgba(224, 120, 92, 0.07);
+  color: #e0785c;
+}
+
+.tb-out {
+  display: grid;
+  grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+  gap: 1.2rem;
+  align-items: start;
+}
+
+/* Capped rather than sized: the result is evidence, and a 4000px-wide
+   photo proves the same thing at 260px as it does at full width. */
+.tb-out-image {
+  max-width: min(260px, 100%);
+  height: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-subtle);
+  /* A converted PNG is often mostly transparent, and transparency on a
+     dark card reads as "the tool ate my image". */
+  background:
+    linear-gradient(45deg, rgba(128, 128, 128, 0.16) 25%, transparent 25%, transparent 75%, rgba(128, 128, 128, 0.16) 75%),
+    linear-gradient(45deg, rgba(128, 128, 128, 0.16) 25%, transparent 25%, transparent 75%, rgba(128, 128, 128, 0.16) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+}
+
+.tb-out-meta { display: flex; flex-direction: column; gap: 0.9rem; min-width: 0; }
+.tb-out-facts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.9rem;
+  color: var(--text-secondary);
+  font-size: 0.76rem;
+}
+.tb-out-facts li { white-space: nowrap; }
+
+.tb-out-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: center; }
+.tb-out-download {
+  padding: 6px 18px;
+  border-radius: 50px;
+  border: 1px solid var(--border-gold);
+  background: var(--gold-glow);
+  color: var(--gold-primary);
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.tb-out-download:hover { background: rgba(var(--gold-rgb), 0.2); }
+.tb-out-again {
+  padding: 6px 14px;
+  border-radius: 50px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.tb-out-again:hover { border-color: var(--border-gold); color: var(--gold-primary); }
+
+.tb-foot { display: flex; align-items: center; gap: 0.6rem; padding: 1.2rem 1.2rem 0; }
+.tb-foot .tb-copy { margin: 0 0 1.2rem; }
+
+@media (max-width: 600px) {
+  /* Stacked, and the image goes full width — at this size a side-by-side
+     grid gives the picture about 90px, which proves nothing. */
+  .tb-out { grid-template-columns: minmax(0, 1fr); }
+  .tb-out-image { max-width: 100%; }
+  .tb-drop { min-height: 150px; }
+}
+
 /* ---- The navbar switch ----
    Deliberately identical to .theme-toggle: two controls that sit next
    to each other and do the same kind of job should not look like two

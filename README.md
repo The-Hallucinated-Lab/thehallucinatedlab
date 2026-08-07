@@ -74,7 +74,8 @@ thehallucinatedlab/
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
 ├── convert.html  # Convert — the first THL tool
 ├── eda.html              # Exploratory data analysis — the command-line profiler
-├── convert.js    # Its drop zone, controls, and result panel
+├── toolbench.js          # The command builder — and, where a tool can run
+│                         #   in the page, the thing that runs it
 ├── toolkit.js            # Shared tool runtime + argument-table renderer
 ├── nlp.js                # Intent parser (classification + slot filling)
 ├── solutions.js          # ScoobyBench screenshot tab switcher

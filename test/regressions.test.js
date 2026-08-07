@@ -32,7 +32,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
-const { ROOT } = require('./helpers/load-pure');
+const { ROOT, loadPure } = require('./helpers/load-pure');
 
 /* ---- WCAG contrast maths ---- */
 
@@ -463,14 +463,13 @@ test('hover-only affordances are suppressed where there is no hover', () => {
    the build rather than the tool.
    ============================================================ */
 
-/* Names kept working on purpose after a rename, so a bookmark or a
-   script written against the old name does not break. These are the
-   only names allowed to have no manifest entry. */
-const LEGACY_TOOL_ALIASES = new Set(['converter']);
-
 const manifestTools = new Set(
   JSON.parse(read('spec/manifest.json')).tools.map(t => t.name),
 );
+
+const runtime = loadPure('toolkit.js', [
+  'canRun', 'normalizeToolName', 'BROWSER_RUNNERS', 'LEGACY_TOOL_NAMES', 'findTool',
+]);
 
 /* Root-level .js only: the site ships plain <script> files, and test/
    and scripts/ are dev tooling that never reaches a browser. */
@@ -491,20 +490,35 @@ test('every tool name the code looks up exists in the manifest', () => {
   assert.deepEqual(misses, [], 'These names are not in spec/manifest.json:\n' + misses.join('\n'));
 });
 
-test('every tool the runtime dispatches on exists in the manifest', () => {
-  /* run() maps a name onto an implementation. A name here that the
-     manifest does not carry is a tool the Assistant can never invoke. */
-  const src = read('toolkit.js');
-  const body = src.slice(src.indexOf('function run(name'));
-  const dispatched = [...body.slice(0, body.indexOf('\n  }')).matchAll(/name\s*===\s*['"]([^'"]+)['"]/g)]
-    .map(m => m[1]);
+test('every tool the runtime can execute exists in the manifest', () => {
+  /* The runner table is what run() dispatches on. A name in it that the
+     manifest does not carry is a tool nothing can ever invoke — which is
+     precisely the shape of the convert bug. */
+  assert.ok(runtime.BROWSER_RUNNERS.length, 'nothing can run in the page at all — did the table get renamed?');
+  for (const name of runtime.BROWSER_RUNNERS) {
+    assert.ok(manifestTools.has(name),
+      `the runtime can run "${name}", which is not in spec/manifest.json`);
+  }
+  assert.equal(runtime.canRun('convert'), true, 'convert must be runnable in the page');
+});
 
-  assert.ok(dispatched.length, 'run() dispatches on nothing — did it get renamed?');
-  assert.ok(dispatched.includes('convert'),
-    'run() must accept the canonical manifest name "convert".');
-  for (const name of dispatched) {
-    assert.ok(manifestTools.has(name) || LEGACY_TOOL_ALIASES.has(name),
-      `run() dispatches on "${name}", which is neither in the manifest nor a declared legacy alias.`);
+test('every legacy tool name resolves to a tool that still exists', () => {
+  /* An alias pointing at a name that was itself renamed is worse than no
+     alias: it reports "unknown tool" for a name the code claims to
+     support. */
+  for (const [old, canonical] of Object.entries(runtime.LEGACY_TOOL_NAMES)) {
+    assert.ok(manifestTools.has(canonical),
+      `legacy name "${old}" maps to "${canonical}", which is not in the manifest`);
+    assert.equal(runtime.normalizeToolName(old), canonical);
+    assert.ok(!manifestTools.has(old),
+      `"${old}" is listed as legacy but is also a live tool name — one of the two is wrong`);
+  }
+});
+
+test('a canonical name is never rewritten by the alias table', () => {
+  for (const name of manifestTools) {
+    assert.equal(runtime.normalizeToolName(name), name,
+      `${name} is a real tool but the alias table rewrites it`);
   }
 });
 

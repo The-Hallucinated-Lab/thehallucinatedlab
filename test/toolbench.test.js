@@ -20,7 +20,7 @@ const path = require('node:path');
 const { ROOT, loadPure } = require('./helpers/load-pure');
 
 const bench = loadPure('toolbench.js', [
-  'terminalText', 'pythonText', 'applicable', 'isInteresting', 'defaultsFor',
+  'terminalText', 'pythonText', 'applicable', 'isInteresting', 'defaultsFor', 'runArgs',
 ]);
 const manifest = JSON.parse(fs.readFileSync(path.join(ROOT, 'spec', 'manifest.json'), 'utf8'));
 const cli = fs.readFileSync(path.join(ROOT, 'python', 'thehallucinatedlab', 'cli.py'), 'utf8');
@@ -142,4 +142,65 @@ test('an argument that does not apply is not offered', () => {
   const jpeg = bench.applicable(convert.params, { format: 'jpeg' }).map((p) => p.name);
   assert.ok(!png.includes('quality'), 'quality is meaningless for lossless png');
   assert.ok(jpeg.includes('quality'), 'quality applies to jpeg');
+});
+
+/* ============================================================
+   The live builder: what is shown and what is run.
+
+   The builder stopped being a picture of a command and became the
+   command — on convert.html it is now the only interface, and dropping a
+   file executes the line on screen. That makes one thing critical that
+   was merely tidy before: the arguments handed to the runtime have to be
+   the arguments the visible command is advertising.
+
+   If those two ever diverge, the page shows `--format png` and produces
+   a JPEG, and every claim the site makes about documentation that
+   cannot drift is false in the most convincing way possible — because
+   the wrong command is right there on screen looking correct.
+   ============================================================ */
+
+test('what runs is what the command line says, argument for argument', () => {
+  for (const name of mountedTools()) {
+    const tool = toolFor(name);
+    const params = tool.params || [];
+
+    const cases = [bench.defaultsFor(tool)];
+    for (const p of params) {
+      const base = bench.defaultsFor(tool);
+      if (p.type === 'enum') for (const v of p.values || []) cases.push({ ...base, [p.name]: v });
+      else if (p.type === 'integer' || p.type === 'number') {
+        cases.push({ ...base, [p.name]: (p.default ?? p.min ?? 1) + 1 });
+      } else if (p.type === 'boolean') cases.push({ ...base, [p.name]: !p.default });
+    }
+
+    for (const values of cases) {
+      const args = bench.runArgs(tool, values);
+      const shown = bench.applicable(params, values).map(p => p.name);
+
+      // Nothing is run that the command does not show.
+      for (const key of Object.keys(args)) {
+        assert.ok(shown.includes(key),
+          `${name}: would run with ${key}, which the command line does not show`);
+      }
+      // And nothing shown with a value is quietly dropped on the way in.
+      for (const p of bench.applicable(params, values)) {
+        const v = values[p.name];
+        if (v === undefined || v === null || v === '') continue;
+        assert.equal(args[p.name], v,
+          `${name}: shows ${p.name}=${v} but would run with ${args[p.name]}`);
+      }
+    }
+  }
+});
+
+test('an argument that does not apply is never handed to the runtime', () => {
+  // The case that exists today: quality is meaningless for lossless PNG,
+  // and passing it anyway would be rejected by validateArgs as an
+  // argument the tool does not accept for that format.
+  const convert = toolFor('convert');
+  if (!convert) return;
+  const args = bench.runArgs(convert, { ...bench.defaultsFor(convert), format: 'png' });
+  assert.ok(!('quality' in args), 'quality must not be sent for png');
+  assert.ok(!('background' in args), 'background must not be sent for png');
+  assert.equal(args.format, 'png');
 });

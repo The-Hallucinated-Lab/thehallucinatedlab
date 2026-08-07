@@ -155,60 +155,26 @@
     return values;
   }
 
-  /* @pure-end */
+  /* The arguments the run actually receives.
 
-  /* ---- Rendering ---- */
-
-  function el(tag, className, text) {
-    var node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text !== undefined) node.textContent = text;
-    return node;
-  }
-
-  function controlFor(param, values, onChange) {
-    var input;
-    if (param.type === 'enum') {
-      input = el('select', 'tb-control tb-select');
-      for (var i = 0; i < (param.values || []).length; i++) {
-        var opt = el('option', null, param.values[i]);
-        opt.value = param.values[i];
-        input.appendChild(opt);
-      }
-      input.value = values[param.name];
-    } else if (param.type === 'integer' || param.type === 'number') {
-      input = el('input', 'tb-control tb-number');
-      input.type = 'number';
-      if (param.min !== undefined) input.min = param.min;
-      if (param.max !== undefined) input.max = param.max;
-      input.value = values[param.name] !== undefined ? values[param.name] : '';
-    } else if (param.type === 'color') {
-      input = el('input', 'tb-control tb-color');
-      input.type = 'color';
-      input.value = values[param.name] || '#ffffff';
-    } else if (param.type === 'boolean') {
-      input = el('input', 'tb-control tb-check');
-      input.type = 'checkbox';
-      input.checked = Boolean(values[param.name]);
-    } else {
-      input = el('input', 'tb-control tb-text');
-      input.type = 'text';
-      input.value = values[param.name] || '';
+     These must be the arguments the command line is showing, so both go
+     through the same applicable() filter over the same values. If the
+     two ever diverge, the page displays one command and executes
+     another — the worst outcome available to a page whose entire claim
+     is that the documentation is the tool. A test pins them together. */
+  function runArgs(tool, values) {
+    var params = applicable((tool && tool.params) || [], values);
+    var out = {};
+    for (var i = 0; i < params.length; i++) {
+      var p = params[i];
+      var v = values[p.name];
+      if (v === undefined || v === null || v === '') continue;
+      out[p.name] = v;
     }
-
-    /* The accessible name has to come from somewhere: the visible label
-       is the flag itself, which is not associated with the control, and
-       a bare select announces as "combo box". */
-    input.setAttribute('aria-label', param.name + (param.description ? ' - ' + param.description : ''));
-    if (param.description) input.title = param.description;
-
-    input.addEventListener(param.type === 'boolean' ? 'change' : 'input', function () {
-      var v = param.type === 'boolean' ? input.checked : input.value;
-      if ((param.type === 'integer' || param.type === 'number') && v !== '') v = Number(v);
-      onChange(param.name, v);
-    });
-    return input;
+    return out;
   }
+
+  /* @pure-end */
 
   /* ---- View mode ----
 
@@ -315,13 +281,26 @@
     return node;
   }
 
-  function controlFor(param, values, onChange) {
+  /* `unusable` names enum values this browser cannot actually produce.
+     canvas.toBlob does not reject a format it cannot encode — it quietly
+     returns a PNG — so the option is disabled up front rather than
+     letting someone pick AVIF and receive a mislabelled file. Only the
+     live builder passes it; the read-only one documents every format the
+     tool has, because the CLI is not limited by this browser.
+
+     The reason is not written into the option label. A <select> is as
+     wide as its widest option, and "avif — not supported here" doubled
+     the width of a control sitting in the middle of a command line. It
+     goes in a note under the line instead, where it can be a sentence. */
+  function controlFor(param, values, onChange, unusable) {
     var input;
     if (param.type === 'enum') {
       input = el('select', 'tb-control tb-select');
       for (var i = 0; i < (param.values || []).length; i++) {
-        var opt = el('option', null, param.values[i]);
-        opt.value = param.values[i];
+        var name = param.values[i];
+        var opt = el('option', null, name);
+        opt.value = name;
+        if (unusable && unusable[name]) opt.disabled = true;
         input.appendChild(opt);
       }
       input.value = values[param.name];
@@ -356,32 +335,68 @@
     return input;
   }
 
-  function render(tool, mount) {
+  /* ---- The transcript ----
+
+     A live builder is a terminal session with one editable command in
+     it. The command line at the top is the real one — changing a
+     dropdown re-runs it — and everything below is that command's output,
+     in the order a terminal would print it.
+
+     There is deliberately only ONE command on screen. An earlier sketch
+     echoed the command above its output the way a real transcript does,
+     which meant the page showed the same command twice and the copy
+     button had two candidates. The command you can edit IS the command
+     that ran. */
+  function render(tool, mount, manifest) {
+    var toolkit = window.THL.toolkit;
     var values = defaultsFor(tool);
     var filename = '';
 
-    var wrap = el('div', 'toolbench');
+    /* Live only where this bundle can actually execute the tool. A page
+       whose tool is python-only still gets the builder — it just builds,
+       which is all it could ever honestly do. */
+    var live = toolkit.canRun(tool.name) && toolkit.runsIn(tool, 'browser');
+    var file = null;
+    var unusable = null;
+    var busy = false;
+    var pending = null;
+    var outputUrl = null;
+    var shown = null;
+    var failure = '';
+
+    var wrap = el('div', 'toolbench' + (live ? ' is-live' : ''));
 
     var head = el('div', 'tb-head');
     var label = el('span', 'tb-title');
     head.appendChild(label);
-    head.appendChild(el('span', 'tb-hint', 'builds the command - nothing runs, nothing uploads'));
+    head.appendChild(el('span', 'tb-hint', live
+      ? 'runs here in the page - nothing uploads, nothing is installed'
+      : 'builds the command - nothing runs, nothing uploads'));
     wrap.appendChild(head);
 
     var body = el('div', 'tb-body');
     wrap.appendChild(body);
 
+    var stage = el('div', 'tb-stage');
+    /* Output arrives without the visitor moving focus, so it has to be
+       announced. Polite rather than assertive: a conversion finishing is
+       worth hearing about, not worth interrupting for. */
+    stage.setAttribute('role', 'status');
+    stage.setAttribute('aria-live', 'polite');
+    if (live) wrap.appendChild(stage);
+
+    var foot = el('div', 'tb-foot');
     var copy = el('button', 'tb-copy', 'Copy');
     copy.type = 'button';
-    wrap.appendChild(copy);
+    foot.appendChild(copy);
+    wrap.appendChild(foot);
 
     var picker = el('input');
     picker.type = 'file';
     picker.className = 'sr-only';
     if (tool.input && tool.input.accept) picker.accept = tool.input.accept.join(',');
     picker.addEventListener('change', function () {
-      filename = picker.files && picker.files[0] ? picker.files[0].name : '';
-      paint();
+      if (picker.files && picker.files.length) accept(picker.files[0]);
     });
     wrap.appendChild(picker);
 
@@ -395,7 +410,18 @@
       return b;
     }
 
-    function set(name, value) { values[name] = value; paint(); }
+    function set(name, value) {
+      values[name] = value;
+      paint();
+      /* Re-run on every edit, so the output below is never the answer to
+         a command that is no longer on screen. Debounced because a
+         number field fires per keystroke and each run encodes a whole
+         image. */
+      if (live && file) {
+        if (pending) clearTimeout(pending);
+        pending = setTimeout(function () { pending = null; execute(); }, 350);
+      }
+    }
 
     /* One line, wrapping like a real terminal rather than one flag per
        row. The stacked form read as a script; this reads as the thing
@@ -415,7 +441,7 @@
           p = params[i];
           line.appendChild(el('span', 'tb-punct', ','));
           line.appendChild(el('span', 'tb-kw', p.name + '='));
-          line.appendChild(controlFor(p, values, set));
+          line.appendChild(controlFor(p, values, set, unusable));
         }
         line.appendChild(el('span', 'tb-cmd', ')'));
       } else {
@@ -426,10 +452,220 @@
           p = params[i];
           line.appendChild(el('span', 'tb-flag',
             p.type === 'boolean' ? booleanFlag(p, values[p.name]) : '--' + flagName(p.name)));
-          if (p.type !== 'boolean') line.appendChild(controlFor(p, values, set));
+          if (p.type !== 'boolean') line.appendChild(controlFor(p, values, set, unusable));
         }
       }
       body.appendChild(line);
+
+      /* Said once, under the line, rather than inside the control. The
+         CLI can encode these; this browser cannot, and that distinction
+         is worth a sentence because the page is documentation for both. */
+      var blocked = unusableNames();
+      if (blocked.length) {
+        body.appendChild(el('p', 'tb-note',
+          'This browser cannot encode ' + blocked.join(' or ').toUpperCase() +
+          '. The command still works everywhere else.'));
+      }
+
+      if (live) paintStage();
+    }
+
+    function unusableNames() {
+      var names = [];
+      if (!unusable) return names;
+      var params = tool.params || [];
+      for (var i = 0; i < params.length; i++) {
+        var values_ = params[i].values || [];
+        for (var v = 0; v < values_.length; v++) {
+          if (unusable[values_[v]] && names.indexOf(values_[v]) === -1) names.push(values_[v]);
+        }
+      }
+      return names;
+    }
+
+    /* ---- The output half ---- */
+
+    function releaseOutput() {
+      if (outputUrl) { URL.revokeObjectURL(outputUrl); outputUrl = null; }
+    }
+
+    function dropZone() {
+      var zone = el('button', 'tb-drop');
+      zone.type = 'button';
+      zone.setAttribute('aria-label', 'Choose a file to run this command on, or drop one here');
+
+      var plus = el('span', 'tb-drop-plus', '+');
+      plus.setAttribute('aria-hidden', 'true');
+      zone.appendChild(plus);
+      zone.appendChild(el('span', 'tb-drop-title', 'Drop a file here to run it'));
+      zone.appendChild(el('span', 'tb-drop-hint', hintForInput()));
+      zone.addEventListener('click', function () { picker.click(); });
+      return zone;
+    }
+
+    /* Named from the spec's accept list rather than restated, so a tool
+       that starts taking TIFF says so here without an edit. */
+    function hintForInput() {
+      var types = (tool.input && tool.input.accept) || [];
+      if (!types.length) return 'or click to choose one';
+      var names = [];
+      for (var i = 0; i < types.length; i++) {
+        var slash = types[i].indexOf('/');
+        var ext = slash === -1 ? types[i] : types[i].slice(slash + 1);
+        if (names.indexOf(ext) === -1) names.push(ext);
+      }
+      return 'or click to choose - ' + names.join(', ').toUpperCase();
+    }
+
+    function paintStage() {
+      stage.textContent = '';
+
+      if (failure) {
+        stage.appendChild(el('p', 'tb-out-error', failure));
+        stage.appendChild(retryLine());
+        return;
+      }
+      if (!file) { stage.appendChild(dropZone()); return; }
+      if (busy || !shown) {
+        stage.appendChild(el('p', 'tb-out-wait', busy ? 'running…' : 'ready to run'));
+        return;
+      }
+
+      /* Exactly what `thl tool convert` prints to a terminal. The page
+         earns the right to show the image underneath by first showing
+         the line the CLI would actually have given you. */
+      stage.appendChild(el('p', 'tb-out-line', shown.line));
+
+      var out = el('div', 'tb-out');
+      if (shown.image && shown.image.url) {
+        var img = el('img', 'tb-out-image');
+        img.src = shown.image.url;
+        img.alt = shown.image.alt || '';
+        /* Intrinsic size, so the transcript does not jump when a large
+           result decodes. */
+        img.width = shown.image.width;
+        img.height = shown.image.height;
+        out.appendChild(img);
+      }
+
+      var meta = el('div', 'tb-out-meta');
+      var facts = el('ul', 'tb-out-facts');
+      for (var i = 0; i < (shown.facts || []).length; i++) {
+        facts.appendChild(el('li', null, shown.facts[i]));
+      }
+      meta.appendChild(facts);
+
+      var actions = el('div', 'tb-out-actions');
+      if (shown.download && shown.download.url) {
+        var link = el('a', 'tb-out-download', 'Download ' + shown.download.filename);
+        link.href = shown.download.url;
+        link.setAttribute('download', shown.download.filename);
+        actions.appendChild(link);
+      }
+      actions.appendChild(retryLine());
+      meta.appendChild(actions);
+
+      out.appendChild(meta);
+      stage.appendChild(out);
+    }
+
+    function retryLine() {
+      var again = el('button', 'tb-out-again', 'Use another file');
+      again.type = 'button';
+      again.addEventListener('click', function () {
+        file = null;
+        filename = '';
+        shown = null;
+        failure = '';
+        picker.value = '';
+        releaseOutput();
+        paint();
+      });
+      return again;
+    }
+
+    function accept(chosen) {
+      file = chosen;
+      filename = chosen.name;
+      shown = null;
+      failure = '';
+      paint();
+      execute();
+    }
+
+    function execute() {
+      if (!live || !file || busy) return;
+      busy = true;
+      failure = '';
+      paintStage();
+
+      var args = runArgs(tool, values);
+      toolkit.run(tool.name, file, args, manifest)
+        .then(function (result) {
+          releaseOutput();
+          outputUrl = URL.createObjectURL(result.blob);
+          shown = toolkit.presentResult(tool.name, result, outputUrl);
+        }, function (err) {
+          shown = null;
+          failure = (err && err.message) || 'That did not work.';
+        })
+        .then(function () {
+          busy = false;
+          paintStage();
+        });
+    }
+
+    if (live) {
+      /* The whole widget is the drop target, not just the box inside it.
+         Someone dragging a file at a terminal aims at the terminal. */
+      ['dragenter', 'dragover'].forEach(function (name) {
+        wrap.addEventListener(name, function (e) {
+          e.preventDefault();
+          wrap.classList.add('is-over');
+        });
+      });
+      ['dragleave', 'drop'].forEach(function (name) {
+        wrap.addEventListener(name, function (e) {
+          e.preventDefault();
+          wrap.classList.remove('is-over');
+        });
+      });
+      wrap.addEventListener('drop', function (e) {
+        var files = e.dataTransfer && e.dataTransfer.files;
+        if (files && files.length) accept(files[0]);
+      });
+
+      window.addEventListener('pagehide', releaseOutput);
+
+      /* Ask the browser what it can really encode before offering the
+         choice. Failure here is not fatal: every option stays enabled
+         and runImageConvert still refuses to hand back a file whose
+         extension lies, so the worst case is an error instead of a
+         greyed-out option. */
+      if (tool.meta && tool.meta.formats) {
+        toolkit.probeEncoders(tool).then(function (support) {
+          var blocked = {};
+          var any = false;
+          for (var name in support) {
+            if (!Object.prototype.hasOwnProperty.call(support, name)) continue;
+            if (support[name] === false) { blocked[name] = true; any = true; }
+          }
+          if (!any) return;
+          unusable = blocked;
+          /* Never leave the command sitting on a format that cannot run:
+             the first thing a visitor does is drop a file, and it would
+             fail for a reason they did not choose. */
+          var params = tool.params || [];
+          for (var i = 0; i < params.length; i++) {
+            var p = params[i];
+            if (p.type !== 'enum' || !blocked[values[p.name]]) continue;
+            for (var v = 0; v < (p.values || []).length; v++) {
+              if (!blocked[p.values[v]]) { values[p.name] = p.values[v]; break; }
+            }
+          }
+          paint();
+        }, function () { /* leave every option enabled */ });
+      }
     }
 
     copy.addEventListener('click', function () {
@@ -472,7 +708,7 @@
     window.THL.toolkit.loadManifest().then(function (manifest) {
       for (var i = 0; i < mounts.length; i++) {
         var tool = window.THL.toolkit.findTool(manifest, mounts[i].getAttribute('data-toolbench'));
-        if (tool) render(tool, mounts[i]);
+        if (tool) render(tool, mounts[i], manifest);
       }
     }).catch(function () {
       /* The argument table below documents the same thing. */
@@ -486,6 +722,7 @@
     applicable: applicable,
     isInteresting: isInteresting,
     defaultsFor: defaultsFor,
+    runArgs: runArgs,
     readMode: readMode,
     setMode: setMode
   };

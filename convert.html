@@ -124,65 +124,23 @@
       </nav>
       <span class="section-label">THL Tools · 01</span>
       <h1 class="page-title">Convert</h1>
-      <p class="page-subtitle">Convert between PNG, JPEG, WebP and AVIF. The conversion runs on a canvas inside this tab — your file is never uploaded, there is no queue, and it keeps working with the network off.</p>
+      <p class="page-subtitle">Convert between PNG, JPEG, WebP and AVIF. The command below is not an example of the command — it is the command. Drop a file into it and it runs, on a canvas inside this tab: nothing is uploaded, there is no queue, and it keeps working with the network off.</p>
     </section>
 
-    <!-- ====== THE TOOL ====== -->
+    <!-- ====== THE TOOL ======
+         The command builder is the tool. There is no second copy of the
+         controls anywhere on this page: the line you would type is the
+         line that runs, and its output appears underneath it. -->
     <section class="media-section" id="convert">
       <div class="container">
         <h2 class="sr-only">Convert an image</h2>
 
-        <div class="tool-panel fade-in">
+        <div data-toolbench="convert" class="fade-in"></div>
 
-          <div class="tool-drop" id="drop-zone">
-            <svg class="tool-drop-icon" viewBox="0 0 24 24" width="40" height="40" fill="currentColor" aria-hidden="true">
-              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-            </svg>
-            <p class="tool-drop-title" id="drop-title">Drop an image here</p>
-            <p class="tool-drop-hint" id="drop-hint">or choose a file — PNG, JPEG, WebP, AVIF, GIF or BMP</p>
-            <button type="button" class="submit-btn" id="pick-file">Choose an image</button>
-            <input type="file" id="file-input" accept="image/*" hidden>
-          </div>
-
-          <div class="tool-controls" id="tool-controls">
-            <div class="form-group">
-              <label class="form-label" for="opt-format">format <span class="form-required">*</span></label>
-              <select class="form-select" id="opt-format"></select>
-              <p class="form-note tool-field-note" id="format-note"></p>
-            </div>
-
-            <div class="form-group" id="quality-group">
-              <label class="form-label" for="opt-quality">quality <span class="tool-range-value" id="quality-value">92</span></label>
-              <input class="tool-range" type="range" id="opt-quality" min="1" max="100" value="92">
-              <p class="form-note tool-field-note">Higher keeps more detail and makes a bigger file.</p>
-            </div>
-
-            <div class="form-group" id="background-group">
-              <label class="form-label" for="opt-background">background</label>
-              <input class="tool-color" type="color" id="opt-background" value="#ffffff">
-              <p class="form-note tool-field-note">Fills transparency when the target has no alpha channel.</p>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="button" class="submit-btn" id="convert-btn" disabled>Convert</button>
-            <p class="tool-status" id="tool-status" role="status" aria-live="polite"></p>
-          </div>
-
-          <div class="tool-result" id="tool-result" hidden>
-            <img class="tool-result-preview" id="result-preview" alt="Converted image preview" width="320" height="240">
-            <div class="tool-result-body">
-              <p class="tool-result-name" id="result-name"></p>
-              <ul class="tool-result-facts" id="result-facts"></ul>
-              <a class="submit-btn tool-download" id="result-download" download>Download</a>
-            </div>
-          </div>
-
-          <p class="tool-privacy">
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
-            Nothing here is uploaded. Open your network tab and watch — there is no request to make.
-          </p>
-        </div>
+        <p class="tool-privacy">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+          Nothing here is uploaded. Open your network tab and watch — there is no request to make.
+        </p>
 
       </div>
     </section>
@@ -194,12 +152,10 @@
           <span class="section-label">Reference</span>
           <h2 class="section-title">Arguments</h2>
           <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The same arguments work in all three places — this page, the Assistant, and the Python package. Both the builder and the table below are generated from the tool spec the code itself reads, so they cannot drift out of date.</p>
+          <p class="section-intro">The same arguments work in all three places — this page, the Assistant, and the Python package. The controls above and the table below are generated from the tool spec the code itself reads, so they cannot drift out of date.</p>
         </div>
 
-        <div data-toolbench="convert" class="fade-in"></div>
-
-        <div class="tool-args-wrap fade-in" id="tool-args"></div>
+        <div class="tool-args-wrap fade-in" data-tool="convert"></div>
       </div>
     </section>
 
@@ -215,6 +171,5 @@
   <script src="tools.js" defer></script>
   <script src="toolkit.js" defer></script>
   <script src="toolbench.js" defer></script>
-  <script src="convert.js" defer></script>
 </body>
 </html>
