@@ -144,6 +144,121 @@ is a TODO nobody will ever find.
 - Open a PR. Get a review. `CODEOWNERS` will pull in the right person.
 - CI must be green.
 
+## Working in parallel
+
+Two people, one repo, no staging environment. Every rule below is here
+because ignoring it already cost us something.
+
+### Merge within days, not months
+
+Two branches opened in May were still sitting there in August, 102
+commits behind `main`. Neither can be merged now without hand-resolving
+seven files, so the work in them is effectively lost.
+
+A branch's conflict surface grows with its age, and it grows fastest in
+the files we both touch — `styles.css`, `pages.css`, `index.html`. If a
+branch is going to live longer than a few days, it is too big: split it.
+
+### Rebase before you push
+
+```bash
+npm run sync     # git fetch origin main && git rebase origin/main
+```
+
+Run it whenever you sit down on a branch. Ten small rebases are free;
+one big one at the end is where the afternoon goes. It autostashes, so
+it is safe with a dirty tree.
+
+### Never force-push anything the other person has pulled
+
+This is the one that actually broke things. A history rewrite — removing
+committed MNIST binaries — replaced every commit SHA on `main`. The
+consequences are still visible:
+
+- Branches created before the rewrite have **no common ancestor** with
+  `main`. Git cannot merge them at all; it is not a conflict, it is two
+  unrelated histories.
+- Every clone taken before it has a stranded `main` that can never
+  fast-forward.
+
+If history genuinely has to be rewritten (a leaked credential, a huge
+binary), it is a planned operation: agree a time, everyone pushes and
+stops, one person rewrites, everyone re-clones. Not a Tuesday afternoon.
+
+### Say which page you are on
+
+`CODEOWNERS` routes the review; it does not stop two people editing
+`pages.css` at the same time. A one-line message before you start is
+cheaper than the merge.
+
+## When git does fight you
+
+| Symptom | Fix |
+|---|---|
+| Conflict in `package-lock.json` | Never hand-merge it. `git checkout --theirs -- package-lock.json && npm install`, then commit the result. |
+| Conflict in `python/thehallucinatedlab/data/manifest.json` | It is generated. Take either side, then `npm run spec:sync`. Only `spec/manifest.json` is edited by hand. |
+| `refusing to merge unrelated histories` | Your branch predates the history rewrite. Cherry-pick the commits you still want onto a fresh branch off `main`; the branch itself cannot be saved. |
+| Whole file shows as changed when you touched one line | Line endings. Should be impossible now — `.gitattributes` pins LF — but if it happens, `git add --renormalize .`. |
+
+### Recovering a clone whose `main` is stranded
+
+You have this if `git merge-base main origin/main` prints nothing at
+all. It means your `main` and the real one share no history.
+
+```bash
+git fetch origin
+git branch rescue/my-local-work main   # only if main has commits you want
+git checkout main
+git reset --hard origin/main
+```
+
+## Repo settings this all assumes
+
+These live in GitHub's settings, not in the repo, so they have to be
+switched on by hand. They are recorded here because a setting nobody
+wrote down is a setting nobody can check.
+
+**Settings → General → Pull Requests**
+
+- ✅ **Allow squash merging** — and *only* squash merging. Every PR
+  lands as exactly one commit, so `main` stays a straight line. This is
+  the setting that does the most for us: with linear history there is
+  never an ambiguous merge base, which is where the confusing conflicts
+  come from.
+- ❌ Allow merge commits — off.
+- ❌ Allow rebase merging — off.
+- ✅ **Automatically delete head branches.** Without it, merged branches
+  pile up; we hit seven at once and it stopped being obvious which
+  branches were alive.
+
+**Settings → Branches → rule for `main`**
+
+- ✅ **Block force pushes.** The single most important one. A history
+  rewrite is what stranded every clone and orphaned a branch entirely;
+  see above.
+- ✅ **Require status checks to pass:** `Tests and site invariants`,
+  `Secret scan`, `THL library (3.10)`, `THL library (3.13)`.
+
+### Deliberately not enabled
+
+These were considered and turned down, so nobody has to re-litigate them
+by accident:
+
+- **Required approvals.** With two people, requiring an approval means
+  whoever is awake cannot ship. Read each other's PRs anyway — the
+  review is the point, the enforcement was the cost.
+- **Require branches to be up to date before merging.** Would catch the
+  case of two PRs that are green alone and broken together. Not free:
+  it forces an "Update branch" click on whichever lands second. If we
+  ever get burned by that case, this is the fix, and a merge queue is
+  the fix after that.
+- **Require Code Owner review.** `CODEOWNERS` still routes the review
+  request; it just is not a gate.
+
+Since none of the above is enforced, `npm run sync` before you push is
+doing the work instead. It is the only thing standing between us and
+the two-green-PRs-one-broken-`main` case.
+
 ## Working with an AI agent on this repo
 
 Most of this codebase was written with one, so: it is a fast junior, not

@@ -11,6 +11,7 @@
   "scripts": {
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
+    "sync": "git fetch origin main && git -c rebase.autoStash=true rebase origin/main",
     "test": "node --test \"test/**/*.test.js\"",
     "test:coverage": "node --test --experimental-test-coverage \"test/**/*.test.js\"",
     "check": "npm run lint && npm test && node scripts/sync-spec.js --check",
