@@ -358,3 +358,21 @@ test('the manifest declares the in-page runner accurately', () => {
     assert.ok(Array.isArray(runner.formats) && runner.formats.length, `${tool.name} lists no formats`);
   }
 });
+
+/* Shipped broken once: run() wrapped the analysis in
+   requestAnimationFrame, which does not fire in a hidden tab. Clicking
+   Analyse and switching away — the obvious thing to do while a large
+   file works — left the page on "Analysing…" forever with the button
+   disabled and no recovery but a reload.
+
+   Checked at the source level because the failure needs a backgrounded
+   tab to reproduce, which a unit test cannot create. */
+test('starting the analysis does not depend on a frame being painted', () => {
+  const src = fs.readFileSync(path.join(ROOT, 'eda.js'), 'utf8');
+  const run = src.slice(src.indexOf('function run()'), src.indexOf('function analyse()'));
+
+  assert.doesNotMatch(run, /requestAnimationFrame\s*\(/,
+    'run() schedules work on requestAnimationFrame, which never fires in a hidden tab');
+  assert.match(run, /setTimeout\s*\(/,
+    'run() should yield with a timer, which fires whether or not the tab is visible');
+});
