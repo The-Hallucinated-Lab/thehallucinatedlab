@@ -11,6 +11,13 @@
   --bg-nav-solid: rgba(5, 5, 5, 0.95);
   --bg-nav-overlay: rgba(5, 5, 5, 0.55);
   --gold-primary: #c9a84c;
+  /* The accent's channels on their own, for the places that need it at
+     some other alpha. A custom property cannot carry a colour and have
+     its opacity changed later, so without this every tint has to write
+     the literal out again — which is how a page full of gold washes
+     ended up staying dark-theme gold when the light theme arrived.
+     Anything written as rgba(var(--gold-rgb), …) follows the theme. */
+  --gold-rgb: 201, 168, 76;
   --gold-light: #e8d48b;
   /* 4.61:1 on --bg-card. The old #8a7232 was 4.14:1 there, which is fine
      for the icons and scrollbars it mostly paints but not for the small
@@ -92,6 +99,7 @@
   /* The accent darkens rather than inverting to black — it is still gold,
      just the side of it that can sit on a light page. */
   --gold-primary: #6b5410;
+  --gold-rgb: 107, 84, 16;
   --gold-light: #57430b;
   --gold-dark: #775e12;
   --gold-glow: rgba(107, 84, 16, 0.10);
@@ -713,8 +721,10 @@ section { padding: 6rem 2rem; position: relative; }
 :root[data-theme="light"] .gateway-cover,
 :root[data-theme="light"] .blog-hero-content {
   --gold-primary: #c9a84c;
+  --gold-rgb: 201, 168, 76;
   --gold-light: #e8d48b;
   --gold-dark: #94793a;
+  --gold-glow: rgba(201, 168, 76, 0.15);
   --border-subtle: rgba(201, 168, 76, 0.1);
   --border-gold: rgba(201, 168, 76, 0.3);
   --text-primary: #f0ece4;
