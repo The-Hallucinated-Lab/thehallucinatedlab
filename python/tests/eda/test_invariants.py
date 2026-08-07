@@ -319,3 +319,45 @@ def test_no_nul_bytes_in_source() -> None:
 def test_every_source_file_is_valid_python() -> None:
     for path in SOURCES:
         ast.parse(path.read_text(encoding="utf-8"))
+
+
+def test_eda_version_is_the_package_version():
+    """The EDA module must not keep a second version number.
+
+    It did, and the two drifted: the package declared 1.0.0 while every
+    report and recipe this module wrote stamped 0.2.0 -- a version that
+    was never published. A recipe carrying a version that never shipped
+    cannot be replayed against the code that produced it, which is the
+    only thing that field is for.
+    """
+    import thehallucinatedlab
+    from thehallucinatedlab.tools import eda
+
+    assert eda.__version__ == thehallucinatedlab.__version__
+
+
+def test_the_eda_extra_exists_and_the_docs_name_it():
+    """`pip install "thehallucinatedlab[eda]"` has to be a real command.
+
+    The website and the module docstring both tell people to run it. If
+    pyproject stops declaring the extra, that instruction silently
+    becomes an error for everyone who follows it.
+    """
+    import re
+    from pathlib import Path
+
+    # Read as text rather than with tomllib: that is stdlib only from
+    # 3.11 and this package supports 3.10, where importing it fails
+    # outright. The question here is whether one key is present and
+    # non-empty, which does not need a parser.
+    pyproject = Path(__file__).resolve().parents[2] / "pyproject.toml"
+    text = pyproject.read_text(encoding="utf-8")
+
+    assert "[project.optional-dependencies]" in text, "no extras table at all"
+
+    declared = re.search(r"^eda\s*=\s*\[(.*?)\]", text, re.MULTILINE | re.DOTALL)
+    assert declared, (
+        "pyproject no longer declares the [eda] extra, but the website and "
+        "this module's docstring both tell people to install it"
+    )
+    assert declared.group(1).strip(), "the [eda] extra is declared but empty"

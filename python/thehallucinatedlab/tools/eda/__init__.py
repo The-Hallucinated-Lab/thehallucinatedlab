@@ -54,7 +54,31 @@ from .types import (
     TypeVerdict,
 )
 
-__version__ = "0.2.0"
+
+def _package_version() -> str:
+    """The version stamped into every report and recipe.
+
+    Read from the installed distribution rather than kept as a second
+    constant here. It was hand-maintained and had already drifted: the
+    package declared 1.0.0 while every report this module wrote claimed
+    0.2.0, a version that does not exist on PyPI. A recipe carrying a
+    version that never shipped cannot be replayed against the code that
+    produced it, which is the only job that field has.
+
+    Imported lazily rather than from the parent package, which imports
+    this module and would make it circular.
+    """
+    from importlib.metadata import PackageNotFoundError, version
+
+    try:
+        return version("thehallucinatedlab")
+    except PackageNotFoundError:
+        # Running from a source tree with nothing installed. Say so
+        # rather than inventing a number a reader might trust.
+        return "0+unknown"
+
+
+__version__ = _package_version()
 
 #: Recipe schema version. Bumped only when an old recipe would replay
 #: differently, which is the only thing the number is for.
