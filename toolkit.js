@@ -485,10 +485,10 @@
     });
   }
 
-  /* ---- converter ---- */
+  /* ---- convert ---- */
   function runImageConvert(file, rawArgs, manifest) {
-    var tool = findTool(manifest, 'converter');
-    if (!tool) return Promise.reject(ToolError('converter is not in the tool spec.'));
+    var tool = findTool(manifest, 'convert');
+    if (!tool) return Promise.reject(ToolError('convert is not in the tool spec.'));
     if (!file) return Promise.reject(ToolError('Choose an image first.'));
 
     var checked = validateArgs(rawArgs, tool);
@@ -556,8 +556,13 @@
     });
   }
 
+  /* 'converter' is the pre-0.2 name, kept as a hidden alias for the same
+     reason the CLI keeps it: a script someone already wrote should not
+     break because the tool got a better name. */
   function run(name, file, args, manifest) {
-    if (name === 'converter') return runImageConvert(file, args, manifest);
+    if (name === 'convert' || name === 'converter') {
+      return runImageConvert(file, args, manifest);
+    }
     return Promise.reject(ToolError('Unknown tool "' + name + '".'));
   }
 
