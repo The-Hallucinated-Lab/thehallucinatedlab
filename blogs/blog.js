@@ -131,12 +131,17 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ============ BLOCKQUOTE ENTRANCE ============ */
   const quotes = gsap.utils.toArray('.blog-content blockquote');
   quotes.forEach((quote) => {
+    /* Animate to whatever the stylesheet already put there rather than to
+       a literal gold: the border is var(--gold-primary), which is a
+       different colour in each theme, and hardcoding the dark one left
+       the rule washed out on the light page. */
+    const restColor = getComputedStyle(quote).borderLeftColor;
     gsap.fromTo(quote,
       { autoAlpha: 0, x: -30, borderLeftColor: 'transparent' },
       {
         autoAlpha: 1,
         x: 0,
-        borderLeftColor: '#c9a84c',
+        borderLeftColor: restColor,
         duration: 0.8,
         ease: 'power3.out',
         scrollTrigger: {

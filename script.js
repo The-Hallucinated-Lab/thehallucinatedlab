@@ -1,11 +1,19 @@
 /* ============ CONFIG ============ */
 const CONFIG = {
   particles: {
-    color: [201, 168, 76],      // RGB gold
+    color: [201, 168, 76],      // RGB gold, on the dark page
+    /* The light page is sand, and gold on sand measures under 1.3:1 —
+       the field simply disappears. The canvas is decoration, so this is
+       cosmetic rather than an a11y failure, but an empty hero is not
+       what the light theme is meant to look like. */
+    colorLight: [107, 84, 16],
     maxCount: 80,
     densityFactor: 15000,
     connectionDistance: 150,
     connectionOpacity: 0.06,
+    /* The connecting lines are drawn at a fixed alpha, so on the lighter
+       page they need a little more of it to survive the same blur. */
+    connectionOpacityLight: 0.10,
     sizeRange: [0.5, 2.0],
     speedRange: 0.3,
     opacityRange: [0.1, 0.5],
@@ -62,9 +70,27 @@ function initParticles() {
   if (!ctx) return;
 
   const particles = [];
-  const { color, maxCount, densityFactor, connectionDistance, connectionOpacity, sizeRange, speedRange, opacityRange } = CONFIG.particles;
+  const { color, colorLight, maxCount, densityFactor, connectionDistance, connectionOpacity, connectionOpacityLight, sizeRange, speedRange, opacityRange } = CONFIG.particles;
   const connectionDistanceSq = connectionDistance * connectionDistance;
-  const rgb = `${color[0]}, ${color[1]}, ${color[2]}`;
+
+  /* Read from the attribute rather than taken once at startup: the theme
+     toggle swaps themes live, without a reload, and a canvas still
+     painting the other page's gold is the one thing on the page that
+     would not follow. theme.js sets the attribute before first paint, so
+     this is already correct on the first frame. */
+  let rgb = '';
+  let lineOpacity = connectionOpacity;
+  function readTheme() {
+    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+    const c = isLight ? colorLight : color;
+    rgb = `${c[0]}, ${c[1]}, ${c[2]}`;
+    lineOpacity = isLight ? connectionOpacityLight : connectionOpacity;
+  }
+  readTheme();
+  new MutationObserver(readTheme).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
 
   let width = 0;
   let height = 0;
@@ -136,7 +162,7 @@ function initParticles() {
         if (distSq < connectionDistanceSq) {
           const dist = Math.sqrt(distSq);
           ctx.beginPath();
-          ctx.strokeStyle = `rgba(${rgb}, ${connectionOpacity * (1 - dist / connectionDistance)})`;
+          ctx.strokeStyle = `rgba(${rgb}, ${lineOpacity * (1 - dist / connectionDistance)})`;
           ctx.lineWidth = 0.5;
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
