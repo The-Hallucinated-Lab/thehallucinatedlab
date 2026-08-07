@@ -231,42 +231,6 @@
     </section>
 
     <!-- ====== USE IT ELSEWHERE ====== -->
-    <section class="media-section" id="library">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Same Tool, Other Doors</span>
-          <h2 class="section-title">Use It From Python</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The package counts with BGE-M3's own tokenizer, so the sizes are exact rather than estimated.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <div class="how-block">
-            <span class="how-block-label">Install</span>
-            <div class="how-code"><code>pip install "thehallucinatedlab[chunk]"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Chunk a document</span>
-            <div class="how-code"><code>from thehallucinatedlab import chunk
-
-result = chunk("report.md", max_tokens=512, overlap=64)
-print(result.path, len(result.chunks), result.total_tokens)</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl tool extract report.pdf
-thl tool chunk report.md --max-tokens 512 --overlap 64
-thl tool tokenize report.jsonl</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </main>
 

@@ -220,44 +220,6 @@
     </section>
 
     <!-- ====== USE IT ELSEWHERE ====== -->
-    <section class="media-section" id="library">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Same Tool, Other Doors</span>
-          <h2 class="section-title">Use It From Python</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The package can load BGE-M3's real tokenizer, so the counts are exact rather than estimated.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <div class="how-block">
-            <span class="how-block-label">Install</span>
-            <div class="how-code"><code>pip install "thehallucinatedlab[chunk]"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-          <p class="how-note">Needs <strong>Python 3.10 or newer</strong>. On an older Python, pip reports <code>No matching distribution found</code> rather than naming the version — the real reason is one line above it in the output.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Count a corpus</span>
-            <div class="how-code"><code>from thehallucinatedlab import tokenize
-
-report = tokenize("chunks.jsonl", tokenizer="bge")
-print(report)
-print(report.over_limit, "chunks would be truncated")</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Or from the command line</span>
-            <div class="how-code"><code>thl tool tokenize chunks.jsonl --tokenizer bge
-
-# plain english works too
-thl "count the tokens in chunks.jsonl"</code></div>
-            <button type="button" class="copy-btn"><span>Copy</span></button>
-          </div>
-        </div>
-      </div>
-    </section>
 
   </main>
 
