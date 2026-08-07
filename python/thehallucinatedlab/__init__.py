@@ -59,7 +59,7 @@ from .tools.extract import ExtractResult, extract
 from .tools.index import IndexResult, index
 from .tools.tokenize import TokenReport, tokenize
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 
 # Deprecated alias. The tool is "convert" everywhere now — website, spec,
 # CLI and API — but `image_convert` shipped in 0.1.0, so it keeps working
