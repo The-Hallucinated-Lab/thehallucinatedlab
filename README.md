@@ -139,7 +139,7 @@ thehallucinatedlab/
 - **Responsive design** — mobile hamburger menu, stacked layouts on small screens
 
 ### Design System
-- **Dark theme** with a gold accent palette (`#c9a84c` primary)
+- **Dark theme** with a gold accent palette (`#c9a84c` primary), and a warm sand light theme (`#e8dfcb` page, `#6b5410` accent) chosen before first paint by `theme.js`
 - **CSS custom properties** for consistent theming across all components
 - **Two font families** — Outfit (headings), JetBrains Mono (body/code)
 - **Smooth transitions** using a custom cubic-bezier easing curve
