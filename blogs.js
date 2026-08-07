@@ -212,7 +212,7 @@ function renderFeatured() {
         <div class="featured-card-top">
           <span class="featured-category">${escapeHtml(article.category)}</span>
           <span class="featured-badge">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="#c9a84c" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
             Featured
           </span>
         </div>
@@ -224,7 +224,7 @@ function renderFeatured() {
         </div>
       </div>
       ${readable ? `<div class="featured-card-arrow" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="20" height="20" fill="#c9a84c"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
       </div>` : ''}
     </${tag}>`;
   }).join(''));
