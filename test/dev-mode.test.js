@@ -112,6 +112,20 @@ test('the gesture does not ride on the browser\'s own click counter', () => {
     'the gesture listens for pointer events, which is what carries pointerType');
 });
 
+test('the tap target is not left where the platform can eat the gesture', () => {
+  /* Both of these read as idle styling on a footer and would survive any
+     tidy-up unchallenged, but the gesture does not work on an iPhone
+     without them: double-tap zoom takes the second tap and moves the
+     page out from under the third, and the text-selection callout draws
+     over the element being tapped. The symptom is "the triple tap does
+     nothing", on one platform, which is exactly the report that took a
+     round trip to a real phone to get. */
+  assert.match(css, /footer\s*\{[^}]*touch-action:\s*manipulation/,
+    'the footer must opt out of double-tap zoom, or taps two and three are lost to it');
+  assert.match(css, /footer\s*\{[^}]*user-select:\s*none/,
+    'the footer must not raise a selection callout over the element being tapped');
+});
+
 test('three taps only count together when they are close together', () => {
   /* Whether the timer happens to have fired is not the thing under
      test — the count itself has to be able to tell a sequence from
