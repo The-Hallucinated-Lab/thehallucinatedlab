@@ -363,6 +363,28 @@ section { padding: 6rem 2rem; position: relative; }
 .footer-text { color: var(--text-muted); font-size: 0.8rem; }
 .footer-text a { color: var(--gold-primary); text-decoration: none; }
 
+/* The dev toggle's touch gesture lands on this element — three taps,
+   see initDevTapToggle in script.js. Both declarations are here to stop
+   the platform from eating the second and third tap, and both look like
+   idle styling, which is why the test names them:
+
+   touch-action: iOS keeps double-tap-to-zoom even on a page with a
+   responsive viewport. Tap two triggers the zoom, the page scales under
+   your finger, and tap three lands somewhere that is no longer the
+   footer. `manipulation` drops double-tap zoom and keeps panning and
+   pinch, which are the two a reader actually wants here.
+
+   user-select: a triple tap on text selects the paragraph and raises
+   the selection callout, which draws directly over the thing being
+   tapped and can swallow the tap that completes the gesture. Nothing is
+   lost by making a line of copyright text unselectable; the links in it
+   still work. */
+footer {
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
 /* ============ ANIMATIONS ============ */
 .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease, transform 0.8s ease; }
 .fade-in.visible { opacity: 1; transform: translateY(0); }

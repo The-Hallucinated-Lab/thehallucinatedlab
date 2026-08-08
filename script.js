@@ -234,11 +234,13 @@ const MODE_KEY = 'thl_mode';
 /* Survives the reload below so the toast can be shown afterwards. */
 const FLASH_KEY = 'thl_mode_flash';
 
-/* Three taps, each within 500ms of the one before. Long enough to be
-   comfortable on a phone held one-handed, short enough that three taps
-   spread over a scroll are not a sequence. */
+/* Three taps, each within 600ms of the one before. Long enough to be
+   comfortable on a phone held one-handed — and the first number was
+   500, which is fine for a tap you have aimed and tight for one you
+   are still aiming. Short enough that three taps spread over a scroll
+   are not a sequence. */
 const TAP_COUNT = 3;
-const TAP_WINDOW_MS = 500;
+const TAP_WINDOW_MS = 600;
 
 /* @pure-start
    Storage access is kept out of here so the decisions themselves can be
@@ -373,12 +375,17 @@ function initDevMode() {
    that a triple tap anywhere on a page — on a card, in a code block,
    while zooming — cannot reach it. */
 function initDevTapToggle() {
-  /* The first paragraph of the footer: .footer-text on every page, and
-     the copyright line on the one blog that ships its own footer. It is
-     the same idea as tapping a build number in an about screen — the
-     dullest text on the page, at the end of it, where nothing is
-     tappable by accident on the way past. */
-  const target = document.querySelector('footer p');
+  /* The footer element, not its paragraph. Same idea as tapping a build
+     number in an about screen — the dullest thing on the page, at the
+     end of it — but the paragraph is a strip about twenty pixels tall,
+     and three rapid taps that all have to land inside it is a game, not
+     a gesture. One tap catching the padding instead of the text was
+     enough to lose the sequence. The footer box includes that padding,
+     so the whole strip is live.
+
+     Everything the tap has to survive on iOS is handled in CSS, on this
+     same element — see the touch-action rule in styles.css. */
+  const target = document.querySelector('footer');
   if (!target) return;
 
   let count = 0;
