@@ -347,6 +347,82 @@
     return false;
   }
 
+  /* ---- What this bundle can actually execute ----
+
+     runsIn() reports what the SPEC claims: convert, extract, chunk and
+     tokenize all say "browser". canRun() reports what this file has an
+     implementation for, which is a smaller set — the other three are
+     implemented by their own page scripts, not here.
+
+     The two must not be conflated. The command builder offers to run a
+     tool only when canRun() says yes, because a Run button that
+     produces "Unknown tool" is worse than no Run button. */
+  var BROWSER_RUNNERS = ['convert'];
+
+  function canRun(name) {
+    return BROWSER_RUNNERS.indexOf(normalizeToolName(name)) !== -1;
+  }
+
+  /* Names kept alive after a rename. Data rather than a branch, so a
+     test can read the whole set and check each target is real. */
+  var LEGACY_TOOL_NAMES = { converter: 'convert', image_convert: 'convert' };
+
+  function normalizeToolName(name) {
+    var key = String(name === null || name === undefined ? '' : name).trim();
+    return Object.prototype.hasOwnProperty.call(LEGACY_TOOL_NAMES, key)
+      ? LEGACY_TOOL_NAMES[key]
+      : key;
+  }
+
+  /* ---- Presenting a result ----
+
+     What a result IS belongs to the runtime that produced it, so the
+     command builder can render a transcript without knowing that this
+     particular tool deals in images.
+
+     `line` is the one that matters: it is what `thl tool convert` prints
+     to a terminal, character for character. ConvertResult.__str__ in
+     tools/convert.py is
+         f"{self.format} {self.width}x{self.height} -> {where}"
+     and a test holds the two together. A page that shows a transcript
+     the CLI would not print is a page that lies in the most convincing
+     way available to it.
+
+     Pure: the caller passes the object URL, because minting one is not
+     this function's business and cannot be tested without a DOM. */
+  function describeConvertResult(result, url) {
+    if (!result) return null;
+    var facts = [result.width + ' × ' + result.height, formatBytes(result.bytes)];
+
+    if (result.delta !== null && result.delta !== undefined && result.sourceBytes) {
+      if (result.delta === 0) {
+        facts.push('same size as the original');
+      } else {
+        facts.push(Math.abs(result.delta) + '% ' +
+          (result.delta < 0 ? 'smaller' : 'larger') + ' than ' + formatBytes(result.sourceBytes));
+      }
+    }
+
+    return {
+      line: result.format + ' ' + result.width + 'x' + result.height + ' -> ' + result.filename,
+      image: {
+        url: url,
+        width: result.width,
+        height: result.height,
+        alt: result.filename + ', the converted image'
+      },
+      facts: facts,
+      download: { url: url, filename: result.filename }
+    };
+  }
+
+  var PRESENTERS = { convert: describeConvertResult };
+
+  function presentResult(name, result, url) {
+    var presenter = PRESENTERS[normalizeToolName(name)];
+    return presenter ? presenter(result, url) : null;
+  }
+
   function describeParams(tool) {
     var params = (tool && tool.params) || [];
     var rows = [];
@@ -556,11 +632,12 @@
     });
   }
 
-  /* 'converter' is the pre-0.2 name, kept as a hidden alias for the same
-     reason the CLI keeps it: a script someone already wrote should not
-     break because the tool got a better name. */
+  /* The legacy names are resolved by normalizeToolName rather than by an
+     extra branch here, for the same reason the CLI keeps its alias: a
+     script someone already wrote should not break because the tool got a
+     better name. */
   function run(name, file, args, manifest) {
-    if (name === 'convert' || name === 'converter') {
+    if (normalizeToolName(name) === 'convert') {
       return runImageConvert(file, args, manifest);
     }
     return Promise.reject(ToolError('Unknown tool "' + name + '".'));
@@ -652,6 +729,9 @@
     renderParamTable: renderParamTable,
     describeParams: describeParams,
     runsIn: runsIn,
+    canRun: canRun,
+    normalizeToolName: normalizeToolName,
+    presentResult: presentResult,
     filenameFor: filenameFor,
     formatBytes: formatBytes,
     sizeDelta: sizeDelta
