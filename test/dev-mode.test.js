@@ -139,6 +139,48 @@ test('every tool declares a status the site can filter on', () => {
   }
 });
 
+test('every navbar carries the same dev group, in the same order', () => {
+  /* This drifted once and nobody saw it: five pages sat without any dev
+     entries at all while the other twenty had three, so which unfinished
+     sections existed depended on which page you happened to be standing
+     on when you pressed the shortcut. Nothing renders wrong when this
+     breaks — the bar just quietly disagrees with itself, and only in a
+     mode most visitors never enter, which is why it went unnoticed.
+
+     Order is part of it. The group is read as a list of what is being
+     worked on, and a list that reshuffles between pages reads as a
+     different list. */
+  const norm = href => href.replace(/^(\.\.\/|\/)/, '');
+  const devGroup = (nav) =>
+    [...nav.matchAll(/<li data-status="dev"><a href="([^"]+)"/g)].map(m => norm(m[1]));
+
+  const found = new Map();
+  for (const dir of ['.', 'blogs']) {
+    for (const f of fs.readdirSync(path.join(ROOT, dir))) {
+      if (!f.endsWith('.html')) continue;
+      const page = dir === '.' ? f : `${dir}/${f}`;
+      const html = read(page);
+      /* Redirect stubs are gone before a bar is any use, and a page with
+         no navbar has nothing to disagree about. */
+      if (/http-equiv=["']refresh["']/i.test(html)) continue;
+      const nav = html.match(/<ul class="nav-links"[^>]*>[\s\S]*?<\/ul>/);
+      if (!nav) continue;
+      found.set(page, devGroup(nav[0]));
+    }
+  }
+
+  const expected = found.get('index.html');
+  assert.ok(expected && expected.length > 0,
+    'index.html has no dev entries — this test now checks nothing');
+
+  const drifted = [...found]
+    .filter(([, group]) => group.join() !== expected.join())
+    .map(([page, group]) => `${page}: [${group.join(', ')}]`);
+
+  assert.deepEqual(drifted, [],
+    `these navbars disagree with index.html's [${expected.join(', ')}]:\n  ${drifted.join('\n  ')}`);
+});
+
 test('the small-model page stays behind dev mode at every entry point', () => {
   /* The three model cards describe work that is still on the bench, so
      two independent gates hold them back rather than one.
