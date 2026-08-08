@@ -23,8 +23,9 @@ const css = read('styles.css');
 const js = read('script.js');
 const manifest = JSON.parse(read('spec/manifest.json'));
 
-const { normalizeMode, navEntryVisible, isModeToggle, otherMode } =
-  loadPure('script.js', ['normalizeMode', 'navEntryVisible', 'isModeToggle', 'otherMode']);
+const { normalizeMode, navEntryVisible, isModeToggle, otherMode, isDevTap, nextTapCount } =
+  loadPure('script.js',
+    ['normalizeMode', 'navEntryVisible', 'isModeToggle', 'otherMode', 'isDevTap', 'nextTapCount']);
 
 test('dev content is hidden by default, not hidden by script', () => {
   assert.match(css, /\[data-status="dev"\]\s*\{\s*display:\s*none\s*!important/,
@@ -52,7 +53,7 @@ test('anything unrecognised resolves to live', () => {
   assert.equal(normalizeMode('dev'), 'dev', 'the exact value is honoured');
 });
 
-test('only Ctrl+Alt+Backslash toggles the mode', () => {
+test('only Ctrl+Alt+Backslash toggles the mode from a keyboard', () => {
   /* Modifiers are checked exhaustively rather than loosely, so the
      shortcut cannot fire as a subset of a larger chord the browser or
      the OS already owns. */
@@ -87,6 +88,44 @@ test('the shortcut matches the physical key, not the character', () => {
     'matching the character is layout-dependent');
 });
 
+test('the triple tap is touch-only, so a mouse cannot reach dev mode', () => {
+  /* This is the whole safety argument for the gesture. A triple click
+     is how you select a paragraph on a desktop, and the footer line is
+     a paragraph — accepting a mouse here would hand dev mode to a
+     visitor for doing the most ordinary thing there is to do to text.
+     A machine with a mouse has Ctrl+Alt+\ already, so the restriction
+     costs nothing. */
+  assert.equal(isDevTap({ pointerType: 'touch' }), true, 'a finger is the intended input');
+  assert.equal(isDevTap({ pointerType: 'mouse' }), false, 'a mouse must not fire it');
+  assert.equal(isDevTap({ pointerType: 'pen' }), false, 'a stylus must not fire it');
+  assert.equal(isDevTap({}), false, 'an event with no pointerType is not a tap');
+  assert.equal(isDevTap(null), false, 'no event is not a tap');
+});
+
+test('the gesture does not ride on the browser\'s own click counter', () => {
+  /* MouseEvent.detail === 3 is the ready-made triple click, and reaching
+     for it would silently undo the rule above: it counts mouse clicks,
+     which is exactly the input that must not work here. */
+  assert.doesNotMatch(js, /\.detail\s*===\s*3/,
+    'the tap count must be counted from touch pointers, not from the click counter');
+  assert.match(js, /addEventListener\('pointerdown'/,
+    'the gesture listens for pointer events, which is what carries pointerType');
+});
+
+test('three taps only count together when they are close together', () => {
+  /* Whether the timer happens to have fired is not the thing under
+     test — the count itself has to be able to tell a sequence from
+     three unrelated taps, or a slow triple tap on a scrolling page
+     becomes a toggle. */
+  const W = 500;
+  assert.equal(nextTapCount(0, 0, 1000, W), 1, 'the first tap starts the sequence');
+  assert.equal(nextTapCount(1, 1000, 1300, W), 2, 'a tap inside the window continues it');
+  assert.equal(nextTapCount(2, 1300, 1600, W), 3, 'the third completes it');
+  assert.equal(nextTapCount(2, 1300, 2600, W), 1,
+    'a tap after the window starts over rather than completing a stale sequence');
+  assert.equal(nextTapCount(1, 1000, 1500, W), 2, 'exactly on the window still counts');
+});
+
 test('the mode still only ever comes from storage, never from the URL', () => {
   /* A ?mode=dev switch would put unfinished work one shared link away. */
   assert.doesNotMatch(js, /searchParams\.get\(\s*['"]mode['"]\s*\)/,
@@ -98,6 +137,85 @@ test('every tool declares a status the site can filter on', () => {
     assert.ok(['live', 'dev'].includes(tool.status),
       `${tool.name} has status ${JSON.stringify(tool.status)}; expected "live" or "dev"`);
   }
+});
+
+test('every navbar carries the same dev group, in the same order', () => {
+  /* This drifted once and nobody saw it: five pages sat without any dev
+     entries at all while the other twenty had three, so which unfinished
+     sections existed depended on which page you happened to be standing
+     on when you pressed the shortcut. Nothing renders wrong when this
+     breaks — the bar just quietly disagrees with itself, and only in a
+     mode most visitors never enter, which is why it went unnoticed.
+
+     Order is part of it. The group is read as a list of what is being
+     worked on, and a list that reshuffles between pages reads as a
+     different list. */
+  const norm = href => href.replace(/^(\.\.\/|\/)/, '');
+  const devGroup = (nav) =>
+    [...nav.matchAll(/<li data-status="dev"><a href="([^"]+)"/g)].map(m => norm(m[1]));
+
+  const found = new Map();
+  for (const dir of ['.', 'blogs']) {
+    for (const f of fs.readdirSync(path.join(ROOT, dir))) {
+      if (!f.endsWith('.html')) continue;
+      const page = dir === '.' ? f : `${dir}/${f}`;
+      const html = read(page);
+      /* Redirect stubs are gone before a bar is any use, and a page with
+         no navbar has nothing to disagree about. */
+      if (/http-equiv=["']refresh["']/i.test(html)) continue;
+      const nav = html.match(/<ul class="nav-links"[^>]*>[\s\S]*?<\/ul>/);
+      if (!nav) continue;
+      found.set(page, devGroup(nav[0]));
+    }
+  }
+
+  const expected = found.get('index.html');
+  assert.ok(expected && expected.length > 0,
+    'index.html has no dev entries — this test now checks nothing');
+
+  const drifted = [...found]
+    .filter(([, group]) => group.join() !== expected.join())
+    .map(([page, group]) => `${page}: [${group.join(', ')}]`);
+
+  assert.deepEqual(drifted, [],
+    `these navbars disagree with index.html's [${expected.join(', ')}]:\n  ${drifted.join('\n  ')}`);
+});
+
+test('the small-model page stays behind dev mode at every entry point', () => {
+  /* The three model cards describe work that is still on the bench, so
+     two independent gates hold them back rather than one.
+
+     The first gate is that every route in is dev-marked — the nav entry
+     on 25 pages and the gateway card on tools.html. Asserting on all of
+     them rather than on a known list is the point: the next page to
+     copy the navbar gets checked for free, and a paste that drops the
+     marker on one page out of twenty-five is invisible by eye.
+
+     The second is that the page is noindex, for the visitor who reaches
+     the URL some other way — an old share link, a guess, a crawler.
+
+     Either gate can be dropped in a refactor with no visible symptom:
+     the page goes on rendering perfectly, just to the wrong audience. */
+  const pages = [...fs.readdirSync(ROOT), ...fs.readdirSync(path.join(ROOT, 'blogs')).map(f => `blogs/${f}`)]
+    .filter(f => f.endsWith('.html'));
+
+  const bare = [];
+  for (const page of pages) {
+    for (const line of read(page).split('\n')) {
+      /* <a> only. The page's own canonical and og:url point at itself
+         and are not a route a visitor can click. */
+      if (!/<a [^>]*href="[^"]*slm\.html"/.test(line)) continue;
+      if (!line.includes('data-status="dev"')) bare.push(`${page}: ${line.trim()}`);
+    }
+  }
+  assert.deepEqual(bare, [],
+    `these links into slm.html are visible to a live visitor:\n  ${bare.join('\n  ')}`);
+
+  /* Without this the loop above passes vacuously the day the page is
+     renamed: no links found, nothing to complain about. */
+  assert.ok(pages.includes('slm.html'), 'slm.html is gone — this test now checks nothing');
+  assert.match(read('slm.html'), /<meta name="robots" content="noindex/,
+    'slm.html must stay out of the index while its models are in training');
 });
 
 test('nav entries default to live and dev entries need dev mode', () => {

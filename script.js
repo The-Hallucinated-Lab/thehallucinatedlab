@@ -215,11 +215,13 @@ function initParticles() {
       data-mode="dev" on <html>. Nothing here can leak unfinished work,
       because JS only ever adds visibility, never removes it.
 
-   2. Ctrl+Alt+\ toggles it. That is the entire gate.
+   2. Ctrl+Alt+\ toggles it, and on a touch screen three taps on the
+      footer line do the same thing. Two gestures, one per input
+      device, and no third way in. That is the entire gate.
 
    What this is NOT, and never was: a security boundary. The site is
    static, so the dev markup ships to every visitor and anyone reading
-   the source can find it. The shortcut stops accidental discovery, not
+   the source can find it. The gestures stop accidental discovery, not
    a determined reader - don't put anything behind it you would mind
    being read.
 
@@ -231,6 +233,12 @@ function initParticles() {
 const MODE_KEY = 'thl_mode';
 /* Survives the reload below so the toast can be shown afterwards. */
 const FLASH_KEY = 'thl_mode_flash';
+
+/* Three taps, each within 500ms of the one before. Long enough to be
+   comfortable on a phone held one-handed, short enough that three taps
+   spread over a scroll are not a sequence. */
+const TAP_COUNT = 3;
+const TAP_WINDOW_MS = 500;
 
 /* @pure-start
    Storage access is kept out of here so the decisions themselves can be
@@ -265,6 +273,31 @@ function isModeToggle(event) {
     event.shiftKey !== true &&
     event.metaKey !== true &&
     event.code === 'Backslash';
+}
+
+/* The touch half of the same toggle: three taps on the footer line.
+   Ctrl+Alt+\ does not exist on a phone, and a phone is where dev mode
+   earns its keep — an unfinished layout looks worst on the narrowest
+   screen, which is the one with no keyboard to check it from.
+
+   Touch only, and that restriction is the entire safety argument. On a
+   desktop a triple click is how you select a paragraph. A version of
+   this gesture that accepted a mouse would drop a visitor into dev mode
+   for doing the most ordinary thing there is to do to a line of text,
+   which is precisely the failure the rest of this section is built to
+   avoid. Nothing is lost by ignoring the mouse: anything with one has
+   the chord already. */
+function isDevTap(event) {
+  return !!event && event.pointerType === 'touch';
+}
+
+/* A gap wider than the window restarts the count at 1 rather than
+   throwing the tap away. Someone who taps, hesitates, then taps three
+   times deliberately gets what they asked for; discarding the tap would
+   leave a dead period the gesture has no way to explain. */
+function nextTapCount(count, lastTapAt, now, windowMs) {
+  if (!lastTapAt || now - lastTapAt > windowMs) return 1;
+  return count + 1;
 }
 /* @pure-end */
 
@@ -332,6 +365,46 @@ function initDevMode() {
     event.preventDefault();
     toggleMode();
   });
+
+  initDevTapToggle();
+}
+
+/* The tap gesture is bound to one element rather than the document so
+   that a triple tap anywhere on a page — on a card, in a code block,
+   while zooming — cannot reach it. */
+function initDevTapToggle() {
+  /* The first paragraph of the footer: .footer-text on every page, and
+     the copyright line on the one blog that ships its own footer. It is
+     the same idea as tapping a build number in an about screen — the
+     dullest text on the page, at the end of it, where nothing is
+     tappable by accident on the way past. */
+  const target = document.querySelector('footer p');
+  if (!target) return;
+
+  let count = 0;
+  let lastTapAt = 0;
+  let timer = null;
+
+  target.addEventListener('pointerdown', (event) => {
+    if (!isDevTap(event)) return;
+
+    /* event.timeStamp, not Date.now(): it is monotonic from page load,
+       so a clock change mid-gesture cannot stretch or collapse the
+       window. Both readings have to come from the same source. */
+    count = nextTapCount(count, lastTapAt, event.timeStamp, TAP_WINDOW_MS);
+    lastTapAt = event.timeStamp;
+
+    /* Replaced on every tap and cleared when one fires: a timer left
+       running would reset the count in the middle of the next gesture. */
+    clearTimeout(timer);
+    if (count >= TAP_COUNT) {
+      count = 0;
+      lastTapAt = 0;
+      toggleMode();
+      return;
+    }
+    timer = setTimeout(() => { count = 0; lastTapAt = 0; }, TAP_WINDOW_MS);
+  });
 }
 
 
@@ -379,6 +452,9 @@ const NAV_ICONS = {
   /* Dev-only sections. They need glyphs for the same reason the live ones
      do: in dev mode the bar is icons, and an entry without one falls back
      to a bare word sitting between two icons. */
+  /* The same chip the gateway card on tools.html uses. A nav glyph that
+     disagrees with the card it leads to reads as two destinations. */
+  'slm.html': 'M9 3v2H7a2 2 0 0 0-2 2v2H3v2h2v2H3v2h2v2a2 2 0 0 0 2 2h2v2h2v-2h2v2h2v-2h2a2 2 0 0 0 2-2v-2h2v-2h-2v-2h2V9h-2V7a2 2 0 0 0-2-2h-2V3h-2v2h-2V3H9zm0 6h6v6H9V9z',
   'certification.html': 'M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z',
   'consultancy.html': 'M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z',
 };

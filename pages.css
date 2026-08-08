@@ -1986,6 +1986,118 @@
 }
 .adapter-note strong { color: var(--gold-light); }
 
+/* ============================================================
+   SLM PAGE — SMALL LANGUAGE MODELS
+
+   Three cards across rather than the adapter grid's two: an SLM is
+   picked by posture, and three side by side is the comparison the
+   page is for. That narrower column is also why the spec list runs
+   in a single column here — the adapter grid's two-up dl wraps a
+   value like "~2.1 GB at Q4_K_M" onto its own line at this width,
+   which reads as a broken row rather than a wrapped one.
+
+   The card body stretches so the spec list sits on the bottom edge
+   of every card regardless of how long the description is. Ragged
+   spec rows across three cards defeat the point of comparing them.
+   ============================================================ */
+.slm-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+.slm-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1.8rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: var(--transition);
+}
+.slm-card:hover { border-color: var(--border-gold); transform: translateY(-3px); box-shadow: var(--shadow-gold); }
+.slm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.7rem;
+}
+.slm-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--gold-light);
+  letter-spacing: 0.3px;
+}
+.slm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 12px;
+  border-radius: 50px;
+  border: 1px solid var(--border-subtle);
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+.slm-status .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--gold-primary);
+  animation: pulse-dot 2s infinite;
+}
+.slm-status.pending { border-color: var(--border-gold); color: var(--gold-primary); }
+.slm-status.queued .dot { background: var(--text-muted); animation: none; }
+.slm-desc {
+  color: var(--text-secondary);
+  font-size: 0.79rem;
+  line-height: 1.7;
+  margin-bottom: 1.2rem;
+  flex-grow: 1;
+}
+.slm-specs {
+  display: grid;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-subtle);
+}
+.slm-specs > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.slm-specs dt {
+  font-size: 0.6rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.slm-specs dd {
+  font-size: 0.72rem;
+  color: var(--text-primary);
+  text-align: right;
+}
+.slm-note {
+  margin-top: 2rem;
+  padding: 1.2rem 1.6rem;
+  border-radius: var(--radius-md);
+  background: rgba(201, 168, 76, 0.05);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--gold-dark);
+}
+.slm-note p {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.8;
+}
+.slm-note strong { color: var(--gold-light); }
+
 /* ============ HOW-TO PANEL ============ */
 .how-panel {
   margin-top: 2.5rem;
@@ -2712,6 +2824,7 @@
   .artifact-grid { grid-template-columns: minmax(0, 1fr); }
   .trait-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cert-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .slm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 768px) {
@@ -2720,6 +2833,7 @@
   .course-grid { grid-template-columns: minmax(0, 1fr); }
   .offer-grid { grid-template-columns: minmax(0, 1fr); }
   .adapter-grid { grid-template-columns: minmax(0, 1fr); }
+  .slm-grid { grid-template-columns: minmax(0, 1fr); }
   .trait-grid,
   .trait-grid-4 { grid-template-columns: minmax(0, 1fr); }
   .cert-steps { grid-template-columns: minmax(0, 1fr); }
@@ -2737,6 +2851,7 @@
 
   .prompt-card,
   .adapter-card,
+  .slm-card,
   .course-card { padding: 1.4rem 1.2rem; }
 
   .prompt-body { max-height: 220px; }

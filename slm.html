@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Small Language Models — The Hallucinated Lab</title>
+  <meta name="description" content="Three small language models on the bench: document-first, tools-first and personal-first. Each sized to run on hardware you already own.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:title" content="Small Language Models — The Hallucinated Lab">
+  <meta property="og:description" content="Document-first, tools-first and personal-first small models, each sized for your own machine.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/slm.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/slm.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Small Language Models — The Hallucinated Lab">
+  <meta name="twitter:description" content="Document-first, tools-first and personal-first small models, each sized for your own machine.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script src="theme.js"></script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="/sitemap.html">Sitemap</a></li>
+        <li data-status="dev"><a href="slm.html" class="active">SLM</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Take It And Run</span>
+      <h1 class="page-title">Small Language Models</h1>
+      <p class="page-subtitle">Three small models, each tuned for one posture rather than for everything at once.</p>
+    </section>
+
+    <section class="media-section">
+      <div class="container">
+        <p class="section-intro">A small model that does one job well beats a large one that does every job adequately — and it does it on a laptop, offline, for free. These three are split by what they are pointed at: your documents, your tools, or you. Pick the posture, not the parameter count.</p>
+
+        <div class="slm-grid">
+
+          <div class="slm-card fade-in fade-in-delay-1">
+            <div class="slm-head">
+              <h2 class="slm-title">Document-first</h2>
+              <span class="slm-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+            </div>
+            <p class="slm-desc">Reads the documents you hand it and answers out of them. Tuned to name the chunk it used, and to say the answer is not in the source rather than fill the gap from memory.</p>
+            <dl class="slm-specs">
+              <div><dt>Model</dt><dd>thl-doc-3b</dd></div>
+              <div><dt>Base</dt><dd>Qwen 2.5 3B Instruct</dd></div>
+              <div><dt>Context</dt><dd>32k tokens</dd></div>
+              <div><dt>Footprint</dt><dd>~2.1 GB at Q4_K_M</dd></div>
+              <div><dt>Pairs with</dt><dd>Extract, Chunk, Embed, Index</dd></div>
+            </dl>
+          </div>
+
+          <div class="slm-card fade-in fade-in-delay-2">
+            <div class="slm-head">
+              <h2 class="slm-title">Tools-first</h2>
+              <span class="slm-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+            </div>
+            <p class="slm-desc">Turns a plain-English request into a tool call the runtime can validate. Arguments come from the tool spec, and a tool it has no schema for is refused rather than invented.</p>
+            <dl class="slm-specs">
+              <div><dt>Model</dt><dd>thl-tools-3b</dd></div>
+              <div><dt>Base</dt><dd>Llama 3.2 3B Instruct</dd></div>
+              <div><dt>Context</dt><dd>16k tokens</dd></div>
+              <div><dt>Footprint</dt><dd>~1.9 GB at Q4_K_M</dd></div>
+              <div><dt>Output</dt><dd>Strict JSON, schema-checked</dd></div>
+            </dl>
+          </div>
+
+          <div class="slm-card fade-in fade-in-delay-3">
+            <div class="slm-head">
+              <h2 class="slm-title">Personal-first</h2>
+              <span class="slm-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
+            </div>
+            <p class="slm-desc">The smallest of the three, for notes, mail and everything else you would not paste into a hosted chat box. Sized to fit a machine with no discrete GPU — a personal model that needs a server is not personal.</p>
+            <dl class="slm-specs">
+              <div><dt>Model</dt><dd>thl-personal-1b</dd></div>
+              <div><dt>Base</dt><dd>Llama 3.2 1B Instruct</dd></div>
+              <div><dt>Context</dt><dd>8k tokens</dd></div>
+              <div><dt>Footprint</dt><dd>~0.8 GB at Q4_K_M</dd></div>
+              <div><dt>Runs on</dt><dd>8 GB RAM, no GPU</dd></div>
+            </dl>
+          </div>
+
+        </div>
+
+        <div class="slm-note fade-in">
+          <p><strong>None of these are downloadable yet.</strong> They are the three postures currently on the bench. Each card publishes weights, an evaluation card and a licence the moment that model clears its benchmark — and if it does not clear it, the card comes down rather than shipping something that only looks finished.</p>
+        </div>
+
+        <div class="how-panel fade-in">
+          <h2 class="how-panel-title">How you'll run them</h2>
+          <p class="how-panel-text">Each one ships as a quantised GGUF for local runtimes and as full weights for anything that wants them. There is no hosted endpoint to call and no key to obtain — the model runs on your machine or it does not run.</p>
+
+          <div class="how-block">
+            <span class="how-block-label">Ollama — pull it and talk to it</span>
+            <pre class="how-code"><code>ollama pull thehallucinatedlab/thl-doc-3b
+ollama run thl-doc-3b "summarise the attached contract, cite the clause"</code></pre>
+          </div>
+
+          <div class="how-block">
+            <span class="how-block-label">Python — load the weights directly</span>
+            <pre class="how-code"><code>from transformers import AutoModelForCausalLM, AutoTokenizer
+
+name = "thehallucinatedlab/thl-tools-3b"
+tok = AutoTokenizer.from_pretrained(name)
+model = AutoModelForCausalLM.from_pretrained(name, device_map="auto")
+
+# the tools-first model answers with a call, not with prose
+prompt = tok.apply_chat_template(
+    [{"role": "user", "content": "convert this png to webp at quality 80"}],
+    tokenize=False, add_generation_prompt=True)</code></pre>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
