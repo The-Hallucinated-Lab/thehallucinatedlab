@@ -102,14 +102,37 @@ test('every tool declares a status the site can filter on', () => {
 
 test('the small-model page stays behind dev mode at every entry point', () => {
   /* The three model cards describe work that is still on the bench, so
-     two independent gates hold them back rather than one. The only link
-     into the page is dev-marked, and the page itself is noindex in case
-     a crawler reaches the URL some other way — a sitemap it was never
-     added to, an old share link, a guess. Either gate can be dropped in
-     a refactor with no visible symptom: the page goes on rendering
-     perfectly, just to the wrong audience. */
-  assert.match(read('tools.html'), /<a href="slm\.html"[^>]*data-status="dev"/,
-    'the only link into slm.html must carry the dev marker');
+     two independent gates hold them back rather than one.
+
+     The first gate is that every route in is dev-marked — the nav entry
+     on 25 pages and the gateway card on tools.html. Asserting on all of
+     them rather than on a known list is the point: the next page to
+     copy the navbar gets checked for free, and a paste that drops the
+     marker on one page out of twenty-five is invisible by eye.
+
+     The second is that the page is noindex, for the visitor who reaches
+     the URL some other way — an old share link, a guess, a crawler.
+
+     Either gate can be dropped in a refactor with no visible symptom:
+     the page goes on rendering perfectly, just to the wrong audience. */
+  const pages = [...fs.readdirSync(ROOT), ...fs.readdirSync(path.join(ROOT, 'blogs')).map(f => `blogs/${f}`)]
+    .filter(f => f.endsWith('.html'));
+
+  const bare = [];
+  for (const page of pages) {
+    for (const line of read(page).split('\n')) {
+      /* <a> only. The page's own canonical and og:url point at itself
+         and are not a route a visitor can click. */
+      if (!/<a [^>]*href="[^"]*slm\.html"/.test(line)) continue;
+      if (!line.includes('data-status="dev"')) bare.push(`${page}: ${line.trim()}`);
+    }
+  }
+  assert.deepEqual(bare, [],
+    `these links into slm.html are visible to a live visitor:\n  ${bare.join('\n  ')}`);
+
+  /* Without this the loop above passes vacuously the day the page is
+     renamed: no links found, nothing to complain about. */
+  assert.ok(pages.includes('slm.html'), 'slm.html is gone — this test now checks nothing');
   assert.match(read('slm.html'), /<meta name="robots" content="noindex/,
     'slm.html must stay out of the index while its models are in training');
 });
