@@ -100,6 +100,20 @@ test('every tool declares a status the site can filter on', () => {
   }
 });
 
+test('the small-model page stays behind dev mode at every entry point', () => {
+  /* The three model cards describe work that is still on the bench, so
+     two independent gates hold them back rather than one. The only link
+     into the page is dev-marked, and the page itself is noindex in case
+     a crawler reaches the URL some other way — a sitemap it was never
+     added to, an old share link, a guess. Either gate can be dropped in
+     a refactor with no visible symptom: the page goes on rendering
+     perfectly, just to the wrong audience. */
+  assert.match(read('tools.html'), /<a href="slm\.html"[^>]*data-status="dev"/,
+    'the only link into slm.html must carry the dev marker');
+  assert.match(read('slm.html'), /<meta name="robots" content="noindex/,
+    'slm.html must stay out of the index while its models are in training');
+});
+
 test('nav entries default to live and dev entries need dev mode', () => {
   assert.equal(navEntryVisible({ label: 'Convert' }, 'live'), true, 'no status means live');
   assert.equal(navEntryVisible({ label: 'X', status: 'dev' }, 'live'), false,
