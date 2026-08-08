@@ -23,8 +23,9 @@ const css = read('styles.css');
 const js = read('script.js');
 const manifest = JSON.parse(read('spec/manifest.json'));
 
-const { normalizeMode, navEntryVisible, isModeToggle, otherMode } =
-  loadPure('script.js', ['normalizeMode', 'navEntryVisible', 'isModeToggle', 'otherMode']);
+const { normalizeMode, navEntryVisible, isModeToggle, otherMode, isDevTap, nextTapCount } =
+  loadPure('script.js',
+    ['normalizeMode', 'navEntryVisible', 'isModeToggle', 'otherMode', 'isDevTap', 'nextTapCount']);
 
 test('dev content is hidden by default, not hidden by script', () => {
   assert.match(css, /\[data-status="dev"\]\s*\{\s*display:\s*none\s*!important/,
@@ -52,7 +53,7 @@ test('anything unrecognised resolves to live', () => {
   assert.equal(normalizeMode('dev'), 'dev', 'the exact value is honoured');
 });
 
-test('only Ctrl+Alt+Backslash toggles the mode', () => {
+test('only Ctrl+Alt+Backslash toggles the mode from a keyboard', () => {
   /* Modifiers are checked exhaustively rather than loosely, so the
      shortcut cannot fire as a subset of a larger chord the browser or
      the OS already owns. */
@@ -85,6 +86,44 @@ test('the shortcut matches the physical key, not the character', () => {
     'the toggle must key off event.code');
   assert.doesNotMatch(js, /event\.key === '\\\\'/,
     'matching the character is layout-dependent');
+});
+
+test('the triple tap is touch-only, so a mouse cannot reach dev mode', () => {
+  /* This is the whole safety argument for the gesture. A triple click
+     is how you select a paragraph on a desktop, and the footer line is
+     a paragraph — accepting a mouse here would hand dev mode to a
+     visitor for doing the most ordinary thing there is to do to text.
+     A machine with a mouse has Ctrl+Alt+\ already, so the restriction
+     costs nothing. */
+  assert.equal(isDevTap({ pointerType: 'touch' }), true, 'a finger is the intended input');
+  assert.equal(isDevTap({ pointerType: 'mouse' }), false, 'a mouse must not fire it');
+  assert.equal(isDevTap({ pointerType: 'pen' }), false, 'a stylus must not fire it');
+  assert.equal(isDevTap({}), false, 'an event with no pointerType is not a tap');
+  assert.equal(isDevTap(null), false, 'no event is not a tap');
+});
+
+test('the gesture does not ride on the browser\'s own click counter', () => {
+  /* MouseEvent.detail === 3 is the ready-made triple click, and reaching
+     for it would silently undo the rule above: it counts mouse clicks,
+     which is exactly the input that must not work here. */
+  assert.doesNotMatch(js, /\.detail\s*===\s*3/,
+    'the tap count must be counted from touch pointers, not from the click counter');
+  assert.match(js, /addEventListener\('pointerdown'/,
+    'the gesture listens for pointer events, which is what carries pointerType');
+});
+
+test('three taps only count together when they are close together', () => {
+  /* Whether the timer happens to have fired is not the thing under
+     test — the count itself has to be able to tell a sequence from
+     three unrelated taps, or a slow triple tap on a scrolling page
+     becomes a toggle. */
+  const W = 500;
+  assert.equal(nextTapCount(0, 0, 1000, W), 1, 'the first tap starts the sequence');
+  assert.equal(nextTapCount(1, 1000, 1300, W), 2, 'a tap inside the window continues it');
+  assert.equal(nextTapCount(2, 1300, 1600, W), 3, 'the third completes it');
+  assert.equal(nextTapCount(2, 1300, 2600, W), 1,
+    'a tap after the window starts over rather than completing a stale sequence');
+  assert.equal(nextTapCount(1, 1000, 1500, W), 2, 'exactly on the window still counts');
 });
 
 test('the mode still only ever comes from storage, never from the URL', () => {

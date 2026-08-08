@@ -654,9 +654,15 @@ section { padding: 6rem 2rem; position: relative; }
 }
 
 /* ---- Mode toggle feedback ----
-   Ctrl+Alt+\ flips dev/live. This is the only chrome that has: the
-   segmented switch it replaced was mounted into the navbar, which meant
-   carrying founder-gate machinery just to decide whether to draw it.
+   Ctrl+Alt+\, or three taps on the footer line. This is the only chrome
+   either gesture has: the segmented switch it replaced was mounted into
+   the navbar, which meant carrying founder-gate machinery just to decide
+   whether to draw it.
+
+   The toast matters more for the tap than it ever did for the chord. A
+   gesture with no visible control and no feedback is indistinguishable
+   from a gesture that is not there — on a phone it is the only way to
+   know the taps landed.
 
    Shown briefly after the toggle reloads, then faded out. pointer-events
    is off throughout so it can never intercept a click on whatever it
