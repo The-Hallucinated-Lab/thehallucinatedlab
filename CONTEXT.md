@@ -200,3 +200,14 @@
 - **Still absent:** a GitHub handle. That is what the `@handle` line under the other two names is, so Shashwat's card has no handle line. Nothing was invented to fill it.
 
 ---
+
+- **Timestamp:** 2026-08-09T15:50:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`
+- **Intent:** Add the `@deepshashwat` handle line under Shashwat Deep's name, so all three founder cards carry the same three elements above the bio: avatar, name, handle.
+- **Bugs/Gaps Addressed:** Closes the last difference between his card and the other two.
+- **Context Modifications:** One `.member-handle` paragraph, and `alternateName` on the `#shashwat` Person node, matching how the other two carry theirs.
+- **Note for whoever adds a GitHub link later:** on the other two cards the handle and the GitHub button are the same identity — `@06pratyush` is `github.com/06pratyush`. Here the handle was supplied as display text and no GitHub URL was given, so **no GitHub button was added**. Do not infer `github.com/deepshashwat` from the handle; an invented profile link either 404s or points at a different person.
+
+---
