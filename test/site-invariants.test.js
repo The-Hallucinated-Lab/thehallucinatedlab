@@ -128,7 +128,7 @@ test('every local asset reference resolves to a file that exists', () => {
 });
 
 test('no <img> points at a master image', () => {
-  const MASTERS = ['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg'];
+  const MASTERS = ['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'shashwat.jpeg'];
   const offenders = [];
   for (const f of htmlFiles()) {
     for (const [tag] of read(f).matchAll(/<(?:img|source)[^>]*>/g)) {
@@ -158,7 +158,7 @@ test('every <img> declares width and height', () => {
 
 test('no shipped image exceeds the per-image budget', () => {
   const dir = path.join(ROOT, 'assets', 'images');
-  const MASTERS = new Set(['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'favicon-180.png']);
+  const MASTERS = new Set(['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'shashwat.jpeg', 'favicon-180.png']);
   const over = [];
   for (const f of fs.readdirSync(dir)) {
     if (MASTERS.has(f)) continue;   // not referenced by any <img>
@@ -208,6 +208,54 @@ test('the homepage stays within its transfer budget', () => {
     `${requests} requests, budget is ${BUDGET.maxRequestsFirstLoad}`);
   assert.ok(total <= BUDGET.maxHomepageTransferKB,
     `homepage is ${total.toFixed(1)}KB transferred, budget is ${BUDGET.maxHomepageTransferKB}KB`);
+});
+
+/* ---- stylesheet integrity ---- */
+
+/* A missing closing brace does not error anywhere. The parser recovers by
+   consuming the next rule's declarations as though they belonged to the
+   unterminated one, and the symptom is that some block of styling simply
+   is not there — on the page it looks like the CSS was never written.
+
+   This is not hypothetical: `.eda-bundle-note` shipped without its
+   closing brace, which silently dropped the entire TOOLBENCH block that
+   followed it, on every tool page, for as long as it was in. Nothing
+   caught it because nothing errors. */
+test('every stylesheet closes every block it opens', () => {
+  /* Discovered rather than listed. A hardcoded list is the same drift
+     this file exists to catch — the two article stylesheets were added
+     after this test was written and would not have been covered. */
+  const sheets = [];
+  for (const dir of ['.', 'blogs']) {
+    for (const f of fs.readdirSync(path.join(ROOT, dir))) {
+      if (f.endsWith('.css')) sheets.push(path.join(dir, f).replace(/\\/g, '/').replace(/^\.\//, ''));
+    }
+  }
+  assert.ok(sheets.length >= 4, `only found ${sheets.length} stylesheets — the discovery is broken`);
+
+  const unbalanced = [];
+  for (const file of sheets) {
+    /* Comments only. Braces inside a comment are prose; braces inside a
+       quoted value are vanishingly rare in this codebase and stripping
+       quotes naively breaks on the apostrophe in an English comment. */
+    const src = read(file).replace(/\/\*[\s\S]*?\*\//g, m => m.replace(/[{}]/g, ' '));
+    let depth = 0;
+    let line = 1;
+    let firstExtraClose = 0;
+    for (const ch of src) {
+      if (ch === '\n') line += 1;
+      else if (ch === '{') depth += 1;
+      else if (ch === '}') {
+        depth -= 1;
+        if (depth < 0 && !firstExtraClose) firstExtraClose = line;
+      }
+    }
+    if (depth !== 0) {
+      unbalanced.push(`${file}: ${depth > 0 ? `${depth} block(s) never closed` : `extra } at line ${firstExtraClose}`}`);
+    }
+  }
+  assert.deepEqual(unbalanced, [],
+    `unbalanced braces silently drop whatever follows them:\n  ${unbalanced.join('\n  ')}`);
 });
 
 /* ---- source hygiene ---- */

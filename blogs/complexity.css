@@ -1,0 +1,526 @@
+/* ============================================================
+   complexity.css — the Time & Space Complexity article.
+
+   This page used to carry its own inline <style> block with its own
+   palette: a blue-grey #0f1116 page, a #7cc4ff blue accent, Inter for
+   prose. It looked like a different site, and because it never loaded
+   theme.js or styles.css it had no light theme at all — a visitor who
+   had chosen light everywhere else landed on a dark page.
+
+   The markup is unchanged. What changed is that every colour, font and
+   radius now comes from the site's tokens, so this page follows the
+   theme like every other one, and the page-local names below are kept
+   only as a mapping layer — `--panel` still exists, it just resolves to
+   `--bg-card` now. That keeps the diff to the CSS rather than spreading
+   a rename through a thousand lines of teaching prose.
+
+   Three groups of colour cannot come from the site palette, because the
+   site does not have them and they are doing real work here:
+
+     - status (good / warn / hard) on the callouts and difficulty badges
+     - syntax highlighting inside <pre>
+     - the eight growth curves in the explorer
+
+   All three are declared as tokens with a light-theme counterpart, so
+   they follow the theme too. The curve colours are also read by
+   complexity.js when it draws the SVG — that is why they live here and
+   not in the script.
+   ============================================================ */
+
+/* ============ THE MAPPING LAYER ============ */
+:root {
+  --panel: var(--bg-card);
+  --panel-2: var(--bg-secondary);
+  --border: var(--border-subtle);
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
+  --accent: var(--gold-primary);
+  --accent-2: var(--gold-light);
+  --mono: var(--font-body);
+
+  /* Status. Distinct hues because they mean distinct things — a reader
+     scanning for the expensive cases is using colour as a filter — but
+     pulled toward the site's warmth, and `--cx-hard` is the same
+     #e0785c the form errors already use. */
+  --cx-good: #6fbf94;
+  --cx-warn: #d9a05b;
+  --cx-hard: #e0785c;
+
+  /* Syntax. One warm, one cool, one recessive. */
+  --cx-kw: #d98cae;
+  --cx-fn: #79b8d9;
+  --cx-cm: var(--text-muted);
+  --cx-num: #d9a05b;
+
+  /* The growth curves, in slot order. Generated at OKLCH L 0.58 / C 0.145
+     and validated against both chart surfaces: every adjacent pair clears
+     the colour-blind separation floor and the 15-point normal-vision
+     floor, and every slot clears 3:1 against the plot background in both
+     themes. The order is identity, not rank — the curve's steepness is
+     what encodes growth, and the legend carries the name. Do not
+     hand-edit one of these without re-validating the adjacent pairs. */
+  --cx-c1: #00948d;
+  --cx-c2: #6370cf;
+  --cx-c3: #528c28;
+  --cx-c4: #0085c3;
+  --cx-c5: #c0505e;
+  --cx-c6: #967700;
+  --cx-c7: #9f5aaf;
+  --cx-c8: #b95e00;
+}
+
+/* The status and syntax colours are tuned for a near-black page; on sand
+   they have to darken or they fail contrast against the card. The curve
+   colours are deliberately not overridden — they were validated against
+   both surfaces as one set, so the toggles and the plot stay the same
+   colour whichever theme you are in. */
+:root[data-theme="light"] {
+  --cx-good: #2f6b4c;
+  --cx-warn: #7d5410;
+  --cx-hard: #9c3a20;
+  --cx-kw: #8a3a5c;
+  --cx-fn: #1f5a75;
+  --cx-num: #7d5410;
+}
+
+/* ============ LAYOUT ============
+   `section` is the tab panel here — complexity.js hides all of them and
+   shows one — so styles.css's 6rem of section padding has to go, and no
+   new <section> may be added to this page without becoming a tab. */
+.complexity-page section { padding: 0; }
+.complexity-page section { display: none; }
+.complexity-page section.active { display: block; }
+
+.complexity-page .wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 1rem 1.5rem 5rem;
+}
+
+.complexity-hero {
+  padding: 1.5rem 0 0.75rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.complexity-hero h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+  margin: 0 0 0.4rem;
+}
+
+.complexity-hero .sub {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.8;
+  max-width: 62ch;
+}
+
+/* The tab row reuses .filter-btn from pages.css, so it is the same pill
+   the Prompts and Converters pages use; what is left here is only the
+   tray it sits in. */
+.complexity-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 1.5rem 0 1.75rem;
+  padding: 6px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.complexity-tabs .filter-btn { flex: 1 1 auto; }
+
+.complexity-page .panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ============ PROSE ============ */
+.complexity-page h2 {
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.3rem;
+  letter-spacing: -0.01em;
+  color: var(--accent);
+}
+
+.complexity-page h3 {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 1.6rem 0 0.5rem;
+  color: var(--text-primary);
+}
+
+.complexity-page h4 {
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  margin: 1.1rem 0 0.4rem;
+  color: var(--text-primary);
+}
+
+.complexity-page p {
+  margin: 0.5rem 0 0.9rem;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.85;
+}
+
+.complexity-page ul,
+.complexity-page ol {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  line-height: 1.85;
+}
+
+.complexity-page strong { color: var(--text-primary); }
+
+.complexity-page code,
+.complexity-page .mono {
+  font-family: var(--mono);
+  font-size: 0.92em;
+}
+
+.complexity-page code {
+  background: var(--panel-2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent-2);
+  border: 1px solid var(--border);
+}
+
+.complexity-page pre {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  padding: 0.9rem 1rem;
+  border-radius: var(--radius-sm);
+  overflow-x: auto;
+  margin: 0.75rem 0;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+.complexity-page pre code { background: none; border: none; padding: 0; color: inherit; }
+.complexity-page pre .kw { color: var(--cx-kw); }
+.complexity-page pre .fn { color: var(--cx-fn); }
+.complexity-page pre .cm { color: var(--cx-cm); font-style: italic; }
+.complexity-page pre .n { color: var(--cx-num); }
+
+/* ============ CALLOUTS ============ */
+.complexity-page .callout {
+  background: var(--gold-glow);
+  border-left: 3px solid var(--accent);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-sm);
+  margin: 0.9rem 0;
+  font-size: 0.82rem;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.complexity-page .callout.warn {
+  background: rgba(217, 160, 91, 0.08);
+  border-left-color: var(--cx-warn);
+}
+
+.complexity-page .callout.good {
+  background: rgba(111, 191, 148, 0.08);
+  border-left-color: var(--cx-good);
+}
+
+.complexity-page .callout strong { color: var(--accent); }
+.complexity-page .callout.warn strong { color: var(--cx-warn); }
+.complexity-page .callout.good strong { color: var(--cx-good); }
+
+/* ============ TABLES ============
+   Same shape as .tool-args on the tool pages, so a comparison table
+   reads the same wherever it appears on the site. */
+.complexity-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.9rem 0;
+  font-size: 0.78rem;
+}
+
+.complexity-page th,
+.complexity-page td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.complexity-page th {
+  background: var(--panel-2);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.complexity-page td { color: var(--text-secondary); }
+.complexity-page td.mono, .complexity-page th.mono { font-family: var(--mono); font-size: 0.74rem; }
+
+.complexity-page .grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ============ GROWTH EXPLORER ============ */
+.complexity-page .chart-wrap {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin: 1rem 0;
+}
+
+.complexity-page svg.chart {
+  width: 100%;
+  height: 420px;
+  display: block;
+}
+
+.complexity-page .controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 0.9rem;
+}
+
+.complexity-page .toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  color: var(--muted);
+  cursor: pointer;
+  transition: var(--transition);
+  user-select: none;
+}
+
+.complexity-page .toggle:hover { border-color: var(--border-gold); }
+
+/* An enabled toggle is painted in its own curve's colour by the script,
+   so the label has to invert against it rather than against the page. */
+.complexity-page .toggle.on {
+  color: var(--bg-primary);
+  font-weight: 600;
+  border-color: transparent;
+}
+
+.complexity-page .toggle .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  display: inline-block;
+}
+
+.complexity-page .slider-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 0.9rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.complexity-page .slider-row input[type="range"] {
+  flex: 1;
+  accent-color: var(--gold-primary);
+}
+
+.complexity-page .slider-row .val {
+  font-family: var(--mono);
+  color: var(--accent);
+  min-width: 60px;
+  text-align: right;
+}
+
+/* ============ WORKED EXAMPLES ============ */
+.complexity-page .example {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 0;
+  margin: 0.9rem 0;
+  overflow: hidden;
+}
+
+.complexity-page .example summary {
+  padding: 0.85rem 1.1rem;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.8rem;
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  user-select: none;
+}
+
+.complexity-page .example summary::-webkit-details-marker { display: none; }
+
+.complexity-page .example summary::after {
+  content: "▸";
+  color: var(--muted);
+  transition: transform 0.2s;
+}
+
+.complexity-page .example[open] summary::after { transform: rotate(90deg); }
+.complexity-page .example summary:hover { background: var(--gold-glow); }
+.complexity-page .example .body { padding: 0 1.1rem 1.1rem; border-top: 1px solid var(--border); }
+
+.complexity-page .badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.6rem;
+  font-family: var(--mono);
+  font-weight: 700;
+  margin-left: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.complexity-page .badge.easy { background: rgba(111, 191, 148, 0.15); color: var(--cx-good); }
+.complexity-page .badge.med { background: rgba(217, 160, 91, 0.15); color: var(--cx-warn); }
+.complexity-page .badge.hard { background: rgba(224, 120, 92, 0.15); color: var(--cx-hard); }
+
+.complexity-page .answer {
+  background: var(--gold-glow);
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--radius-sm);
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--accent);
+}
+
+/* ============ MASTER THEOREM ============ */
+.complexity-page .mt-calc {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin: 1rem 0;
+}
+
+.complexity-page .mt-calc label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.complexity-page .mt-calc input {
+  background: var(--panel-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+}
+
+.complexity-page .mt-calc input:focus {
+  outline: none;
+  border-color: var(--border-gold);
+  box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.08);
+}
+
+.complexity-page .mt-result {
+  background: var(--panel-2);
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin-top: 0.75rem;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.complexity-page .mt-result .verdict {
+  color: var(--cx-good);
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.complexity-page .mt-result .invalid { color: var(--cx-warn); }
+.complexity-page .mt-result .case { color: var(--accent-2); }
+.complexity-page .mt-result .mt-note { margin-top: 8px; color: var(--muted); }
+
+/* ============ FORMULA SHEET ============ */
+.complexity-page .sheet {
+  background: linear-gradient(135deg, var(--panel-2), var(--panel));
+  padding: 1.25rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  margin: 0.9rem 0;
+}
+
+.complexity-page .sheet h3,
+.complexity-page .sheet h4 {
+  margin: 0 0 6px;
+  color: var(--accent);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.complexity-page .sheet ul { padding-left: 20px; margin: 8px 0; }
+.complexity-page .sheet li { margin: 4px 0; font-size: 0.78rem; }
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 700px) {
+  .complexity-page .wrap { padding: 1rem 1.2rem 4rem; }
+  .complexity-page .panel { padding: 1.1rem 0.9rem; }
+  .complexity-page .grid-2 { grid-template-columns: 1fr; }
+  .complexity-tabs .filter-btn { flex: 1 1 45%; padding: 8px 10px; font-size: 0.68rem; }
+  /* Wide tables scroll inside their own box instead of breaking the page */
+  .complexity-page table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .complexity-page svg.chart { height: 300px; }
+  .complexity-page .example summary { padding: 0.75rem 0.9rem; font-size: 0.82rem; }
+  .complexity-page .example .body { padding: 0 0.9rem 0.9rem; }
+  .complexity-page pre { font-size: 0.7rem; padding: 0.75rem; }
+  .complexity-page .slider-row { flex-wrap: wrap; }
+  .complexity-page .sheet { padding: 0.9rem; }
+}
+
+@media (max-width: 600px) {
+  .complexity-page .mt-calc { grid-template-columns: 1fr; }
+}
+
+/* The formula sheet is meant to be printed, so the tabs collapse and
+   every panel is laid open rather than only the active one. */
+@media print {
+  .complexity-page section { display: block !important; page-break-after: always; }
+  .complexity-tabs,
+  header,
+  .page-breadcrumb,
+  .footer,
+  #print-sheet,
+  .complexity-page .skip-link { display: none !important; }
+  .complexity-page .panel { border-color: #ccc; background: #fff; }
+}

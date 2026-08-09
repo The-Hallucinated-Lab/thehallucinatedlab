@@ -72,10 +72,20 @@ thehallucinatedlab/
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── blogs.js           # Note data store, the tag filing rule, board search, note form
+├── blogs/
+│   ├── blog.css              # Shared article layout — hero, TOC, prose, callouts
+│   ├── complexity.css        # The complexity session's widgets, on site tokens
+│   └── ai-orchestration.css  # That article's widgets, on site tokens
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
 ├── convert.html  # Convert — the first THL tool
+├── converters.html       # Converters — ~40 format conversions, all client-side
+├── genai.html            # Gen AI bench (dev only) — video→image, image→HTML
 ├── eda.html              # Exploratory data analysis — the command-line profiler
 ├── convert.js    # Its drop zone, controls, and result panel
+├── converters.js         # Text/table conversion registry (pure, unit tested)
+├── convert-scales.js     # Units, number bases, colour and time (pure, unit tested)
+├── converters-ui.js      # The Converters panels — DOM only
+├── genai.js              # Frame timing, palette sampling, HTML scaffold
 ├── toolkit.js            # Shared tool runtime + argument-table renderer
 ├── nlp.js                # Intent parser (classification + slot filling)
 ├── solutions.js          # ScoobyBench screenshot tab switcher
@@ -84,7 +94,7 @@ thehallucinatedlab/
 ├── CONTEXT.md            # Project memory: stack, rules, gaps, append-only change log
 ├── SECURITY.md           # Disclosure policy + known header limitations
 ├── robots.txt            # Crawl permissions — AI/LLM agents explicitly allowed
-├── sitemap.xml           # 13 canonical URLs for search engines
+├── sitemap.xml           # every indexable URL, asserted against the shipped pages
 ├── llms.txt              # Concise Markdown site summary for LLM crawlers
 ├── llms-full.txt         # Full machine-readable site directory
 ├── RELEASING.md          # How the pip package gets published
@@ -158,8 +168,10 @@ thehallucinatedlab/
 - **Exploratory data analysis** — `thl pipeline eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
 - **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
 - **Tools declare where they run** — the `runtimes` field is respected, so the Assistant names the command for a Python-only tool rather than offering to run something it cannot
+- **Converters** — around forty conversions in one page, every one running in the tab: CSV/TSV/JSON/JSONL/Markdown/HTML tables, Base64, URL, HTML entity, hex and binary encoding, eleven case styles and slugs, nine categories of physical unit, number bases 2–36 via BigInt, HEX/RGB/HSL/HSV/CMYK with WCAG contrast ratios, Unix/ISO 8601/RFC 1123 timestamps, and canvas image scaling. Video, audio, PDF and Office formats are deliberately absent, with the reason stated on the page
 - **Prompt library** — eight production-ready prompts with category filters and one-click copy
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
+- **Gen AI bench** (dev mode) — video→image pulls real frames with the browser's own codecs and is finished; image→HTML computes dimensions and a sampled palette into an HTML scaffold and says on the page that it does *not* infer layout, because that needs a model the site does not ship
 
 ### Media
 - **Blogs** — a note board in two sections, Artificial Intelligence and Software Engineering. Every note carries tags, and a tag carried by five notes in a section is promoted to a subsection of it. Readers can add their own notes, stored in `localStorage`
