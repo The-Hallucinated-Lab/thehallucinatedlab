@@ -1,0 +1,80 @@
+name: Context Sync
+
+# CONTEXT.md is the project's persistent memory: the stack, the rules
+# that are load-bearing, the gaps we already know about, and an
+# append-only log of every change that reached main.
+#
+# It only works if it is never stale. A manifest that lags two months
+# behind the code is worse than no manifest, because the next reader
+# trusts it. So this is a hard gate rather than a convention: a pull
+# request that changes the repository without recording what it changed
+# does not merge.
+
+on:
+  pull_request:
+    branches: [main]
+    types: [opened, synchronize, reopened]
+
+# Read-only. This job inspects the diff and reports; it never writes.
+permissions:
+  contents: read
+
+concurrency:
+  group: context-sync-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: CONTEXT.md is in sync
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # Pinned to a commit SHA rather than a mutable tag, matching ci.yml,
+      # so a retagged action cannot change what runs here.
+      # fetch-depth: 0 because we need the merge base, not just the tip.
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Verify CONTEXT.md was updated
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+
+          changed=$(git diff --name-only "$BASE_SHA...$HEAD_SHA")
+
+          # A pull request that touches nothing has nothing to log. This
+          # is not the common case, but failing it would be nonsense.
+          if [ -z "$changed" ]; then
+            echo "no files changed — nothing to record"
+            exit 0
+          fi
+
+          echo "files changed in this pull request:"
+          echo "$changed" | sed 's/^/  /'
+
+          if ! echo "$changed" | grep -qx 'CONTEXT.md'; then
+            echo "::error file=CONTEXT.md::PROTOCOL VIOLATION — CONTEXT.md was not updated."
+            echo ""
+            echo "Every pull request into main must append an entry to section 5"
+            echo "of CONTEXT.md describing what this change does. If the change"
+            echo "also closes or introduces a known shortcoming, update section 4"
+            echo "in the same commit."
+            exit 1
+          fi
+
+          # Present but unchanged in substance is the failure mode this
+          # gate exists to catch: someone touches the file to get green
+          # without recording anything. Require a real addition.
+          added=$(git diff --numstat "$BASE_SHA...$HEAD_SHA" -- CONTEXT.md | cut -f1)
+          if [ "${added:-0}" -lt 3 ]; then
+            echo "::error file=CONTEXT.md::CONTEXT.md changed by only ${added:-0} line(s)."
+            echo "A timeline entry is several lines. This looks like a token edit."
+            exit 1
+          fi
+
+          echo "CONTEXT.md updated (+${added} lines) — in sync"
