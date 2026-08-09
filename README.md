@@ -80,6 +80,8 @@ thehallucinatedlab/
 ├── nlp.js                # Intent parser (classification + slot filling)
 ├── solutions.js          # ScoobyBench screenshot tab switcher
 ├── redirect.js           # Shared redirect for the renamed-page stubs
+├── CLAUDE.md             # Mandatory development protocol — how work gets done here
+├── CONTEXT.md            # Project memory: stack, rules, gaps, append-only change log
 ├── SECURITY.md           # Disclosure policy + known header limitations
 ├── robots.txt            # Crawl permissions — AI/LLM agents explicitly allowed
 ├── sitemap.xml           # 13 canonical URLs for search engines
