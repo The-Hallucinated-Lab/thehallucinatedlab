@@ -65,7 +65,7 @@ The Hallucinated Lab operates in three modes:
 - GitHub organisation: https://github.com/The-Hallucinated-Lab
 - Pratyush: https://github.com/06pratyush — AI, machine learning, data science
 - Divyansh Tripathi: https://github.com/TheQMLGuy — machine learning, developer experience
-- Shashwat Deep: https://www.linkedin.com/in/shashwat-deep-ab6556240 — data science, machine learning, data analysis
+- Shashwat Deep: https://github.com/shashwat-deep — data science, machine learning, data analysis
 
 ## Optional
 

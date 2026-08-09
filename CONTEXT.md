@@ -211,3 +211,14 @@
 - **Note for whoever adds a GitHub link later:** on the other two cards the handle and the GitHub button are the same identity — `@06pratyush` is `github.com/06pratyush`. Here the handle was supplied as display text and no GitHub URL was given, so **no GitHub button was added**. Do not infer `github.com/deepshashwat` from the handle; an invented profile link either 404s or points at a different person.
 
 ---
+
+- **Timestamp:** 2026-08-09T16:00:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `llms.txt`, `llms-full.txt`
+- **Intent:** Add Shashwat Deep's GitHub link, now that the URL was supplied. His card is now complete: photo, name, handle, bio, and GitHub / LinkedIn / email — the same shape as Pratyush's.
+- **Bugs/Gaps Addressed:** Closes the last item the previous entries recorded as outstanding.
+- **Context Modifications:** GitHub button first in the link row, matching the order on the other two cards; `https://github.com/shashwat-deep` added to the `#shashwat` node's `sameAs`; both crawler files now carry the GitHub URL, and the note telling crawlers not to infer a handle is replaced.
+- **Verified before linking:** the account was confirmed to exist through the GitHub API (`shashwat-deep`, id 77567664) rather than taken on trust. The earlier entries refused to guess `github.com/deepshashwat` from the display handle, and that caution was warranted — **the display handle and the GitHub username are not the same string**. The card shows `@deepshashwat`, as the founders asked, while the account is `shashwat-deep`. On the other two cards those two are identical, so a reader may reasonably assume the handle is the GitHub name here too; `llms-full.txt` states explicitly that both identifiers are the same person, so an answer engine does not treat them as two people.
+
+---
