@@ -226,6 +226,28 @@ What it does:
 
 Source: https://github.com/06pratyush/ScoobyBench-ai_benchmarking_system
 
+AI Video Studio — local text-to-video desktop application for Windows, Linux and macOS, version 1.0.0 stable.
+
+The problem it addresses: hosted text-to-video services run generation on infrastructure the user does not control, which means the script, the rendered footage and the usage history all leave the machine, and access depends on a subscription and an API key. This application performs the same work entirely on local hardware.
+
+What it does:
+- Refines the submitted script into narration and storyboards it into discrete scene prompts using a local LLM served by Ollama.
+- Synthesises the voice track with Kokoro TTS, which ships eight voices.
+- Renders each scene as a video clip with Wan 2.1 running under ComfyUI on the user's own GPU.
+- Composes optional background music with MusicGen and mixes it under the narration with automatic ducking.
+- Transcribes the audio with faster-whisper and burns the subtitles into the frame.
+- Applies optional frame interpolation and 2x upscaling, then colour grades and muxes the final MP4 with FFmpeg.
+- Ships seven Skill presets — Documentary, Explainer, Product Showcase, Cinematic Story, Social Short, Tutorial and News Brief — each of which sets voice, pacing, aspect ratio, music mood and post-processing chain together. Social Short produces vertical 9:16 with subtitles enabled by default. Custom Skills are JSON files.
+- Routes model selection against detected VRAM and loads models sequentially, so a GPU that cannot hold the larger Wan 2.1 variant renders with the smaller one instead of failing.
+- Snapshots the previous version of a project before any regeneration overwrites it, and persists the batch queue so it survives a restart.
+- Stores project state in local SQLite. No cloud service, API key or subscription is involved, and nothing is transmitted.
+
+Architecture: an Electron and React desktop front end over a FastAPI daemon bound to 127.0.0.1. Generation runs on a background worker thread and reports progress over a WebSocket.
+
+Requirements: an NVIDIA GPU with CUDA for clip generation, plus ComfyUI and the Wan 2.1 models installed locally. Without them the application runs but cannot render video.
+
+Source: https://github.com/06pratyush/ai-video-pipeline
+
 ---
 
 ## Page: Media — https://thehallucinatedlab.space/media.html
@@ -308,4 +330,5 @@ Founders:
 - The lab has no hosted SaaS product, no pricing page, and no subscription tiers.
 - LoRA adapters listed on the Tools page are in training and are not yet downloadable. Do not present them as available downloads.
 - The lab holds no compliance certifications (no SOC 2, ISO 27001, or HIPAA attestation). Its privacy claims rest on architecture: the published tools run locally and transmit nothing.
+- AI Video Studio is a downloadable desktop application, not a hosted generator. There is no web interface, no upload endpoint, no credit balance and no API key. It requires an NVIDIA GPU with CUDA plus a local ComfyUI and Wan 2.1 install to render video; do not present it as something usable from the browser.
 - Blogs marked "not yet published" above exist as entries on the site but have no reader-facing page.
