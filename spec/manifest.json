@@ -1419,6 +1419,100 @@
         "rowCap": 50000,
         "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
       }
+    },
+    {
+      "$devComment": "Spec-only. This is the first tool to ship with status \"dev\", and it exists to hold the contract while the implementation is written. Nothing implements it: toolkit.js has no browser branch for it, and the Python registry will raise ToolNotFound rather than pretend. It is filtered out of every visitor-facing surface by toolVisible() in toolkit.js, so a visitor never sees it in the assistant's capability list and cannot reach it by phrasing a request. Delete this comment when a real implementation lands and the status flips to \"live\".",
+      "name": "link",
+      "title": "Link",
+      "status": "dev",
+      "summary": "Pull every URL out of a document and return a deduplicated list.",
+      "description": "Reads a text, Markdown or HTML document and collects the URLs it contains - href targets in markup, bare URLs in prose - then reports them once each rather than once per occurrence. Not implemented yet: this entry declares the argument contract so the page, the argument table and the Python package all agree on it before any code is written, which is the order this repository does it in. Running it reports that it has no implementation instead of returning an empty list that reads like a document with no links in it.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "link.html",
+      "input": {
+        "kind": "document",
+        "accept": [
+          ".txt",
+          ".md",
+          ".html",
+          ".htm"
+        ]
+      },
+      "aliases": [
+        "extract links",
+        "list links",
+        "collect urls",
+        "list urls"
+      ],
+      "keywords": {
+        "action": [
+          "extract",
+          "list",
+          "collect"
+        ],
+        "subject": [
+          "link",
+          "links",
+          "url",
+          "urls",
+          "hyperlink",
+          "hyperlinks",
+          "href",
+          "hrefs"
+        ]
+      },
+      "params": [
+        {
+          "name": "source",
+          "type": "path",
+          "required": true,
+          "description": "The document to read links out of.",
+          "prompt": "Which file?"
+        },
+        {
+          "name": "scope",
+          "type": "enum",
+          "required": false,
+          "default": "all",
+          "values": [
+            "all",
+            "external",
+            "internal"
+          ],
+          "aliases": {
+            "outbound": "external",
+            "relative": "internal"
+          },
+          "description": "Which links to keep. \"internal\" is same-origin or relative; \"external\" is everything pointing off the document's own host."
+        },
+        {
+          "name": "unique",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Report each URL once. Turn it off to keep every occurrence, which is what you want when counting rather than listing."
+        },
+        {
+          "name": "format",
+          "type": "enum",
+          "required": false,
+          "default": "list",
+          "values": [
+            "list",
+            "json",
+            "csv"
+          ],
+          "description": "A plain list reads in a terminal; JSON and CSV are for piping somewhere else."
+        }
+      ],
+      "examples": [
+        {
+          "text": "extract links from this file",
+          "args": {}
+        }
+      ]
     }
   ]
 }

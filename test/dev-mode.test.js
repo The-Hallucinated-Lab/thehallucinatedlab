@@ -21,6 +21,7 @@ const { loadPure, ROOT } = require('./helpers/load-pure');
 const read = p => fs.readFileSync(path.join(ROOT, p), 'utf8');
 const css = read('styles.css');
 const js = read('script.js');
+const js2 = read('toolkit.js');
 const manifest = JSON.parse(read('spec/manifest.json'));
 
 const { normalizeMode, navEntryVisible, isModeToggle, otherMode, isDevTap, nextTapCount } =
@@ -198,7 +199,7 @@ test('every navbar carries the same dev group, in the same order', () => {
 /* Pages that exist but are not for visitors yet. Each is reachable only
    from a dev-marked link, and each is noindex so a visitor who arrives
    by some other route is not indexed into finding it. */
-const DEV_ONLY_PAGES = ['slm.html', 'genai.html'];
+const DEV_ONLY_PAGES = ['slm.html', 'genai.html', 'data.html', 'link.html'];
 
 test('an unfinished page stays behind dev mode at every entry point', () => {
   /* The pages in DEV_ONLY_PAGES describe work still on the bench, so two
@@ -250,4 +251,80 @@ test('nav entries default to live and dev entries need dev mode', () => {
     'dev mode reveals dev entries');
   assert.equal(navEntryVisible({ label: 'Y', status: 'live' }, 'live'), true,
     'an explicit live entry renders');
+});
+
+/* ---- tool status ----
+
+   The nav filter above hides sections. This half hides tools, and it is
+   the half that actually keeps a dev tool out of a visitor's hands: a
+   tool with no card on any page is still reachable through the
+   assistant, because the intent parser scores every tool in the manifest
+   against whatever gets typed and never looks at a page. */
+
+const { toolVisible, visibleTools } =
+  loadPure('toolkit.js', ['toolVisible', 'visibleTools']);
+
+test('a tool with no status is live, and a dev tool needs dev mode', () => {
+  assert.equal(toolVisible({ name: 'convert' }, 'live'), true, 'no status means live');
+  assert.equal(toolVisible({ name: 'x', status: 'live' }, 'live'), true, 'explicit live renders');
+  assert.equal(toolVisible({ name: 'x', status: 'dev' }, 'live'), false,
+    'a dev tool must not reach a visitor');
+  assert.equal(toolVisible({ name: 'x', status: 'dev' }, 'dev'), true, 'dev mode reveals it');
+});
+
+test('anything unrecognised leaves a dev tool hidden', () => {
+  /* Same asymmetry as normalizeMode: every ambiguous input has to land
+     on the public view, because the expensive mistake is the other one. */
+  for (const mode of [null, undefined, '', 'DEV', 'nonsense', 'live']) {
+    assert.equal(toolVisible({ name: 'x', status: 'dev' }, mode), false,
+      `mode ${JSON.stringify(mode)} must not reveal a dev tool`);
+  }
+  assert.equal(toolVisible(null, 'live'), true, 'a missing tool is not a dev tool');
+});
+
+test('the visitor never receives a dev tool in the spec the page runs on', () => {
+  const live = visibleTools(manifest, 'live').map(t => t.name);
+  const dev = visibleTools(manifest, 'dev').map(t => t.name);
+  const declaredDev = manifest.tools.filter(t => t.status === 'dev').map(t => t.name);
+
+  assert.deepEqual(live.filter(n => declaredDev.includes(n)), [],
+    `dev tools reached the live spec: ${live.filter(n => declaredDev.includes(n)).join(', ')}`);
+  assert.deepEqual(dev, manifest.tools.map(t => t.name), 'dev mode sees every tool');
+  assert.equal(live.length + declaredDev.length, dev.length,
+    'the live spec should be every tool minus the dev ones');
+});
+
+test('the filter is wired into the fetch every consumer shares', () => {
+  /* interface.js, the intent parser it feeds and the argument tables all
+     arrive through loadManifest. Filtering anywhere else means the next
+     consumer has to remember a rule it cannot see. */
+  assert.match(js2, /visibleTools\(manifest,\s*readMode\(\)\)/,
+    'loadManifest must filter the tools it hands out');
+});
+
+test('both files agree on the storage key the mode lives under', () => {
+  /* script.js owns the toggle, toolkit.js reads the result. They are
+     separate files with no shared module, so the key is written twice
+     and nothing but this test notices if one of them changes. The
+     symptom would be dev tools staying hidden in dev mode - or worse,
+     showing in live mode - with every other dev surface working. */
+  const keyOf = src => (src.match(/MODE_KEY\s*=\s*'([^']+)'/) || [])[1];
+  const inScript = keyOf(js);
+  const inToolkit = keyOf(js2);
+
+  assert.ok(inScript, 'script.js no longer declares MODE_KEY');
+  assert.ok(inToolkit, 'toolkit.js no longer declares MODE_KEY');
+  assert.equal(inToolkit, inScript,
+    `toolkit.js reads "${inToolkit}" but script.js writes "${inScript}"`);
+});
+
+test('toolkit resolves the mode from storage, not from the DOM', () => {
+  /* Both scripts are deferred and nothing orders them, so reading the
+     data-mode attribute script.js sets would make tool visibility depend
+     on which one ran first. The failure that produces is a dev tool
+     appearing for a visitor. */
+  assert.doesNotMatch(js2, /getAttribute\(\s*['"]data-mode['"]\s*\)/,
+    'toolkit.js must not read the mode off the document');
+  assert.match(js2, /localStorage\.getItem\(MODE_KEY\)\s*===\s*'dev'/,
+    'toolkit.js must resolve the mode from storage');
 });
