@@ -6,7 +6,7 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Solutions — The Hallucinated Lab</title>
-  <meta name="description" content="Local-first AI solutions — private, purpose-built and fully under your control. Includes ScoobyBench, the AI hardware benchmarking desktop app.">
+  <meta name="description" content="Local-first AI solutions you run yourself — ScoobyBench for AI hardware benchmarking, NexusLink for encrypted P2P, AI Video Studio for text-to-video.">
   <meta property="og:title" content="Solutions — The Hallucinated Lab">
   <meta property="og:description" content="Local-first AI solutions by The Hallucinated Lab. Private, purpose-built, and fully under your control.">
   <meta property="og:type" content="website">
@@ -62,6 +62,28 @@
       "description": "A desktop application that benchmarks real AI inference performance on your own hardware and compares it against vendor claims and MLPerf baselines. Runs reproducible ONNX and Ollama workloads, reports tokens per second with p50/p90/p99 latency, streams live CPU, GPU, memory, temperature and power telemetry, recommends models that fit your hardware, and exports reproducible JSON, HTML and CSV reports. All data stays in local SQLite.",
       "url": "https://thehallucinatedlab.space/solutions.html",
       "codeRepository": "https://github.com/06pratyush/ScoobyBench-ai_benchmarking_system",
+      "author": {
+        "@id": "https://thehallucinatedlab.space/#pratyush"
+      },
+      "publisher": {
+        "@id": "https://thehallucinatedlab.space/#organization"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "AI Video Studio",
+      "applicationCategory": "MultimediaApplication",
+      "applicationSubCategory": "Local AI video generation",
+      "operatingSystem": "Windows, Linux, macOS",
+      "softwareVersion": "1.0.0",
+      "description": "A desktop application that turns a written script into a narrated, edited video entirely on local hardware. A local LLM refines the narration and storyboards it into scenes, Wan 2.1 renders the clips on the user's own GPU, Kokoro synthesises the voice track, MusicGen scores it, faster-whisper burns in subtitles, and FFmpeg applies colour grading and muxes the final MP4. Seven Skill presets set voice, pacing, aspect ratio and post-processing. Model selection is routed against detected VRAM so a full GPU downgrades the render rather than failing it. No cloud service, API key or subscription is involved.",
+      "url": "https://thehallucinatedlab.space/solutions.html",
+      "codeRepository": "https://github.com/06pratyush/ai-video-pipeline",
       "author": {
         "@id": "https://thehallucinatedlab.space/#pratyush"
       },
