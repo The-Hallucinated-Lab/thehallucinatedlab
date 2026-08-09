@@ -180,3 +180,71 @@ test('the python-only tools are known, and are not offered as browser work', () 
       `${name} runs nowhere at all`);
   }
 });
+
+/* ============================================================
+   The transcript must print what the CLI prints.
+
+   convert.html now shows a terminal session rather than a picture of
+   one: the command is real, and beneath it the page prints the tool's
+   output line before showing the converted image.
+
+   That line is a quotation. `thl tool convert` prints str(result), and
+   ConvertResult.__str__ in python/thehallucinatedlab/tools/convert.py is
+
+       f"{self.format} {self.width}x{self.height} -> {where}"
+
+   A page that shows a transcript the CLI would not produce is lying in
+   the most convincing format available to it — it looks exactly like
+   evidence. So the format string is read out of the Python source and
+   the browser's line is checked against it, rather than the two being
+   written down twice and trusted to stay equal.
+   ============================================================ */
+
+const { presentResult, describeConvertResult } =
+  loadPure('toolkit.js', ['presentResult', 'describeConvertResult']);
+
+const RESULT = {
+  format: 'png', width: 1920, height: 1080,
+  bytes: 412000, sourceBytes: 660000, delta: -38, filename: 'photo.png',
+};
+
+test('the transcript line matches ConvertResult.__str__ in the Python package', () => {
+  const py = fs.readFileSync(path.join(ROOT, 'python/thehallucinatedlab/tools/convert.py'), 'utf8');
+
+  const template = (py.match(/return f"\{self\.format\}([^"]*)"/) || [])[1];
+  assert.ok(template !== undefined,
+    'ConvertResult.__str__ no longer starts with {self.format} — the browser transcript\n' +
+    'quotes this line, so if the CLI changed its output the page must change with it.');
+
+  // Turn the f-string into the exact text those field values produce.
+  const expected = ('{self.format}' + template)
+    .replace('{self.format}', RESULT.format)
+    .replace('{self.width}', String(RESULT.width))
+    .replace('{self.height}', String(RESULT.height))
+    .replace('{where}', RESULT.filename);
+
+  assert.equal(describeConvertResult(RESULT, 'blob:x').line, expected);
+});
+
+test('the transcript carries the image, the facts and a download', () => {
+  const shown = presentResult('convert', RESULT, 'blob:x');
+  assert.equal(shown.image.url, 'blob:x');
+  assert.equal(shown.image.width, 1920);
+  assert.ok(shown.image.alt.includes('photo.png'), 'the preview needs a real alt text');
+  assert.equal(shown.download.filename, 'photo.png');
+  assert.ok(shown.facts.some(f => f.includes('1920')), shown.facts.join(' | '));
+  assert.ok(shown.facts.some(f => /38% smaller/.test(f)), shown.facts.join(' | '));
+});
+
+test('a result with nothing to compare against does not invent a delta', () => {
+  const shown = describeConvertResult(
+    { ...RESULT, sourceBytes: 0, delta: null }, 'blob:x');
+  assert.ok(!shown.facts.some(f => /smaller|larger|same size/.test(f)), shown.facts.join(' | '));
+});
+
+test('only tools with a presenter produce a transcript', () => {
+  // embed is python-only: the page must not render an output block for
+  // something it never ran.
+  assert.equal(presentResult('embed', RESULT, 'blob:x'), null);
+  assert.ok(presentResult('converter', RESULT, 'blob:x'), 'the legacy name should still present');
+});
