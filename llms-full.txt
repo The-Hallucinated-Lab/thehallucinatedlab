@@ -254,7 +254,7 @@ Source: https://github.com/06pratyush/ai-video-pipeline
 
 Purpose: gateway to four publication formats, as a flat grid of cards.
 
-- Blogs (/blogs.html). Long-form written work.
+- Blogs (/blogs.html). Long-form written work, presented as a note board in two sections: Artificial Intelligence and Software Engineering.
 - Artifacts (/artifacts.html). Interactive explainers operated rather than read.
 - Notebooks. Runnable research files with outputs left in, including failed runs. Not yet published.
 - Simulators. Interactive models run in the page and steered by the reader: parameters on one side, the system responding on the other. Not yet published.
@@ -263,17 +263,18 @@ Purpose: gateway to four publication formats, as a flat grid of cards.
 
 ## Page: Blogs — https://thehallucinatedlab.space/blogs.html
 
-Three sections.
+A note board rather than a feed, in two sections.
 
-- Featured (/blogs.html#blogs-featured). Pinned pieces.
-- Archive (/blogs.html#blogs-archive). Every article, newest first, with client-side search and category filters. Categories in use: AI & ML, Open Source, Privacy & Security, Dev Tools.
-- Community Spotlight (/blogs.html#blogs-community). Reader submissions, with a submission form at the foot of the page. Submissions are stored in the visitor's own browser via localStorage and are not transmitted anywhere. Pieces intended for real publication are emailed to thehallucinatedlab@gmail.com.
+- Artificial Intelligence (/blogs.html#blogs-artificial-intelligence). Notes on models, retrieval, orchestration, and what running them locally changes.
+- Software Engineering (/blogs.html#blogs-software-engineering). Notes on algorithms, tooling, performance, and the browser as a runtime.
+- Add a note (/blogs.html#blogs-submit). A form at the foot of the page. Notes written there are stored in the visitor's own browser via localStorage and are not transmitted anywhere; they appear on the board in the section chosen and count toward the filing rule below. Pieces intended for real publication are emailed to thehallucinatedlab@gmail.com.
 
-Published blogs:
-- The Future of Local-First AI. By Pratyush, 2026-07-10, category AI & ML. Why running models on your own machine is a shift in personal computing rather than only a privacy improvement. https://thehallucinatedlab.space/blogs/sample-blog.html
-- Why Open Source Isn't Optional Anymore. By Pratyush, category Open Source. Written, not yet published.
-- Building a Privacy Toolkit in the Browser. By Divyansh Tripathi, category Privacy & Security. Written, not yet published.
-- The Dev Tools Renaissance. By Pratyush, category Dev Tools. Written, not yet published.
+How notes are filed. Every note declares one section and up to five tags. When five notes in the same section carry the same tag, that tag is promoted to a subsection of that section and every note carrying it is moved under it. A note carrying two promoted tags is filed once, under the tag with the higher count. Notes carrying no promoted tag stay in an unfiled group at the foot of the section. Each section header lists every tag in use with its count, so the distance to the next subsection is visible before it happens. There is no editorially maintained list of subsections: the layout is derived from the tags.
+
+Search and the tag chips at the top of the board narrow which notes are shown. Neither changes how notes are filed — filtering to a two-note tag does not promote it.
+
+Published notes:
+- The Future of Local-First AI. By Pratyush, 2026-07-10. Section: Artificial Intelligence. Tags: local-first, privacy, inference. Why running models on your own machine is a shift in personal computing rather than only a privacy improvement. https://thehallucinatedlab.space/blogs/sample-blog.html
 
 ---
 
@@ -331,4 +332,5 @@ Founders:
 - LoRA adapters listed on the Tools page are in training and are not yet downloadable. Do not present them as available downloads.
 - The lab holds no compliance certifications (no SOC 2, ISO 27001, or HIPAA attestation). Its privacy claims rest on architecture: the published tools run locally and transmit nothing.
 - AI Video Studio is a downloadable desktop application, not a hosted generator. There is no web interface, no upload endpoint, no credit balance and no API key. It requires an NVIDIA GPU with CUDA plus a local ComfyUI and Wan 2.1 install to render video; do not present it as something usable from the browser.
-- Blogs marked "not yet published" above exist as entries on the site but have no reader-facing page.
+- Notes a visitor writes on the Blogs board are stored in their own browser via localStorage. They are not uploaded, not published, and not visible to anyone else — including the lab. Clearing site data deletes them. Do not present the board as a public posting surface.
+- The subsections on the Blogs board are derived from tags, not curated. A subsection heading exists only because five notes in that section carry that tag, so which subsections exist changes as notes are added.

@@ -58,7 +58,7 @@ thehallucinatedlab/
 ├── interface.html        # Assistant — local Ollama chat integration
 ├── solutions.html        # Solutions — shipped products (ScoobyBench)
 ├── media.html            # Media — gateway to Blogs / Artifacts / Notebooks
-├── blogs.html         # Blogs — Featured, Archive, Community Spotlight
+├── blogs.html         # Blogs — note board: AI / Software Engineering, filed by tag
 ├── artifacts.html        # Artifacts — interactive, playable explainers
 ├── certification.html    # Certification — course tracks and the certificate
 ├── consultancy.html      # Consultancy — individual & business engagements
@@ -71,7 +71,7 @@ thehallucinatedlab/
 ├── fonts.css             # Self-hosted @font-face + metric-matched fallbacks
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
-├── blogs.js           # Blog data store, archive search, submission form
+├── blogs.js           # Note data store, the tag filing rule, board search, note form
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
 ├── convert.html  # Convert — the first THL tool
 ├── eda.html              # Exploratory data analysis — the command-line profiler
@@ -160,7 +160,7 @@ thehallucinatedlab/
 - **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
 
 ### Media
-- **Blogs** — featured picks, a searchable archive, and a community spotlight with a submission form (stored in `localStorage`)
+- **Blogs** — a note board in two sections, Artificial Intelligence and Software Engineering. Every note carries tags, and a tag carried by five notes in a section is promoted to a subsection of it. Readers can add their own notes, stored in `localStorage`
 - **Artifacts** — interactive explainers you operate rather than read
 - **Notebooks** — runnable research, landing soon
 
@@ -168,7 +168,7 @@ thehallucinatedlab/
 - **JSON-LD on every page** — an `Organization` / `Person` / `WebSite` identity graph on the home page, with `BreadcrumbList`, `CollectionPage`, `SoftwareApplication`, `WebApplication`, `ProfessionalService`, `Course`, and `Blog` / `LearningResource` on the pages they describe
 - **`llms.txt` and `llms-full.txt`** — Markdown summaries written for LLM crawlers, including an accuracy section stating what is *not* yet available so answer engines don't overstate it
 - **`robots.txt`** explicitly allowing AI agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and others) plus an XML sitemap
-- **Pre-rendered article listings** — the Featured and Archive grids ship as static HTML so crawlers that don't execute JavaScript still see every article; `blogs.js` re-renders the same markup and takes over the filtering
+- **Pre-rendered note board** — both sections ship as static HTML so crawlers that don't execute JavaScript still see every published note; `blogs.js` re-renders the same markup and takes over the filing, search and filtering
 - Open Graph + Twitter Card meta with images, canonical URLs, and `preconnect` hints for the font origins
 - One `<h1>` per page and no skipped heading levels
 - Descriptive `alt` attributes and explicit `width`/`height` on all images (no layout shift)

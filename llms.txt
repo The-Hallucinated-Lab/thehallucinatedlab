@@ -44,7 +44,7 @@ The Hallucinated Lab operates in three modes:
 
 ## Media
 
-- [Blogs](https://thehallucinatedlab.space/blogs.html): Long-form writing on AI, privacy, and developer tooling. Includes a community section open to reader submissions.
+- [Blogs](https://thehallucinatedlab.space/blogs.html): Long-form writing on AI, privacy, and developer tooling, presented as a note board in two sections — Artificial Intelligence and Software Engineering. Notes are filed by tag: a tag carried by five notes in a section becomes a subsection of it. Readers can add their own notes, which stay in their browser.
 - [Artifacts](https://thehallucinatedlab.space/artifacts.html): Interactive explainers the reader operates rather than reads. All computation runs in the browser.
 - [Time & Space Complexity](https://thehallucinatedlab.space/blogs/complexity.html): Interactive teaching session on asymptotic analysis, Big-O through the Master Theorem, with a growth-rate explorer and twelve worked examples.
 - [The Model Is No Longer the Product](https://thehallucinatedlab.space/blogs/ai-orchestration.html): Interactive piece on AI engineering as orchestration, with a runnable RAG pipeline and a failure-diagnosis game.
