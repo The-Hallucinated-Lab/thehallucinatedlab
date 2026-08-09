@@ -347,36 +347,6 @@
     return false;
   }
 
-  /* The manifest is the only place tool status lives, and this is the
-     only place it is read. A tool with no status is live, matching every
-     entry written before the field existed.
-
-     The asymmetry is the same one the nav filter is built on: showing a
-     visitor unfinished work is a real failure, failing to show it to a
-     founder is an annoyance. So anything that is not exactly the string
-     'dev' for the mode resolves to the public view, and a malformed
-     manifest hides a tool rather than revealing it.
-
-     This matters more than the nav case. A dev tool with no card
-     anywhere is still reachable through the assistant, because the
-     intent parser scores every tool in the manifest against whatever the
-     visitor types - it never consults a page. Filtering here, at the one
-     fetch every consumer goes through, is what makes "dev" mean
-     something rather than being a field nobody reads. */
-  function toolVisible(tool, mode) {
-    if (!tool || tool.status !== 'dev') return true;
-    return mode === 'dev';
-  }
-
-  function visibleTools(manifest, mode) {
-    var tools = (manifest && manifest.tools) || [];
-    var out = [];
-    for (var i = 0; i < tools.length; i++) {
-      if (toolVisible(tools[i], mode)) out.push(tools[i]);
-    }
-    return out;
-  }
-
   function describeParams(tool) {
     var params = (tool && tool.params) || [];
     var rows = [];
@@ -417,29 +387,6 @@
 
   /* ---- Manifest ---- */
 
-  /* The same key script.js writes, read straight from storage rather
-     than from the data-mode attribute script.js sets. Both files load
-     with defer and nothing orders them against each other, so reading
-     the DOM would make tool visibility depend on which script happened
-     to run first - and the failure that produced would be dev tools
-     appearing for a visitor, which is the one outcome worth designing
-     against. Storage has no such race.
-
-     A test asserts this string still matches the one in script.js: two
-     files naming the same key is the kind of drift that shows up as a
-     feature quietly not working rather than as a failure. */
-  var MODE_KEY = 'thl_mode';
-
-  function readMode() {
-    try {
-      return localStorage.getItem(MODE_KEY) === 'dev' ? 'dev' : 'live';
-    } catch (e) {
-      /* Storage blocked - a visitor with cookies off is a visitor, and
-         the public view is the safe answer. */
-      return 'live';
-    }
-  }
-
   /* Cached on the promise, not the value, so ten widgets asking at once
      share one request instead of racing. */
   function loadManifest() {
@@ -454,28 +401,7 @@
       if (!manifest || !manifest.tools || !manifest.tools.length) {
         throw ToolError('The tool spec is empty or malformed.');
       }
-
-      /* Dev tools are removed here rather than at each consumer. Every
-         surface that lists or matches a tool - the assistant's
-         capability reply, the intent parser it feeds, the argument
-         tables - comes through this one fetch, so one filter covers all
-         of them and a new consumer is covered without knowing the rule
-         exists.
-
-         The emptiness check above runs against the unfiltered spec on
-         purpose: a manifest of nothing but dev tools is a working spec
-         seen in live mode, not a broken deploy, and reporting it as one
-         would send someone hunting a fetch failure that never happened.
-
-         Caching the filtered result is safe because toggling the mode
-         reloads the page. If that ever stops being true, this cache
-         becomes stale and has to be keyed by mode. */
-      var copy = {};
-      for (var key in manifest) {
-        if (Object.prototype.hasOwnProperty.call(manifest, key)) copy[key] = manifest[key];
-      }
-      copy.tools = visibleTools(manifest, readMode());
-      return copy;
+      return manifest;
     }).catch(function (err) {
       /* Do not cache a failure - a visitor who was offline for one
          request should get a real retry, not a poisoned promise. */
