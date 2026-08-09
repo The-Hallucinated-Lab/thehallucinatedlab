@@ -41,6 +41,7 @@
 - [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer, so a site-wide head change is a mechanical edit across every HTML file.
 - [GAP-05]: Solutions are documented on the site but their source repositories live outside it, so a version number here can silently fall behind the upstream release.
 - [GAP-06]: The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command. The `thehallucinatedlab` package implements no `solutions` subcommand, so both lines are aspirational and read as fact. Either implement the subcommand or replace the two lines.
+- [GAP-07]: NexusLink Engine has a one-line entry in `llms.txt` but no `## Page:`-level coverage in `llms-full.txt`, where ScoobyBench and AI Video Studio both have full sections. An answer engine reading the long-form file sees two of the three shipped products. The tests do not catch this — they check that every *page* is covered, not every product on a page.
 
 ## 5. IMMUTABLE EXECUTION TIMELINE & BUG LOG
 
@@ -78,5 +79,16 @@
 - **Bugs/Gaps Addressed:** The page description advertised only ScoobyBench and had never been updated when NexusLink shipped, so it was already stale before this change. Now names all three products.
 - **Context Modifications:** Added one `.spotlight-panel` block following the NexusLink layout (no bespoke mockup, no new CSS — every class already exists in `pages.css`), one `SoftwareApplication` node reusing the existing `#pratyush` author and `#organization` publisher identifiers, and a rewritten `<meta name="description">` at 149 characters. Outbound repository link: `https://github.com/06pratyush/ai-video-pipeline`. No new script, stylesheet, image, or dependency — the per-page JS budget and CSP are untouched.
 - **Deliberate omission:** The sibling cards advertise a `thl solutions install …` subcommand that the `thehallucinatedlab` Python package does not implement. This card uses a real `git clone` line instead rather than inventing a third command that does not exist. The two pre-existing claims are recorded as [GAP-06].
+
+---
+
+- **Timestamp:** 2026-08-09T01:00:00Z
+- **Trigger Event:** Pull Request Merge
+- **Author/Agent:** Claude Opus 5 (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `llms.txt`, `llms-full.txt`
+- **Intent:** Extend the AI-crawler surface to cover AI Video Studio, so answer engines describe the product from the lab's own text rather than inferring it.
+- **Bugs/Gaps Addressed:** Partially addresses [GAP-03]. The `llms.txt` Solutions summary read "led by ScoobyBench" and named no other product — stale since NexusLink shipped, and the exact drift GAP-03 describes. Now names all three.
+- **Context Modifications:** Added a Tools-section entry to `llms.txt`, a full `## Page: Solutions` subsection to `llms-full.txt` covering the eight pipeline stages with the model behind each, the seven Skills, VRAM routing, architecture and hardware requirements, and one entry under *Accuracy notes for crawlers and answer engines* stating that the product is a download requiring a CUDA GPU and a local ComfyUI — no browser interface, no credits, no API key. That bullet exists because answer engines otherwise default to describing anything text-to-video as a hosted web service.
+- **New gap recorded:** [GAP-07] — NexusLink Engine still has no long-form section in `llms-full.txt`. Left unfixed deliberately: it is outside this change's scope, and the invariant tests cannot catch it because they verify page coverage, not product coverage.
 
 ---
