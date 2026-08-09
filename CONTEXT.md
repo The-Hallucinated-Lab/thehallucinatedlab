@@ -184,3 +184,19 @@
 - **Still outstanding:** his photo and, if he wants them shown, a GitHub handle and email. The card renders a monogram in place of the avatar and carries only a LinkedIn button. The photo could not be added from this session — it arrived as a screenshot in chat, and there is no file on disk to convert into the `240px` avif/webp/jpg variants the other two cards use. The `@handle` line under his name is also absent, because that line is a GitHub username and none is published.
 
 ---
+
+- **Timestamp:** 2026-08-09T15:35:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `styles.css`, `assets/images/`, `llms-full.txt`, `test/site-invariants.test.js`
+- **Intent:** Finish Shashwat Deep's card — email button and avatar — so all three founder cards are identical in shape.
+- **Bugs/Gaps Addressed:** Closes the two gaps the previous entry recorded as outstanding. The `llms-full.txt` note claiming no email is published for this co-founder is corrected, since one now is.
+- **Context Modifications:**
+  - Email button on the card (`deepshashwat@gmail.com`), matching the other two.
+  - `assets/images/shashwat.jpeg` (master, 972x972) plus `shashwat-240.jpg` (10.9 KB) and `shashwat-240.webp` (7.6 KB), both inside the 20 KB per-image budget. The master is registered in both `MASTERS` lists in `test/site-invariants.test.js`, so it is exempt from that budget and forbidden from appearing in an `<img>` like the other three masters.
+  - `.member-avatar-initial` deleted. It existed only because there was no photo; there is one now, and leaving it would be dead CSS.
+- **How the avatar was produced, because it is not the usual path:** the photo arrived as a phone screenshot of a circular profile picture on a black field, not as an image file. The disc's bounding box was cropped out with a canvas in headless Chromium — 144,1054 at 972x972 on the 1260x2800 source — and rescaled to 240. The black corners the square crop leaves are outside the disc and are clipped by `.member-avatar`'s `border-radius: 50%`, so they are never visible.
+- **One deviation from the other two cards:** no AVIF variant. Chromium's `canvas.toDataURL` does not encode AVIF and silently returned a 95 KB PNG under an `image/avif` request — shipping that would have been a mislabelled file, four times over the image budget. The `<picture>` therefore offers WebP with a JPEG fallback. Re-encoding a real AVIF needs a tool this environment does not have; the two variants shipped cover every browser.
+- **Still absent:** a GitHub handle. That is what the `@handle` line under the other two names is, so Shashwat's card has no handle line. Nothing was invented to fill it.
+
+---

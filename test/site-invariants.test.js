@@ -128,7 +128,7 @@ test('every local asset reference resolves to a file that exists', () => {
 });
 
 test('no <img> points at a master image', () => {
-  const MASTERS = ['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg'];
+  const MASTERS = ['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'shashwat.jpeg'];
   const offenders = [];
   for (const f of htmlFiles()) {
     for (const [tag] of read(f).matchAll(/<(?:img|source)[^>]*>/g)) {
@@ -158,7 +158,7 @@ test('every <img> declares width and height', () => {
 
 test('no shipped image exceeds the per-image budget', () => {
   const dir = path.join(ROOT, 'assets', 'images');
-  const MASTERS = new Set(['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'favicon-180.png']);
+  const MASTERS = new Set(['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'shashwat.jpeg', 'favicon-180.png']);
   const over = [];
   for (const f of fs.readdirSync(dir)) {
     if (MASTERS.has(f)) continue;   // not referenced by any <img>
