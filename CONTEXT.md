@@ -107,3 +107,13 @@
 - **Deliberate omission:** `blogs/complexity.html` and `blogs/ai-orchestration.html` were not added to the board. They live under `blogs/` but the site files them as Artifacts — their breadcrumbs, nav state and `artifacts.html` listing all say so — and moving them is a taxonomy decision for a human, not a side effect of a redesign. The board therefore ships with one published note, so no tag reaches five and no subsection is rendered until the archive grows or the reader writes notes of their own. The rule is exercised by the tests and by the tag ledger rather than by placeholder content: the drafts deleted in 98060ec were not reinstated to fill the page.
 
 ---
+
+- **Timestamp:** 2026-08-09T09:50:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`
+- **Intent:** Finish the Blogs board rename. The homepage "Explore the Lab" card for Media still advertised the Blogs page as "featured, archive & community" — three sections that stopped existing when #33 merged, which is now live copy describing a page that does not look like that.
+- **Bugs/Gaps Addressed:** A miss in #33. That change swept `media.html`, `sitemap.html`, `README.md`, `llms.txt` and `llms-full.txt` for the old section names but not `index.html`, so the homepage was the one surface left pointing at the old structure. Nothing catches this — no test asserts that one page's description of another page is current, which is [GAP-03] wearing different clothes.
+- **Context Modifications:** One list item in the Media explore card, from "Blogs — featured, archive & community" to "Blogs — AI & software engineering, filed by tag", which names the two sections and the rule that organises them. No new markup, script, style or dependency; the homepage transfer budget is unchanged at 107.6 KB of 150 KB.
+
+---
