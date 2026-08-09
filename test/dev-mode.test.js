@@ -195,15 +195,20 @@ test('every navbar carries the same dev group, in the same order', () => {
     `these navbars disagree with index.html's [${expected.join(', ')}]:\n  ${drifted.join('\n  ')}`);
 });
 
-test('the small-model page stays behind dev mode at every entry point', () => {
-  /* The three model cards describe work that is still on the bench, so
-     two independent gates hold them back rather than one.
+/* Pages that exist but are not for visitors yet. Each is reachable only
+   from a dev-marked link, and each is noindex so a visitor who arrives
+   by some other route is not indexed into finding it. */
+const DEV_ONLY_PAGES = ['slm.html', 'genai.html'];
+
+test('an unfinished page stays behind dev mode at every entry point', () => {
+  /* The pages in DEV_ONLY_PAGES describe work still on the bench, so two
+     independent gates hold them back rather than one.
 
      The first gate is that every route in is dev-marked — the nav entry
-     on 25 pages and the gateway card on tools.html. Asserting on all of
-     them rather than on a known list is the point: the next page to
-     copy the navbar gets checked for free, and a paste that drops the
-     marker on one page out of twenty-five is invisible by eye.
+     on 25 pages, the gateway card on tools.html. Asserting on all of them
+     rather than on a known list is the point: the next page to copy the
+     navbar gets checked for free, and a paste that drops the marker on
+     one page out of twenty-five is invisible by eye.
 
      The second is that the page is noindex, for the visitor who reaches
      the URL some other way — an old share link, a guess, a crawler.
@@ -214,22 +219,27 @@ test('the small-model page stays behind dev mode at every entry point', () => {
     .filter(f => f.endsWith('.html'));
 
   const bare = [];
-  for (const page of pages) {
-    for (const line of read(page).split('\n')) {
-      /* <a> only. The page's own canonical and og:url point at itself
-         and are not a route a visitor can click. */
-      if (!/<a [^>]*href="[^"]*slm\.html"/.test(line)) continue;
-      if (!line.includes('data-status="dev"')) bare.push(`${page}: ${line.trim()}`);
-    }
-  }
-  assert.deepEqual(bare, [],
-    `these links into slm.html are visible to a live visitor:\n  ${bare.join('\n  ')}`);
+  for (const target of DEV_ONLY_PAGES) {
+    /* Without this the loop below passes vacuously the day the page is
+       renamed: no links found, nothing to complain about. */
+    assert.ok(pages.includes(target), `${target} is gone — this test now checks nothing`);
 
-  /* Without this the loop above passes vacuously the day the page is
-     renamed: no links found, nothing to complain about. */
-  assert.ok(pages.includes('slm.html'), 'slm.html is gone — this test now checks nothing');
-  assert.match(read('slm.html'), /<meta name="robots" content="noindex/,
-    'slm.html must stay out of the index while its models are in training');
+    const linkPattern = new RegExp(`<a [^>]*href="[^"]*${target.replace('.', '\\.')}"`);
+    for (const page of pages) {
+      for (const line of read(page).split('\n')) {
+        /* <a> only. The page's own canonical and og:url point at itself
+           and are not a route a visitor can click. */
+        if (!linkPattern.test(line)) continue;
+        if (!line.includes('data-status="dev"')) bare.push(`${page} -> ${target}: ${line.trim()}`);
+      }
+    }
+
+    assert.match(read(target), /<meta name="robots" content="noindex/,
+      `${target} must stay out of the index while it is on the bench`);
+  }
+
+  assert.deepEqual(bare, [],
+    `these links into a dev-only page are visible to a live visitor:\n  ${bare.join('\n  ')}`);
 });
 
 test('nav entries default to live and dev entries need dev mode', () => {

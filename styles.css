@@ -269,7 +269,9 @@ section { padding: 6rem 2rem; position: relative; }
 
 /* ============ ABOUT ============ */
 #about { background: var(--bg-secondary); }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+/* Three founders, so three columns — and auto-fit rather than a fixed
+   count, so a fourth card lands in a row instead of alone underneath one. */
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; }
 .member-card {
   background: var(--bg-card); border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl); padding: 2.5rem; text-align: center;

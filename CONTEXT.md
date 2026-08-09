@@ -117,3 +117,118 @@
 - **Context Modifications:** One list item in the Media explore card, from "Blogs — featured, archive & community" to "Blogs — AI & software engineering, filed by tag", which names the two sections and the rule that organises them. No new markup, script, style or dependency; the homepage transfer budget is unchanged at 107.6 KB of 150 KB.
 
 ---
+
+- **Timestamp:** 2026-08-09T11:15:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `converters.html`, `converters.js`, `convert-scales.js`, `converters-ui.js`, `genai.html`, `genai.js`, `tools.html`, `pages.css`, `test/converters.test.js`, `test/genai.test.js`, `test/dev-mode.test.js`, `test/site-invariants.test.js`, plus the discoverability surface
+- **Intent:** Two additions. (1) A Converters page in the spirit of a hosted converter service but under this site's constraints: around forty conversions across six panels — tabular data, encodings, naming conventions, physical units, number bases, colour spaces, timestamps and canvas image scaling — every one running in the tab with nothing uploaded. (2) A Gen AI bench behind dev mode carrying video→image and image→HTML.
+- **Bugs/Gaps Addressed:**
+  - **A shipped CSS bug, found by measurement rather than by eye.** `.eda-bundle-note` in `pages.css` was missing its closing brace. CSS does not error on that: the parser recovers by consuming the next rule's declarations as part of the unterminated one, so the entire `TOOLBENCH` block that followed it was silently dropped — the command builder on every tool page has been unstyled for as long as that line has been in. It surfaced because the new Converters CSS landed after it and also vanished. Fixed, and `test/site-invariants.test.js` now asserts brace balance across all four stylesheets, verified to fail when a brace is removed.
+  - Two defects in this change's own code, caught by the new tests rather than in review: `Number('')` is `0`, so an empty unit input converted cleanly and printed "0 ft" as though it had been asked to; and a query-string input with no `=` anywhere was accepted as a single valueless key, so "no pairs here" converted successfully.
+  - `test/dev-mode.test.js` had a gate hard-coded to `slm.html`. Generalised to a `DEV_ONLY_PAGES` list so `genai.html` is covered by the same two-gate rule, verified to fail when the marker is dropped from the tools.html card.
+- **Context Modifications:**
+  - New pages: `converters.html` (indexable, in `sitemap.xml`, `sitemap.html`, `llms.txt` and `llms-full.txt`) and `genai.html` (`noindex`, absent from every sitemap, reachable only from a `data-status="dev"` card on `tools.html`, no navbar entry so the shared dev group is unchanged).
+  - New scripts, split three ways because the combined file was 53 KB against the 40 KB per-page budget, and split along a real seam rather than an arbitrary byte count: `converters.js` (26.5 KB, documents), `convert-scales.js` (16 KB, quantities), `converters-ui.js` (16 KB, DOM only). `genai.js` is 20.5 KB. The two engines publish on the existing `window.THL` namespace, matching how `eda.js` reaches `eda-engine.js`; nothing was added to `eslint.config.js`'s globals.
+  - The scales engine never throws — every entry point returns `{ ok, value | error }`. That keeps it independent of `converters.js` (two scripts in one global scope cannot both define a helper, and a duplicate `const` is a SyntaxError that takes the page with it) and satisfies the standing rule about never rendering a raw exception message: the classification happens at the boundary, not in a catch block in the UI.
+  - 87 new tests (369 total, all passing; lint clean; spec in sync). Driven in headless Chromium as well: all 38 text conversions exercised in both themes, temperature/base/colour/time panels checked against known values (100 °C → 212 °F, 2⁶⁴−1 exact across six bases), and the video panel driven against a real WebM recorded in-browser via MediaRecorder — six evenly spaced frames decoded at full resolution, plus a single scrubbed JPEG frame. No console errors, no horizontal overflow at 1440px or 390px.
+- **Deliberate omissions, stated on the page in a table rather than left implicit:** no video, audio, PDF, Word, Excel, PowerPoint or YAML conversion. Video and audio need an ffmpeg build compiled to WebAssembly — roughly 25 MB of third-party runtime — or a server that accepts the upload; both break [RULE-01] and [RULE-02]. PDF and Office formats are already handled locally by Extract through the Python package. YAML is absent because the subset of the specification that is easy to implement is the subset that silently mis-parses, and a converter that is right most of the time is not a converter.
+- **Deliberately not done:** no `spec/manifest.json` entries for the new converters, so they are page-only and the Assistant cannot invoke them. Adding forty tools to the manifest would mean forty Python implementations to keep the "three doors" promise honest, and would put forty new `convert`-flavoured action keywords into the intent parser whose scoring is asserted against documented examples. Recorded here as a known limit rather than a gap: promoting individual converters to real manifest tools is a deliberate, separate decision.
+
+---
+
+- **Timestamp:** 2026-08-09T13:20:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `blogs/complexity.html`, `blogs/complexity.css` (new), `blogs/complexity.js`, `blogs/ai-orchestration.html`, `blogs/ai-orchestration.css` (new), `README.md`, `test/site-invariants.test.js`
+- **Intent:** Bring the three article pages onto the site's design system, so an article does not read as a different product from the page that linked to it.
+- **Bugs/Gaps Addressed:**
+  - **`blogs/complexity.html` was a different site.** It carried a 387-line inline `<style>` block with its own palette (a #0f1116 blue-grey page, a #7cc4ff blue accent, Inter for prose), loaded none of `fonts.css`, `styles.css` or `pages.css`, had no navbar — a visitor landing there had no route back into the site — and, because it never loaded `theme.js`, **no light theme at all**: someone who had chosen light everywhere else got a dark page. Now on the site's tokens, fonts, navbar, breadcrumb and footer, with the tab row reusing the same `.filter-btn` pill as Prompts and Converters.
+  - **The growth chart was hardcoded and broke in light mode.** `complexity.js` built the SVG as a string with `fill="#0f1116"`, `stroke="#262a35"` and `fill="#9aa0ac"` baked in, so on a sand page it drew a dark rectangle with dark text. Every colour is now read from a CSS custom property at draw time, and a `MutationObserver` on `data-theme` redraws it when the theme flips — verified live: the plot surface goes `#efe8d8` → `#0a0a0a` on toggle.
+  - **Sixteen hardcoded `rgba(201, 168, 76, …)` in `ai-orchestration.html`** — the exact mistake the comment beside `--gold-rgb` in `styles.css` warns about, and the reason that token exists: a literal channel list cannot follow the theme, so every one of those washes stayed dark-theme gold on the sand page. All sixteen are `rgba(var(--gold-rgb), …)` now, along with nine literals of an untokenised failure-state pink that measured about 2:1 on sand.
+  - The brace-balance invariant added earlier today checked a hardcoded list of four stylesheets, which would not have covered either new article stylesheet. It now discovers every `.css` file under the root and `blogs/`, and was verified to fail when a brace is removed from `blogs/complexity.css`.
+- **Context Modifications:**
+  - `blogs/complexity.css` (13.3 KB) and `blogs/ai-orchestration.css` (16.1 KB) are new; both were inline `<style>` blocks, which also takes 32 KB of CSS out of the HTML and makes it cacheable. Every selector in both is namespaced under the page's own class or prefix, so neither can reach the rest of the site now that they load beside `styles.css` and `pages.css`.
+  - Three groups of colour cannot come from the site palette because the palette does not have them and they do real work: status (callouts, difficulty badges), syntax highlighting, and the eight growth curves. All are page tokens with light-theme counterparts.
+  - The eight curve colours were generated at OKLCH L 0.58 / C 0.145 and **validated with the data-visualisation palette checker against both chart surfaces** — every adjacent pair clears the colour-blind separation floor and the 15-point normal-vision floor, and every slot clears 3:1 against the plot background in both themes. The comment beside them says not to hand-edit one without re-validating.
+  - No markup was rewritten beyond the page scaffolding: the teaching prose and widget classes are untouched, so the diff is in the CSS rather than spread through a thousand lines of article.
+  - 370 tests pass; lint clean; spec in sync. All three articles verified in headless Chromium in both themes: same body background, same body font (JetBrains Mono), same heading font (Outfit), navbar present, no console errors, no horizontal overflow.
+- **Left alone deliberately:** the dark hero scrim on `sample-blog.html` and `ai-orchestration.html`. The `rgba(5, 5, 5, …)` gradient there looks like an unthemed literal but is correct — `styles.css` already re-pins the dark tokens inside `.blog-hero-content` under `[data-theme="light"]`, which is the right pattern for text over imagery, and measurement confirmed the hero is legible in both themes. Also left: the authored hero gradient on `sample-blog.html`, which is content (it is the same accent the note board card uses), not theming.
+
+---
+
+- **Timestamp:** 2026-08-09T14:40:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `styles.css`, `llms.txt`, `llms-full.txt`
+- **Intent:** Add Shashwat Deep as the third co-founder, from a LinkedIn URL supplied by the founder.
+- **Bugs/Gaps Addressed:** None. This is new content, and it is deliberately incomplete — see below.
+- **Context Modifications:**
+  - `index.html`: a third `.member-card`, a `Person` node at `#shashwat`, and a third entry in the Organization's `founder` array. The About intro now reads "Three engineering students".
+  - `styles.css`: `.about-grid` moved from a fixed `1fr 1fr` to `repeat(auto-fit, minmax(280px, 1fr))`, so three cards sit in one row and a fourth would not land alone underneath. Added `.member-avatar-initial`, a monogram standing in for a photo that does not exist yet, at the same 120px geometry as the real avatar so dropping the image in later moves nothing.
+  - `llms.txt` and `llms-full.txt` name three founders. Both previously said the lab was founded by two people "both computer science undergraduates at Manipal University Jaipur" — that clause now attaches only to the two it is true of, because nothing is known about the third person's institution.
+- **What was deliberately NOT written, and why it matters:** no bio, no role, no field of study, no institution, no GitHub handle, no email. The only facts available were a name inferred from the LinkedIn slug and the URL itself; `www.linkedin.com` is blocked by this environment's egress proxy, so the profile could not be read. Every one of those fields on the existing two cards is a specific claim about a real person, and inventing them for a third — on a public page, under an `@type: Person` node that answer engines will ingest as fact — is not a gap to be filled with plausible text. The card therefore renders with a monogram, a name and a LinkedIn link, and looks visibly unfinished on purpose. `llms-full.txt` carries an explicit instruction to crawlers not to infer a role, a field of study or an institution for this person.
+- **Outstanding, needs the founders:** a photo (the convention is a master in `assets/images/` plus 240px avif/webp/jpg variants under the 20 KB per-image budget), a one-line bio, and a GitHub handle and email if he wants them shown. With those, the card becomes identical in shape to the other two.
+
+---
+
+- **Timestamp:** 2026-08-09T15:05:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `llms.txt`, `llms-full.txt`
+- **Intent:** Fill in Shashwat Deep's card from details the founders supplied, and correct the year of study for all three.
+- **Bugs/Gaps Addressed:** All three founder bios said "2nd-year" and both `Person` descriptions said "Second-year". All three are in their third year now, so every one of those was stale — on the page, in the JSON-LD an answer engine reads as fact, and in both crawler files.
+- **Context Modifications:**
+  - Shashwat Deep: bio, `description`, `knowsAbout`, and `affiliation` — third-year B.Tech CSE (Data Science) at Manipal University Jaipur, focus on programming, machine learning and data analysis, Operations team member at Google Developer Groups MUJ. Every claim came from the founders directly or from his own profile; nothing was inferred.
+  - Year of study corrected to third year in four places in `index.html` (two visible bios, two JSON-LD descriptions) and two in `llms-full.txt`, and `llms.txt` now states all three are third-year undergraduates at Manipal University Jaipur.
+- **Still outstanding:** his photo and, if he wants them shown, a GitHub handle and email. The card renders a monogram in place of the avatar and carries only a LinkedIn button. The photo could not be added from this session — it arrived as a screenshot in chat, and there is no file on disk to convert into the `240px` avif/webp/jpg variants the other two cards use. The `@handle` line under his name is also absent, because that line is a GitHub username and none is published.
+
+---
+
+- **Timestamp:** 2026-08-09T15:35:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `styles.css`, `assets/images/`, `llms-full.txt`, `test/site-invariants.test.js`
+- **Intent:** Finish Shashwat Deep's card — email button and avatar — so all three founder cards are identical in shape.
+- **Bugs/Gaps Addressed:** Closes the two gaps the previous entry recorded as outstanding. The `llms-full.txt` note claiming no email is published for this co-founder is corrected, since one now is.
+- **Context Modifications:**
+  - Email button on the card (`deepshashwat@gmail.com`), matching the other two.
+  - `assets/images/shashwat.jpeg` (master, 972x972) plus `shashwat-240.jpg` (10.9 KB) and `shashwat-240.webp` (7.6 KB), both inside the 20 KB per-image budget. The master is registered in both `MASTERS` lists in `test/site-invariants.test.js`, so it is exempt from that budget and forbidden from appearing in an `<img>` like the other three masters.
+  - `.member-avatar-initial` deleted. It existed only because there was no photo; there is one now, and leaving it would be dead CSS.
+- **How the avatar was produced, because it is not the usual path:** the photo arrived as a phone screenshot of a circular profile picture on a black field, not as an image file. The disc's bounding box was cropped out with a canvas in headless Chromium — 144,1054 at 972x972 on the 1260x2800 source — and rescaled to 240. The black corners the square crop leaves are outside the disc and are clipped by `.member-avatar`'s `border-radius: 50%`, so they are never visible.
+- **One deviation from the other two cards:** no AVIF variant. Chromium's `canvas.toDataURL` does not encode AVIF and silently returned a 95 KB PNG under an `image/avif` request — shipping that would have been a mislabelled file, four times over the image budget. The `<picture>` therefore offers WebP with a JPEG fallback. Re-encoding a real AVIF needs a tool this environment does not have; the two variants shipped cover every browser.
+- **Still absent:** a GitHub handle. That is what the `@handle` line under the other two names is, so Shashwat's card has no handle line. Nothing was invented to fill it.
+
+---
+
+- **Timestamp:** 2026-08-09T15:50:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`
+- **Intent:** Add the `@deepshashwat` handle line under Shashwat Deep's name, so all three founder cards carry the same three elements above the bio: avatar, name, handle.
+- **Bugs/Gaps Addressed:** Closes the last difference between his card and the other two.
+- **Context Modifications:** One `.member-handle` paragraph, and `alternateName` on the `#shashwat` Person node, matching how the other two carry theirs.
+- **Note for whoever adds a GitHub link later:** on the other two cards the handle and the GitHub button are the same identity — `@06pratyush` is `github.com/06pratyush`. Here the handle was supplied as display text and no GitHub URL was given, so **no GitHub button was added**. Do not infer `github.com/deepshashwat` from the handle; an invented profile link either 404s or points at a different person.
+
+---
+
+- **Timestamp:** 2026-08-09T16:00:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `llms.txt`, `llms-full.txt`
+- **Intent:** Add Shashwat Deep's GitHub link, now that the URL was supplied. His card is now complete: photo, name, handle, bio, and GitHub / LinkedIn / email — the same shape as Pratyush's.
+- **Bugs/Gaps Addressed:** Closes the last item the previous entries recorded as outstanding.
+- **Context Modifications:** GitHub button first in the link row, matching the order on the other two cards; `https://github.com/shashwat-deep` added to the `#shashwat` node's `sameAs`; both crawler files now carry the GitHub URL, and the note telling crawlers not to infer a handle is replaced.
+- **Verified before linking:** the account was confirmed to exist through the GitHub API (`shashwat-deep`, id 77567664) rather than taken on trust. The earlier entries refused to guess `github.com/deepshashwat` from the display handle, and that caution was warranted — **the display handle and the GitHub username are not the same string**. The card shows `@deepshashwat`, as the founders asked, while the account is `shashwat-deep`. On the other two cards those two are identical, so a reader may reasonably assume the handle is the GitHub name here too; `llms-full.txt` states explicitly that both identifiers are the same person, so an answer engine does not treat them as two people.
+
+---
+
+- **Timestamp:** 2026-08-09T16:10:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `llms-full.txt`
+- **Intent:** Change Shashwat Deep's display handle from `@deepshashwat` to `@shashwat-deep`, so it matches his GitHub username the way the other two cards do.
+- **Bugs/Gaps Addressed:** Removes the one inconsistency the previous entry flagged. On all three cards the `@handle` line and the GitHub button now name the same identifier, which is what a reader assumes when the other two behave that way.
+- **Context Modifications:** The `.member-handle` line and the `alternateName` on the `#shashwat` Person node. The `llms-full.txt` sentence explaining that the display handle and the GitHub username were different is deleted, because they no longer are — leaving it would have been a comment contradicting the thing it describes.
+
+---
