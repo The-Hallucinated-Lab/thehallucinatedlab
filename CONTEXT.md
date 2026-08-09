@@ -40,6 +40,7 @@
 - [GAP-03]: `llms.txt` and `llms-full.txt` are maintained by hand. Tests confirm every link resolves and every indexable page is covered, but nothing verifies that the *prose* still describes what the page currently does — this has drifted twice before.
 - [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer, so a site-wide head change is a mechanical edit across every HTML file.
 - [GAP-05]: Solutions are documented on the site but their source repositories live outside it, so a version number here can silently fall behind the upstream release.
+- [GAP-06]: The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command. The `thehallucinatedlab` package implements no `solutions` subcommand, so both lines are aspirational and read as fact. Either implement the subcommand or replace the two lines.
 
 ## 5. IMMUTABLE EXECUTION TIMELINE & BUG LOG
 
@@ -66,5 +67,16 @@
 - **Intent:** Adopt the Continuous Synchronization Mandate. Establish `CONTEXT.md` as the persistent project brain and add a CI gatekeeper that blocks any pull request into `main` which does not update it.
 - **Bugs/Gaps Addressed:** None — this is new infrastructure. Documents [GAP-01] through [GAP-05] for the first time so future agents prioritise stability over new surface area.
 - **Context Modifications:** Added `CONTEXT.md` (this file) and `.github/workflows/enforce-context-sync.yml`. No page, script, style, or dependency was touched, so the site's runtime behaviour is unchanged.
+
+---
+
+- **Timestamp:** 2026-08-09T00:30:00Z
+- **Trigger Event:** Pull Request Merge
+- **Author/Agent:** Claude Opus 5 (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `solutions.html`
+- **Intent:** Publish AI Video Studio as the third shipped product on the Solutions page — a spotlight panel, a `SoftwareApplication` JSON-LD node, and a page description that names it.
+- **Bugs/Gaps Addressed:** The page description advertised only ScoobyBench and had never been updated when NexusLink shipped, so it was already stale before this change. Now names all three products.
+- **Context Modifications:** Added one `.spotlight-panel` block following the NexusLink layout (no bespoke mockup, no new CSS — every class already exists in `pages.css`), one `SoftwareApplication` node reusing the existing `#pratyush` author and `#organization` publisher identifiers, and a rewritten `<meta name="description">` at 149 characters. Outbound repository link: `https://github.com/06pratyush/ai-video-pipeline`. No new script, stylesheet, image, or dependency — the per-page JS budget and CSP are untouched.
+- **Deliberate omission:** The sibling cards advertise a `thl solutions install …` subcommand that the `thehallucinatedlab` Python package does not implement. This card uses a real `git clone` line instead rather than inventing a third command that does not exist. The two pre-existing claims are recorded as [GAP-06].
 
 ---
