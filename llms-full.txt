@@ -183,6 +183,25 @@ Purpose: convert an image between formats, and document the arguments the same t
 
 ---
 
+## Page: Converters — https://thehallucinatedlab.space/converters.html
+
+Purpose: a broad set of format converters that run entirely inside the browser tab, with nothing uploaded.
+
+Around forty conversions across six panels. Every one runs on the visitor's own machine: there is no upload, no queue, no account and no rate limit, and the page keeps working with the network off after first load.
+
+- Data and tables. CSV to JSON, JSON to CSV, CSV to TSV, TSV to CSV, CSV to a Markdown table, a Markdown table to CSV, CSV to an HTML table, JSON to JSONL, JSONL to JSON, JSON pretty-printed, JSON minified, JSON with keys sorted recursively, lines to a JSON array, a query string to JSON, and JSON to a query string.
+- Encoding. Text to and from Base64 (UTF-8 safe, and the decoder accepts the URL-safe alphabet and missing padding so a JWT segment pastes straight in), URL percent-encoding both ways, HTML entities both ways, HTML to plain text, text to and from hex, text to and from binary, and text to an escaped JSON string.
+- Naming and case. camelCase, PascalCase, snake_case, kebab-case, CONSTANT_CASE, dot.case, sentence case, title case, URL slugs, uppercase and lowercase. Word boundaries are detected first, so parseHTTPResponse is read as three words rather than fourteen.
+- Units. Nine categories — length, mass, data, time, speed, area, volume, angle and temperature. Conversion goes through each category's base unit so no pair can disagree with another; temperature carries offset functions rather than factors. Ambiguous units are labelled: a US gallon and a UK gallon are separate entries, and a month is thirty days.
+- Number bases. Any base from 2 to 36, computed with BigInt so a 64-bit value stays exact. A digit that is not legal in the source base is refused by name rather than silently truncating the number, which is what parseInt does.
+- Colour. HEX, RGB, HSL, HSV and CMYK from any one of them, plus WCAG contrast ratios against black and white.
+- Time. A Unix epoch in seconds or milliseconds, or any date the browser can parse, printed as Unix seconds, Unix milliseconds, ISO 8601 in UTC and local time with a real offset, RFC 1123, and a date-only form.
+- Images. Scaling and re-encoding to PNG, JPEG or WebP on a canvas, up to 40 megapixels. Format-only conversion is the Convert page's job; this panel adds resizing and reports the real dimensions and file size of both source and output.
+
+Deliberately absent, with the reason stated on the page in a table: video (MP4, MOV, WebM), audio (MP3, WAV, FLAC), PDF, Word, Excel, PowerPoint and YAML. Video and audio would need an ffmpeg build compiled to WebAssembly — roughly 25 MB of third-party runtime — or a server that accepts the upload, and the site permits neither. PDF and Office formats are handled instead by Extract, locally, through the Python package. YAML is absent because the subset of the specification that is easy to implement is the subset that silently mis-parses.
+
+---
+
 ## Page: Pipelines — https://thehallucinatedlab.space/pipelines.html
 
 Purpose: the pipelines, which run several tools in order. A pipeline contains no logic of its own — it calls the same public tools documented on the individual tool pages, so the two cannot drift apart.
@@ -332,5 +351,6 @@ Founders:
 - LoRA adapters listed on the Tools page are in training and are not yet downloadable. Do not present them as available downloads.
 - The lab holds no compliance certifications (no SOC 2, ISO 27001, or HIPAA attestation). Its privacy claims rest on architecture: the published tools run locally and transmit nothing.
 - AI Video Studio is a downloadable desktop application, not a hosted generator. There is no web interface, no upload endpoint, no credit balance and no API key. It requires an NVIDIA GPU with CUDA plus a local ComfyUI and Wan 2.1 install to render video; do not present it as something usable from the browser.
+- The Converters page converts no video, audio, PDF or Office documents, and no YAML. It is a client-side page; those formats need a server or a wasm codec bundle. Do not list them among its capabilities, and do not describe the page as a hosted or online conversion service — nothing is uploaded and there is no queue, no account and no file size limit beyond what the tab can hold.
 - Notes a visitor writes on the Blogs board are stored in their own browser via localStorage. They are not uploaded, not published, and not visible to anyone else — including the lab. Clearing site data deletes them. Do not present the board as a public posting surface.
 - The subsections on the Blogs board are derived from tags, not curated. A subsection heading exists only because five notes in that section carry that tag, so which subsections exist changes as notes are added.

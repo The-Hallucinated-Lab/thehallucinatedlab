@@ -210,6 +210,43 @@ test('the homepage stays within its transfer budget', () => {
     `homepage is ${total.toFixed(1)}KB transferred, budget is ${BUDGET.maxHomepageTransferKB}KB`);
 });
 
+/* ---- stylesheet integrity ---- */
+
+/* A missing closing brace does not error anywhere. The parser recovers by
+   consuming the next rule's declarations as though they belonged to the
+   unterminated one, and the symptom is that some block of styling simply
+   is not there — on the page it looks like the CSS was never written.
+
+   This is not hypothetical: `.eda-bundle-note` shipped without its
+   closing brace, which silently dropped the entire TOOLBENCH block that
+   followed it, on every tool page, for as long as it was in. Nothing
+   caught it because nothing errors. */
+test('every stylesheet closes every block it opens', () => {
+  const unbalanced = [];
+  for (const file of ['styles.css', 'pages.css', 'fonts.css', 'blogs/blog.css']) {
+    /* Comments only. Braces inside a comment are prose; braces inside a
+       quoted value are vanishingly rare in this codebase and stripping
+       quotes naively breaks on the apostrophe in an English comment. */
+    const src = read(file).replace(/\/\*[\s\S]*?\*\//g, m => m.replace(/[{}]/g, ' '));
+    let depth = 0;
+    let line = 1;
+    let firstExtraClose = 0;
+    for (const ch of src) {
+      if (ch === '\n') line += 1;
+      else if (ch === '{') depth += 1;
+      else if (ch === '}') {
+        depth -= 1;
+        if (depth < 0 && !firstExtraClose) firstExtraClose = line;
+      }
+    }
+    if (depth !== 0) {
+      unbalanced.push(`${file}: ${depth > 0 ? `${depth} block(s) never closed` : `extra } at line ${firstExtraClose}`}`);
+    }
+  }
+  assert.deepEqual(unbalanced, [],
+    `unbalanced braces silently drop whatever follows them:\n  ${unbalanced.join('\n  ')}`);
+});
+
 /* ---- source hygiene ---- */
 
 test('no source file contains a NUL byte', () => {
