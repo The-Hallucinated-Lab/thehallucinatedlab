@@ -171,3 +171,16 @@
 - **Outstanding, needs the founders:** a photo (the convention is a master in `assets/images/` plus 240px avif/webp/jpg variants under the 20 KB per-image budget), a one-line bio, and a GitHub handle and email if he wants them shown. With those, the card becomes identical in shape to the other two.
 
 ---
+
+- **Timestamp:** 2026-08-09T15:05:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `llms.txt`, `llms-full.txt`
+- **Intent:** Fill in Shashwat Deep's card from details the founders supplied, and correct the year of study for all three.
+- **Bugs/Gaps Addressed:** All three founder bios said "2nd-year" and both `Person` descriptions said "Second-year". All three are in their third year now, so every one of those was stale — on the page, in the JSON-LD an answer engine reads as fact, and in both crawler files.
+- **Context Modifications:**
+  - Shashwat Deep: bio, `description`, `knowsAbout`, and `affiliation` — third-year B.Tech CSE (Data Science) at Manipal University Jaipur, focus on programming, machine learning and data analysis, Operations team member at Google Developer Groups MUJ. Every claim came from the founders directly or from his own profile; nothing was inferred.
+  - Year of study corrected to third year in four places in `index.html` (two visible bios, two JSON-LD descriptions) and two in `llms-full.txt`, and `llms.txt` now states all three are third-year undergraduates at Manipal University Jaipur.
+- **Still outstanding:** his photo and, if he wants them shown, a GitHub handle and email. The card renders a monogram in place of the avatar and carries only a LinkedIn button. The photo could not be added from this session — it arrived as a screenshot in chat, and there is no file on disk to convert into the `240px` avif/webp/jpg variants the other two cards use. The `@handle` line under his name is also absent, because that line is a GitHub username and none is published.
+
+---
