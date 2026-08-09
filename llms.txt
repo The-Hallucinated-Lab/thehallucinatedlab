@@ -23,7 +23,7 @@ The Hallucinated Lab operates in three modes:
 - [Index](https://thehallucinatedlab.space/vector-index.html): Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy.
 - [Exploratory data analysis](https://thehallucinatedlab.space/eda.html): Profiles a tabular file from the command line. `thl pipeline eda sales.csv` writes a Markdown report, the figures, a replayable recipe and a runnable analysis.py that reproduces the report.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
-- [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped products, led by ScoobyBench, a Windows desktop app that benchmarks real AI inference performance against vendor claims.
+- [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped desktop products — ScoobyBench benchmarks real AI inference performance against vendor claims, NexusLink Engine is an encrypted peer-to-peer networking SDK, and AI Video Studio generates narrated video from a script on local hardware.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
 - [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.
 
@@ -39,6 +39,7 @@ The Hallucinated Lab operates in three modes:
 - [Index](https://thehallucinatedlab.space/vector-index.html): Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy. Records the embedding model, its dimensions and whether vectors were normalised, plus a runnable query snippet - without which the folder cannot be reopened correctly.
 - [Exploratory data analysis](https://thehallucinatedlab.space/eda.html): Command-line profiler for tabular data. Every column gets an inferred type and a confidence, and anything below 0.7 is flagged rather than asserted. The emitted analysis.py reproduces the report exactly and imports nothing from the toolkit. Sampling is never silent.
 - [NexusLink Engine](https://thehallucinatedlab.space/solutions.html): Headless Rust SDK for encrypted peer-to-peer LAN/WAN communication. Built from source rather than PyPI for now.
+- [AI Video Studio](https://thehallucinatedlab.space/solutions.html): Desktop application that turns a written script into a narrated, edited MP4 without a cloud service. A local LLM refines the narration and storyboards the scenes, Wan 2.1 renders the clips on the user's own GPU, Kokoro synthesises the voice, and FFmpeg grades and muxes the result. Installed from source, not from PyPI.
 - Python toolkit: `pip install thehallucinatedlab` gives every tool as a Python method plus a `thl` command.
 
 ## Media
