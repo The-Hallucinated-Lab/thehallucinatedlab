@@ -156,3 +156,18 @@
 - **Left alone deliberately:** the dark hero scrim on `sample-blog.html` and `ai-orchestration.html`. The `rgba(5, 5, 5, …)` gradient there looks like an unthemed literal but is correct — `styles.css` already re-pins the dark tokens inside `.blog-hero-content` under `[data-theme="light"]`, which is the right pattern for text over imagery, and measurement confirmed the hero is legible in both themes. Also left: the authored hero gradient on `sample-blog.html`, which is content (it is the same accent the note board card uses), not theming.
 
 ---
+
+- **Timestamp:** 2026-08-09T14:40:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `styles.css`, `llms.txt`, `llms-full.txt`
+- **Intent:** Add Shashwat Deep as the third co-founder, from a LinkedIn URL supplied by the founder.
+- **Bugs/Gaps Addressed:** None. This is new content, and it is deliberately incomplete — see below.
+- **Context Modifications:**
+  - `index.html`: a third `.member-card`, a `Person` node at `#shashwat`, and a third entry in the Organization's `founder` array. The About intro now reads "Three engineering students".
+  - `styles.css`: `.about-grid` moved from a fixed `1fr 1fr` to `repeat(auto-fit, minmax(280px, 1fr))`, so three cards sit in one row and a fourth would not land alone underneath. Added `.member-avatar-initial`, a monogram standing in for a photo that does not exist yet, at the same 120px geometry as the real avatar so dropping the image in later moves nothing.
+  - `llms.txt` and `llms-full.txt` name three founders. Both previously said the lab was founded by two people "both computer science undergraduates at Manipal University Jaipur" — that clause now attaches only to the two it is true of, because nothing is known about the third person's institution.
+- **What was deliberately NOT written, and why it matters:** no bio, no role, no field of study, no institution, no GitHub handle, no email. The only facts available were a name inferred from the LinkedIn slug and the URL itself; `www.linkedin.com` is blocked by this environment's egress proxy, so the profile could not be read. Every one of those fields on the existing two cards is a specific claim about a real person, and inventing them for a third — on a public page, under an `@type: Person` node that answer engines will ingest as fact — is not a gap to be filled with plausible text. The card therefore renders with a monogram, a name and a LinkedIn link, and looks visibly unfinished on purpose. `llms-full.txt` carries an explicit instruction to crawlers not to infer a role, a field of study or an institution for this person.
+- **Outstanding, needs the founders:** a photo (the convention is a master in `assets/images/` plus 240px avif/webp/jpg variants under the 20 KB per-image budget), a one-line bio, and a GitHub handle and email if he wants them shown. With those, the card becomes identical in shape to the other two.
+
+---

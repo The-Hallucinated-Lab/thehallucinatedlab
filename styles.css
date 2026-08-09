@@ -269,7 +269,9 @@ section { padding: 6rem 2rem; position: relative; }
 
 /* ============ ABOUT ============ */
 #about { background: var(--bg-secondary); }
-.about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+/* Three founders, so three columns — and auto-fit rather than a fixed
+   count, so a fourth card lands in a row instead of alone underneath one. */
+.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; }
 .member-card {
   background: var(--bg-card); border: 1px solid var(--border-subtle);
   border-radius: var(--radius-xl); padding: 2.5rem; text-align: center;
@@ -282,6 +284,16 @@ section { padding: 6rem 2rem; position: relative; }
 .member-card:hover { border-color: var(--border-gold); transform: translateY(-4px); box-shadow: var(--shadow-gold); }
 .member-card:hover::before { opacity: 1; }
 .member-avatar { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem; border: 2px solid var(--border-gold); object-fit: cover; }
+/* Stands in for a photo that does not exist yet. Same geometry as the
+   real avatar, so adding the image later is a markup swap and nothing
+   moves — and it is an initial rather than a stock silhouette, because a
+   placeholder that looks like a person reads as the wrong person. */
+.member-avatar-initial {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--gold-glow); color: var(--gold-primary);
+  font-family: var(--font-heading); font-size: 2.6rem; font-weight: 800;
+  user-select: none;
+}
 .member-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
 .member-handle { color: var(--gold-primary); font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; }
 .member-bio { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.5rem; }

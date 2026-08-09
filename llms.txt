@@ -1,6 +1,6 @@
 # The Hallucinated Lab
 
-> The Hallucinated Lab is a local-first AI lab. It builds AI tools that run entirely on the user's own machine — no cloud dependency, no API keys, no data leaving the device. It was founded by Pratyush and Divyansh Tripathi, both computer science undergraduates at Manipal University Jaipur, India.
+> The Hallucinated Lab is a local-first AI lab. It builds AI tools that run entirely on the user's own machine — no cloud dependency, no API keys, no data leaving the device. It was founded by Pratyush, Divyansh Tripathi and Shashwat Deep. Pratyush and Divyansh are computer science undergraduates at Manipal University Jaipur, India.
 
 The Hallucinated Lab operates in three modes:
 
@@ -65,6 +65,7 @@ The Hallucinated Lab operates in three modes:
 - GitHub organisation: https://github.com/The-Hallucinated-Lab
 - Pratyush: https://github.com/06pratyush — AI, machine learning, data science
 - Divyansh Tripathi: https://github.com/TheQMLGuy — machine learning, developer experience
+- Shashwat Deep: https://www.linkedin.com/in/shashwat-deep-ab6556240
 
 ## Optional
 
