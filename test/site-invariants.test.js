@@ -222,8 +222,19 @@ test('the homepage stays within its transfer budget', () => {
    followed it, on every tool page, for as long as it was in. Nothing
    caught it because nothing errors. */
 test('every stylesheet closes every block it opens', () => {
+  /* Discovered rather than listed. A hardcoded list is the same drift
+     this file exists to catch — the two article stylesheets were added
+     after this test was written and would not have been covered. */
+  const sheets = [];
+  for (const dir of ['.', 'blogs']) {
+    for (const f of fs.readdirSync(path.join(ROOT, dir))) {
+      if (f.endsWith('.css')) sheets.push(path.join(dir, f).replace(/\\/g, '/').replace(/^\.\//, ''));
+    }
+  }
+  assert.ok(sheets.length >= 4, `only found ${sheets.length} stylesheets — the discovery is broken`);
+
   const unbalanced = [];
-  for (const file of ['styles.css', 'pages.css', 'fonts.css', 'blogs/blog.css']) {
+  for (const file of sheets) {
     /* Comments only. Braces inside a comment are prose; braces inside a
        quoted value are vanishingly rare in this codebase and stripping
        quotes naively breaks on the apostrophe in an English comment. */

@@ -2,7 +2,21 @@
    complexity.js — interactive figures for the complexity article.
    Extracted from complexity.html so the page's Content-Security-Policy
    can forbid inline script.
+
+   No colour is written down in this file. Every one is read from a CSS
+   custom property at draw time, which is what lets the chart follow the
+   site's light/dark theme: the SVG is regenerated as a string, so a
+   hardcoded #0f1116 plot background stayed dark on a sand page no matter
+   what the stylesheet said. The curve colours live in complexity.css
+   next to the note explaining how they were validated.
    ============================================================ */
+
+/* Read once per draw rather than once per file: the values change when
+   the theme does. */
+function token(name, fallback) {
+  const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  return value || fallback;
+}
 
 // ============ TAB SWITCHING ============
 const tabs = document.querySelectorAll('#tabs button');
@@ -18,16 +32,22 @@ tabs.forEach(btn => {
 });
 
 // ============ GROWTH EXPLORER ============
+/* `slot` names the CSS custom property this curve is painted in. The
+   eight were generated and validated as one ordered set, so a curve keeps
+   its slot even when its neighbours are toggled off — colour follows the
+   series, never its rank among the visible ones. */
 const funcs = [
-  {name: 'O(1)',        f: _n => 1,            color: '#6ee7a1', on: true},
-  {name: 'O(log n)',    f: n => Math.log2(n+1),color: '#7cc4ff', on: true},
-  {name: 'O(√n)',       f: n => Math.sqrt(n),  color: '#b78dff', on: false},
-  {name: 'O(n)',        f: n => n,             color: '#ffb86b', on: true},
-  {name: 'O(n log n)',  f: n => n*Math.log2(n+1),color: '#ff92c4', on: true},
-  {name: 'O(n²)',       f: n => n*n,           color: '#ff8080', on: true},
-  {name: 'O(n³)',       f: n => n*n*n,         color: '#ff5555', on: false},
-  {name: 'O(2ⁿ)',       f: n => Math.pow(2,n), color: '#e0d000', on: false},
+  {name: 'O(1)',        f: _n => 1,              slot: '--cx-c1', on: true},
+  {name: 'O(log n)',    f: n => Math.log2(n+1),  slot: '--cx-c2', on: true},
+  {name: 'O(√n)',       f: n => Math.sqrt(n),    slot: '--cx-c3', on: false},
+  {name: 'O(n)',        f: n => n,               slot: '--cx-c4', on: true},
+  {name: 'O(n log n)',  f: n => n*Math.log2(n+1),slot: '--cx-c5', on: true},
+  {name: 'O(n²)',       f: n => n*n,             slot: '--cx-c6', on: true},
+  {name: 'O(n³)',       f: n => n*n*n,           slot: '--cx-c7', on: false},
+  {name: 'O(2ⁿ)',       f: n => Math.pow(2,n),   slot: '--cx-c8', on: false},
 ];
+
+const curveColour = fn => token(fn.slot, '#c9a84c');
 
 const chart = document.getElementById('chart');
 const controls = document.getElementById('controls');
@@ -37,11 +57,13 @@ const nVal = document.getElementById('nVal');
 function renderControls() {
   controls.innerHTML = '';
   funcs.forEach((f, i) => {
+    const colour = curveColour(f);
     const el = document.createElement('span');
     el.className = 'toggle' + (f.on ? ' on' : '');
-    el.style.background = f.on ? f.color : 'var(--panel)';
-    el.style.color = f.on ? 'var(--bg)' : 'var(--muted)';
-    el.innerHTML = '<span class="dot" style="background:' + f.color + '"></span>' + f.name;
+    /* Only the fill is set here — the label colour that has to invert
+       against it is .toggle.on's job, so it stays theme-aware. */
+    el.style.background = f.on ? colour : '';
+    el.innerHTML = '<span class="dot" style="background:' + colour + '"></span>' + f.name;
     el.addEventListener('click', () => {
       funcs[i].on = !funcs[i].on;
       renderControls();
@@ -79,19 +101,28 @@ function drawChart() {
     return PAD_T + plotH - (y / ymax) * plotH;
   }
 
+  /* The surface, the grid and the ink all come from the theme. The grid
+     is drawn from the border token rather than a mid-grey so it stays
+     recessive on both a near-black and a sand page. */
+  const surface = token('--bg-secondary', '#0a0a0a');
+  const gridInk = token('--border-subtle', 'rgba(201,168,76,0.1)');
+  const tickInk = token('--text-muted', '#807b72');
+  const axisInk = token('--text-secondary', '#9a9590');
+  const mono = token('--font-body', 'ui-monospace, monospace');
+
   let svg = '';
   // Background grid
-  svg += '<rect x="'+PAD_L+'" y="'+PAD_T+'" width="'+plotW+'" height="'+plotH+'" fill="#0f1116" stroke="#262a35"/>';
+  svg += '<rect x="'+PAD_L+'" y="'+PAD_T+'" width="'+plotW+'" height="'+plotH+'" fill="'+surface+'" stroke="'+gridInk+'"/>';
   // Gridlines
   for (let i = 0; i <= 5; i++) {
     const y = PAD_T + (plotH * i / 5);
-    svg += '<line x1="'+PAD_L+'" x2="'+(PAD_L+plotW)+'" y1="'+y+'" y2="'+y+'" stroke="#262a35" stroke-dasharray="2,4"/>';
+    svg += '<line x1="'+PAD_L+'" x2="'+(PAD_L+plotW)+'" y1="'+y+'" y2="'+y+'" stroke="'+gridInk+'" stroke-dasharray="2,4"/>';
   }
   for (let i = 0; i <= 5; i++) {
     const x = PAD_L + (plotW * i / 5);
-    svg += '<line x1="'+x+'" x2="'+x+'" y1="'+PAD_T+'" y2="'+(PAD_T+plotH)+'" stroke="#262a35" stroke-dasharray="2,4"/>';
+    svg += '<line x1="'+x+'" x2="'+x+'" y1="'+PAD_T+'" y2="'+(PAD_T+plotH)+'" stroke="'+gridInk+'" stroke-dasharray="2,4"/>';
     const tickValue = Math.round(maxN * i / 5);
-    svg += '<text x="'+x+'" y="'+(H-PAD_B+18)+'" fill="#9aa0ac" font-size="11" text-anchor="middle" font-family="ui-monospace,monospace">'+tickValue+'</text>';
+    svg += '<text x="'+x+'" y="'+(H-PAD_B+18)+'" fill="'+tickInk+'" font-size="11" text-anchor="middle" font-family="'+mono+'">'+tickValue+'</text>';
   }
   // Y-axis labels
   for (let i = 0; i <= 5; i++) {
@@ -109,12 +140,12 @@ function drawChart() {
     else if (val >= 1e3) label = (val/1e3).toFixed(1) + 'K';
     else if (val >= 1) label = Math.round(val);
     else label = val.toFixed(2);
-    svg += '<text x="'+(PAD_L-8)+'" y="'+(y+4)+'" fill="#9aa0ac" font-size="11" text-anchor="end" font-family="ui-monospace,monospace">'+label+'</text>';
+    svg += '<text x="'+(PAD_L-8)+'" y="'+(y+4)+'" fill="'+tickInk+'" font-size="11" text-anchor="end" font-family="'+mono+'">'+label+'</text>';
   }
 
   // Axis labels
-  svg += '<text x="'+(PAD_L+plotW/2)+'" y="'+(H-5)+'" fill="#e6e8ee" font-size="12" text-anchor="middle">input size n</text>';
-  svg += '<text x="15" y="'+(PAD_T+plotH/2)+'" fill="#e6e8ee" font-size="12" text-anchor="middle" transform="rotate(-90 15 '+(PAD_T+plotH/2)+')">operations</text>';
+  svg += '<text x="'+(PAD_L+plotW/2)+'" y="'+(H-5)+'" fill="'+axisInk+'" font-size="12" text-anchor="middle">input size n</text>';
+  svg += '<text x="15" y="'+(PAD_T+plotH/2)+'" fill="'+axisInk+'" font-size="12" text-anchor="middle" transform="rotate(-90 15 '+(PAD_T+plotH/2)+')">operations</text>';
 
   // Draw each curve
   active.forEach(fn => {
@@ -130,7 +161,7 @@ function drawChart() {
         first = false;
       }
     }
-    svg += '<path d="'+path+'" fill="none" stroke="'+fn.color+'" stroke-width="2.2" stroke-linejoin="round"/>';
+    svg += '<path d="'+path+'" fill="none" stroke="'+curveColour(fn)+'" stroke-width="2" stroke-linejoin="round"/>';
   });
 
   chart.innerHTML = svg;
@@ -157,7 +188,7 @@ function computeMT() {
   const d = parseFloat(mtD.value);
 
   if (!isFinite(a) || !isFinite(b) || !isFinite(d) || a < 1 || b <= 1) {
-    mtResult.innerHTML = '<div class="verdict" style="color:var(--warn)">Enter valid values (a ≥ 1, b > 1).</div>';
+    mtResult.innerHTML = '<div class="verdict invalid">Enter valid values (a ≥ 1, b > 1).</div>';
     return;
   }
 
@@ -194,7 +225,7 @@ function computeMT() {
     '<div class="verdict">T(n) = ' + solution + '</div>' +
     '<div>a = ' + a + ', b = ' + b + ', so <span class="case">c* = log_' + b + '(' + a + ') ≈ ' + cStar.toFixed(3) + '</span></div>' +
     '<div>f(n) = Θ(n^' + d + '), comparing d = ' + d + ' with c* ≈ ' + cStar.toFixed(3) + '</div>' +
-    '<div style="margin-top:8px;color:var(--muted)">→ <strong style="color:var(--accent-2)">Case ' + caseNum + '</strong>: ' + explanation + '</div>';
+    '<div class="mt-note">→ <strong class="case">Case ' + caseNum + '</strong>: ' + explanation + '</div>';
 }
 
 [mtA, mtB, mtD].forEach(el => el.addEventListener('input', computeMT));
@@ -205,3 +236,13 @@ computeMT();
    'unsafe-inline' — an inline handler is silently blocked by CSP. */
 const printBtn = document.getElementById('print-sheet');
 if (printBtn) printBtn.addEventListener('click', () => window.print());
+
+/* The chart is an SVG string, so it does not repaint itself when the
+   theme changes the way real elements do — it has to be redrawn. theme.js
+   flips data-theme on <html> and dispatches nothing, so this watches the
+   attribute. It runs for the life of the page, which is the whole point;
+   there is nothing to disconnect it from. */
+new MutationObserver(() => {
+  renderControls();
+  drawChart();
+}).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });

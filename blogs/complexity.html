@@ -24,393 +24,13 @@
 <link rel="canonical" href="https://thehallucinatedlab.space/blogs/complexity.html">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
   <link rel="apple-touch-icon" href="../assets/images/favicon-180.png">
-<style>
-  :root {
-    --bg: #0f1116;
-    --panel: #171a22;
-    --panel-2: #1e222c;
-    --border: #262a35;
-    --text: #e6e8ee;
-    --muted: #9aa0ac;
-    --accent: #7cc4ff;
-    --accent-2: #b78dff;
-    --good: #6ee7a1;
-    --warn: #ffb86b;
-    --bad: #ff8080;
-    --mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, Menlo, monospace;
-    --serif: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-  }
-  * { box-sizing: border-box; }
-  html, body {
-    margin: 0; padding: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--serif);
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-  }
-  .wrap {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 40px 24px 80px;
-  }
-  header.hero {
-    padding: 24px 0 12px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-  }
-  h1 {
-    font-size: 32px;
-    margin: 0 0 6px;
-    letter-spacing: -0.02em;
-  }
-  .sub {
-    color: var(--muted);
-    font-size: 15px;
-  }
-  nav.tabs {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin: 24px 0 28px;
-    padding: 6px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-  }
-  nav.tabs button {
-    flex: 1 1 auto;
-    background: transparent;
-    color: var(--muted);
-    border: none;
-    padding: 10px 14px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    border-radius: 8px;
-    transition: all 0.15s ease;
-  }
-  nav.tabs button:hover { color: var(--text); }
-  nav.tabs button.active {
-    background: var(--panel-2);
-    color: var(--accent);
-    box-shadow: inset 0 0 0 1px var(--border);
-  }
-  .panel {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px;
-    margin-bottom: 20px;
-  }
-  section { display: none; }
-  section.active { display: block; }
-  h2 {
-    font-size: 22px;
-    margin: 0 0 4px;
-    letter-spacing: -0.01em;
-    color: var(--accent);
-  }
-  h3 {
-    font-size: 17px;
-    margin: 26px 0 8px;
-    color: var(--accent-2);
-  }
-  h4 {
-    font-size: 15px;
-    margin: 18px 0 6px;
-    color: var(--text);
-  }
-  p { margin: 8px 0 14px; }
-  code, .mono {
-    font-family: var(--mono);
-    font-size: 0.92em;
-  }
-  code {
-    background: var(--panel-2);
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: var(--warn);
-  }
-  pre {
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    padding: 14px 16px;
-    border-radius: 8px;
-    overflow-x: auto;
-    margin: 12px 0;
-    font-family: var(--mono);
-    font-size: 13px;
-    line-height: 1.55;
-    color: #e6e8ee;
-  }
-  pre .kw { color: #ff92c4; }
-  pre .fn { color: #7cc4ff; }
-  pre .cm { color: #6d7383; font-style: italic; }
-  pre .n  { color: #ffb86b; }
-  .callout {
-    background: rgba(124, 196, 255, 0.06);
-    border-left: 3px solid var(--accent);
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin: 14px 0;
-    font-size: 14.5px;
-  }
-  .callout.warn {
-    background: rgba(255, 184, 107, 0.06);
-    border-left-color: var(--warn);
-  }
-  .callout.good {
-    background: rgba(110, 231, 161, 0.06);
-    border-left-color: var(--good);
-  }
-  .callout strong { color: var(--accent); }
-  .callout.warn strong { color: var(--warn); }
-  .callout.good strong { color: var(--good); }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 14px 0;
-    font-size: 14px;
-  }
-  th, td {
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    text-align: left;
-  }
-  th {
-    background: var(--panel-2);
-    font-weight: 600;
-    color: var(--accent);
-  }
-  td.mono, th.mono { font-family: var(--mono); font-size: 13px; }
-  .grid-2 {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  @media (max-width: 700px) {
-    .grid-2 { grid-template-columns: 1fr; }
-    h1 { font-size: 26px; }
-  }
-  .page-footer {
-    max-width: 1080px;
-    margin: 0 auto;
-    padding: 24px;
-    border-top: 1px solid var(--border);
-    color: var(--muted);
-    font-size: 13px;
-    text-align: center;
-  }
-  .page-footer p { margin: 4px 0; }
-  .page-footer a { color: var(--accent); text-decoration: none; }
-  .page-footer a:hover { text-decoration: underline; }
-
-  /* Growth explorer */
-  .chart-wrap {
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 16px;
-    margin: 16px 0;
-  }
-  svg.chart {
-    width: 100%;
-    height: 420px;
-    display: block;
-  }
-  .controls {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 14px;
-  }
-  .toggle {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    font-size: 13px;
-    font-family: var(--mono);
-    cursor: pointer;
-    transition: all 0.15s;
-    user-select: none;
-  }
-  .toggle:hover { border-color: var(--muted); }
-  .toggle.on { color: var(--bg); font-weight: 600; }
-  .toggle .dot {
-    width: 10px; height: 10px;
-    border-radius: 50%;
-    background: currentColor;
-    display: inline-block;
-  }
-  .slider-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-top: 14px;
-    font-size: 14px;
-  }
-  .slider-row input[type=range] {
-    flex: 1;
-    accent-color: var(--accent);
-  }
-  .slider-row .val {
-    font-family: var(--mono);
-    color: var(--accent);
-    min-width: 60px;
-    text-align: right;
-  }
-  /* Example cards */
-  .example {
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 0;
-    margin: 14px 0;
-    overflow: hidden;
-  }
-  .example summary {
-    padding: 14px 18px;
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-weight: 500;
-    user-select: none;
-  }
-  .example summary::-webkit-details-marker { display: none; }
-  .example summary::after {
-    content: "▸";
-    color: var(--muted);
-    transition: transform 0.2s;
-  }
-  .example[open] summary::after { transform: rotate(90deg); }
-  .example summary:hover { background: rgba(255,255,255,0.02); }
-  .example .body { padding: 0 18px 18px; border-top: 1px solid var(--border); }
-  .badge {
-    display: inline-block;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 11px;
-    font-family: var(--mono);
-    font-weight: 600;
-    margin-left: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-  .badge.easy { background: rgba(110, 231, 161, 0.15); color: var(--good); }
-  .badge.med  { background: rgba(255, 184, 107, 0.15); color: var(--warn); }
-  .badge.hard { background: rgba(255, 128, 128, 0.15); color: var(--bad); }
-  .answer {
-    background: rgba(124, 196, 255, 0.06);
-    padding: 10px 14px;
-    border-radius: 6px;
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 14px;
-    color: var(--accent);
-  }
-  /* Master theorem calc */
-  .mt-calc {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin: 16px 0;
-  }
-  @media (max-width: 600px) { .mt-calc { grid-template-columns: 1fr; } }
-  .mt-calc label {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    font-size: 13px;
-    color: var(--muted);
-  }
-  .mt-calc input {
-    background: var(--panel-2);
-    border: 1px solid var(--border);
-    color: var(--text);
-    font-family: var(--mono);
-    font-size: 15px;
-    padding: 10px 12px;
-    border-radius: 8px;
-  }
-  .mt-calc input:focus { outline: none; border-color: var(--accent); }
-  .mt-result {
-    background: var(--panel-2);
-    padding: 16px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    margin-top: 12px;
-    font-family: var(--mono);
-    font-size: 14px;
-  }
-  .mt-result .verdict {
-    color: var(--good);
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-  .mt-result .case { color: var(--accent-2); }
-  /* Formula sheet */
-  .sheet {
-    background: linear-gradient(135deg, var(--panel-2), var(--panel));
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    margin: 14px 0;
-  }
-  .sheet h3,
-  .sheet h4 {
-    margin: 0 0 6px;
-    color: var(--accent);
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .sheet ul { padding-left: 20px; margin: 8px 0; }
-  .sheet li { margin: 4px 0; font-size: 14px; }
-  .print-btn {
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-family: inherit;
-    font-weight: 600;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  .print-btn:hover { filter: brightness(1.1); }
-  @media print {
-    body { background: white; color: black; }
-    nav.tabs, .print-btn { display: none; }
-    section { display: block !important; page-break-after: always; }
-    .panel { border-color: #ccc; background: white; }
-  }
-
-  /* ============ MOBILE ============ */
-  @media (max-width: 700px) {
-    .wrap { padding: 24px 14px 60px; }
-    .panel { padding: 18px 14px; }
-    h1 { font-size: 24px; }
-    h2 { font-size: 19px; }
-    nav.tabs button { padding: 9px 8px; font-size: 12.5px; flex: 1 1 45%; }
-    /* Wide tables scroll inside their own box instead of breaking the page */
-    table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-    svg.chart { height: 300px; }
-    .example summary { padding: 12px 14px; font-size: 14px; }
-    .example .body { padding: 0 14px 14px; }
-    pre { font-size: 12px; padding: 12px; }
-    .slider-row { flex-wrap: wrap; }
-    .sheet { padding: 14px; }
-  }
-</style>
+  <link rel="preload" href="../assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="../assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="../pages.css">
+  <link rel="stylesheet" href="complexity.css">
+  <script src="../theme.js"></script>
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -471,19 +91,61 @@
   </script>
 </head>
 <body>
-<main class="wrap" id="main-content">
 
-<header class="hero">
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="../" class="nav-logo">
+        <picture>
+          <source srcset="../assets/images/logo-72.avif" type="image/avif">
+          <source srcset="../assets/images/logo-72.webp" type="image/webp">
+          <img src="../assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../">Home</a></li>
+        <li><a href="../tools.html">Tools</a></li>
+        <li><a href="../pipelines.html">Pipelines</a></li>
+        <li><a href="../interface.html">Assistant</a></li>
+        <li><a href="../solutions.html">Solutions</a></li>
+        <li><a href="../artifacts.html" class="active">Media</a></li>
+        <li><a href="../sitemap.html">Sitemap</a></li>
+        <li data-status="dev"><a href="../slm.html">SLM</a></li>
+        <li data-status="dev"><a href="../certification.html">Certification</a></li>
+        <li data-status="dev"><a href="../consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+<main class="page-main complexity-page" id="main-content">
+<div class="wrap">
+
+<nav class="page-breadcrumb" aria-label="Breadcrumb">
+  <a href="../artifacts.html">Artifacts</a>
+  <span aria-hidden="true">/</span>
+  <span>Time &amp; Space Complexity</span>
+</nav>
+
+<header class="complexity-hero">
   <h1>Time &amp; Space Complexity</h1>
   <div class="sub">A first-principles teaching session — theory, worked examples, and a reference sheet you'll actually use.</div>
 </header>
 
-<nav class="tabs" id="tabs">
-  <button data-tab="theory" class="active">1. Theory</button>
-  <button data-tab="growth">2. Growth Explorer</button>
-  <button data-tab="examples">3. Worked Examples</button>
-  <button data-tab="master">4. Master Theorem</button>
-  <button data-tab="sheet">5. Formula Sheet</button>
+<nav class="complexity-tabs" id="tabs" aria-label="Sections of this session">
+  <button type="button" class="filter-btn active" data-tab="theory">1. Theory</button>
+  <button type="button" class="filter-btn" data-tab="growth">2. Growth Explorer</button>
+  <button type="button" class="filter-btn" data-tab="examples">3. Worked Examples</button>
+  <button type="button" class="filter-btn" data-tab="master">4. Master Theorem</button>
+  <button type="button" class="filter-btn" data-tab="sheet">5. Formula Sheet</button>
 </nav>
 
 <!-- ============ THEORY ============ -->
@@ -920,7 +582,7 @@
 <div class="panel">
   <h2>5. Formula Sheet</h2>
   <p style="margin-bottom:20px;">
-    <button class="print-btn" id="print-sheet" type="button">🖨 Print / Save as PDF</button>
+    <button class="submit-btn" id="print-sheet" type="button">🖨 Print / Save as PDF</button>
   </p>
 
   <div class="sheet">
@@ -1011,13 +673,14 @@
 </div>
 </section>
 
+</div>
 </main>
 
-  <footer class="page-footer">
-    <p>© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>.</p>
-    <p><a href="../sitemap.html">Sitemap</a> · <a href="../blogs.html">All blogs</a></p>
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine. <a href="../sitemap.html">Sitemap</a> · <a href="../artifacts.html">All artifacts</a></p>
   </footer>
 
+  <script src="../script.js" defer></script>
   <script src="complexity.js" defer></script>
 
 </body>

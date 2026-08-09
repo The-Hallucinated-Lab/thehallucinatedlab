@@ -72,6 +72,10 @@ thehallucinatedlab/
 ├── script.js             # Particles, navbar, scroll reveals, typing effect
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── blogs.js           # Note data store, the tag filing rule, board search, note form
+├── blogs/
+│   ├── blog.css              # Shared article layout — hero, TOC, prose, callouts
+│   ├── complexity.css        # The complexity session's widgets, on site tokens
+│   └── ai-orchestration.css  # That article's widgets, on site tokens
 ├── interface.js          # Assistant chat engine (intent parser + Ollama)
 ├── convert.html  # Convert — the first THL tool
 ├── converters.html       # Converters — ~40 format conversions, all client-side
