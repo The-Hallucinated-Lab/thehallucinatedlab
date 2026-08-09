@@ -6,15 +6,15 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Blogs — The Hallucinated Lab</title>
-  <meta name="description" content="Blogs from The Hallucinated Lab — featured pieces, the full searchable archive, and the community spotlight where readers publish their own work.">
+  <meta name="description" content="A note board of the lab's writing, filed under Artificial Intelligence or Software Engineering. Five notes on one tag promote it to a subsection.">
   <meta property="og:title" content="Blogs — The Hallucinated Lab">
-  <meta property="og:description" content="Featured pieces, the full archive, and community-submitted writing.">
+  <meta property="og:description" content="A note board: two sections, and tags that promote themselves to subsections once five notes carry them.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/blogs.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/blogs.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Blogs — The Hallucinated Lab">
-  <meta name="twitter:description" content="Featured pieces, the full archive, and community-submitted writing.">
+  <meta name="twitter:description" content="A note board: two sections, and tags that promote themselves to subsections once five notes carry them.">
   <meta property="og:site_name" content="The Hallucinated Lab">
   <meta property="og:locale" content="en_US">
   <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
@@ -63,7 +63,7 @@
       "@id": "https://thehallucinatedlab.space/blogs.html#webpage",
       "url": "https://thehallucinatedlab.space/blogs.html",
       "name": "Blogs - The Hallucinated Lab",
-      "description": "Featured pieces, the full searchable archive, and the community spotlight where readers publish their own work.",
+      "description": "A note board of the lab's writing, split into Artificial Intelligence and Software Engineering, where a tag carried by five notes becomes a subsection.",
       "isPartOf": {
         "@id": "https://thehallucinatedlab.space/#website"
       },
@@ -71,9 +71,21 @@
         "@id": "https://thehallucinatedlab.space/#organization"
       },
       "inLanguage": "en",
+      "hasPart": [
+        {
+          "@type": "WebPageElement",
+          "name": "Artificial Intelligence",
+          "url": "https://thehallucinatedlab.space/blogs.html#blogs-artificial-intelligence"
+        },
+        {
+          "@type": "WebPageElement",
+          "name": "Software Engineering",
+          "url": "https://thehallucinatedlab.space/blogs.html#blogs-software-engineering"
+        }
+      ],
       "mainEntity": {
         "@type": "ItemList",
-        "name": "Published blogs",
+        "name": "Published notes",
         "numberOfItems": 1,
         "itemListElement": [
           {
@@ -136,167 +148,187 @@
       </nav>
       <span class="section-label">The Written Work</span>
       <h1 class="page-title">Blogs</h1>
-      <p class="page-subtitle">Long-form writing on AI, privacy, and the tools we build. Pick a card and it opens as a full reading experience.</p>
+      <p class="page-subtitle">A board, not a feed. Every piece is a note with a section and its own tags, and the board files it from there — pick one and it opens as a full reading experience.</p>
       <nav class="page-jump" aria-label="Sections on this page">
-        <a href="#blogs-featured">Featured</a>
-        <a href="#blogs-archive">Archive</a>
-        <a href="#blogs-community">Community Spotlight</a>
+        <a href="#blogs-artificial-intelligence">Artificial Intelligence</a>
+        <a href="#blogs-software-engineering">Software Engineering</a>
+        <a href="#blogs-submit">Add a note</a>
       </nav>
     </section>
 
-    <!-- ====== SECTION 1: FEATURED ====== -->
-    <section class="media-section" id="blogs-featured">
+    <!-- ====== BOARD TOOLBAR ======
+         Search and the tag filter narrow what is on the board. Neither
+         touches the filing rule: subsections are a property of the
+         archive, not of the search box. -->
+    <div class="board-toolbar-wrap">
       <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Pinned</span>
-          <h2 class="section-title">Featured</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">The pieces we've pinned — either because they're the best entry point into what we do, or because we're still thinking about them months later.</p>
-        </div>
-        <!-- Pre-rendered so crawlers that do not execute JavaScript still see
-             the blogs. blogs.js re-renders this identically on load and
-             then owns it. Keep the two in sync when ARTICLES changes. -->
-        <div class="featured-grid" id="featured-grid">
-          <a href="blogs/sample-blog.html" class="featured-card fade-in fade-in-delay-1" id="featured-local-first-ai" style="--featured-accent: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
-            <div class="featured-card-body">
-              <div class="featured-card-top">
-                <span class="featured-category">AI &amp; ML</span>
-                <span class="featured-badge">
-                  <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-                  Featured
-                </span>
-              </div>
-              <h3 class="featured-card-title">The Future of Local-First AI</h3>
-              <p class="featured-card-excerpt">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
-              <div class="featured-card-meta">
-                <span class="featured-author">Pratyush</span>
-                <span class="featured-date">Jul 10, 2026</span>
-              </div>
-            </div>
-            <div class="featured-card-arrow" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </div>
-          </a>
-        </div>
-      </div>
-    </section>
-
-    <!-- ====== SECTION 2: THE ARCHIVE ====== -->
-    <section class="media-section media-section-alt" id="blogs-archive">
-      <div class="container">
-        <div class="section-header fade-in">
-          <span class="section-label">Everything We've Published</span>
-          <h2 class="section-title">Archive</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">Every article, newest first. Search by title, author, or topic — or filter down to a single category.</p>
-        </div>
-
-        <!-- Filters -->
-        <div class="archive-controls fade-in" id="archive-controls">
-          <div class="archive-search-wrap">
+        <p class="board-rule">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M5.5 7A1.5 1.5 0 1 1 7 5.5 1.5 1.5 0 0 1 5.5 7m11.91 4.09-5.5-5.5A2 2 0 0 0 10.5 5H4a1 1 0 0 0-1 1v6.5a2 2 0 0 0 .59 1.41l5.5 5.5a2 2 0 0 0 2.82 0l5.5-5.5a2 2 0 0 0 0-2.82"/></svg>
+          <span><strong>How the board is organised.</strong> A note carries one section and up to five tags. When five notes in the same section share a tag, that tag is promoted to a subsection and every note carrying it moves under it. Everything else stays unfiled.</span>
+        </p>
+        <div class="board-toolbar">
+          <div class="board-search-wrap">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-            <label for="archive-search" class="sr-only">Search blogs</label>
-            <input type="text" class="archive-search" id="archive-search" placeholder="Search blogs..." autocomplete="off">
+            <label for="board-search" class="sr-only">Search notes</label>
+            <input type="text" class="board-search" id="board-search" placeholder="Search notes, tags, authors..." autocomplete="off">
           </div>
-          <div class="archive-filters" id="archive-filters">
-            <button class="filter-btn active" data-filter="all" type="button">All</button>
-            <button class="filter-btn" data-filter="AI &amp; ML" type="button">AI &amp; ML</button>
-            <button class="filter-btn" data-filter="Open Source" type="button">Open Source</button>
-            <button class="filter-btn" data-filter="Privacy &amp; Security" type="button">Privacy &amp; Security</button>
-            <button class="filter-btn" data-filter="Dev Tools" type="button">Dev Tools</button>
+          <!-- Pre-rendered so the chips exist without JavaScript; blogs.js
+               re-renders this identically on load and then owns it. -->
+          <div class="board-filters" id="board-filters">
+            <button class="filter-btn active" data-tag="all" type="button">All notes</button>
+            <button class="filter-btn" data-tag="inference" type="button">#inference</button>
+            <button class="filter-btn" data-tag="local-first" type="button">#local-first</button>
+            <button class="filter-btn" data-tag="privacy" type="button">#privacy</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== SECTION: ARTIFICIAL INTELLIGENCE ======
+         Pre-rendered so crawlers that do not execute JavaScript still
+         see every published note. blogs.js re-renders this identically
+         on load and then owns it. Keep the two in sync when NOTES
+         changes. -->
+    <section class="media-section" id="blogs-artificial-intelligence">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Section</span>
+          <h2 class="section-title">Artificial Intelligence</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Notes on models, retrieval, orchestration, and what running them locally changes. Tags on the notes here decide the subsections: a tag reaching five notes becomes one of its own.</p>
         </div>
 
-        <div class="archive-grid" id="archive-grid">
-          <a href="blogs/sample-blog.html" class="archive-card fade-in" id="archive-local-first-ai" style="--archive-accent: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
-            <div class="archive-card-body">
-              <span class="archive-card-category">AI &amp; ML</span>
-              <h3 class="archive-card-title">The Future of Local-First AI</h3>
-              <p class="archive-card-excerpt">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
-              <div class="archive-card-meta">
-                <span>Pratyush</span>
-                <span class="archive-card-dot">·</span>
-                <span>Jul 10, 2026</span>
-              </div>
+        <ul class="board-ledger" id="ledger-artificial-intelligence" aria-label="Tags in Artificial Intelligence and how close each is to becoming a subsection">
+          <li class="ledger-tag">
+            <span class="ledger-tag-name">#inference</span>
+            <span class="ledger-tag-count">1/5</span>
+          </li>
+          <li class="ledger-tag">
+            <span class="ledger-tag-name">#local-first</span>
+            <span class="ledger-tag-count">1/5</span>
+          </li>
+          <li class="ledger-tag">
+            <span class="ledger-tag-name">#privacy</span>
+            <span class="ledger-tag-count">1/5</span>
+          </li>
+        </ul>
+
+        <div class="board-groups" id="groups-artificial-intelligence">
+          <section class="note-group note-group-loose" aria-labelledby="group-artificial-intelligence-loose">
+            <div class="note-group-head">
+              <h3 class="note-group-title" id="group-artificial-intelligence-loose">All notes</h3>
+              <span class="note-group-count">1 note</span>
             </div>
-          </a>
+            <div class="note-stack">
+              <a href="blogs/sample-blog.html" class="note-card fade-in" id="note-local-first-ai" style="--note-accent: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);">
+                <div class="note-card-chips">
+                  <span class="note-chip note-chip-pinned">
+                    <svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                    Pinned
+                  </span>
+                </div>
+                <h4 class="note-card-title">The Future of Local-First AI</h4>
+                <p class="note-card-text">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
+                <ul class="note-tags">
+                  <li class="note-tag">#local-first</li>
+                  <li class="note-tag">#privacy</li>
+                  <li class="note-tag">#inference</li>
+                </ul>
+                <div class="note-card-foot">
+                  <span class="note-author">Pratyush</span>
+                  <span class="note-dot" aria-hidden="true">·</span>
+                  <span>Jul 10, 2026</span>
+                  <span class="note-open" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
+                  </span>
+                </div>
+              </a>
+            </div>
+          </section>
         </div>
-        <div class="archive-empty" id="archive-empty" style="display:none;">
-          <p>No blogs match your search.</p>
-        </div>
+        <p class="board-empty" id="empty-artificial-intelligence" hidden></p>
       </div>
     </section>
 
-    <!-- ====== SECTION 3: COMMUNITY SPOTLIGHT ====== -->
-    <section class="media-section" id="blogs-community">
+    <!-- ====== SECTION: SOFTWARE ENGINEERING ====== -->
+    <section class="media-section media-section-alt" id="blogs-software-engineering">
       <div class="container">
         <div class="section-header fade-in">
-          <span class="section-label">From Our Readers</span>
-          <h2 class="section-title">Community Spotlight</h2>
+          <span class="section-label">Section</span>
+          <h2 class="section-title">Software Engineering</h2>
           <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">Writing from everyone who isn't us. Post a finished piece, a rough draft, or an argument you want tested.</p>
-        </div>
-        <div class="community-grid" id="community-grid">
-          <!-- JS renders community submissions here -->
-        </div>
-        <div class="community-empty" id="community-empty">
-          <div class="community-empty-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12zM11 5h2v4h-2zm0 6h2v2h-2z"/></svg>
-          </div>
-          <p>No community posts yet. Be the first to share your ideas below.</p>
+          <p class="section-intro">Notes on the craft around the models — algorithms, tooling, performance, and the browser as a runtime. The same rule applies here: five notes sharing a tag promote it to a subsection.</p>
         </div>
 
-        <!-- Submission form -->
+        <ul class="board-ledger" id="ledger-software-engineering" aria-label="Tags in Software Engineering and how close each is to becoming a subsection">
+          <li class="ledger-tag ledger-tag-none">No tags in this section yet.</li>
+        </ul>
+
+        <div class="board-groups" id="groups-software-engineering"></div>
+        <p class="board-empty" id="empty-software-engineering">Nothing filed under Software Engineering yet. Write the first note below — the tag you give it is what files it.</p>
+      </div>
+    </section>
+
+    <!-- ====== SECTION: ADD A NOTE ====== -->
+    <section class="media-section" id="blogs-add">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">Write One</span>
+          <h2 class="section-title">Add a note</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">Your note goes onto the board in the section you pick, tagged the way you tag it — and it counts toward promoting that tag to a subsection. It is stored in this browser and nowhere else.</p>
+        </div>
+
         <div class="submit-wrapper submit-wrapper-compact fade-in" id="blogs-submit">
           <div class="submit-head">
-            <h3 class="submit-head-title">Upload your article</h3>
-            <p class="submit-intro">Your submission appears in the Spotlight above. Outstanding pieces get published as full interactive blogs with your byline on them.</p>
+            <h3 class="submit-head-title">New note</h3>
+            <p class="submit-intro">Outstanding pieces get published as full interactive blogs with your byline on them.</p>
           </div>
-          <form class="submit-form" id="submit-form" novalidate>
+          <form class="submit-form" id="note-form" novalidate>
             <div class="form-row">
               <div class="form-group">
-                <label for="submit-name" class="form-label">Name <span class="form-required">*</span></label>
-                <input type="text" id="submit-name" class="form-input" placeholder="Your name" required>
+                <label for="note-name" class="form-label">Name <span class="form-required">*</span></label>
+                <input type="text" id="note-name" class="form-input" placeholder="Your name" required>
               </div>
               <div class="form-group">
-                <label for="submit-email" class="form-label">Email <span class="form-optional">(optional)</span></label>
-                <input type="email" id="submit-email" class="form-input" placeholder="your@email.com">
+                <label for="note-email" class="form-label">Email <span class="form-optional">(optional)</span></label>
+                <input type="email" id="note-email" class="form-input" placeholder="your@email.com">
               </div>
             </div>
             <div class="form-row">
               <div class="form-group">
-                <label for="submit-title" class="form-label">Title <span class="form-required">*</span></label>
-                <input type="text" id="submit-title" class="form-input" placeholder="Blog title or idea" required>
+                <label for="note-title" class="form-label">Title <span class="form-required">*</span></label>
+                <input type="text" id="note-title" class="form-input" placeholder="Note title or idea" required>
               </div>
               <div class="form-group">
-                <label for="submit-category" class="form-label">Category</label>
-                <select id="submit-category" class="form-select">
-                  <option value="General">General</option>
-                  <option value="AI &amp; ML">AI &amp; ML</option>
-                  <option value="Open Source">Open Source</option>
-                  <option value="Privacy &amp; Security">Privacy &amp; Security</option>
-                  <option value="Dev Tools">Dev Tools</option>
-                  <option value="Research">Research</option>
-                  <option value="Other">Other</option>
+                <label for="note-section" class="form-label">Section <span class="form-required">*</span></label>
+                <select id="note-section" class="form-select">
+                  <option value="artificial-intelligence">Artificial Intelligence</option>
+                  <option value="software-engineering">Software Engineering</option>
                 </select>
               </div>
             </div>
             <div class="form-group">
-              <label for="submit-body" class="form-label">Your Piece <span class="form-required">*</span></label>
-              <textarea id="submit-body" class="form-textarea" placeholder="Write your article, idea, pitch, or whatever's on your mind..." rows="8" required></textarea>
+              <label for="note-tags" class="form-label">Tags <span class="form-required">*</span></label>
+              <input type="text" id="note-tags" class="form-input" placeholder="rag, agents, local-first" autocomplete="off" required>
+              <p class="form-hint">Up to five, comma separated. Tags are what file the note — the fifth note in a section carrying the same tag turns it into a subsection.</p>
+            </div>
+            <div class="form-group">
+              <label for="note-body" class="form-label">The note <span class="form-required">*</span></label>
+              <textarea id="note-body" class="form-textarea" placeholder="Write your article, idea, pitch, or whatever's on your mind..." rows="8" required></textarea>
             </div>
             <div class="form-actions">
-              <button type="submit" class="submit-btn" id="submit-btn">
+              <button type="submit" class="submit-btn" id="note-submit">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
-                <span>Submit</span>
+                <span>Pin it to the board</span>
               </button>
-              <p class="form-note">Submissions are stored locally in your browser — nothing is uploaded to a server. To have a piece published properly, email it to <a href="mailto:thehallucinatedlab@gmail.com" class="inline-link">thehallucinatedlab@gmail.com</a>.</p>
+              <p class="form-note">Notes are stored in your own browser — nothing is uploaded to a server, and clearing your site data clears them. To have a piece published properly, email it to <a href="mailto:thehallucinatedlab@gmail.com" class="inline-link">thehallucinatedlab@gmail.com</a>.</p>
             </div>
           </form>
-          <!-- Success toast -->
-          <div class="submit-toast" id="submit-toast" aria-live="polite">
+          <!-- Status line for what just happened to the board -->
+          <div class="board-toast" id="board-toast" aria-live="polite">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-            <span>Your piece has been added to the Community Spotlight above.</span>
+            <span class="board-toast-text">Your note has been filed on the board above.</span>
           </div>
         </div>
       </div>
