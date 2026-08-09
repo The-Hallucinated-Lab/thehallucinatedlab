@@ -222,3 +222,13 @@
 - **Verified before linking:** the account was confirmed to exist through the GitHub API (`shashwat-deep`, id 77567664) rather than taken on trust. The earlier entries refused to guess `github.com/deepshashwat` from the display handle, and that caution was warranted — **the display handle and the GitHub username are not the same string**. The card shows `@deepshashwat`, as the founders asked, while the account is `shashwat-deep`. On the other two cards those two are identical, so a reader may reasonably assume the handle is the GitHub name here too; `llms-full.txt` states explicitly that both identifiers are the same person, so an answer engine does not treat them as two people.
 
 ---
+
+- **Timestamp:** 2026-08-09T16:10:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `index.html`, `llms-full.txt`
+- **Intent:** Change Shashwat Deep's display handle from `@deepshashwat` to `@shashwat-deep`, so it matches his GitHub username the way the other two cards do.
+- **Bugs/Gaps Addressed:** Removes the one inconsistency the previous entry flagged. On all three cards the `@handle` line and the GitHub button now name the same identifier, which is what a reader assumes when the other two behave that way.
+- **Context Modifications:** The `.member-handle` line and the `alternateName` on the `#shashwat` Person node. The `llms-full.txt` sentence explaining that the display handle and the GitHub username were different is deleted, because they no longer are — leaving it would have been a comment contradicting the thing it describes.
+
+---

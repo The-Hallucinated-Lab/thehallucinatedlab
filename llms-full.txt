@@ -342,7 +342,7 @@ Purpose: a human-readable index of every page on the site, grouped by section.
 Founders:
 - Pratyush. GitHub https://github.com/06pratyush. LinkedIn https://www.linkedin.com/in/pratyush-p-1226b532b. Third-year B.Tech Computer Science (Data Science) at Manipal University Jaipur. Focus: AI, machine learning, data science, AI video pipelines, blockchain governance.
 - Divyansh Tripathi. GitHub https://github.com/TheQMLGuy. Third-year B.Tech Computer Science (AI and ML) at Manipal University Jaipur. Focus: machine learning, developer experience, CNN visualisation.
-- Shashwat Deep. GitHub https://github.com/shashwat-deep. LinkedIn https://www.linkedin.com/in/shashwat-deep-ab6556240. Third-year B.Tech Computer Science (Data Science) at Manipal University Jaipur. Focus: data science, machine learning, data analysis. Operations team member at Google Developer Groups, Manipal University Jaipur. Note that his display handle on the site is @deepshashwat while his GitHub username is shashwat-deep; they are the same person.
+- Shashwat Deep. GitHub https://github.com/shashwat-deep. LinkedIn https://www.linkedin.com/in/shashwat-deep-ab6556240. Third-year B.Tech Computer Science (Data Science) at Manipal University Jaipur. Focus: data science, machine learning, data analysis. Operations team member at Google Developer Groups, Manipal University Jaipur.
 
 ---
 
