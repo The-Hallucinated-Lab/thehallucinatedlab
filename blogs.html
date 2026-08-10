@@ -271,6 +271,24 @@
     </section>
 
     <!-- ====== SECTION: ADD A NOTE ====== -->
+    <!-- Dev-only. data-status="dev" is what hides it: the rule lives in
+         CSS so nothing flashes before the deferred scripts run, and
+         blogs.js fills #egress-queue without ever checking the mode.
+         A public roadmap is a promise, and an unwritten topic is not
+         one worth making to a reader. -->
+    <section class="media-section" id="blogs-egress" data-status="dev">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">On The Bench</span>
+          <h2 class="section-title">Topic egress</h2>
+          <div class="section-line" aria-hidden="true"></div>
+          <p class="section-intro">The other end of the board. These are topics that exist as an intention and are not written yet, grouped by how far along they are — drafting, queued, then next out. A stage with nothing in it still shows, because an empty queue is worth seeing.</p>
+        </div>
+
+        <div class="board-groups" id="egress-queue"></div>
+      </div>
+    </section>
+
     <section class="media-section" id="blogs-add">
       <div class="container">
         <div class="section-header fade-in">

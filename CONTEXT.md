@@ -288,3 +288,23 @@
 - **Not done:** the `link` page and the Data section stay behind dev mode. The instruction was specifically about hiding dev *tools* from visitors; the two pages were asked for "in dev mode" and nothing said to unhide them, so `noindex`, `DEV_ONLY_PAGES` membership and the dev-marked routes in are all left exactly as they were. Dismantling the page-level split would have been a much larger change to pre-existing machinery on `slm.html` and `genai.html` that nobody requested.
 
 ---
+
+- **Timestamp:** 2026-08-09T23:10:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Claude Code) for 06pratyush
+- **Target Subsystem:** `blogs.js`, `blogs.html`, `test/egress.test.js` (new)
+- **Intent:** Add a dev-only "Topic egress" block to the Blogs page — the queue of topics on their way out, grouped by stage (drafting → queued → next out). The board already renders what has been published; this is the other end of the same pipe.
+- **Bugs/Gaps Addressed:** None. New surface.
+- **Assumption this was built on, because it was not confirmed:** "egress" is not existing vocabulary anywhere in this repository — it was new with the request, and the request was one line. It was read as *an outgoing queue of blog topics*. Two other readings were plausible and were put to 06pratyush, who did not pick: a data-egress notice (documenting that nothing leaves the browser) and an outbound-links block (writing published elsewhere). The queue reading was built rather than blocking on an answer, because the block is dev-gated and self-contained — a wrong guess costs a revert of three files, not a visitor-visible mistake. **If this was the wrong reading, revert this entry's diff; nothing else depends on it.**
+- **Context Modifications:**
+  - `EGRESS_STAGES` and `TOPICS` in the pure block of `blogs.js`, beside `NOTES`, with `resolveStage()`, `topicsInStage()` and `organiseEgress()`. `renderEgress()` fills `#egress-queue` and is called from `renderBoard()`.
+  - `#blogs-egress` section in `blogs.html`, marked `data-status="dev"`, sitting between the Software Engineering section and the Add-a-note form.
+  - `test/egress.test.js` — ten tests. Suite is 370 → 380.
+  - No new CSS. The block reuses `board-groups`, `note-group`, `note-group-head`, `board-ledger` and `ledger-tag`, which the board already ships. One class was invented during the work (`note-group-note`) and removed once it turned out to have no rule behind it — an unstyled class renders as a bare default and looks like a bug.
+- **The design decision worth keeping:** `organiseEgress()` walks `EGRESS_STAGES`, never the topics. Two properties fall out of that and both are tested. A stage with nothing in it still renders, because an empty "Next out" is information rather than an absence. And the column order cannot change when the topic list is reordered — the notes-board tests already record that Map-insertion order once reshuffled the board under the reader, and this avoids the same shape of bug by construction.
+- **A topic can never silently vanish.** An unrecognised `stage` resolves into the *first* stage rather than being filtered out, so a typo in the data appears on the page in the wrong column instead of removing a topic nobody then notices is missing. This was mutation-checked: changing `topicsInStage` to match `topic.stage` directly (dropping unknowns) fails `a topic with a broken stage still appears`, so the test is not passing vacuously.
+- **Hiding stays where it already works.** `blogs.js` never reads the mode — the `data-status="dev"` marker and the CSS rule do all of it, so the block is hidden before the deferred script runs and there is no second, weaker gate to go wrong. A test asserts `blogs.js` contains no `data-mode` reference and never strips the marker.
+- **Deliberately not pre-rendered.** Every other board container carries static markup in `blogs.html` so crawlers without JavaScript see the notes. `#egress-queue` is left empty and filled only by script. The pre-render exists to get published work indexed, and unwritten topics are the one thing on this page that should not be — leaving them out of the served HTML means a crawler never receives them at all, which is a stronger guarantee than a CSS rule.
+- **The seed topics are placeholders.** All three describe work that genuinely exists in this repository rather than invented titles, but nothing depends on them; replace them as real topics are picked up. A test enforces that every topic names a real section and carries a unique id, so a bad edit fails the build rather than rendering a broken column.
+
+---

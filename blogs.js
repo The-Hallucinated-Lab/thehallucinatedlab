@@ -67,6 +67,82 @@ const NOTES = [
   },
 ];
 
+/* ============ EGRESS: TOPICS ON THEIR WAY OUT ============
+   The board above is what has been published. This is the other end of
+   the same pipe: topics that exist as an intention and are not written
+   yet.
+
+   It sits behind dev mode deliberately. A public roadmap is a promise,
+   and a topic nobody has started is not a promise worth making to a
+   reader — the failure mode of shipping this openly is a list of things
+   that never appear, which reads worse than no list at all.
+
+   Stage order is the direction of travel and the order on the page.
+   Rendering walks this array rather than the topics, so a stage with
+   nothing in it still appears (an empty "Next out" is information) and
+   the order can never fall out of however the topics happen to be
+   listed. */
+const EGRESS_STAGES = [
+  { id: 'drafting', label: 'Drafting', blurb: 'Being written now.' },
+  { id: 'queued', label: 'Queued', blurb: 'Outlined and waiting for a slot.' },
+  { id: 'next', label: 'Next out', blurb: 'Finished, going up next.' },
+];
+
+/* Seed topics, all drawn from work that actually exists in this
+   repository rather than invented to fill the block. Replace them as
+   real ones are picked up — nothing here is load-bearing. */
+const TOPICS = [
+  {
+    id: 'one-json-file',
+    title: 'Why the tool spec is one JSON file',
+    section: 'software-engineering',
+    stage: 'drafting',
+    note: 'One manifest read by the browser, the parser, the assistant and the Python package — and what it costs to keep them honest.',
+  },
+  {
+    id: 'dev-mode-no-backend',
+    title: 'Dev mode without a backend',
+    section: 'software-engineering',
+    stage: 'queued',
+    note: 'Hiding unfinished work on a static site, why the rule lives in CSS rather than JavaScript, and what that does not protect.',
+  },
+  {
+    id: 'chunking-without-a-tokenizer',
+    title: 'Chunking without a tokenizer',
+    section: 'artificial-intelligence',
+    stage: 'queued',
+    note: 'Estimating token counts in the browser when the real vocabulary is a 17MB download, and why the estimate errs high.',
+  },
+];
+
+function resolveStage(value) {
+  const match = EGRESS_STAGES.find(s => s.id === value);
+  return match ? match.id : EGRESS_STAGES[0].id;
+}
+
+function topicsInStage(topics, stageId) {
+  const wanted = resolveStage(stageId);
+  return (topics || []).filter(topic => resolveStage(topic && topic.stage) === wanted);
+}
+
+/* The whole queue, grouped and in stage order. A topic with an
+   unrecognised stage is not dropped — resolveStage lands it in the
+   first stage, so a typo shows up on the page as something in the
+   wrong column rather than as a topic that silently disappears. */
+function organiseEgress(topics) {
+  return EGRESS_STAGES.map(stage => ({
+    id: stage.id,
+    label: stage.label,
+    blurb: stage.blurb,
+    topics: topicsInStage(topics, stage.id).map(topic => ({
+      id: topic.id,
+      title: topic.title,
+      note: topic.note,
+      section: resolveSection(topic.section),
+    })),
+  }));
+}
+
 /* ============ TEXT HELPERS ============ */
 
 function formatDate(dateStr) {
@@ -669,11 +745,37 @@ function renderTagFilters(notes) {
   ].join('');
 }
 
+/* ============ RENDER: THE EGRESS QUEUE ============
+   Dev-only. The section carries data-status="dev" in blogs.html, so the
+   CSS has already hidden it before this runs — nothing here needs to
+   check the mode, and nothing here may reveal it. */
+function renderEgress() {
+  const container = document.getElementById('egress-queue');
+  if (!container) return;
+
+  container.innerHTML = organiseEgress(TOPICS).map(stage => `
+    <section class="note-group note-group-loose" aria-labelledby="egress-${escapeAttr(stage.id)}">
+      <div class="note-group-head">
+        <h3 class="note-group-title" id="egress-${escapeAttr(stage.id)}">${escapeHtml(stage.label)}</h3>
+        <span class="note-group-count">${stage.topics.length}</span>
+      </div>
+      <p class="section-intro">${escapeHtml(stage.blurb)}</p>
+      ${stage.topics.length
+        ? `<ul class="board-ledger">${stage.topics.map(topic => `
+            <li class="ledger-tag">
+              <span class="ledger-tag-name">${escapeHtml(topic.title)}</span>
+              <span class="ledger-tag-count">${escapeHtml(sectionLabel(topic.section))}</span>
+            </li>`).join('')}</ul>`
+        : '<ul class="board-ledger"><li class="ledger-tag ledger-tag-none">Nothing at this stage.</li></ul>'}
+    </section>`).join('');
+}
+
 /* ============ RENDER: THE BOARD ============ */
 function renderBoard() {
   const notes = allNotes();
   renderTagFilters(notes);
   SECTIONS.forEach(section => renderSection(section, notes));
+  renderEgress();
 }
 
 /* ============ FORM HANDLING ============ */
