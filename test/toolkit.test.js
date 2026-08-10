@@ -172,7 +172,12 @@ test('the python-only tools are known, and are not offered as browser work', () 
   /* Named rather than counted: adding a python-only tool should make
      somebody read this line and decide, not just bump a number. */
   assert.deepEqual(pythonOnly.sort(), [
-    'describe_dataset', 'eda_report', 'embed', 'index', 'plot_column',
+    /* link is the deliberate odd one: it is python-only because it is
+       not browser work, and unimplemented in both runtimes for now.
+       Python reports that through ToolNotFound; the browser never
+       offers it at all, which is the answer this list exists to keep
+       honest. */
+    'describe_dataset', 'eda_report', 'embed', 'index', 'link', 'plot_column',
     'profile_column', 'relate_columns',
   ]);
   for (const name of pythonOnly) {

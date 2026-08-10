@@ -198,7 +198,7 @@ test('every navbar carries the same dev group, in the same order', () => {
 /* Pages that exist but are not for visitors yet. Each is reachable only
    from a dev-marked link, and each is noindex so a visitor who arrives
    by some other route is not indexed into finding it. */
-const DEV_ONLY_PAGES = ['slm.html', 'genai.html'];
+const DEV_ONLY_PAGES = ['slm.html', 'genai.html', 'data.html', 'link.html'];
 
 test('an unfinished page stays behind dev mode at every entry point', () => {
   /* The pages in DEV_ONLY_PAGES describe work still on the bench, so two

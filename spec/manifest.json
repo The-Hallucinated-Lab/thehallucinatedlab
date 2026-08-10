@@ -1,5 +1,5 @@
 {
-  "$comment": "Single source of truth for every THL tool. Consumed by toolkit.js (browser runtime + argument docs), nlp.js (parser vocabulary), interface.js (assistant capabilities) and the thehallucinatedlab Python package. Adding a tool here is what makes it appear in all four. Each tool carries a \"status\": \"live\" tools are public, \"dev\" tools are visible only in dev mode and are never shown to a visitor. Keep python/thehallucinatedlab/data/manifest.json byte-identical: scripts/sync-spec.js copies it and test/manifest.test.js fails the build if they drift.",
+  "$comment": "Single source of truth for every THL tool. Consumed by toolkit.js (browser runtime + argument docs), nlp.js (parser vocabulary), interface.js (assistant capabilities) and the thehallucinatedlab Python package. Adding a tool here is what makes it appear in all four. Each tool carries a \"status\" describing how finished it is: \"live\" is implemented and working, \"dev\" is still being built. It is a label, not a gate - nothing filters on it. Every tool in this file is offered to every visitor, so a \"dev\" entry must still describe itself honestly enough that someone who reaches it is not misled about what it does today. Keep python/thehallucinatedlab/data/manifest.json byte-identical: scripts/sync-spec.js copies it and test/manifest.test.js fails the build if they drift.",
   "specVersion": 1,
   "version": "1.0.0",
   "scoring": {
@@ -1419,6 +1419,100 @@
         "rowCap": 50000,
         "note": "Runs in the browser on delimited and JSON text, sampling past rowCap. Parquet and Excel, and whole files past the cap, need the Python package."
       }
+    },
+    {
+      "$devComment": "Spec-only. This is the first tool to ship with status \"dev\", and it exists to hold the contract while the implementation is written. Nothing implements it: toolkit.js has no browser branch for it, and the Python registry raises ToolNotFound rather than pretend. Nothing hides it either - status is a label, not a gate - so it is listed in the assistant's capabilities and the parser matches it like any other tool. A visitor who asks for it is told it runs in the Python package and given a `thl link` command that does not work yet, which is why the summary and description below say plainly that it is not implemented. Delete this comment when a real implementation lands and the status flips to \"live\".",
+      "name": "link",
+      "title": "Link",
+      "status": "dev",
+      "summary": "Pull every URL out of a document and return a deduplicated list. Not built yet - the arguments are declared, the implementation is not.",
+      "description": "Reads a text, Markdown or HTML document and collects the URLs it contains - href targets in markup, bare URLs in prose - then reports them once each rather than once per occurrence. Not implemented yet: this entry declares the argument contract so the page, the argument table and the Python package all agree on it before any code is written, which is the order this repository does it in. Running it reports that it has no implementation instead of returning an empty list that reads like a document with no links in it.",
+      "runtimes": [
+        "python"
+      ],
+      "page": "link.html",
+      "input": {
+        "kind": "document",
+        "accept": [
+          ".txt",
+          ".md",
+          ".html",
+          ".htm"
+        ]
+      },
+      "aliases": [
+        "extract links",
+        "list links",
+        "collect urls",
+        "list urls"
+      ],
+      "keywords": {
+        "action": [
+          "extract",
+          "list",
+          "collect"
+        ],
+        "subject": [
+          "link",
+          "links",
+          "url",
+          "urls",
+          "hyperlink",
+          "hyperlinks",
+          "href",
+          "hrefs"
+        ]
+      },
+      "params": [
+        {
+          "name": "source",
+          "type": "path",
+          "required": true,
+          "description": "The document to read links out of.",
+          "prompt": "Which file?"
+        },
+        {
+          "name": "scope",
+          "type": "enum",
+          "required": false,
+          "default": "all",
+          "values": [
+            "all",
+            "external",
+            "internal"
+          ],
+          "aliases": {
+            "outbound": "external",
+            "relative": "internal"
+          },
+          "description": "Which links to keep. \"internal\" is same-origin or relative; \"external\" is everything pointing off the document's own host."
+        },
+        {
+          "name": "unique",
+          "type": "boolean",
+          "required": false,
+          "default": true,
+          "description": "Report each URL once. Turn it off to keep every occurrence, which is what you want when counting rather than listing."
+        },
+        {
+          "name": "format",
+          "type": "enum",
+          "required": false,
+          "default": "list",
+          "values": [
+            "list",
+            "json",
+            "csv"
+          ],
+          "description": "A plain list reads in a terminal; JSON and CSV are for piping somewhere else."
+        }
+      ],
+      "examples": [
+        {
+          "text": "extract links from this file",
+          "args": {}
+        }
+      ]
     }
   ]
 }

@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Small Language Models — The Hallucinated Lab</title>
-  <meta name="description" content="Three small language models on the bench: document-first, tools-first and personal-first. Each sized to run on hardware you already own.">
+  <title>Data — The Hallucinated Lab</title>
+  <meta name="description" content="The data workbench: what the lab is building around datasets, from profiling that already ships to the extraction and cleaning work still on the bench.">
   <meta name="robots" content="noindex, nofollow">
-  <meta property="og:title" content="Small Language Models — The Hallucinated Lab">
-  <meta property="og:description" content="Document-first, tools-first and personal-first small models, each sized for your own machine.">
+  <meta property="og:title" content="Data — The Hallucinated Lab">
+  <meta property="og:description" content="The data workbench — profiling, extraction and cleaning, local-first and in the browser.">
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://thehallucinatedlab.space/slm.html">
-  <link rel="canonical" href="https://thehallucinatedlab.space/slm.html">
+  <meta property="og:url" content="https://thehallucinatedlab.space/data.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/data.html">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Small Language Models — The Hallucinated Lab">
-  <meta name="twitter:description" content="Document-first, tools-first and personal-first small models, each sized for your own machine.">
+  <meta name="twitter:title" content="Data — The Hallucinated Lab">
+  <meta name="twitter:description" content="The data workbench — profiling, extraction and cleaning, local-first and in the browser.">
   <meta property="og:site_name" content="The Hallucinated Lab">
   <meta property="og:locale" content="en_US">
   <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
@@ -55,10 +55,10 @@
         <li><a href="solutions.html">Solutions</a></li>
         <li><a href="media.html">Media</a></li>
         <li><a href="/sitemap.html">Sitemap</a></li>
-        <li data-status="dev"><a href="slm.html" class="active">SLM</a></li>
+        <li data-status="dev"><a href="slm.html">SLM</a></li>
         <li data-status="dev"><a href="certification.html">Certification</a></li>
         <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
-        <li data-status="dev"><a href="data.html">Data</a></li>
+        <li data-status="dev"><a href="data.html" class="active">Data</a></li>
       </ul>
       <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
         <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
@@ -70,95 +70,64 @@
     </nav>
   </header>
 
-
   <main id="main-content" class="page-main">
 
     <section class="page-hero">
-      <span class="section-label">Take It And Run</span>
-      <h1 class="page-title">Small Language Models</h1>
-      <p class="page-subtitle">Three small models, each tuned for one posture rather than for everything at once.</p>
+      <span class="section-label">On The Bench</span>
+      <h1 class="page-title">Data</h1>
+      <p class="page-subtitle">The dataset half of the toolkit — what already runs in the page, and what is still being built.</p>
     </section>
 
     <section class="media-section">
       <div class="container">
-        <p class="section-intro">A small model that does one job well beats a large one that does every job adequately — and it does it on a laptop, offline, for free. These three are split by what they are pointed at: your documents, your tools, or you. Pick the posture, not the parameter count.</p>
+        <p class="section-intro">Every tool here holds the same line the rest of the site does: the file stays on the machine that opened it. A dataset is the case where that matters most — it is usually the thing you are least willing to paste into a hosted box. Profiling already ships and runs entirely in the browser; the rest of this page is work in progress, which is why it sits behind dev mode.</p>
 
+        <!-- The slm-* card family rather than a new one: it already carries
+             the pending/queued status chips this page needs, and a second
+             near-identical card set would be CSS with no new behaviour. -->
         <div class="slm-grid">
 
           <div class="slm-card fade-in fade-in-delay-1">
             <div class="slm-head">
-              <h2 class="slm-title">Document-first</h2>
-              <span class="slm-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+              <h2 class="slm-title">Profiling</h2>
+              <span class="slm-status pending"><span class="dot" aria-hidden="true"></span>Shipped</span>
             </div>
-            <p class="slm-desc">Reads the documents you hand it and answers out of them. Tuned to name the chunk it used, and to say the answer is not in the source rather than fill the gap from memory.</p>
+            <p class="slm-desc">Describe a dataset, profile one column, plot it, and score how two columns relate. Five tools, all running on the page against a file you never upload. This is the one part of the data workbench a visitor can already use.</p>
             <dl class="slm-specs">
-              <div><dt>Model</dt><dd>thl-doc-3b</dd></div>
-              <div><dt>Base</dt><dd>Qwen 2.5 3B Instruct</dd></div>
-              <div><dt>Context</dt><dd>32k tokens</dd></div>
-              <div><dt>Footprint</dt><dd>~2.1 GB at Q4_K_M</dd></div>
-              <div><dt>Pairs with</dt><dd>Extract, Chunk, Embed, Index</dd></div>
+              <div><dt>Page</dt><dd><a href="eda.html">eda.html</a></dd></div>
+              <div><dt>Tools</dt><dd>describe_dataset, profile_column, plot_column, relate_columns, eda_report</dd></div>
+              <div><dt>Runtimes</dt><dd>Browser and Python</dd></div>
+              <div><dt>Input</dt><dd>CSV and TSV</dd></div>
             </dl>
           </div>
 
           <div class="slm-card fade-in fade-in-delay-2">
             <div class="slm-head">
-              <h2 class="slm-title">Tools-first</h2>
-              <span class="slm-status pending"><span class="dot" aria-hidden="true"></span>In Training</span>
+              <h2 class="slm-title">Link extraction</h2>
+              <span class="slm-status pending"><span class="dot" aria-hidden="true"></span>In Progress</span>
             </div>
-            <p class="slm-desc">Turns a plain-English request into a tool call the runtime can validate. Arguments come from the tool spec, and a tool it has no schema for is refused rather than invented.</p>
+            <p class="slm-desc">Pulls the URLs out of a document and hands back a deduplicated list rather than a wall of text. Registered in the tool spec so the argument table and the Python package both see it, but the implementation is not written yet — running it reports that plainly instead of returning an empty result that looks like an answer.</p>
             <dl class="slm-specs">
-              <div><dt>Model</dt><dd>thl-tools-3b</dd></div>
-              <div><dt>Base</dt><dd>Llama 3.2 3B Instruct</dd></div>
-              <div><dt>Context</dt><dd>16k tokens</dd></div>
-              <div><dt>Footprint</dt><dd>~1.9 GB at Q4_K_M</dd></div>
-              <div><dt>Output</dt><dd>Strict JSON, schema-checked</dd></div>
+              <div><dt>Page</dt><dd><a href="link.html" data-status="dev">link.html</a></dd></div>
+              <div><dt>Tool</dt><dd>link</dd></div>
+              <div><dt>Status</dt><dd>Spec only, no implementation</dd></div>
+              <div><dt>Listed in</dt><dd>The assistant, like any other tool</dd></div>
             </dl>
           </div>
 
           <div class="slm-card fade-in fade-in-delay-3">
             <div class="slm-head">
-              <h2 class="slm-title">Personal-first</h2>
+              <h2 class="slm-title">Cleaning</h2>
               <span class="slm-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
             </div>
-            <p class="slm-desc">The smallest of the three, for notes, mail and everything else you would not paste into a hosted chat box. Sized to fit a machine with no discrete GPU — a personal model that needs a server is not personal.</p>
+            <p class="slm-desc">Deduplication, type coercion and null handling as explicit steps you can see rather than guesses a library makes for you. Nothing is built here yet — no spec entry, no page, no argument table. It is on this list so the shape of the workbench is visible, not because any of it runs.</p>
             <dl class="slm-specs">
-              <div><dt>Model</dt><dd>thl-personal-1b</dd></div>
-              <div><dt>Base</dt><dd>Llama 3.2 1B Instruct</dd></div>
-              <div><dt>Context</dt><dd>8k tokens</dd></div>
-              <div><dt>Footprint</dt><dd>~0.8 GB at Q4_K_M</dd></div>
-              <div><dt>Runs on</dt><dd>8 GB RAM, no GPU</dd></div>
+              <div><dt>Page</dt><dd>None yet</dd></div>
+              <div><dt>Tool</dt><dd>None yet</dd></div>
+              <div><dt>Status</dt><dd>Not started</dd></div>
             </dl>
           </div>
 
-        </div>
-
-        <div class="slm-note fade-in">
-          <p><strong>None of these are downloadable yet.</strong> They are the three postures currently on the bench. Each card publishes weights, an evaluation card and a licence the moment that model clears its benchmark — and if it does not clear it, the card comes down rather than shipping something that only looks finished.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h2 class="how-panel-title">How you'll run them</h2>
-          <p class="how-panel-text">Each one ships as a quantised GGUF for local runtimes and as full weights for anything that wants them. There is no hosted endpoint to call and no key to obtain — the model runs on your machine or it does not run.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Ollama — pull it and talk to it</span>
-            <pre class="how-code"><code>ollama pull thehallucinatedlab/thl-doc-3b
-ollama run thl-doc-3b "summarise the attached contract, cite the clause"</code></pre>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Python — load the weights directly</span>
-            <pre class="how-code"><code>from transformers import AutoModelForCausalLM, AutoTokenizer
-
-name = "thehallucinatedlab/thl-tools-3b"
-tok = AutoTokenizer.from_pretrained(name)
-model = AutoModelForCausalLM.from_pretrained(name, device_map="auto")
-
-# the tools-first model answers with a call, not with prose
-prompt = tok.apply_chat_template(
-    [{"role": "user", "content": "convert this png to webp at quality 80"}],
-    tokenize=False, add_generation_prompt=True)</code></pre>
-          </div>
         </div>
       </div>
     </section>
