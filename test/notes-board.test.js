@@ -40,11 +40,17 @@ const {
   accentFor,
   isReadable,
   safeGradient,
+  noteStatus,
+  isRawNote,
+  noteVisible,
+  visibleNotes,
+  isRawGroup,
 } = loadPure('blogs.js', [
   'NOTES', 'SECTIONS', 'SUBSECTION_THRESHOLD', 'normalizeTag', 'parseTags',
   'tagLabel', 'countTags', 'promotedTags', 'organiseSection', 'tagLedger',
   'notesInSection', 'sortNotes', 'matchesQuery', 'hasTag', 'accentFor',
-  'isReadable', 'safeGradient',
+  'isReadable', 'safeGradient', 'noteStatus', 'isRawNote', 'noteVisible',
+  'visibleNotes', 'isRawGroup',
 ]);
 
 const AI = 'artificial-intelligence';
@@ -312,6 +318,82 @@ test('every published note declares a real section and canonical tags', () => {
   }
 });
 
+/* ---- live notes and raw notes ----
+   The board carries finished pieces and notebook pages, and the second
+   kind is held back by dev mode. Everything below exists because the
+   failure is silent in the direction that matters: a raw note that
+   leaks looks exactly like a published one to the visitor reading it. */
+
+test('every note declares a status the board can filter on', () => {
+  for (const note of NOTES) {
+    assert.ok(['live', 'dev'].includes(note.status),
+      `${note.id} has status ${JSON.stringify(note.status)}; expected "live" or "dev"`);
+  }
+});
+
+test('a note with no usable status is treated as raw, never as live', () => {
+  /* The opposite of how nav entries resolve (script.js), and deliberately
+     so. An unrecognised nav entry renders — the cost is a stray link. An
+     unrecognised note would publish — the cost is unfinished work in
+     front of a visitor. Each defaults to whichever answer is survivable. */
+  assert.equal(noteStatus({}), 'dev', 'a missing status must not read as live');
+  assert.equal(noteStatus({ status: 'DEV' }), 'dev');
+  assert.equal(noteStatus({ status: 'Live' }), 'dev', 'case must not smuggle a note out of dev mode');
+  assert.equal(noteStatus({ status: 'published' }), 'dev', 'an invented status is not live');
+  assert.equal(noteStatus(null), 'dev');
+  assert.equal(noteStatus({ status: 'live' }), 'live');
+  assert.equal(isRawNote({ status: 'live' }), false);
+  assert.equal(isRawNote({ status: 'dev' }), true);
+});
+
+test('raw notes reach a dev session and no other', () => {
+  const live = { id: 'a', status: 'live' };
+  const raw = { id: 'b', status: 'dev' };
+
+  assert.equal(noteVisible(live, 'live'), true);
+  assert.equal(noteVisible(live, 'dev'), true, 'dev mode adds notes, it never removes them');
+  assert.equal(noteVisible(raw, 'live'), false);
+  assert.equal(noteVisible(raw, 'dev'), true);
+
+  /* An unrecognised mode is not dev. Same reasoning as normalizeMode. */
+  assert.equal(noteVisible(raw, 'DEV'), false);
+  assert.equal(noteVisible(raw, undefined), false);
+
+  assert.deepEqual(visibleNotes([live, raw], 'live').map(n => n.id), ['a']);
+  assert.deepEqual(visibleNotes([live, raw], 'dev').map(n => n.id), ['a', 'b']);
+  assert.deepEqual(visibleNotes(null, 'dev'), []);
+});
+
+test("a visitor's own note is never held back by dev mode", () => {
+  /* Notes written in the browser have no status of the lab's choosing.
+     Filtering them would delete the visitor's work from their own board
+     depending on a mode they did not set. */
+  assert.equal(noteVisible({ local: true }, 'live'), true);
+  assert.equal(noteVisible({ local: true, status: 'dev' }, 'live'), true);
+});
+
+test('a group of nothing but raw notes is hidden whole', () => {
+  /* Otherwise a live reader gets a heading and a "1 note" count sitting
+     over a stack with nothing in it. */
+  const live = { status: 'live' };
+  const raw = { status: 'dev' };
+  assert.equal(isRawGroup([raw, raw]), true);
+  assert.equal(isRawGroup([raw, live]), false, 'one live note keeps the heading');
+  assert.equal(isRawGroup([]), false, 'an empty group is not a dev group');
+});
+
+test('every raw note points at a page that is itself noindex', () => {
+  /* The card is one gate; the page is the other. A raw note linking to
+     an indexable page would put the whole thing in search results while
+     the board still believes it is hidden. */
+  for (const note of NOTES) {
+    if (!isRawNote(note) || !isReadable(note)) continue;
+    const src = fs.readFileSync(path.join(ROOT, note.articleUrl), 'utf8');
+    assert.match(src, /<meta name="robots" content="noindex/,
+      `${note.id} links to ${note.articleUrl}, which is indexable`);
+  }
+});
+
 test('every published note either links somewhere real or is marked a draft', () => {
   for (const note of NOTES) {
     if (!isReadable(note)) continue;
@@ -344,7 +426,7 @@ test('the pre-rendered board in blogs.html matches the note data', () => {
     assert.ok(html.includes(`>${section.label}<`), `blogs.html never names ${section.label}`);
   }
 
-  for (const note of NOTES) {
+  for (const note of NOTES.filter(n => !isRawNote(n))) {
     assert.ok(html.includes(`id="note-${note.id}"`), `${note.id} is missing from the pre-rendered board`);
     assert.ok(html.includes(note.title.replace(/&/g, '&amp;')), `${note.id}'s title is missing`);
     for (const tag of note.tags) {
@@ -356,4 +438,21 @@ test('the pre-rendered board in blogs.html matches the note data', () => {
      the copy does not, the page lies about how it works. */
   assert.ok(html.includes(`five notes`) || html.includes(String(SUBSECTION_THRESHOLD)),
     'blogs.html never states the threshold');
+});
+
+test('no raw note is pre-rendered into blogs.html', () => {
+  /* The pre-render exists for crawlers that do not run JavaScript, which
+     is precisely the audience a raw note is not for. A hidden card is
+     still in the source: data-status="dev" is display:none, not absence,
+     so pre-rendering one would put the notebook into the index of a page
+     that is itself indexable. Raw cards are built by blogs.js at load
+     time instead, and only when the session is already in dev mode. */
+  const html = fs.readFileSync(path.join(ROOT, 'blogs.html'), 'utf8');
+  const leaked = NOTES
+    .filter(isRawNote)
+    .filter(note => html.includes(`id="note-${note.id}"`) || html.includes(note.title))
+    .map(note => note.id);
+
+  assert.deepEqual(leaked, [],
+    `raw notes in the crawler-visible board:\n  ${leaked.join('\n  ')}`);
 });

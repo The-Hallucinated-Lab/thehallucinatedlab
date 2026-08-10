@@ -188,7 +188,19 @@
          Pre-rendered so crawlers that do not execute JavaScript still
          see every published note. blogs.js re-renders this identically
          on load and then owns it. Keep the two in sync when NOTES
-         changes. -->
+         changes.
+
+         Live notes only. Raw notes carry status: 'dev' in NOTES and are
+         built by blogs.js at load time, in a dev session and nowhere
+         else — pre-rendering one would put the notebook in the source
+         of a page that is indexable. A test enforces both halves. -->
+
+    <!-- Only rendered in dev mode, and it is the one place the split is
+         explained to the person reading the board in that mode. -->
+    <div class="container" data-status="dev">
+      <p class="section-intro">Dev mode. The board is also showing raw notes — notebook pages kept as they were written, each with an overview and a reading list attached. They are marked <em>Raw · dev only</em>, their pages are noindex, and neither the live board nor a crawler ever sees them.</p>
+    </div>
+
     <section class="media-section" id="blogs-artificial-intelligence">
       <div class="container">
         <div class="section-header fade-in">

@@ -51,7 +51,12 @@ const SUBSECTION_THRESHOLD = 5;
 /* ============ NOTE DATA STORE ============
    Published notes. `tags` are stored already normalised — the shape
    normalizeTag produces — so the filing rule never has to guess, and a
-   test fails if one drifts. */
+   test fails if one drifts.
+
+   `status` is mandatory and has no default: 'live' is a finished piece
+   anyone may read, 'dev' is a raw notebook page that only a dev session
+   ever renders. See noteStatus() for why the missing case resolves to
+   'dev' rather than the other way round. */
 const NOTES = [
   {
     id: 'local-first-ai',
@@ -59,11 +64,34 @@ const NOTES = [
     author: 'Pratyush',
     date: '2026-07-10',
     section: 'artificial-intelligence',
+    status: 'live',
     tags: ['local-first', 'privacy', 'inference'],
     excerpt: 'Why running AI models entirely on your machine isn\'t just a privacy win — it\'s the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.',
     accent: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)',
     pinned: true,
     articleUrl: 'blogs/sample-blog.html',
+  },
+  {
+    id: 'raw-tokenisation-questions',
+    title: 'Raw: tokenisation, the questions',
+    author: 'Pratyush',
+    date: '2026-08-10',
+    section: 'artificial-intelligence',
+    status: 'dev',
+    tags: ['tokenisation', 'open-questions', 'bpe', 'vocabulary'],
+    excerpt: 'Notebook page, transcribed as written: what "best tokeniser" could mean across English and Hindi, what the tokeniser throws away, per-session vocabularies, and whether any of it is differentiable. Overview and reading list attached.',
+    articleUrl: 'blogs/dev-tokenisation-questions.html',
+  },
+  {
+    id: 'raw-llm-systems-questions',
+    title: 'Raw: eight questions about LLM systems',
+    author: 'Pratyush',
+    date: '2026-08-10',
+    section: 'artificial-intelligence',
+    status: 'dev',
+    tags: ['open-questions', 'compression', 'alignment', 'local-deployment'],
+    excerpt: 'Whether a model is the only route to AI, why GPT-2 wrote worse Python than anything else, YAML against JSON in prompts, and what compression does to alignment. Overview and reading list attached.',
+    articleUrl: 'blogs/dev-llm-systems-questions.html',
   },
 ];
 
@@ -323,6 +351,47 @@ function isReadable(note) {
   return Boolean(note && note.articleUrl) && note.articleUrl !== '#';
 }
 
+/* ============ LIVE NOTES AND RAW NOTES ============
+   Two kinds of note, not two polish levels of one kind. A live note is
+   finished writing. A raw note is the notebook page it came from — the
+   questions as they were actually asked, plus an overview pointing at
+   what to read next. Raw notes are for the author, so they sit behind
+   dev mode (script.js) and their pages are noindex.
+
+   Two independent gates, the pair the dev-only pages already use: the
+   card carries data-status="dev" so CSS hides it, and the board never
+   builds a raw card unless the session is already in dev mode.
+
+   Status is required, not defaulted, and the unrecognised case resolves
+   to 'dev'. The mistake that matters is a raw note whose status was
+   never typed publishing itself. A test rejects it outright. */
+function noteStatus(note) {
+  return note && note.status === 'live' ? 'live' : 'dev';
+}
+
+function isRawNote(note) {
+  return noteStatus(note) === 'dev';
+}
+
+/* A note written in this browser is the visitor's own, not the lab's
+   raw work, so dev mode never filters it. */
+function noteVisible(note, mode) {
+  if (note && note.local) return true;
+  return !isRawNote(note) || mode === 'dev';
+}
+
+function visibleNotes(notes, mode) {
+  return (Array.isArray(notes) ? notes : []).filter(note => noteVisible(note, mode));
+}
+
+/* True when a live visitor may see nothing in the group, which is when
+   its heading and count have to be hidden too — otherwise they read
+   "1 note" over an empty stack. */
+function isRawGroup(notes) {
+  const list = Array.isArray(notes) ? notes : [];
+  return list.length > 0 && list.every(isRawNote);
+}
+
 /* ============ SUBMISSION VALIDATION ============
    The note form is the only place anything on this site accepts input
    and writes it anywhere. Bounds are declared next to the schema rather
@@ -479,6 +548,9 @@ function noteFromStored(post) {
     accent: null,
     pinned: false,
     articleUrl: null,
+    /* Stated as well as guarded at the render site: every note the board
+       handles should be able to answer what it is on its own. */
+    status: 'live',
     local: true,
   };
 }
@@ -524,10 +596,24 @@ function removeStoredNote(id) {
   return writeStoredNotes(readStoredNotes().filter(n => n.id !== id));
 }
 
+/* The mode script.js resolved onto <html>. Read, never recomputed: one
+   place decides, and both scripts are deferred in document order so the
+   attribute is set before anything here runs. Anything missing or
+   unreadable is 'live' — every ambiguous answer has to land on the
+   public view. */
+function currentMode() {
+  try {
+    return document.documentElement.getAttribute('data-mode') === 'dev' ? 'dev' : 'live';
+  } catch (err) {
+    return 'live';
+  }
+}
+
 /* Everything on the board: what the lab published, plus whatever this
-   browser has written locally. */
+   browser has written locally, minus the raw notes when this is not a
+   dev session. */
 function allNotes() {
-  return [...NOTES, ...readStoredNotes().map(noteFromStored)];
+  return visibleNotes([...NOTES, ...readStoredNotes().map(noteFromStored)], currentMode());
 }
 
 /* ============ BOARD STATE ============
@@ -538,6 +624,25 @@ function allNotes() {
 const boardState = { query: '', tag: 'all' };
 
 /* ============ RENDER: A NOTE ============ */
+/* The chip row, split out so the card builder stays under the complexity
+   ceiling the lint config sets. Order is deliberate: what the note *is*
+   comes before what has been done to it. */
+function noteChipsHtml(note, readable, raw) {
+  const chips = [];
+  if (raw) {
+    chips.push('<span class="note-chip note-chip-raw">Raw · dev only</span>');
+  }
+  if (note.pinned) {
+    chips.push(`<span class="note-chip note-chip-pinned"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>Pinned</span>`);
+  }
+  if (note.local) {
+    chips.push('<span class="note-chip note-chip-local">Your note · this browser only</span>');
+  } else if (!readable) {
+    chips.push('<span class="note-chip note-chip-draft">Draft</span>');
+  }
+  return chips;
+}
+
 function noteCardHtml(note) {
   const readable = isReadable(note);
   const tag = readable ? 'a' : 'div';
@@ -548,15 +653,15 @@ function noteCardHtml(note) {
   if (!readable && !note.local) classes.push('note-card-locked');
   if (note.local) classes.push('note-card-local');
 
-  const chips = [];
-  if (note.pinned) {
-    chips.push(`<span class="note-chip note-chip-pinned"><svg viewBox="0 0 24 24" width="10" height="10" fill="currentColor" aria-hidden="true"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>Pinned</span>`);
-  }
-  if (note.local) {
-    chips.push('<span class="note-chip note-chip-local">Your note · this browser only</span>');
-  } else if (!readable) {
-    chips.push('<span class="note-chip note-chip-draft">Draft</span>');
-  }
+  const raw = isRawNote(note) && !note.local;
+  if (raw) classes.push('note-card-raw');
+  /* The second gate. allNotes() has already dropped this card in a live
+     session; the attribute is what stops it being seen if that filter
+     is ever bypassed — a stale render, a copied snippet, a future entry
+     point that forgets. */
+  const status = raw ? ' data-status="dev"' : '';
+
+  const chips = noteChipsHtml(note, readable, raw);
 
   const tags = parseTags(note.tags);
   const tagList = tags.length
@@ -567,7 +672,7 @@ function noteCardHtml(note) {
   const shown = excerpt.length > 320 ? `${excerpt.slice(0, 320)}…` : excerpt;
 
   return `
-    <${tag}${href} class="${classes.join(' ')}" id="note-${escapeAttr(note.id)}" style="--note-accent: ${safeGradient(accentFor(note))};">
+    <${tag}${href}${status} class="${classes.join(' ')}" id="note-${escapeAttr(note.id)}" style="--note-accent: ${safeGradient(accentFor(note))};">
       ${chips.length ? `<div class="note-card-chips">${chips.join('')}</div>` : ''}
       ${note.local ? `<button type="button" class="note-delete" data-note-id="${escapeAttr(note.id)}" aria-label="Delete the note ${escapeAttr(note.title)}"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg><span class="note-delete-text">Delete</span></button>` : ''}
       <h4 class="note-card-title">${escapeHtml(note.title)}</h4>
@@ -587,8 +692,13 @@ function noteGroupHtml(sectionId, group) {
   const headingId = `group-${sectionId}-${group.isLoose ? 'loose' : group.tag}`;
   const count = `${group.notes.length} note${group.notes.length === 1 ? '' : 's'}`;
 
+  /* A group made only of raw notes takes the marker too. Without it a
+     live reader gets a heading and a "1 note" count over a stack with
+     nothing in it. */
+  const status = isRawGroup(group.notes) ? ' data-status="dev"' : '';
+
   return `
-    <section class="note-group${group.isLoose ? ' note-group-loose' : ''}" aria-labelledby="${escapeAttr(headingId)}">
+    <section class="note-group${group.isLoose ? ' note-group-loose' : ''}"${status} aria-labelledby="${escapeAttr(headingId)}">
       <div class="note-group-head">
         <h3 class="note-group-title" id="${escapeAttr(headingId)}">${group.isLoose ? '' : '<span class="note-group-hash" aria-hidden="true">#</span>'}${escapeHtml(group.label)}</h3>
         <span class="note-group-count">${count}</span>
