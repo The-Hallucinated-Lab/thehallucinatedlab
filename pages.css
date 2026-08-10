@@ -1992,9 +1992,12 @@
    of every card regardless of how long the description is. Ragged
    spec rows across three cards defeat the point of comparing them.
    ============================================================ */
+/* Four postures, so two by two. A third column would leave the fourth
+   card alone on its own row, which reads as an afterthought rather than
+   as the fourth of a set. */
 .slm-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
 }
 .slm-card {
@@ -2784,7 +2787,6 @@
   .artifact-grid { grid-template-columns: minmax(0, 1fr); }
   .trait-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cert-steps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .slm-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 768px) {
