@@ -249,3 +249,14 @@
 - **Deliberate omission:** The reading ceiling and the delegation pipeline are documented, not automated — no lint rule or CI job can observe how much an agent read or whether a unit was delegated. Enforcement stays where it already works: `enforce-context-sync.yml` for the record, and `npm run check` for the code. Adding a fake gate for the parts that cannot be measured would be theatre, which §15 of the new file prohibits by name. Also not done: the `.orchestrator/` harness itself is not committed. It is per-machine, depends on a local Ollama install that CI does not have, and §2 of the protocol has the agent create it on first use — committing it would put a dead toolchain in the repository for every contributor without a local model.
 
 ---
+
+---
+
+- **Timestamp:** 2026-08-10T00:00:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `slm.html`, `pages.css`, `styles.css`
+- **Intent:** Add a fourth small model to the dev-gated SLM bench — **Rule-first** (`thl-rule-4b`, Gemma 3 4B Instruct base, 32k context, ~2.6 GB at Q4_K_M, Queued). It applies a rule set the user supplies and cites the clause behind each call, returning uncovered cases as uncovered. Placed third in the grid so the three work-facing postures (documents, tools, rules) sit together and the personal model stays last.
+- **Bugs/Gaps Addressed:** `.fade-in-delay-4` was referenced by `media.html` and two cards on `tools.html` but was never defined in `styles.css`, so those cards animated with no stagger. Defining it for the fourth SLM card fixes those three call sites as a side effect — a visual change on two other pages, recorded here because it is invisible in the diff of this page.
+- **Context Modifications:** One `.slm-card` block added using only existing classes (`slm-status.queued` already shipped with Personal-first); no new image, script, dependency or origin, so the CSP and the per-page JS budget are untouched. `.slm-grid` moved from three desktop columns to two — with four cards a three-column grid orphans the last one on its own row — which made the `@media (max-width: 1024px)` `.slm-grid` override redundant, so it was removed rather than left as dead CSS. Copy that counted the models was updated in five places: page subtitle, section intro, the Personal-first description ("smallest of the four"), the bench note, and the meta/og/twitter descriptions (new description 149 chars, title unchanged at 44).
+- **Deliberate omission:** No discoverability-surface edit. `slm.html` is dev-only and `noindex` (`test/dev-mode.test.js`), so it is absent from `sitemap.xml`, `llms.txt` and `llms-full.txt` by design; no page was added or renamed, so RULE-03 is not triggered. The card claims no download and no benchmark — it is Queued, matching the standing "none of these are downloadable yet" note, so nothing here asserts a model that exists.
