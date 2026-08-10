@@ -132,7 +132,7 @@
 
         <h2 id="reading">Reading list</h2>
 
-        <p>Identifiers are here so you can find the work, not so you can cite it unread — verify each one before it goes anywhere public.</p>
+        <p>Every arXiv identifier below was checked against arXiv on 10 August 2026 and resolves to the paper named. The entries with no identifier — Newell and Simon, Russell and Norvig, Sutton, AlphaGeometry, the GPT-2 paper, the YAML specification and the <code>llama.cpp</code> repository — were not machine-checked. No identifier is a substitute for opening the paper.</p>
 
         <h3>Is a model the only route</h3>
         <ul class="ref-list">
@@ -148,7 +148,7 @@
         <ul class="ref-list">
           <li><strong>Chen, Tworek, Jun et al. (2021), "Evaluating Large Language Models Trained on Code".</strong> The Codex paper, including the whitespace-run tokens added because GPT-2's BPE handled Python indentation badly. <a href="https://arxiv.org/abs/2107.03374" rel="noopener">arXiv:2107.03374</a></li>
           <li><strong>Radford, Wu, Child et al. (2019), "Language Models are Unsupervised Multitask Learners".</strong> The GPT-2 paper — read the section on WebText for the data half of the answer.</li>
-          <li><strong>Tam, Wu, Lai et al. (2024), "Let Me Speak Freely? A Study on the Impact of Format Restrictions on Performance of Large Language Models".</strong> Evidence that format constraints can cost reasoning quality. <a href="https://arxiv.org/abs/2408.02442" rel="noopener">arXiv:2408.02442</a></li>
+          <li><strong>Tam et al. (2024), "Let Me Speak Freely? A Study on the Impact of Format Restrictions on Performance of Large Language Models".</strong> Evidence that format constraints can cost reasoning quality. <a href="https://arxiv.org/abs/2408.02442" rel="noopener">arXiv:2408.02442</a></li>
           <li><strong>Willard &amp; Louf (2023), "Efficient Guided Generation for Large Language Models".</strong> The finite-state approach behind Outlines and most JSON-mode implementations. <a href="https://arxiv.org/abs/2307.09702" rel="noopener">arXiv:2307.09702</a></li>
           <li><strong>The YAML 1.2 specification, §on booleans and the "Norway problem".</strong> Ten minutes that will decide the question for you on ambiguity grounds alone.</li>
         </ul>
@@ -163,11 +163,11 @@
 
         <h3>Compression, alignment and the efficiency/security trade</h3>
         <ul class="ref-list">
-          <li><strong>Qi, Panda, Wang et al. (2024), "Safety Alignment Should Be Made More Than Just a Few Tokens Deep".</strong> Why a small perturbation can undo alignment without touching benchmark scores. <a href="https://arxiv.org/abs/2406.05946" rel="noopener">arXiv:2406.05946</a></li>
+          <li><strong>Qi, Panda, Lyu et al. (2024), "Safety Alignment Should Be Made More Than Just a Few Tokens Deep".</strong> Why a small perturbation can undo alignment without touching benchmark scores. <a href="https://arxiv.org/abs/2406.05946" rel="noopener">arXiv:2406.05946</a></li>
           <li><strong>Egashira, Vero, Staab, He, Vechev (2024), "Exploiting LLM Quantization", NeurIPS.</strong> Weights that pass evaluation in fp16 and misbehave once quantised. <a href="https://arxiv.org/abs/2405.18137" rel="noopener">arXiv:2405.18137</a></li>
-          <li><strong>Hong, Yu, Chen et al. (2024), "Decoding Compressed Trust: Scrutinizing the Trustworthiness of Efficient LLMs Under Compression".</strong> Compression measured against trustworthiness dimensions rather than perplexity. <a href="https://arxiv.org/abs/2403.15447" rel="noopener">arXiv:2403.15447</a></li>
+          <li><strong>Hong, Duan, Zhang et al. (2024), "Decoding Compressed Trust: Scrutinizing the Trustworthiness of Efficient LLMs Under Compression".</strong> Compression measured against trustworthiness dimensions rather than perplexity. <a href="https://arxiv.org/abs/2403.15447" rel="noopener">arXiv:2403.15447</a></li>
           <li><strong>Jaiswal, Gan, Du et al. (2023), "Compressing LLMs: The Truth is Rarely Pure and Never Simple".</strong> Where the standard compression evaluations flatter themselves. <a href="https://arxiv.org/abs/2310.01382" rel="noopener">arXiv:2310.01382</a></li>
-          <li><strong>Kocher, Horn, Fogh et al. (2019), "Spectre Attacks: Exploiting Speculative Execution", IEEE S&amp;P.</strong> The canonical case of paying for security in performance, for the systems reading of question 5. <a href="https://arxiv.org/abs/1801.01203" rel="noopener">arXiv:1801.01203</a></li>
+          <li><strong>Kocher, Genkin, Gruss et al. (2019), "Spectre Attacks: Exploiting Speculative Execution", IEEE S&amp;P.</strong> The canonical case of paying for security in performance, for the systems reading of question 5. <a href="https://arxiv.org/abs/1801.01203" rel="noopener">arXiv:1801.01203</a></li>
         </ul>
 
         <h3>Local deployment</h3>
@@ -184,12 +184,12 @@
         <h3>Adaptation and leakage</h3>
         <ul class="ref-list">
           <li><strong>Carlini, Tramèr, Wallace et al. (2021), "Extracting Training Data from Large Language Models", USENIX Security.</strong> <a href="https://arxiv.org/abs/2012.07805" rel="noopener">arXiv:2012.07805</a></li>
-          <li><strong>Carlini, Ippolito, Jagielski et al. (2022), "Quantifying Memorization Across Neural Language Models", ICLR.</strong> Memorisation as a function of scale, duplication and context. <a href="https://arxiv.org/abs/2202.07646" rel="noopener">arXiv:2202.07646</a></li>
+          <li><strong>Carlini, Ippolito, Jagielski et al. (2022; ICLR 2023), "Quantifying Memorization Across Neural Language Models".</strong> Memorisation as a function of scale, duplication and context. <a href="https://arxiv.org/abs/2202.07646" rel="noopener">arXiv:2202.07646</a></li>
           <li><strong>Zhu, Liu, Han (2019), "Deep Leakage from Gradients", NeurIPS.</strong> Why sharing gradients is sharing data. <a href="https://arxiv.org/abs/1906.08935" rel="noopener">arXiv:1906.08935</a></li>
-          <li><strong>Shokri, Stronati, Song, Shmatikov (2017), "Membership Inference Attacks Against Machine Learning Models", IEEE S&amp;P.</strong> <a href="https://arxiv.org/abs/1610.05820" rel="noopener">arXiv:1610.05820</a></li>
+          <li><strong>Shokri, Stronati, Song, Shmatikov (2017), "Membership Inference Attacks against Machine Learning Models", IEEE S&amp;P.</strong> <a href="https://arxiv.org/abs/1610.05820" rel="noopener">arXiv:1610.05820</a></li>
           <li><strong>Abadi, Chu, Goodfellow et al. (2016), "Deep Learning with Differential Privacy", CCS.</strong> DP-SGD, and an honest account of what it costs. <a href="https://arxiv.org/abs/1607.00133" rel="noopener">arXiv:1607.00133</a></li>
           <li><strong>Debenedetti, Severi, Carlini et al. (2023), "Privacy Side Channels in Machine Learning Systems".</strong> Leakage from the pipeline rather than the weights — the most relevant one for a local-first design. <a href="https://arxiv.org/abs/2309.05610" rel="noopener">arXiv:2309.05610</a></li>
-          <li><strong>Zeng, Zhang, Xu et al. (2024), "The Good and The Bad: Exploring Privacy Issues in Retrieval-Augmented Generation".</strong> If local adaptation is done by retrieval rather than training, the leak moves here. <a href="https://arxiv.org/abs/2402.16893" rel="noopener">arXiv:2402.16893</a></li>
+          <li><strong>Zeng, Zhang, He et al. (2024), "The Good and The Bad: Exploring Privacy Issues in Retrieval-Augmented Generation (RAG)".</strong> If local adaptation is done by retrieval rather than training, the leak moves here. <a href="https://arxiv.org/abs/2402.16893" rel="noopener">arXiv:2402.16893</a></li>
         </ul>
 
         <footer class="blog-footer">
