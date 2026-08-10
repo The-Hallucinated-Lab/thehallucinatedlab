@@ -708,3 +708,66 @@
     padding: 1rem 1.2rem;
   }
 }
+
+/* ============ RAW NOTE PAGES ============
+   A raw note is a notebook page with an overview attached, and it has to
+   read as one. These three rules are the whole difference from a
+   published article: a banner saying what the page is, the questions set
+   apart from the commentary on them, and a reference list that stays
+   scannable at thirty entries.
+
+   None of this ships to a visitor — every page using it is noindex and
+   reachable only from a dev-mode card — but it is styled properly
+   anyway, because the pages exist to be read repeatedly. */
+.raw-banner {
+  margin-bottom: 2rem;
+  padding: 1rem 1.2rem;
+  border: 1px dashed var(--border-gold);
+  border-radius: 10px;
+  background: rgba(212, 175, 55, 0.05);
+}
+
+.raw-banner p {
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+}
+
+/* Numbered because the overview refers to the questions by number, and a
+   question that changes number between the two halves of the page is
+   worse than no numbering at all. */
+.raw-questions {
+  margin: 1.5rem 0;
+  padding-left: 1.4rem;
+  color: var(--text-primary);
+}
+
+.raw-questions li {
+  margin-bottom: 0.9rem;
+  font-size: 0.95rem;
+  line-height: 1.75;
+}
+
+.ref-list {
+  margin: 1rem 0 2rem;
+  padding-left: 1.1rem;
+  list-style: none;
+}
+
+.ref-list li {
+  position: relative;
+  margin-bottom: 0.85rem;
+  font-size: 0.86rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+}
+
+.ref-list li::before {
+  content: "—";
+  position: absolute;
+  left: -1.1rem;
+  color: var(--gold-dark);
+}
+
+.ref-list strong { color: var(--text-primary); }
