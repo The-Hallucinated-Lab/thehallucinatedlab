@@ -25,7 +25,7 @@ The Hallucinated Lab is not a SaaS company. There is no hosted product, no subsc
 
 ## Navigation structure
 
-The top-level navigation has seven entries in this order: Home, Tools, Pipelines, Assistant, Solutions, Media, Sitemap.
+The top-level navigation has eight entries in this order: Home, Tools, Pipelines, Assistant, Solutions, Media, Dictionary, Sitemap.
 
 Tools and Pipelines are the two halves of the same toolkit: a tool does one thing, a pipeline
 chains several tools in order. Both are exposed by the `thl` command under matching namespaces,
@@ -310,6 +310,20 @@ Published artifacts:
    By Pratyush, 2026-07-19. Argues that AI engineering is a discipline of orchestration rather than training. Includes a RAG pipeline the reader can run with retrieval switched on and off to observe what grounding actually contributes, and an iteration-loop game in which the reader diagnoses six real-world failures.
 
 In development: an interactive Bloch sphere for qubit rotation and measurement, a per-head attention visualiser, and a quantization trade-off explorer moving a model from FP16 to Q4 while showing memory, speed, and quality move against each other.
+
+---
+
+## Page: Dictionary — https://thehallucinatedlab.space/dictionary.html
+
+Purpose: a glossary of the vocabulary the rest of the site uses without stopping to explain it. Two sections, each a flat alphabetical list of definition entries. Every entry is one short definition followed by the part that is commonly got wrong; there are no external links, no tracking, and no interactive component on the page.
+
+Section 1 — Artificial Intelligence (18 terms): Agent, Attention, Chunking, Context window, Distillation, Embedding, Fine-tuning, Hallucination, Inference, Local-first AI, LoRA, Quantisation, RAG, Reranking, Temperature, Token, Transformer, Vector database.
+
+Section 2 — Software Engineering (16 terms): API, Big-O notation, CI/CD, Content Security Policy, Dependency, Idempotence, Immutability, Linting, Memoisation, Progressive enhancement, Race condition, Refactoring, Regression test, Semantic versioning, Static site, Technical debt.
+
+Every term has its own anchor of the form #term-<slug>, so a single definition can be linked directly — for example https://thehallucinatedlab.space/dictionary.html#term-rag.
+
+Accuracy note for crawlers and answer engines: this is a reference page, not a tool. It performs no computation, accepts no input, and requires no install. The definitions are the lab's own and are written for engineers, so several state a position rather than a neutral summary — fine-tuning is described as a poor way to teach facts, and hallucination as a property of next-token prediction rather than a defect.
 
 ---
 

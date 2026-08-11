@@ -3619,3 +3619,85 @@
   .frame-card img { width: 100%; }
   .genai-caveat { padding: 1.2rem; }
 }
+
+/* ============ DICTIONARY ============
+   Two sections of definition entries. A <dl> with each dt/dd pair wrapped
+   in a div, which is what makes the pairs griddable — the same shape
+   .adapter-specs already uses. */
+/* Centred, because the .section-intro above it is a centred 680px block
+   and a left-aligned row under it reads as two different columns. */
+.dict-jump {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 2.2rem 0 3.5rem;
+}
+.dict-jump a {
+  padding: 0.45rem 1.1rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+.dict-jump a:hover {
+  border-color: var(--border-gold);
+  color: var(--gold-primary);
+}
+
+/* These are <section> elements nested inside one, so they inherit the
+   global 6rem/2rem block padding and sit indented from the container the
+   rest of the page lines up against. Spacing is set here instead. */
+.dict-section { padding: 0; }
+.dict-section + .dict-section { margin-top: 4.5rem; }
+.dict-section-note {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.7;
+  max-width: 60ch;
+  margin-bottom: 2rem;
+}
+
+.dict-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.2rem;
+}
+.dict-entry {
+  padding: 1.4rem 1.6rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 2px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+.dict-entry:hover { border-color: var(--border-gold); }
+/* A term reached by its own anchor stays marked, so a link to one entry
+   lands on something identifiable rather than somewhere in a grid. */
+.dict-entry:target {
+  border-color: var(--border-gold);
+  box-shadow: var(--shadow-gold);
+}
+.dict-term {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold-light);
+  margin-bottom: 0.5rem;
+}
+.dict-def {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  line-height: 1.75;
+}
+
+@media (max-width: 768px) {
+  .dict-list { grid-template-columns: minmax(0, 1fr); }
+  .dict-entry { padding: 1.2rem 1.3rem; }
+  .dict-section + .dict-section { margin-top: 3rem; }
+}

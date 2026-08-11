@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Dictionary — The Hallucinated Lab</title>
+  <meta name="description" content="Plain-English definitions of the AI and software engineering terms used across The Hallucinated Lab, from RAG and quantisation to idempotence.">
+  <meta property="og:title" content="Dictionary — The Hallucinated Lab">
+  <meta property="og:description" content="The AI and software engineering terms used across the lab, defined in plain English.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://thehallucinatedlab.space/dictionary.html">
+  <link rel="canonical" href="https://thehallucinatedlab.space/dictionary.html">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Dictionary — The Hallucinated Lab">
+  <meta name="twitter:description" content="The AI and software engineering terms used across the lab, defined in plain English.">
+  <meta property="og:site_name" content="The Hallucinated Lab">
+  <meta property="og:locale" content="en_US">
+  <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta property="og:image:width" content="1024">
+  <meta property="og:image:height" content="1024">
+  <meta property="og:image:alt" content="The Hallucinated Lab logo">
+  <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+  <meta name="twitter:image:alt" content="The Hallucinated Lab logo">
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="fonts.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="pages.css">
+  <script src="theme.js"></script>
+
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Dictionary",
+          "item": "https://thehallucinatedlab.space/dictionary.html"
+        }
+      ]
+    },
+    {
+      "@type": "DefinedTermSet",
+      "@id": "https://thehallucinatedlab.space/dictionary.html#dictionary",
+      "name": "The Hallucinated Lab Dictionary",
+      "description": "Definitions of the artificial intelligence and software engineering terms used across The Hallucinated Lab.",
+      "url": "https://thehallucinatedlab.space/dictionary.html",
+      "inLanguage": "en",
+      "hasDefinedTerm": [
+        { "@type": "DefinedTerm", "name": "Agent", "url": "https://thehallucinatedlab.space/dictionary.html#term-agent" },
+        { "@type": "DefinedTerm", "name": "Attention", "url": "https://thehallucinatedlab.space/dictionary.html#term-attention" },
+        { "@type": "DefinedTerm", "name": "Chunking", "url": "https://thehallucinatedlab.space/dictionary.html#term-chunking" },
+        { "@type": "DefinedTerm", "name": "Context window", "url": "https://thehallucinatedlab.space/dictionary.html#term-context-window" },
+        { "@type": "DefinedTerm", "name": "Distillation", "url": "https://thehallucinatedlab.space/dictionary.html#term-distillation" },
+        { "@type": "DefinedTerm", "name": "Embedding", "url": "https://thehallucinatedlab.space/dictionary.html#term-embedding" },
+        { "@type": "DefinedTerm", "name": "Fine-tuning", "url": "https://thehallucinatedlab.space/dictionary.html#term-fine-tuning" },
+        { "@type": "DefinedTerm", "name": "Hallucination", "url": "https://thehallucinatedlab.space/dictionary.html#term-hallucination" },
+        { "@type": "DefinedTerm", "name": "Inference", "url": "https://thehallucinatedlab.space/dictionary.html#term-inference" },
+        { "@type": "DefinedTerm", "name": "Local-first AI", "url": "https://thehallucinatedlab.space/dictionary.html#term-local-first-ai" },
+        { "@type": "DefinedTerm", "name": "LoRA", "url": "https://thehallucinatedlab.space/dictionary.html#term-lora" },
+        { "@type": "DefinedTerm", "name": "Quantisation", "url": "https://thehallucinatedlab.space/dictionary.html#term-quantisation" },
+        { "@type": "DefinedTerm", "name": "RAG", "url": "https://thehallucinatedlab.space/dictionary.html#term-rag" },
+        { "@type": "DefinedTerm", "name": "Reranking", "url": "https://thehallucinatedlab.space/dictionary.html#term-reranking" },
+        { "@type": "DefinedTerm", "name": "Temperature", "url": "https://thehallucinatedlab.space/dictionary.html#term-temperature" },
+        { "@type": "DefinedTerm", "name": "Token", "url": "https://thehallucinatedlab.space/dictionary.html#term-token" },
+        { "@type": "DefinedTerm", "name": "Transformer", "url": "https://thehallucinatedlab.space/dictionary.html#term-transformer" },
+        { "@type": "DefinedTerm", "name": "Vector database", "url": "https://thehallucinatedlab.space/dictionary.html#term-vector-database" },
+        { "@type": "DefinedTerm", "name": "API", "url": "https://thehallucinatedlab.space/dictionary.html#term-api" },
+        { "@type": "DefinedTerm", "name": "Big-O notation", "url": "https://thehallucinatedlab.space/dictionary.html#term-big-o-notation" },
+        { "@type": "DefinedTerm", "name": "CI/CD", "url": "https://thehallucinatedlab.space/dictionary.html#term-ci-cd" },
+        { "@type": "DefinedTerm", "name": "Content Security Policy", "url": "https://thehallucinatedlab.space/dictionary.html#term-content-security-policy" },
+        { "@type": "DefinedTerm", "name": "Dependency", "url": "https://thehallucinatedlab.space/dictionary.html#term-dependency" },
+        { "@type": "DefinedTerm", "name": "Idempotence", "url": "https://thehallucinatedlab.space/dictionary.html#term-idempotence" },
+        { "@type": "DefinedTerm", "name": "Immutability", "url": "https://thehallucinatedlab.space/dictionary.html#term-immutability" },
+        { "@type": "DefinedTerm", "name": "Linting", "url": "https://thehallucinatedlab.space/dictionary.html#term-linting" },
+        { "@type": "DefinedTerm", "name": "Memoisation", "url": "https://thehallucinatedlab.space/dictionary.html#term-memoisation" },
+        { "@type": "DefinedTerm", "name": "Progressive enhancement", "url": "https://thehallucinatedlab.space/dictionary.html#term-progressive-enhancement" },
+        { "@type": "DefinedTerm", "name": "Race condition", "url": "https://thehallucinatedlab.space/dictionary.html#term-race-condition" },
+        { "@type": "DefinedTerm", "name": "Refactoring", "url": "https://thehallucinatedlab.space/dictionary.html#term-refactoring" },
+        { "@type": "DefinedTerm", "name": "Regression test", "url": "https://thehallucinatedlab.space/dictionary.html#term-regression-test" },
+        { "@type": "DefinedTerm", "name": "Semantic versioning", "url": "https://thehallucinatedlab.space/dictionary.html#term-semantic-versioning" },
+        { "@type": "DefinedTerm", "name": "Static site", "url": "https://thehallucinatedlab.space/dictionary.html#term-static-site" },
+        { "@type": "DefinedTerm", "name": "Technical debt", "url": "https://thehallucinatedlab.space/dictionary.html#term-technical-debt" }
+      ]
+    }
+  ]
+}
+  </script>
+</head>
+<body>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="/" class="nav-logo">
+        <picture>
+          <source srcset="assets/images/logo-72.avif" type="image/avif">
+          <source srcset="assets/images/logo-72.webp" type="image/webp">
+          <img src="assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="/">Home</a></li>
+        <li><a href="tools.html">Tools</a></li>
+        <li><a href="pipelines.html">Pipelines</a></li>
+        <li><a href="interface.html">Assistant</a></li>
+        <li><a href="solutions.html">Solutions</a></li>
+        <li><a href="media.html">Media</a></li>
+        <li><a href="dictionary.html" class="active">Dictionary</a></li>
+        <li><a href="/sitemap.html">Sitemap</a></li>
+        <li data-status="dev"><a href="slm.html">SLM</a></li>
+        <li data-status="dev"><a href="certification.html">Certification</a></li>
+        <li data-status="dev"><a href="consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+
+  <main id="main-content" class="page-main">
+
+    <section class="page-hero">
+      <span class="section-label">Look It Up</span>
+      <h1 class="page-title">Dictionary</h1>
+      <p class="page-subtitle">The vocabulary this site runs on, defined in plain English — what each term means, and when it actually matters.</p>
+    </section>
+
+    <section class="media-section">
+      <div class="container">
+
+        <p class="section-intro">Two sections. <strong>Artificial Intelligence</strong> covers the words that appear on the tool pages — tokens, embeddings, retrieval, quantisation. <strong>Software Engineering</strong> covers the words that appear in how this site is built and reviewed. Every entry is short on purpose: the definition, then the part that is easy to get wrong.</p>
+
+        <nav class="dict-jump" aria-label="Dictionary sections">
+          <a href="#artificial-intelligence">Artificial Intelligence</a>
+          <a href="#software-engineering">Software Engineering</a>
+        </nav>
+
+        <section class="dict-section fade-in" id="artificial-intelligence">
+          <h2 class="section-title">Artificial Intelligence</h2>
+          <p class="dict-section-note">Eighteen terms, in alphabetical order. These are the ones used on the Tools, Pipelines and Assistant pages without stopping to explain them.</p>
+
+          <dl class="dict-list">
+
+            <div class="dict-entry" id="term-agent">
+              <dt class="dict-term">Agent</dt>
+              <dd class="dict-def">A model given tools and a loop: it picks a tool, reads the result, and decides again, rather than answering in one pass. The loop is what makes it an agent — the model underneath is the same model.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-attention">
+              <dt class="dict-term">Attention</dt>
+              <dd class="dict-def">The mechanism that lets a model weigh every token against every other token when deciding what a token means in context. It is also why long prompts are expensive: the work grows with the square of the sequence length.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-chunking">
+              <dt class="dict-term">Chunking</dt>
+              <dd class="dict-def">Splitting a long document into retrieval-sized pieces. Where you cut decides what can be retrieved — a chunk cut through the middle of an argument can only ever return half of it, which is why splitting on headings beats splitting on character counts.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-context-window">
+              <dt class="dict-term">Context window</dt>
+              <dd class="dict-def">The maximum number of tokens a model can hold at once, prompt and answer together. Anything past the limit is dropped, usually without a warning, which is why oversized inputs fail in ways that look like the model forgetting rather than the tool truncating.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-distillation">
+              <dt class="dict-term">Distillation</dt>
+              <dd class="dict-def">Training a small model to imitate a larger one's outputs. You get most of the behaviour at a fraction of the running cost, and you inherit the teacher's habits — including the wrong ones.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-embedding">
+              <dt class="dict-term">Embedding</dt>
+              <dd class="dict-def">A list of numbers that represents a piece of text so that similar meanings sit near each other. Retrieval is then a distance measurement in that space and nothing more, which is both why it is fast and why it returns confidently irrelevant results when the space is a poor fit for your documents.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-fine-tuning">
+              <dt class="dict-term">Fine-tuning</dt>
+              <dd class="dict-def">Continuing a model's training on your own examples so it adopts a behaviour, a tone, or an output format. It teaches shape reliably. It is a poor and expensive way to teach facts — that is what retrieval is for.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-hallucination">
+              <dt class="dict-term">Hallucination</dt>
+              <dd class="dict-def">A fluent, confident, wrong answer. Not a malfunction in the ordinary sense: the model is predicting plausible text, and plausible is not the same thing as true. Grounding, citation and verification reduce it; nothing removes it.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-inference">
+              <dt class="dict-term">Inference</dt>
+              <dd class="dict-def">Running a trained model to get an answer, as opposed to training one. Everything on this site described as running "locally" means inference happening on your own machine.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-local-first-ai">
+              <dt class="dict-term">Local-first AI</dt>
+              <dd class="dict-def">Running models on hardware you own, so the data never leaves it. You trade peak model quality for privacy, offline use, and no per-token bill. It is the position this lab builds from.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-lora">
+              <dt class="dict-term">LoRA</dt>
+              <dd class="dict-def">Low-Rank Adaptation. A small set of extra weights trained on top of a frozen base model, so a new behaviour costs megabytes instead of a second copy of the model. Several can be swapped in and out against one base.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-quantisation">
+              <dt class="dict-term">Quantisation</dt>
+              <dd class="dict-def">Storing weights at lower numerical precision — FP16 down to 4-bit — so a model fits in less memory and runs faster. Quality degrades gradually rather than all at once, which is exactly why it is worth measuring on your own task instead of assuming.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-rag">
+              <dt class="dict-term">RAG</dt>
+              <dd class="dict-def">Retrieval-augmented generation. Fetch the relevant text first, put it in the prompt, then answer. It grounds an answer in documents you control and can update, and it is the usual alternative to fine-tuning facts into a model.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-reranking">
+              <dt class="dict-term">Reranking</dt>
+              <dd class="dict-def">A second pass that reorders retrieved chunks with a slower, more accurate model. Cheap retrieval finds plausible candidates; reranking decides which of them actually answers the question asked.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-temperature">
+              <dt class="dict-term">Temperature</dt>
+              <dd class="dict-def">A sampling knob for randomness. Low values make output repeatable and flat; high values make it varied and less reliable. When you are debugging anything else in a pipeline, set it to zero first so the model stops being a variable.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-token">
+              <dt class="dict-term">Token</dt>
+              <dd class="dict-def">The unit a model actually reads: a word, a fragment of a word, or a punctuation mark. Cost, context limits and truncation are all counted in tokens, never in characters — which is why a character count is a bad estimate of either.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-transformer">
+              <dt class="dict-term">Transformer</dt>
+              <dd class="dict-def">The architecture behind essentially every current language model. Its defining feature is attention; the rest is layers stacked on top of it and trained at scale.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-vector-database">
+              <dt class="dict-term">Vector database</dt>
+              <dd class="dict-def">Storage for embeddings that answers "what is nearest to this?" quickly. The database is the easy part of retrieval. What you chose to put in it — and how you split it — decides whether retrieval works at all.</dd>
+            </div>
+
+          </dl>
+        </section>
+
+        <section class="dict-section fade-in" id="software-engineering">
+          <h2 class="section-title">Software Engineering</h2>
+          <p class="dict-section-note">Sixteen terms, in alphabetical order. These are the ones that decide how work here is built, reviewed and shipped.</p>
+
+          <dl class="dict-list">
+
+            <div class="dict-entry" id="term-api">
+              <dt class="dict-term">API</dt>
+              <dd class="dict-def">The contract one piece of software offers another: what may be called, what must be passed, what comes back. The contract is the product; the implementation behind it is free to change as long as the contract does not.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-big-o-notation">
+              <dt class="dict-term">Big-O notation</dt>
+              <dd class="dict-def">How an algorithm's cost grows as its input grows, with constant factors ignored. It answers "does this survive ten times the data", not "is this fast today" — and the two questions have different answers more often than people expect.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-ci-cd">
+              <dt class="dict-term">CI/CD</dt>
+              <dd class="dict-def">Continuous integration and continuous delivery: every push is built and tested automatically, and what passes is fit to ship. The value is that a broken change is caught by a machine on a schedule rather than by a person eventually.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-content-security-policy">
+              <dt class="dict-term">Content Security Policy</dt>
+              <dd class="dict-def">A browser-enforced list of where a page is allowed to load code from. Restricted to the page's own origin, it turns an injected inline script into a no-op instead of an incident. Every page on this site ships one, this one included.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-dependency">
+              <dt class="dict-term">Dependency</dt>
+              <dd class="dict-def">Code you did not write but now ship and maintain. Each one is a standing bet on somebody else's release schedule, security posture and continued interest — which is why this site ships none to the browser.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-idempotence">
+              <dt class="dict-term">Idempotence</dt>
+              <dd class="dict-def">The property of an operation that can be repeated without changing the result beyond what the first run did. It is the property that makes a retry safe, and the one missing whenever a retry causes a duplicate.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-immutability">
+              <dt class="dict-term">Immutability</dt>
+              <dd class="dict-def">Not modifying a value after creating it — producing a new one instead. It removes an entire class of bug in which two parts of a program disagree about the current state of the same object.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-linting">
+              <dt class="dict-term">Linting</dt>
+              <dd class="dict-def">Static checks for the rules a language does not enforce: unused variables, unsafe patterns, house style. Cheap to run, and it settles style arguments before review rather than during it.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-memoisation">
+              <dt class="dict-term">Memoisation</dt>
+              <dd class="dict-def">Caching a function's result against its arguments so repeat calls are free. Correct only for pure functions — applied to one with side effects, it does not speed the side effects up, it silently stops them happening.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-progressive-enhancement">
+              <dt class="dict-term">Progressive enhancement</dt>
+              <dd class="dict-def">Building so the page works as plain HTML first, then layering behaviour on top. The test is whether it still works with JavaScript disabled. For this site's navigation it does: the menu is a list of real links, and the script only rearranges it.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-race-condition">
+              <dt class="dict-term">Race condition</dt>
+              <dd class="dict-def">A bug whose outcome depends on which of two concurrent operations finishes first. It reproduces when it feels like it, which is why it is usually discovered in production rather than in a test.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-refactoring">
+              <dt class="dict-term">Refactoring</dt>
+              <dd class="dict-def">Changing a program's structure without changing what it does. If behaviour changed, it was not a refactor — it was a change, and it needs the review a change gets.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-regression-test">
+              <dt class="dict-term">Regression test</dt>
+              <dd class="dict-def">A test written for a bug that already shipped once, so it cannot ship twice. Often the most valuable test in a suite, because it is the only kind you know for certain was needed.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-semantic-versioning">
+              <dt class="dict-term">Semantic versioning</dt>
+              <dd class="dict-def">MAJOR.MINOR.PATCH, where the major number is a promise: it moves only when something you depend on breaks. Version ranges are safe exactly to the degree the publisher keeps that promise.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-static-site">
+              <dt class="dict-term">Static site</dt>
+              <dd class="dict-def">A site served as files, with no application server building pages per request. Nothing to exploit at request time, nothing to keep running, and nowhere for user data to accumulate. This site is one.</dd>
+            </div>
+
+            <div class="dict-entry" id="term-technical-debt">
+              <dt class="dict-term">Technical debt</dt>
+              <dd class="dict-def">The future cost of a shortcut taken now. Legitimate when it is taken deliberately and written down with a plan to repay it. The damaging kind is the debt nobody recorded, which is discovered by the next person, under deadline.</dd>
+            </div>
+
+          </dl>
+        </section>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="script.js" defer></script>
+</body>
+</html>

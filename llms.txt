@@ -26,6 +26,7 @@ The Hallucinated Lab operates in three modes:
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped desktop products — ScoobyBench benchmarks real AI inference performance against vendor claims, NexusLink Engine is an encrypted peer-to-peer networking SDK, and AI Video Studio generates narrated video from a script on local hardware.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
+- [Dictionary](https://thehallucinatedlab.space/dictionary.html): Definitions of the vocabulary used across the site, in two sections — Artificial Intelligence (eighteen terms, from attention and chunking through to vector databases) and Software Engineering (sixteen terms, from Big-O through to technical debt). Each entry is a short definition plus the part that is commonly got wrong.
 - [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.
 
 ## Tools
