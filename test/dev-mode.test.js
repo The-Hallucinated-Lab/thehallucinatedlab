@@ -207,6 +207,7 @@ test('every navbar carries the same dev group, in the same order', () => {
 const DEV_ONLY_PAGES = [
   'slm.html',
   'genai.html',
+  'data.html',
   'blogs/dev-tokenisation-questions.html',
   'blogs/dev-llm-systems-questions.html',
 ];

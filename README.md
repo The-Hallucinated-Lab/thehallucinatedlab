@@ -63,6 +63,7 @@ thehallucinatedlab/
 ├── certification.html    # Certification — course tracks and the certificate
 ├── consultancy.html      # Consultancy — individual & business engagements
 ├── slm.html              # Small language models — document, tools and personal first
+├── data.html             # Data (dev only) — empty shell, the project is not built yet
 ├── livelab.html          # Redirect → tools.html (old LiveLab URL)
 ├── certificate.html      # Redirect → certification.html (old URL)
 ├── 404.html              # Custom not-found page (served by GitHub Pages)
