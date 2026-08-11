@@ -464,6 +464,10 @@ const NAV_ICONS = {
   'slm.html': 'M9 3v2H7a2 2 0 0 0-2 2v2H3v2h2v2H3v2h2v2a2 2 0 0 0 2 2h2v2h2v-2h2v2h2v-2h2a2 2 0 0 0 2-2v-2h2v-2h-2v-2h2V9h-2V7a2 2 0 0 0-2-2h-2V3h-2v2h-2V3H9zm0 6h6v6H9V9z',
   'certification.html': 'M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z',
   'consultancy.html': 'M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z',
+  /* Three stacked discs. The page is a catalogue of published sets, not
+     a chart or a tool, so the glyph says "stored records" rather than
+     borrowing the analysis icon eda.html already owns. */
+  'data.html': 'M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9.5V12c0 2.21 3.58 4 8 4s8-1.79 8-4V9.5c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5V17c0 2.21 3.58 4 8 4s8-1.79 8-4v-2.5c0 2.21-3.58 4-8 4s-8-1.79-8-4z',
 };
 
 /* Collapse each top-level link to its icon and reveal the label on hover,

@@ -2012,12 +2012,14 @@
 /* Four postures, so two by two. A third column would leave the fourth
    card alone on its own row, which reads as an afterthought rather than
    as the fourth of a set. */
-.slm-grid {
+.slm-grid,
+.dataset-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.5rem;
 }
-.slm-card {
+.slm-card,
+.dataset-card {
   display: flex;
   flex-direction: column;
   padding: 1.8rem;
@@ -2026,8 +2028,10 @@
   border-radius: var(--radius-lg);
   transition: var(--transition);
 }
-.slm-card:hover { border-color: var(--border-gold); transform: translateY(-3px); box-shadow: var(--shadow-gold); }
-.slm-head {
+.slm-card:hover,
+.dataset-card:hover { border-color: var(--border-gold); transform: translateY(-3px); box-shadow: var(--shadow-gold); }
+.slm-head,
+.dataset-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2035,14 +2039,16 @@
   flex-wrap: wrap;
   margin-bottom: 0.7rem;
 }
-.slm-title {
+.slm-title,
+.dataset-title {
   font-family: var(--font-heading);
   font-size: 1.05rem;
   font-weight: 700;
   color: var(--gold-light);
   letter-spacing: 0.3px;
 }
-.slm-status {
+.slm-status,
+.dataset-status {
   display: inline-flex;
   align-items: center;
   gap: 7px;
@@ -2056,46 +2062,55 @@
   color: var(--text-secondary);
   white-space: nowrap;
 }
-.slm-status .dot {
+.slm-status .dot,
+.dataset-status .dot {
   width: 6px; height: 6px;
   border-radius: 50%;
   background: var(--gold-primary);
   animation: pulse-dot 2s infinite;
 }
-.slm-status.pending { border-color: var(--border-gold); color: var(--gold-primary); }
-.slm-status.queued .dot { background: var(--text-muted); animation: none; }
-.slm-desc {
+.slm-status.pending,
+.dataset-status.pending { border-color: var(--border-gold); color: var(--gold-primary); }
+.slm-status.queued .dot,
+.dataset-status.queued .dot { background: var(--text-muted); animation: none; }
+.slm-desc,
+.dataset-desc {
   color: var(--text-secondary);
   font-size: 0.79rem;
   line-height: 1.7;
   margin-bottom: 1.2rem;
   flex-grow: 1;
 }
-.slm-specs {
+.slm-specs,
+.dataset-specs {
   display: grid;
   gap: 0.5rem;
   padding-top: 1rem;
   border-top: 1px solid var(--border-subtle);
 }
-.slm-specs > div {
+.slm-specs > div,
+.dataset-specs > div {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
   gap: 0.8rem;
 }
-.slm-specs dt {
+.slm-specs dt,
+.dataset-specs dt {
   font-size: 0.6rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--text-muted);
   white-space: nowrap;
 }
-.slm-specs dd {
+.slm-specs dd,
+.dataset-specs dd {
   font-size: 0.72rem;
   color: var(--text-primary);
   text-align: right;
 }
-.slm-note {
+.slm-note,
+.dataset-note {
   margin-top: 2rem;
   padding: 1.2rem 1.6rem;
   border-radius: var(--radius-md);
@@ -2103,12 +2118,14 @@
   border: 1px solid var(--border-subtle);
   border-left: 3px solid var(--gold-dark);
 }
-.slm-note p {
+.slm-note p,
+.dataset-note p {
   color: var(--text-secondary);
   font-size: 0.8rem;
   line-height: 1.8;
 }
-.slm-note strong { color: var(--gold-light); }
+.slm-note strong,
+.dataset-note strong { color: var(--gold-light); }
 
 /* ============ HOW-TO PANEL ============ */
 .how-panel {
@@ -2812,7 +2829,8 @@
   .course-grid { grid-template-columns: minmax(0, 1fr); }
   .offer-grid { grid-template-columns: minmax(0, 1fr); }
   .adapter-grid { grid-template-columns: minmax(0, 1fr); }
-  .slm-grid { grid-template-columns: minmax(0, 1fr); }
+  .slm-grid,
+  .dataset-grid { grid-template-columns: minmax(0, 1fr); }
   .trait-grid,
   .trait-grid-4 { grid-template-columns: minmax(0, 1fr); }
   .cert-steps { grid-template-columns: minmax(0, 1fr); }
@@ -2831,6 +2849,7 @@
   .prompt-card,
   .adapter-card,
   .slm-card,
+  .dataset-card,
   .course-card { padding: 1.4rem 1.2rem; }
 
   .prompt-body { max-height: 220px; }
