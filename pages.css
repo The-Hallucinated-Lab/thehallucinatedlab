@@ -750,6 +750,23 @@
    and nowhere else. */
 .note-card-local { border-style: dashed; }
 
+/* A raw note only renders in a dev session, so this styling is never
+   seen by a visitor. It exists so that the two kinds of note are
+   distinguishable at a glance while reading the board in dev mode —
+   otherwise a notebook page and a finished piece look identical, which
+   is exactly the confusion the split was made to remove. */
+.note-card-raw { border-style: dotted; }
+
+.note-chip-raw {
+  background: transparent;
+  border: 1px dashed var(--border-gold);
+  color: var(--gold-dark);
+  font-size: 0.58rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
 .note-delete {
   position: absolute;
   top: 0.6rem;

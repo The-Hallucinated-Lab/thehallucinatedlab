@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Raw: eight questions about LLM systems</title>
+  <meta name="description" content="Eight open questions on models, formats, compression and local deployment, transcribed as asked, with an overview and a reading list. Raw working note.">
+  <link rel="icon" type="image/png" sizes="32x32" href="../assets/images/favicon-32.png">
+  <link rel="apple-touch-icon" href="../assets/images/favicon-180.png">
+  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/assets/fonts/jetbrains-mono-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="../fonts.css">
+  <link rel="stylesheet" href="../styles.css">
+  <link rel="stylesheet" href="blog.css">
+  <script src="../theme.js"></script>
+</head>
+<body>
+  <div class="reading-progress" id="reading-progress"></div>
+
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="../" class="nav-logo">
+        <picture>
+          <source srcset="../assets/images/logo-72.avif" type="image/avif">
+          <source srcset="../assets/images/logo-72.webp" type="image/webp">
+          <img src="../assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../">Home</a></li>
+        <li><a href="../tools.html">Tools</a></li>
+        <li><a href="../pipelines.html">Pipelines</a></li>
+        <li><a href="../interface.html">Assistant</a></li>
+        <li><a href="../solutions.html">Solutions</a></li>
+        <li><a href="../blogs.html" class="active">Media</a></li>
+        <li><a href="../dictionary.html">Dictionary</a></li>
+        <li><a href="/sitemap.html">Sitemap</a></li>
+        <li data-status="dev"><a href="../slm.html">SLM</a></li>
+        <li data-status="dev"><a href="../certification.html">Certification</a></li>
+        <li data-status="dev"><a href="../consultancy.html">Consultancy</a></li>
+        <li data-status="dev"><a href="../data.html">Data</a></li>
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+
+  <div class="blog-hero">
+    <div class="blog-hero-bg" style="background: linear-gradient(135deg, #0e2a1e 0%, #123d2c 40%, #185a3f 70%, #0e2a1e 100%);"></div>
+    <div class="blog-hero-overlay"></div>
+    <div class="blog-hero-content">
+      <div class="blog-meta-top">
+        <span class="blog-category-badge">Raw note · dev only</span>
+        <span class="blog-read-time">12 min read</span>
+      </div>
+      <h1 class="blog-hero-title">Raw: eight questions about LLM systems</h1>
+      <p class="blog-hero-subtitle">Asked in one sitting, answered only far enough to know what to read next.</p>
+      <div class="blog-author-row">
+        <div class="blog-author-info">
+          <span class="blog-author-name">Pratyush</span>
+          <span class="blog-date">August 10, 2026</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <main id="main-content" class="blog-page">
+    <div class="blog-layout">
+
+      <aside class="blog-toc" aria-label="Table of Contents">
+        <span class="toc-label">Contents</span>
+        <ul class="toc-list">
+          <li><a href="#raw" class="toc-link active">The questions</a></li>
+          <li><a href="#overview" class="toc-link">Overview</a></li>
+          <li><a href="#reading" class="toc-link">Reading list</a></li>
+        </ul>
+        <a href="../blogs.html" class="toc-back">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+          Back to the board
+        </a>
+      </aside>
+
+      <article class="blog-content">
+
+        <div class="raw-banner" role="note">
+          <p><strong>This is a raw note.</strong> Questions as asked, plus an overview written to point at what to read next. One of these — the Security Efficiency Paradox — I could not match to an established term, and the overview says so rather than inventing a definition. The page is <code>noindex</code> and only renders on the board in dev mode.</p>
+        </div>
+
+        <h2 id="raw">The questions</h2>
+
+        <ol class="raw-questions">
+          <li>Does AI necessarily mean a model, or is a model a way to achieve AI? Do we have any other way?</li>
+          <li>Why did GPT-2 have coding errors only in the Python language?</li>
+          <li>Why use YAML over JSON in LLMs?</li>
+          <li>LLMs are not actually end-to-end language models — why?</li>
+          <li>What is the Security Efficiency Paradox?</li>
+          <li>How can a model's compression affect the safety alignment of the model?</li>
+          <li>Things to keep in mind to improve local deployment of LLMs.</li>
+          <li>How does continuous local adaptation introduce privacy leakage?</li>
+        </ol>
+
+        <hr class="blog-divider">
+
+        <h2 id="overview">Overview</h2>
+
+        <p><strong>1. Model or AI.</strong> A model is one route, and historically the minority one. Search, constraint solving and symbolic reasoning are AI with no learned parameters anywhere: A* and its descendants, SAT and SMT solvers, planners in the STRIPS lineage, expert systems like MYCIN, logic programming. These still beat learned systems outright on problems with crisp structure — a modern SMT solver will decide things no transformer can. The interesting position is not either/or but the hybrid: AlphaGeometry pairs a language model with a symbolic deduction engine and reaches medallist-level olympiad geometry, where neither half does alone. Read Sutton's <em>Bitter Lesson</em> and then read a good critique of it, because the honest answer to your question is that scale has repeatedly beaten structure at the same time as the strongest current systems are structured search with a learned proposal distribution inside.</p>
+
+        <p><strong>2. GPT-2 and Python.</strong> Two causes, and the specific one is a tokeniser fact. GPT-2's BPE was fitted on web text where runs of spaces are rare, so it has no efficient tokens for four, eight or twelve consecutive spaces — indentation gets shredded into many tokens, each carrying almost no information, and long stretches of the context are spent encoding whitespace. In most languages that is merely wasteful. In Python indentation <em>is</em> the block structure, so a representation that garbles it garbles the program's semantics. The Codex paper states the fix plainly: they added tokens representing whitespace runs, and it materially improved code generation. The second cause is mundane — WebText was not a code corpus, so GPT-2 saw comparatively little Python and almost none of it well-formatted. Worth checking the premise before building on it, though: "errors only in Python" is probably "errors most visibly in Python", since the failure mode there is syntactic and loud rather than silently wrong.</p>
+
+        <p><strong>3. YAML over JSON.</strong> The honest ranking depends on which end you are on. For model <em>output</em>, JSON usually wins now, because constrained decoding against a JSON Schema gives you a validity guarantee no amount of prompting gives you, and YAML's indentation sensitivity interacts badly with the same whitespace tokenisation from question 2. For model <em>input</em> — long structured prompts, config, few-shot payloads — YAML is genuinely cheaper in tokens, because JSON spends a large fraction of its characters on quotes, braces and commas that each cost a token. The catch is that YAML is an ambiguous format: unquoted <code>no</code>, <code>on</code> and <code>NO</code> parse as booleans under YAML 1.1, version strings become floats, and a model producing YAML will produce those. And there is a cost to constraint itself — Tam et al. found that forcing rigid formats can reduce reasoning quality, which argues for letting the model think in prose and then formatting in a second, cheap call.</p>
+
+        <p><strong>4. Not end-to-end.</strong> Correct, and the seam is exactly the tokeniser. It is fitted by a separate greedy counting algorithm, before training, against no loss the model ever sees, and then frozen — gradients stop at the embedding lookup and never reach the segmentation decision. Detokenisation is a second, non-learned stage. So is sampling: temperature, top-p and repetition penalties are hand-set decision rules operating outside the objective the model was trained on. So, usually, is retrieval. The current attempts to close the seam are the byte-level and learned-tokenisation lines — ByT5, MegaByte, Charformer, MANTa, and most recently the Byte Latent Transformer, whose dynamic patching is trained rather than fitted.</p>
+
+        <p><strong>5. Security Efficiency Paradox.</strong> I cannot point you to a canonical definition, and you should treat any confident one-line answer here with suspicion. It most plausibly names one of two real things. In systems security it is the old observation that the mitigations are what cost you the performance — the Spectre and Meltdown patches being the standard case, where correctness against a side channel is bought directly in throughput. In LLM serving it names something newer and sharper: the optimisations that make inference cheap are the ones that break isolation. Prefix and KV-cache sharing across users creates a timing side channel that leaks whether someone else has asked a similar question; batching couples tenants' latency; speculative decoding leaks token-level timing. If the phrase came from a specific paper, find that paper before using the term, because as it stands it is a description in search of a citation.</p>
+
+        <p><strong>6. Compression against alignment.</strong> This one has good evidence and a satisfying mechanism. Quantisation, pruning and distillation preserve average benchmark scores far better than they preserve tail behaviour, and safety <em>is</em> tail behaviour. Qi et al. showed alignment is shallow — concentrated in the first few generated tokens — which explains why a perturbation too small to move perplexity can still move refusal behaviour: you only have to disturb a small, specific region. Worse, it is attackable on purpose. Egashira et al. built models that behave benignly in full precision and turn malicious once quantised, meaning the fp16 evaluation you ran certifies nothing about the artefact you shipped. The operational rule that follows is blunt: re-run safety evaluation on the exact quantised weights you deploy, not on the parent.</p>
+
+        <p><strong>7. Local deployment.</strong> The single most useful thing to internalise is that single-stream decoding is memory-bandwidth bound, not compute bound — tokens per second tracks how fast you can pull weights through memory, which is why quantisation buys speed and not only capacity. From there: pick the quantisation deliberately (GPTQ, AWQ and the K-quants have different damage profiles, and 4-bit weights with a poorly chosen group size lose more than the size suggests); budget the KV cache explicitly, since it grows with context length times batch and is what actually kills you at long context; quantise the cache if you must; use paged attention if you are serving more than yourself; consider speculative decoding with a small draft model; keep the prompt prefix stable so it can be cached; and evaluate the quantised build on your own task, before and after, rather than trusting the published table. Then reread question 6 before calling it done.</p>
+
+        <p><strong>8. Continuous local adaptation and leakage.</strong> Training on your own data locally feels private and mostly is — until the artefact moves. Models memorise, verbatim, at rates that rise with repetition and model size; a LoRA adapter fitted on your notes is a lossy but real encoding of them, and shipping or syncing that adapter ships the data with it. If adaptation is federated, gradients alone are enough — Zhu et al. reconstructed training images from shared gradients. Even without exfiltration there is membership inference: an adapted model assigns systematically higher likelihood to what it was adapted on, so anyone who can query it can ask whether a document was in your corpus. Differential privacy is the principled defence and costs utility honestly. The underrated failure is the one Debenedetti et al. call a privacy side channel — the leak comes not from the model but from the pipeline around it: deduplication, caching, filters, retrieval indices, telemetry. For a local-first stack that is the part worth designing first.</p>
+
+        <hr class="blog-divider">
+
+        <h2 id="reading">Reading list</h2>
+
+        <p>Every arXiv identifier below was checked against arXiv on 10 August 2026 and resolves to the paper named. The entries with no identifier — Newell and Simon, Russell and Norvig, Sutton, AlphaGeometry, the GPT-2 paper, the YAML specification and the <code>llama.cpp</code> repository — were not machine-checked. No identifier is a substitute for opening the paper.</p>
+
+        <h3>Is a model the only route</h3>
+        <ul class="ref-list">
+          <li><strong>Newell &amp; Simon (1976), "Computer Science as Empirical Inquiry: Symbols and Search", CACM.</strong> The physical symbol system hypothesis, stated by the people who meant it.</li>
+          <li><strong>Russell &amp; Norvig, <em>Artificial Intelligence: A Modern Approach</em>.</strong> Chapters on search, logic, planning and constraint satisfaction — several hundred pages of AI with no gradient in sight.</li>
+          <li><strong>Sutton (2019), "The Bitter Lesson".</strong> Short, and the argument every hybrid proposal has to answer.</li>
+          <li><strong>Garcez &amp; Lamb (2020), "Neurosymbolic AI: The 3rd Wave".</strong> The counter-position, surveyed. <a href="https://arxiv.org/abs/2012.05876" rel="noopener">arXiv:2012.05876</a></li>
+          <li><strong>Trinh, Wu, Le, He, Luong (2024), "Solving olympiad geometry without human demonstrations", <em>Nature</em> 625.</strong> AlphaGeometry — the concrete case for language model plus symbolic engine.</li>
+          <li><strong>Chollet (2019), "On the Measure of Intelligence".</strong> Why benchmark scores and intelligence come apart, and the origin of ARC. <a href="https://arxiv.org/abs/1911.01547" rel="noopener">arXiv:1911.01547</a></li>
+        </ul>
+
+        <h3>GPT-2, Python and formats</h3>
+        <ul class="ref-list">
+          <li><strong>Chen, Tworek, Jun et al. (2021), "Evaluating Large Language Models Trained on Code".</strong> The Codex paper, including the whitespace-run tokens added because GPT-2's BPE handled Python indentation badly. <a href="https://arxiv.org/abs/2107.03374" rel="noopener">arXiv:2107.03374</a></li>
+          <li><strong>Radford, Wu, Child et al. (2019), "Language Models are Unsupervised Multitask Learners".</strong> The GPT-2 paper — read the section on WebText for the data half of the answer.</li>
+          <li><strong>Tam et al. (2024), "Let Me Speak Freely? A Study on the Impact of Format Restrictions on Performance of Large Language Models".</strong> Evidence that format constraints can cost reasoning quality. <a href="https://arxiv.org/abs/2408.02442" rel="noopener">arXiv:2408.02442</a></li>
+          <li><strong>Willard &amp; Louf (2023), "Efficient Guided Generation for Large Language Models".</strong> The finite-state approach behind Outlines and most JSON-mode implementations. <a href="https://arxiv.org/abs/2307.09702" rel="noopener">arXiv:2307.09702</a></li>
+          <li><strong>The YAML 1.2 specification, §on booleans and the "Norway problem".</strong> Ten minutes that will decide the question for you on ambiguity grounds alone.</li>
+        </ul>
+
+        <h3>Where the pipeline stops being end-to-end</h3>
+        <ul class="ref-list">
+          <li><strong>Pagnoni, Pasunuru, Rodriguez et al. (2024), "Byte Latent Transformer: Patches Scale Better Than Tokens".</strong> <a href="https://arxiv.org/abs/2412.09871" rel="noopener">arXiv:2412.09871</a></li>
+          <li><strong>Tay, Tran, Ruder et al. (2022), "Charformer: Fast Character Transformers via Gradient-based Subword Tokenization".</strong> <a href="https://arxiv.org/abs/2106.12672" rel="noopener">arXiv:2106.12672</a></li>
+          <li><strong>Xue, Barua, Constant et al. (2022), "ByT5: Towards a token-free future with pre-trained byte-to-byte models".</strong> <a href="https://arxiv.org/abs/2105.13626" rel="noopener">arXiv:2105.13626</a></li>
+          <li>See also the companion raw note on tokenisation, which is the same seam from the other side.</li>
+        </ul>
+
+        <h3>Compression, alignment and the efficiency/security trade</h3>
+        <ul class="ref-list">
+          <li><strong>Qi, Panda, Lyu et al. (2024), "Safety Alignment Should Be Made More Than Just a Few Tokens Deep".</strong> Why a small perturbation can undo alignment without touching benchmark scores. <a href="https://arxiv.org/abs/2406.05946" rel="noopener">arXiv:2406.05946</a></li>
+          <li><strong>Egashira, Vero, Staab, He, Vechev (2024), "Exploiting LLM Quantization", NeurIPS.</strong> Weights that pass evaluation in fp16 and misbehave once quantised. <a href="https://arxiv.org/abs/2405.18137" rel="noopener">arXiv:2405.18137</a></li>
+          <li><strong>Hong, Duan, Zhang et al. (2024), "Decoding Compressed Trust: Scrutinizing the Trustworthiness of Efficient LLMs Under Compression".</strong> Compression measured against trustworthiness dimensions rather than perplexity. <a href="https://arxiv.org/abs/2403.15447" rel="noopener">arXiv:2403.15447</a></li>
+          <li><strong>Jaiswal, Gan, Du et al. (2023), "Compressing LLMs: The Truth is Rarely Pure and Never Simple".</strong> Where the standard compression evaluations flatter themselves. <a href="https://arxiv.org/abs/2310.01382" rel="noopener">arXiv:2310.01382</a></li>
+          <li><strong>Kocher, Genkin, Gruss et al. (2019), "Spectre Attacks: Exploiting Speculative Execution", IEEE S&amp;P.</strong> The canonical case of paying for security in performance, for the systems reading of question 5. <a href="https://arxiv.org/abs/1801.01203" rel="noopener">arXiv:1801.01203</a></li>
+        </ul>
+
+        <h3>Local deployment</h3>
+        <ul class="ref-list">
+          <li><strong>Frantar, Ashkboos, Hoefler, Alistarh (2023), "GPTQ: Accurate Post-Training Quantization for Generative Pre-trained Transformers", ICLR.</strong> <a href="https://arxiv.org/abs/2210.17323" rel="noopener">arXiv:2210.17323</a></li>
+          <li><strong>Lin, Tang, Tang et al. (2024), "AWQ: Activation-aware Weight Quantization for LLM Compression and Acceleration", MLSys.</strong> <a href="https://arxiv.org/abs/2306.00978" rel="noopener">arXiv:2306.00978</a></li>
+          <li><strong>Xiao, Lin, Seznec et al. (2023), "SmoothQuant: Accurate and Efficient Post-Training Quantization for Large Language Models", ICML.</strong> <a href="https://arxiv.org/abs/2211.10438" rel="noopener">arXiv:2211.10438</a></li>
+          <li><strong>Kwon, Li, Zhuang et al. (2023), "Efficient Memory Management for Large Language Model Serving with PagedAttention", SOSP.</strong> The KV cache as the real constraint. <a href="https://arxiv.org/abs/2309.06180" rel="noopener">arXiv:2309.06180</a></li>
+          <li><strong>Leviathan, Kalman, Matias (2023), "Fast Inference from Transformers via Speculative Decoding", ICML.</strong> <a href="https://arxiv.org/abs/2211.17192" rel="noopener">arXiv:2211.17192</a></li>
+          <li><strong>Dao, Fu, Ermon, Rudra, Ré (2022), "FlashAttention: Fast and Memory-Efficient Exact Attention with IO-Awareness", NeurIPS.</strong> The clearest statement of why memory movement, not arithmetic, is the budget. <a href="https://arxiv.org/abs/2205.14135" rel="noopener">arXiv:2205.14135</a></li>
+          <li><strong>The <code>llama.cpp</code> repository, and its quantisation documentation.</strong> The K-quant damage profiles are documented nowhere better than in the project's own measurements.</li>
+        </ul>
+
+        <h3>Adaptation and leakage</h3>
+        <ul class="ref-list">
+          <li><strong>Carlini, Tramèr, Wallace et al. (2021), "Extracting Training Data from Large Language Models", USENIX Security.</strong> <a href="https://arxiv.org/abs/2012.07805" rel="noopener">arXiv:2012.07805</a></li>
+          <li><strong>Carlini, Ippolito, Jagielski et al. (2022; ICLR 2023), "Quantifying Memorization Across Neural Language Models".</strong> Memorisation as a function of scale, duplication and context. <a href="https://arxiv.org/abs/2202.07646" rel="noopener">arXiv:2202.07646</a></li>
+          <li><strong>Zhu, Liu, Han (2019), "Deep Leakage from Gradients", NeurIPS.</strong> Why sharing gradients is sharing data. <a href="https://arxiv.org/abs/1906.08935" rel="noopener">arXiv:1906.08935</a></li>
+          <li><strong>Shokri, Stronati, Song, Shmatikov (2017), "Membership Inference Attacks against Machine Learning Models", IEEE S&amp;P.</strong> <a href="https://arxiv.org/abs/1610.05820" rel="noopener">arXiv:1610.05820</a></li>
+          <li><strong>Abadi, Chu, Goodfellow et al. (2016), "Deep Learning with Differential Privacy", CCS.</strong> DP-SGD, and an honest account of what it costs. <a href="https://arxiv.org/abs/1607.00133" rel="noopener">arXiv:1607.00133</a></li>
+          <li><strong>Debenedetti, Severi, Carlini et al. (2023), "Privacy Side Channels in Machine Learning Systems".</strong> Leakage from the pipeline rather than the weights — the most relevant one for a local-first design. <a href="https://arxiv.org/abs/2309.05610" rel="noopener">arXiv:2309.05610</a></li>
+          <li><strong>Zeng, Zhang, He et al. (2024), "The Good and The Bad: Exploring Privacy Issues in Retrieval-Augmented Generation (RAG)".</strong> If local adaptation is done by retrieval rather than training, the leak moves here. <a href="https://arxiv.org/abs/2402.16893" rel="noopener">arXiv:2402.16893</a></li>
+        </ul>
+
+        <footer class="blog-footer">
+          <div class="blog-footer-tags">
+            <span class="blog-tag">Raw</span>
+            <span class="blog-tag">Compression</span>
+            <span class="blog-tag">Alignment</span>
+            <span class="blog-tag">Local deployment</span>
+            <span class="blog-tag">Privacy</span>
+          </div>
+          <a href="../blogs.html" class="blog-back-link">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+            Back to the board
+          </a>
+        </footer>
+
+      </article>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+  </footer>
+
+  <script src="../assets/vendor/gsap.min.js" defer></script>
+  <script src="../assets/vendor/ScrollTrigger.min.js" defer></script>
+  <script src="../assets/vendor/ScrollToPlugin.min.js" defer></script>
+  <script src="../script.js" defer></script>
+  <script src="blog.js" defer></script>
+</body>
+</html>

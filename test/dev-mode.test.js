@@ -197,8 +197,20 @@ test('every navbar carries the same dev group, in the same order', () => {
 
 /* Pages that exist but are not for visitors yet. Each is reachable only
    from a dev-marked link, and each is noindex so a visitor who arrives
-   by some other route is not indexed into finding it. */
-const DEV_ONLY_PAGES = ['slm.html', 'genai.html'];
+   by some other route is not indexed into finding it.
+
+   The two blogs/dev-*.html entries are a different kind of unfinished:
+   not work in progress on a page, but raw notebook material that is
+   never intended to go live at all. Same two gates, same reasons — see
+   the raw-note section of test/notes-board.test.js for the third gate
+   on the card that links to them. */
+const DEV_ONLY_PAGES = [
+  'slm.html',
+  'genai.html',
+  'data.html',
+  'blogs/dev-tokenisation-questions.html',
+  'blogs/dev-llm-systems-questions.html',
+];
 
 test('an unfinished page stays behind dev mode at every entry point', () => {
   /* The pages in DEV_ONLY_PAGES describe work still on the bench, so two
