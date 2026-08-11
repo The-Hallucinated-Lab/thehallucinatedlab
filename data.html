@@ -5,17 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
-  <title>Datasets — The Hallucinated Lab</title>
-  <meta name="description" content="Datasets the lab publishes: what is in each one, where the material came from, the licence it carries, and how to fetch it once it lands.">
+  <title>Data — The Hallucinated Lab</title>
+  <meta name="description" content="The data project. An empty page on the bench — nothing has been built here yet.">
   <meta name="robots" content="noindex, nofollow">
-  <meta property="og:title" content="Datasets — The Hallucinated Lab">
-  <meta property="og:description" content="Evaluation sets for the lab's own tools, each published with its provenance and its licence.">
+  <meta property="og:title" content="Data — The Hallucinated Lab">
+  <meta property="og:description" content="The data project. An empty page on the bench.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/data.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/data.html">
   <meta name="twitter:card" content="summary">
-  <meta name="twitter:title" content="Datasets — The Hallucinated Lab">
-  <meta name="twitter:description" content="Evaluation sets for the lab's own tools, each published with its provenance and its licence.">
+  <meta name="twitter:title" content="Data — The Hallucinated Lab">
+  <meta name="twitter:description" content="The data project. An empty page on the bench.">
   <meta property="og:site_name" content="The Hallucinated Lab">
   <meta property="og:locale" content="en_US">
   <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
@@ -74,107 +74,26 @@
   <main id="main-content" class="page-main">
 
     <section class="page-hero">
-      <span class="section-label">Open Data</span>
-      <h1 class="page-title">Datasets</h1>
-      <p class="page-subtitle">The sets the lab builds to measure its own tools, published with the provenance and the licence attached.</p>
+      <span class="section-label">Data</span>
+      <h1 class="page-title">Data</h1>
+      <p class="page-subtitle">Nothing here yet. This page is deliberately empty — the data project gets built from scratch.</p>
     </section>
+
+    <!-- Build the page below this line. The shell above is the shared
+         head, navbar and hero every page on this site carries; the footer
+         and script tag below close it. What goes between is open.
+
+         Three things are load-bearing and should survive whatever you
+         build here, because a test fails if they do not:
+           - the noindex robots meta in <head>
+           - the data-status="dev" marker on every link into this page,
+             including the navbar entry above
+           - the dev group order [slm, certification, consultancy, data],
+             which must match every other page's navbar
+         See test/dev-mode.test.js. -->
 
     <section class="media-section">
       <div class="container">
-        <p class="section-intro">Every tool on this site makes a claim — that a splitter respects a code fence, that an extractor keeps the text a reader wants, that a converter survives a ragged table. A claim you cannot measure is marketing. These are the sets the lab is assembling to measure them, and the intent is to publish each one rather than keep the scoreboard private. A dataset without a stated origin and a stated licence is not publishable, so both are on the card before anything is released.</p>
-
-        <div class="dataset-grid">
-
-          <div class="dataset-card fade-in fade-in-delay-1">
-            <div class="dataset-head">
-              <h2 class="dataset-title">Chunk boundaries</h2>
-              <span class="dataset-status pending"><span class="dot" aria-hidden="true"></span>Assembling</span>
-            </div>
-            <p class="dataset-desc">Long documents with the split points a person would actually choose, marked by hand. It exists to answer one question about the Chunk tool that unit tests cannot: not whether a chunk fits the budget, but whether cutting there destroyed the meaning.</p>
-            <dl class="dataset-specs">
-              <div><dt>Set</dt><dd>thl-chunk-bounds</dd></div>
-              <div><dt>Format</dt><dd>JSONL, one document per line</dd></div>
-              <div><dt>Source</dt><dd>Public-domain and CC BY text</dd></div>
-              <div><dt>Licence</dt><dd>CC BY 4.0</dd></div>
-              <div><dt>Measures</dt><dd>Chunk</dd></div>
-            </dl>
-          </div>
-
-          <div class="dataset-card fade-in fade-in-delay-2">
-            <div class="dataset-head">
-              <h2 class="dataset-title">Extraction ground truth</h2>
-              <span class="dataset-status pending"><span class="dot" aria-hidden="true"></span>Assembling</span>
-            </div>
-            <p class="dataset-desc">Documents paired with the text a reader would keep from them — headers, footers, navigation furniture and repeated boilerplate removed. Scoring against it is how the Extract tool can claim it kept the content and dropped the chrome.</p>
-            <dl class="dataset-specs">
-              <div><dt>Set</dt><dd>thl-extract-truth</dd></div>
-              <div><dt>Format</dt><dd>Source file plus reference text</dd></div>
-              <div><dt>Source</dt><dd>Lab-authored and public-domain</dd></div>
-              <div><dt>Licence</dt><dd>CC BY 4.0</dd></div>
-              <div><dt>Measures</dt><dd>Extract</dd></div>
-            </dl>
-          </div>
-
-          <div class="dataset-card fade-in fade-in-delay-3">
-            <div class="dataset-head">
-              <h2 class="dataset-title">Tokeniser drift</h2>
-              <span class="dataset-status queued"><span class="dot" aria-hidden="true"></span>Planned</span>
-            </div>
-            <p class="dataset-desc">The same strings counted by several tokenisers, including the awkward ones — emoji, combining marks, CJK, code with long identifiers. Published as a table so anyone can check where a budget computed with one tokeniser stops holding under another.</p>
-            <dl class="dataset-specs">
-              <div><dt>Set</dt><dd>thl-token-drift</dd></div>
-              <div><dt>Format</dt><dd>CSV, one string per row</dd></div>
-              <div><dt>Source</dt><dd>Generated, no scraped text</dd></div>
-              <div><dt>Licence</dt><dd>CC0 1.0</dd></div>
-              <div><dt>Measures</dt><dd>Tokenize, Chunk</dd></div>
-            </dl>
-          </div>
-
-          <div class="dataset-card fade-in fade-in-delay-4">
-            <div class="dataset-head">
-              <h2 class="dataset-title">Converter round trips</h2>
-              <span class="dataset-status queued"><span class="dot" aria-hidden="true"></span>Planned</span>
-            </div>
-            <p class="dataset-desc">The inputs that break naive converters: quoted delimiters, ragged rows, pipes inside Markdown cells, mixed encodings, numbers that are only numbers by accident. Each case carries the output it must produce, so a regression is a failing row rather than an argument.</p>
-            <dl class="dataset-specs">
-              <div><dt>Set</dt><dd>thl-convert-cases</dd></div>
-              <div><dt>Format</dt><dd>JSONL, input and expected output</dd></div>
-              <div><dt>Source</dt><dd>Generated from the lab's own fixtures</dd></div>
-              <div><dt>Licence</dt><dd>CC0 1.0</dd></div>
-              <div><dt>Measures</dt><dd>Converters, Convert</dd></div>
-            </dl>
-          </div>
-
-        </div>
-
-        <div class="dataset-note fade-in">
-          <p><strong>Nothing here is downloadable yet.</strong> These four are the sets currently being assembled; the cards describe what each one is for and what it will carry, not something you can fetch today. A set is published when its provenance is written down, its licence is settled, and the scores the lab quotes from it can be reproduced by someone else — and if a set cannot clear that, the card comes down instead of shipping numbers nobody can check.</p>
-        </div>
-
-        <div class="how-panel fade-in">
-          <h2 class="how-panel-title">The rules each set is built under</h2>
-          <p class="how-panel-text">These are constraints on what may go into a set at all, not preferences. A set that breaks one of them does not get published late — it gets rebuilt.</p>
-
-          <div class="how-block">
-            <span class="how-block-label">Provenance before content</span>
-            <p class="how-panel-text">Every record names where it came from. Material whose licence cannot be established does not go in, however useful it looks, and nothing is collected by scraping a site that asked not to be scraped.</p>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">No personal data, at any size</span>
-            <p class="how-panel-text">No names, addresses, contact details or anything else that identifies a person. This is a floor, not a target: a set that would need anonymising is the wrong set to have built.</p>
-          </div>
-
-          <div class="how-block">
-            <span class="how-block-label">Fetchable without an account</span>
-            <p class="how-panel-text">Each set ships as plain JSONL or CSV plus a checksum, small enough to read with the tools already on this site. The intended shape of a release, once the first one lands:</p>
-            <pre class="how-code"><code>thl-chunk-bounds/
-├── data.jsonl        # the records
-├── SHA256SUMS        # checksum for every file above
-├── LICENCE           # CC BY 4.0, full text
-└── DATASHEET.md      # origin, method, known limits, what it cannot measure</code></pre>
-          </div>
-        </div>
       </div>
     </section>
 
