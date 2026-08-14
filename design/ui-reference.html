@@ -1,0 +1,2575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>The Hallucinated Lab — UI Reference</title>
+<style>
+/* ============================================================
+   THE HALLUCINATED LAB — SINGLE-FILE UI REFERENCE
+   ------------------------------------------------------------
+   Every screen of thehallucinatedlab.space, rendered statically
+   in one standalone file. No JavaScript, no external stylesheet,
+   no font file, no image, no network request of any kind.
+
+   This is a design reference, not a page of the site. Anything
+   that moves on the real site (theme toggle, hamburger drawer,
+   tab switching, typing cursor, fade-in-on-scroll) is drawn here
+   in its resting state, and the states that would need a click
+   are laid out side by side instead.
+
+   Fonts: the live site loads Outfit (headings) and JetBrains Mono
+   (body). Standalone, this file cannot, so it falls back to the
+   nearest system stacks — same rhythm, slightly different letters.
+   ============================================================ */
+
+/* ---------- tokens: dark, the site default ---------- */
+:root {
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --bg-card: #0f0f0f;
+  --bg-nav: rgba(5, 5, 5, 0.8);
+  --gold-primary: #c9a84c;
+  --gold-rgb: 201, 168, 76;
+  --gold-light: #e8d48b;
+  --gold-dark: #94793a;
+  --gold-glow: rgba(201, 168, 76, 0.15);
+  --text-primary: #f0ece4;
+  --text-secondary: #9a9590;
+  --text-muted: #807b72;
+  --border-subtle: rgba(201, 168, 76, 0.1);
+  --border-gold: rgba(201, 168, 76, 0.3);
+  --gradient-gold: linear-gradient(135deg, #c9a84c, #e8d48b, #c9a84c);
+  --shadow-gold: 0 0 40px rgba(201, 168, 76, 0.08);
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --font-heading: 'Outfit', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+/* A scoped copy of the light theme, used only by the swatch board
+   and the one light-mode screen. The real site sets these on <html>
+   via theme.js before first paint; here they are opt-in per block. */
+.theme-light {
+  --bg-primary: #e8dfcb;
+  --bg-secondary: #efe8d8;
+  --bg-card: #f8f4ea;
+  --bg-nav: rgba(232, 223, 203, 0.86);
+  --gold-primary: #6b5410;
+  --gold-rgb: 107, 84, 16;
+  --gold-light: #57430b;
+  --gold-dark: #775e12;
+  --gold-glow: rgba(107, 84, 16, 0.10);
+  --text-primary: #1f1a0d;
+  --text-secondary: #4b4230;
+  --text-muted: #68604a;
+  --border-subtle: rgba(31, 26, 13, 0.16);
+  --border-gold: rgba(107, 84, 16, 0.45);
+  --gradient-gold: linear-gradient(135deg, #6b5410, #7a6012, #6b5410);
+  --shadow-gold: 0 12px 34px rgba(75, 60, 20, 0.18);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+
+body {
+  margin: 0;
+  background: #030303;
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 { font-family: var(--font-heading); margin: 0; line-height: 1.15; }
+p { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+a { color: inherit; text-decoration: none; }
+img, svg { display: block; }
+
+/* ============================================================
+   DOCUMENT CHROME — the reference's own shell, not the site's
+   ============================================================ */
+
+.doc-bar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 12px 26px;
+  background: rgba(3, 3, 3, 0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.doc-bar-mark {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.doc-bar-tag {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.doc-nav { display: flex; gap: 4px; flex-wrap: wrap; margin-left: auto; }
+.doc-nav a {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+.doc-nav a:hover { color: var(--gold-primary); border-color: var(--border-subtle); }
+
+.doc-intro {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 64px 26px 20px;
+}
+.doc-intro h1 {
+  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.doc-intro p { color: var(--text-secondary); margin-top: 18px; font-size: 14px; }
+.doc-intro .doc-meta {
+  margin-top: 26px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.doc-meta span {
+  font-size: 10.5px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 5px 12px;
+}
+
+.doc-section { max-width: 1180px; margin: 0 auto; padding: 56px 26px 0; }
+.doc-section-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-bottom: 6px; }
+.doc-index {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--gold-dark);
+  letter-spacing: 0.1em;
+}
+.doc-section-head h2 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.01em; }
+.doc-note { color: var(--text-muted); font-size: 12.5px; margin-bottom: 22px; max-width: 78ch; }
+.doc-rule { height: 1px; background: linear-gradient(90deg, var(--border-gold), transparent); margin: 10px 0 20px; }
+
+/* the frame each screen sits in, so a screen reads as a screen */
+.frame {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-primary);
+  margin-bottom: 34px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+.frame-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 9px 14px;
+  background: #101010;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.frame-dots { display: flex; gap: 6px; }
+.frame-dots span { width: 9px; height: 9px; border-radius: 50%; background: #2a2a2a; }
+.frame-url {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: #070707;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 3px 14px;
+}
+.frame-label { margin-left: auto; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dark); }
+.frame-body { background: var(--bg-primary); }
+
+/* a caption strip under a mockup, for state notes */
+.state-note {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  border-left: 2px solid var(--border-gold);
+  padding-left: 12px;
+  margin: -18px 0 34px;
+}
+
+.split { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); }
+
+/* ============================================================
+   SITE COMPONENTS — the actual UI vocabulary
+   ============================================================ */
+
+/* ---- navbar ---- */
+.navbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 24px;
+  background: var(--bg-nav);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border-subtle);
+}
+.nav-logo { display: flex; align-items: center; gap: 11px; }
+.nav-logo-mark {
+  width: 34px; height: 34px;
+  border-radius: 10px;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.22), rgba(var(--gold-rgb), 0.05));
+  border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+}
+.nav-logo span.wordmark {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+}
+.nav-links { display: flex; align-items: center; gap: 2px; flex-wrap: wrap; }
+.nav-links a {
+  display: block;
+  font-size: 11.5px;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+  padding: 7px 11px;
+  border-radius: 7px;
+}
+.nav-links a:hover { color: var(--gold-primary); }
+.nav-links a.active { color: var(--gold-primary); background: rgba(var(--gold-rgb), 0.08); }
+/* the dev-status pages carry a marker in the nav and a badge on the page */
+.nav-links li[data-status="dev"] > a::after {
+  content: "dev";
+  font-size: 8px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 0 4px;
+  margin-left: 6px;
+  vertical-align: 2px;
+}
+.nav-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.icon-btn {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 9px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--gold-primary);
+}
+.icon-btn svg { width: 17px; height: 17px; fill: currentColor; }
+.hamburger { display: none; flex-direction: column; gap: 4px; }
+.hamburger span { display: block; width: 17px; height: 1.5px; background: var(--gold-primary); }
+
+/* mobile drawer, drawn open */
+.nav-drawer {
+  border-top: 1px solid var(--border-subtle);
+  background: rgba(5, 5, 5, 0.96);
+  padding: 8px 0 14px;
+}
+.nav-drawer a {
+  display: block;
+  padding: 11px 24px;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+.nav-drawer a.active { color: var(--gold-primary); }
+
+/* ---- hero ---- */
+.hero {
+  position: relative;
+  padding: 96px 26px 92px;
+  text-align: center;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 0%, rgba(var(--gold-rgb), 0.10), transparent 58%),
+    linear-gradient(180deg, var(--bg-primary), var(--bg-secondary));
+}
+/* the particle canvas is JS on the real site; a static dot field stands in */
+.hero::before {
+  content: "";
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 12% 22%, rgba(var(--gold-rgb), 0.5), transparent),
+    radial-gradient(1.5px 1.5px at 78% 18%, rgba(var(--gold-rgb), 0.35), transparent),
+    radial-gradient(1.5px 1.5px at 33% 68%, rgba(var(--gold-rgb), 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 63% 78%, rgba(var(--gold-rgb), 0.4), transparent),
+    radial-gradient(1.5px 1.5px at 88% 56%, rgba(var(--gold-rgb), 0.25), transparent),
+    radial-gradient(1.5px 1.5px at 22% 44%, rgba(var(--gold-rgb), 0.3), transparent);
+  pointer-events: none;
+}
+.hero-content { position: relative; max-width: 780px; margin: 0 auto; }
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold-primary);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 6px 16px;
+  background: rgba(var(--gold-rgb), 0.05);
+}
+.dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-primary); }
+.hero-title {
+  margin-top: 26px;
+  font-size: clamp(2.6rem, 8vw, 4.6rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-subtitle {
+  margin-top: 20px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.8;
+}
+.hero-subtitle .typed { color: var(--gold-primary); font-weight: 600; }
+.hero-actions { margin-top: 34px; display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 12px 26px;
+  border-radius: 999px;
+  border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  background: transparent;
+}
+.btn-primary {
+  background: var(--gradient-gold);
+  color: #0a0a0a;
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: var(--shadow-gold);
+}
+.btn-sm { padding: 8px 18px; font-size: 11px; }
+.btn[disabled], .btn.is-disabled { opacity: 0.4; }
+
+/* ---- section scaffolding ---- */
+.section { padding: 76px 26px; }
+.section--alt { background: var(--bg-secondary); }
+.container { max-width: 1120px; margin: 0 auto; }
+.section-header { text-align: center; max-width: 720px; margin: 0 auto 44px; }
+.section-label {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+}
+.section-title {
+  margin-top: 12px;
+  font-size: clamp(1.7rem, 4vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.section-line { width: 54px; height: 2px; margin: 18px auto; background: var(--gradient-gold); border-radius: 2px; }
+.section-intro { color: var(--text-secondary); font-size: 13.5px; }
+
+.page-hero { padding: 78px 26px 40px; text-align: center; background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary)); }
+.page-title {
+  margin-top: 12px;
+  font-size: clamp(2.1rem, 6vw, 3.4rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.page-subtitle { max-width: 700px; margin: 18px auto 0; color: var(--text-secondary); font-size: 13.5px; line-height: 1.85; }
+.breadcrumb { font-size: 11px; color: var(--text-muted); margin-bottom: 16px; }
+.breadcrumb a { color: var(--gold-dark); }
+
+/* ---- explore cards (home) ---- */
+.explore-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+.explore-card {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 26px 22px;
+}
+.explore-card-icon {
+  width: 42px; height: 42px;
+  display: grid; place-items: center;
+  border-radius: 12px;
+  background: rgba(var(--gold-rgb), 0.08);
+  border: 1px solid var(--border-subtle);
+  color: var(--gold-primary);
+}
+.explore-card-icon svg { width: 21px; height: 21px; fill: currentColor; }
+.explore-card-title { margin-top: 18px; font-size: 1.15rem; font-weight: 700; }
+.explore-card-desc { margin-top: 10px; color: var(--text-secondary); font-size: 12.5px; line-height: 1.75; }
+.explore-card-list { margin-top: 16px; display: grid; gap: 7px; }
+.explore-card-list li { position: relative; padding-left: 17px; font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+.explore-card-list li::before { content: "\25C6"; position: absolute; left: 0; top: -1px; color: var(--gold-dark); font-size: 8px; }
+.explore-card-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: 20px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--gold-primary);
+}
+.explore-card-cta svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* ---- gateway cards (tools / pipelines / media) ---- */
+.gateway-grid { display: grid; gap: 22px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+.gateway-card {
+  display: flex; flex-direction: column;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+.gateway-cover { position: relative; height: 126px; display: flex; align-items: flex-end; padding: 14px; }
+.gateway-icon {
+  position: absolute; top: 14px; left: 14px;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 12px;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  color: #f4ead0;
+}
+.gateway-icon svg { width: 23px; height: 23px; fill: currentColor; }
+.gateway-count {
+  font-size: 9.5px;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: #f0e6cf;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+.gateway-body { padding: 20px 20px 22px; display: flex; flex-direction: column; flex: 1; }
+.gateway-title { font-size: 1.2rem; font-weight: 700; }
+.gateway-desc { margin-top: 9px; color: var(--text-secondary); font-size: 12.5px; line-height: 1.75; }
+.gateway-list { margin-top: 15px; display: grid; gap: 8px; }
+.gateway-list li { font-size: 11.5px; color: var(--text-muted); line-height: 1.6; }
+.gateway-list li span {
+  display: inline-block;
+  min-width: 84px;
+  color: var(--gold-dark);
+  letter-spacing: 0.05em;
+}
+.gateway-cta {
+  display: inline-flex; align-items: center; gap: 5px;
+  margin-top: auto; padding-top: 18px;
+  font-size: 11px; letter-spacing: 0.06em;
+  color: var(--gold-primary);
+}
+.gateway-cta svg { width: 13px; height: 13px; fill: currentColor; }
+
+/* ---- team ---- */
+.about-grid { display: grid; gap: 20px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.member-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 28px 22px;
+  text-align: center;
+}
+.member-avatar {
+  width: 84px; height: 84px;
+  margin: 0 auto;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background: linear-gradient(135deg, rgba(var(--gold-rgb), 0.2), rgba(var(--gold-rgb), 0.04));
+  border: 1px solid var(--border-gold);
+  color: var(--gold-primary);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.5rem;
+}
+.member-name { margin-top: 16px; font-size: 1.05rem; font-weight: 700; }
+.member-handle { margin-top: 4px; font-size: 11px; color: var(--gold-dark); }
+.member-bio { margin-top: 12px; font-size: 11.5px; color: var(--text-secondary); line-height: 1.75; }
+.member-links { margin-top: 18px; display: flex; justify-content: center; gap: 9px; }
+.hover-btn {
+  width: 34px; height: 34px;
+  display: grid; place-items: center;
+  border-radius: 10px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+}
+.hover-btn svg { width: 16px; height: 16px; fill: currentColor; }
+.hover-btn-lg { width: 44px; height: 44px; border-color: var(--border-gold); color: var(--gold-primary); }
+.hover-btn-lg svg { width: 19px; height: 19px; }
+.contact-inline { margin-top: 44px; text-align: center; }
+.contact-text { max-width: 560px; margin: 0 auto; color: var(--text-secondary); font-size: 12.5px; }
+.contact-links-row { margin-top: 20px; display: flex; justify-content: center; gap: 12px; }
+
+/* ---- footer ---- */
+.footer { padding: 32px 26px; text-align: center; border-top: 1px solid var(--border-subtle); background: var(--bg-secondary); }
+.footer-text { font-size: 11.5px; color: var(--text-muted); }
+.footer-text a { color: var(--gold-dark); }
+
+/* ---- tool panel (convert / chunk / tokenize / embed / index) ---- */
+.tool-panel {
+  max-width: 720px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 26px;
+}
+.tool-drop {
+  border: 1px dashed var(--border-gold);
+  border-radius: var(--radius-md);
+  padding: 38px 20px;
+  text-align: center;
+  background: rgba(var(--gold-rgb), 0.03);
+}
+.tool-drop-icon { width: 38px; height: 38px; margin: 0 auto; fill: var(--gold-dark); }
+.tool-drop-title { margin-top: 14px; font-family: var(--font-heading); font-size: 1.05rem; font-weight: 600; }
+.tool-drop-hint { margin-top: 6px; font-size: 11.5px; color: var(--text-muted); }
+.tool-controls { margin-top: 24px; display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); }
+.form-field { display: grid; gap: 7px; }
+.form-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-secondary); }
+.form-required { color: var(--gold-primary); }
+.form-select, .form-input, .form-textarea {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+}
+.form-textarea { min-height: 92px; resize: vertical; }
+.form-hint { font-size: 10.5px; color: var(--text-muted); }
+.range-track { height: 4px; border-radius: 999px; background: #1c1c1c; position: relative; margin: 13px 0 5px; }
+.range-fill { position: absolute; inset: 0 auto 0 0; width: 92%; border-radius: 999px; background: var(--gradient-gold); }
+.range-thumb {
+  position: absolute; top: 50%; left: 92%;
+  width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  border-radius: 50%;
+  background: var(--gold-primary);
+  box-shadow: 0 0 0 4px rgba(var(--gold-rgb), 0.15);
+}
+.range-value { font-size: 11px; color: var(--gold-primary); }
+.swatch-input { width: 44px; height: 34px; border-radius: 8px; border: 1px solid var(--border-subtle); background: #ffffff; }
+.tool-actions { margin-top: 24px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.tool-status { font-size: 11.5px; color: var(--text-muted); }
+.tool-result {
+  margin-top: 24px;
+  display: flex; gap: 18px; flex-wrap: wrap;
+  padding: 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-primary);
+}
+.tool-result-preview {
+  width: 132px; height: 96px;
+  border-radius: var(--radius-sm);
+  background: repeating-conic-gradient(#1a1a1a 0% 25%, #111 0% 50%) 50% / 16px 16px;
+  border: 1px solid var(--border-subtle);
+}
+.tool-result-name { font-family: var(--font-heading); font-size: 1rem; font-weight: 600; }
+.tool-result-facts { margin-top: 10px; display: grid; gap: 5px; }
+.tool-result-facts li { font-size: 11.5px; color: var(--text-muted); }
+.tool-result-facts li b { color: var(--text-secondary); font-weight: 400; }
+.tool-privacy { margin-top: 20px; font-size: 11px; color: var(--text-muted); text-align: center; }
+
+/* ---- code / command block ---- */
+.code-block {
+  background: #070707;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 15px 17px;
+  font-size: 11.5px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  overflow-x: auto;
+  white-space: pre;
+}
+.code-block .c-prompt { color: var(--gold-dark); }
+.code-block .c-flag { color: var(--gold-primary); }
+.code-block .c-dim { color: var(--text-muted); }
+
+/* ---- trait cards / how panels ---- */
+.trait-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); }
+.trait-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+.trait-step { font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--gold-dark); }
+.trait-title { margin-top: 8px; font-size: 1rem; font-weight: 700; }
+.trait-text { margin-top: 8px; font-size: 11.5px; color: var(--text-secondary); line-height: 1.75; }
+.how-panel {
+  margin-top: 26px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+}
+.how-panel-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 14px; }
+
+/* ---- chat / assistant ---- */
+.chat-container {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 460px;
+}
+.chat-messages { flex: 1; padding: 26px; display: grid; gap: 16px; align-content: start; }
+.chat-empty { margin: auto; text-align: center; max-width: 380px; color: var(--text-muted); }
+.chat-empty svg { width: 40px; height: 40px; margin: 0 auto 14px; fill: var(--gold-dark); }
+.chat-empty p { font-size: 12.5px; line-height: 1.8; }
+.msg { max-width: 78%; padding: 13px 16px; border-radius: 16px; font-size: 12.5px; line-height: 1.75; }
+.msg-user { margin-left: auto; background: rgba(var(--gold-rgb), 0.1); border: 1px solid var(--border-gold); color: var(--text-primary); border-bottom-right-radius: 5px; }
+.msg-bot { background: var(--bg-primary); border: 1px solid var(--border-subtle); color: var(--text-secondary); border-bottom-left-radius: 5px; }
+.msg-attach {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 9px; padding: 7px 11px;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.3);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+.msg-plan { margin-top: 10px; display: grid; gap: 5px; }
+.msg-plan li { font-size: 11px; color: var(--text-muted); }
+.msg-plan li b { color: var(--gold-dark); font-weight: 400; }
+.chat-quick { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 20px 14px; }
+.chat-chip {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 6px 13px;
+}
+.chat-input-bar {
+  display: flex; align-items: center; gap: 10px;
+  padding: 13px 16px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-primary);
+}
+.chat-input {
+  flex: 1;
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  padding: 8px 2px;
+}
+.chat-round-btn {
+  width: 36px; height: 36px;
+  display: grid; place-items: center;
+  border-radius: 50%;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+}
+.chat-round-btn svg { width: 17px; height: 17px; fill: currentColor; }
+.chat-send { background: var(--gradient-gold); border-color: transparent; color: #0a0a0a; }
+
+/* ---- spotlight (solutions) ---- */
+.spotlight-panel {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-xl);
+  padding: 30px;
+}
+.spotlight-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.blog-tag {
+  font-size: 9.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--gold-primary);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+.spotlight-status {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 10.5px; color: var(--text-muted);
+}
+.spotlight-title { margin-top: 18px; font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; }
+.spotlight-tagline { margin-top: 9px; color: var(--gold-primary); font-size: 13px; }
+.spotlight-desc { margin-top: 14px; color: var(--text-secondary); font-size: 12.5px; line-height: 1.85; max-width: 76ch; }
+
+/* app preview inside the spotlight */
+.sb-app {
+  margin-top: 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: #080808;
+}
+.sb-titlebar { display: flex; align-items: center; gap: 11px; padding: 9px 13px; background: #101010; border-bottom: 1px solid var(--border-subtle); }
+.sb-dots { display: flex; gap: 5px; }
+.sb-dots span { width: 8px; height: 8px; border-radius: 50%; background: #2a2a2a; }
+.sb-titlebar-name { font-size: 10.5px; color: var(--text-muted); }
+.sb-tabs { display: flex; gap: 2px; padding: 8px 10px 0; border-bottom: 1px solid var(--border-subtle); flex-wrap: wrap; }
+.sb-tab {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 8px 12px;
+}
+.sb-tab.active { color: var(--gold-primary); border-bottom-color: var(--gold-primary); }
+.sb-screen { padding: 18px 16px; display: grid; gap: 11px; }
+.sb-screen-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+.sb-bar-row { display: grid; grid-template-columns: 108px 1fr 74px; gap: 11px; align-items: center; }
+.sb-bar-label { font-size: 11px; color: var(--text-secondary); }
+.sb-bar-track { height: 8px; border-radius: 999px; background: #171717; overflow: hidden; }
+.sb-bar-fill { height: 100%; border-radius: 999px; background: var(--gradient-gold); }
+.sb-bar-fill.dim { background: #3a3a3a; }
+.sb-w100 { width: 100%; } .sb-w66 { width: 66%; } .sb-w42 { width: 42%; } .sb-w78 { width: 78%; }
+.sb-bar-val { font-size: 11px; color: var(--text-muted); text-align: right; }
+.sb-grade {
+  justify-self: start;
+  font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold-primary);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 4px 13px;
+}
+.sb-note { font-size: 11px; color: var(--text-muted); line-height: 1.75; }
+.sb-note strong { color: var(--gold-dark); font-weight: 400; }
+.spotlight-actions { margin-top: 22px; display: flex; gap: 11px; flex-wrap: wrap; }
+
+/* ---- notes board (blogs) ---- */
+.board-ledger { display: flex; gap: 9px; flex-wrap: wrap; justify-content: center; margin-bottom: 30px; }
+.ledger-tag {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+.ledger-tag-count { color: var(--gold-dark); font-size: 10px; }
+.note-group-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 16px; }
+.note-group-title { font-size: 1rem; font-weight: 700; }
+.note-group-count { font-size: 10.5px; color: var(--text-muted); }
+.note-stack { display: grid; gap: 18px; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); }
+.note-card {
+  display: block;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  background: var(--bg-card);
+  position: relative;
+  overflow: hidden;
+}
+.note-card::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--note-accent, var(--gradient-gold)); }
+.note-card-chips { display: flex; gap: 7px; flex-wrap: wrap; }
+.note-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--gold-primary);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 3px 10px;
+}
+.note-chip svg { width: 10px; height: 10px; fill: currentColor; }
+.note-card-title { margin-top: 14px; font-size: 1.1rem; font-weight: 700; line-height: 1.3; }
+.note-card-text { margin-top: 10px; font-size: 11.5px; color: var(--text-secondary); line-height: 1.75; }
+.note-tags { margin-top: 14px; display: flex; gap: 7px; flex-wrap: wrap; }
+.note-tag { font-size: 10px; color: var(--gold-dark); }
+.note-card-foot { margin-top: 16px; display: flex; align-items: center; gap: 7px; font-size: 10.5px; color: var(--text-muted); }
+.note-open { margin-left: auto; color: var(--gold-primary); }
+.note-open svg { width: 15px; height: 15px; fill: currentColor; }
+.submit-head-title { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+
+/* ---- artifacts ---- */
+.artifact-card {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.artifact-cover { height: 118px; display: grid; place-items: center; color: rgba(255, 255, 255, 0.85); }
+.artifact-cover svg { width: 34px; height: 34px; fill: currentColor; opacity: 0.9; }
+.artifact-body { padding: 20px; }
+.artifact-title { font-size: 1.1rem; font-weight: 700; }
+.artifact-text { margin-top: 9px; font-size: 11.5px; color: var(--text-secondary); line-height: 1.75; }
+.horizon-card {
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  background: transparent;
+}
+.horizon-card-title { font-size: 1rem; font-weight: 700; }
+.horizon-card-text { margin-top: 8px; font-size: 11.5px; color: var(--text-muted); line-height: 1.75; }
+.horizon-badge {
+  display: inline-block;
+  font-size: 9.5px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 3px 11px;
+  margin-bottom: 12px;
+}
+
+/* ---- empty / call-out panels ---- */
+.utilities-empty {
+  text-align: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: 40px 26px;
+  background: rgba(var(--gold-rgb), 0.02);
+}
+.utilities-empty-title { font-size: 1.15rem; font-weight: 700; }
+.utilities-empty-text { margin: 10px auto 0; max-width: 520px; font-size: 12px; color: var(--text-secondary); line-height: 1.8; }
+
+/* ---- sitemap ---- */
+.sitemap-list { display: grid; gap: 11px; margin: 16px 0 34px; }
+.sitemap-list li { font-size: 12px; color: var(--text-muted); line-height: 1.7; padding-left: 16px; position: relative; }
+.sitemap-list li::before { content: "\25C6"; position: absolute; left: 0; top: 0; font-size: 7px; color: var(--gold-dark); }
+.sitemap-list a { color: var(--gold-primary); }
+
+/* ---- 404 ---- */
+.notfound { padding: 110px 26px; text-align: center; }
+.notfound-code {
+  font-family: var(--font-heading);
+  font-size: clamp(4rem, 16vw, 8rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ---- token board ---- */
+.token-grid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); }
+.token {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--bg-card);
+}
+.token-chip { height: 58px; }
+.token-meta { padding: 10px 12px; }
+.token-name { font-size: 11px; color: var(--text-secondary); }
+.token-value { font-size: 10.5px; color: var(--text-muted); }
+.type-row { display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap; padding: 13px 0; border-bottom: 1px solid var(--border-subtle); }
+.type-row .type-tag { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dark); min-width: 130px; }
+.radius-row { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 8px; }
+.radius-demo {
+  width: 78px; height: 62px;
+  display: grid; place-items: end center;
+  padding-bottom: 6px;
+  border: 1px solid var(--border-gold);
+  background: rgba(var(--gold-rgb), 0.05);
+  font-size: 9.5px;
+  color: var(--text-muted);
+}
+
+/* ---- responsive ---- */
+@media (max-width: 900px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .sb-bar-row { grid-template-columns: 84px 1fr 62px; }
+}
+@media (max-width: 620px) {
+  .doc-nav { display: none; }
+  .section { padding: 52px 18px; }
+  .frame { border-radius: var(--radius-md); }
+}
+
+/* the mobile viewport mock keeps its narrow layout regardless of screen */
+.phone {
+  width: 340px;
+  max-width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 26px;
+  overflow: hidden;
+  background: var(--bg-primary);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+.phone .navbar { padding: 12px 16px; }
+.phone .nav-links { display: none; }
+.phone .hamburger { display: flex; }
+.phone .hero { padding: 52px 18px 46px; }
+.phone .hero-title { font-size: 2rem; }
+.phone .hero-subtitle { font-size: 12px; }
+.phone .section { padding: 34px 16px; }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     DOCUMENT BAR
+     ============================================================ -->
+<div class="doc-bar">
+  <span class="doc-bar-mark">The Hallucinated Lab</span>
+  <span class="doc-bar-tag">UI Reference · static</span>
+  <nav class="doc-nav">
+    <a href="#tokens">Tokens</a>
+    <a href="#nav">Nav</a>
+    <a href="#home">Home</a>
+    <a href="#tools">Tools</a>
+    <a href="#tool">Tool</a>
+    <a href="#pipelines">Pipelines</a>
+    <a href="#assistant">Assistant</a>
+    <a href="#solutions">Solutions</a>
+    <a href="#media">Media</a>
+    <a href="#blogs">Blogs</a>
+    <a href="#artifacts">Artifacts</a>
+    <a href="#dev">Dev</a>
+    <a href="#sitemap">Sitemap</a>
+    <a href="#notfound">404</a>
+    <a href="#mobile">Mobile</a>
+  </nav>
+</div>
+
+<header class="doc-intro">
+  <h1>UI Reference</h1>
+  <p>
+    Every screen of thehallucinatedlab.space in one standalone file — navigation,
+    home, the tool index and a tool, pipelines, the assistant, solutions, media,
+    the notes board, artifacts, the dev-status pages, the sitemap and the 404.
+  </p>
+  <p>
+    There is no JavaScript here and nothing is fetched. The site's moving parts —
+    the theme toggle, the mobile drawer, the app-preview tabs, the typing cursor,
+    the fade-in-on-scroll — are drawn in their resting state, and where a state
+    only exists after a click, both states are laid out next to each other.
+  </p>
+  <div class="doc-meta">
+    <span>No JS</span>
+    <span>No external assets</span>
+    <span>Self-contained CSS</span>
+    <span>Dark default · light tokens included</span>
+  </div>
+</header>
+
+<!-- ============================================================
+     00 · TOKENS
+     ============================================================ -->
+<section class="doc-section" id="tokens">
+  <div class="doc-section-head">
+    <span class="doc-index">00</span>
+    <h2>Design tokens</h2>
+  </div>
+  <p class="doc-note">
+    Black paper, gold ink. The accent never becomes the page — in light mode the
+    gold darkens rather than inverting, so the surfaces stay warm sand and the
+    accent stays an accent.
+  </p>
+  <div class="doc-rule"></div>
+
+  <h3 style="font-size:0.95rem;margin-bottom:14px;">Dark — the default</h3>
+  <div class="token-grid">
+    <div class="token"><div class="token-chip" style="background:#050505;"></div><div class="token-meta"><div class="token-name">--bg-primary</div><div class="token-value">#050505</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#0a0a0a;"></div><div class="token-meta"><div class="token-name">--bg-secondary</div><div class="token-value">#0a0a0a</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#0f0f0f;"></div><div class="token-meta"><div class="token-name">--bg-card</div><div class="token-value">#0f0f0f</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#c9a84c;"></div><div class="token-meta"><div class="token-name">--gold-primary</div><div class="token-value">#c9a84c</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#e8d48b;"></div><div class="token-meta"><div class="token-name">--gold-light</div><div class="token-value">#e8d48b</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#94793a;"></div><div class="token-meta"><div class="token-name">--gold-dark</div><div class="token-value">#94793a · 4.61:1</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#f0ece4;"></div><div class="token-meta"><div class="token-name">--text-primary</div><div class="token-value">#f0ece4</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#9a9590;"></div><div class="token-meta"><div class="token-name">--text-secondary</div><div class="token-value">#9a9590</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#807b72;"></div><div class="token-meta"><div class="token-name">--text-muted</div><div class="token-value">#807b72 · 4.56:1</div></div></div>
+  </div>
+
+  <h3 style="font-size:0.95rem;margin:30px 0 14px;">Light — &ldquo;Sand&rdquo;</h3>
+  <div class="token-grid theme-light">
+    <div class="token"><div class="token-chip" style="background:#e8dfcb;"></div><div class="token-meta"><div class="token-name">--bg-primary</div><div class="token-value">#e8dfcb</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#efe8d8;"></div><div class="token-meta"><div class="token-name">--bg-secondary</div><div class="token-value">#efe8d8</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#f8f4ea;"></div><div class="token-meta"><div class="token-name">--bg-card</div><div class="token-value">#f8f4ea</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#6b5410;"></div><div class="token-meta"><div class="token-name">--gold-primary</div><div class="token-value">#6b5410</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#57430b;"></div><div class="token-meta"><div class="token-name">--gold-light</div><div class="token-value">#57430b</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#775e12;"></div><div class="token-meta"><div class="token-name">--gold-dark</div><div class="token-value">#775e12</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#1f1a0d;"></div><div class="token-meta"><div class="token-name">--text-primary</div><div class="token-value">#1f1a0d</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#4b4230;"></div><div class="token-meta"><div class="token-name">--text-secondary</div><div class="token-value">#4b4230</div></div></div>
+    <div class="token"><div class="token-chip" style="background:#68604a;"></div><div class="token-meta"><div class="token-name">--text-muted</div><div class="token-value">#68604a</div></div></div>
+  </div>
+
+  <h3 style="font-size:0.95rem;margin:30px 0 6px;">Type</h3>
+  <div class="type-row"><span class="type-tag">hero-title</span><span style="font-family:var(--font-heading);font-weight:800;font-size:2.6rem;letter-spacing:-0.03em;">The Hallucinated Lab</span></div>
+  <div class="type-row"><span class="type-tag">page-title</span><span style="font-family:var(--font-heading);font-weight:800;font-size:2rem;letter-spacing:-0.03em;">Tools</span></div>
+  <div class="type-row"><span class="type-tag">section-title</span><span style="font-family:var(--font-heading);font-weight:700;font-size:1.5rem;">Explore the Lab</span></div>
+  <div class="type-row"><span class="type-tag">section-label</span><span class="section-label" style="display:inline;">Take It And Run</span></div>
+  <div class="type-row"><span class="type-tag">body / mono</span><span style="color:var(--text-secondary);">Everything here is meant to leave with you.</span></div>
+  <div class="type-row" style="border-bottom:0;"><span class="type-tag">muted / list</span><span style="color:var(--text-muted);font-size:11.5px;">format &mdash; png, jpeg, webp or avif</span></div>
+
+  <h3 style="font-size:0.95rem;margin:30px 0 6px;">Radii</h3>
+  <div class="radius-row">
+    <div class="radius-demo" style="border-radius:8px;">sm · 8</div>
+    <div class="radius-demo" style="border-radius:12px;">md · 12</div>
+    <div class="radius-demo" style="border-radius:20px;">lg · 20</div>
+    <div class="radius-demo" style="border-radius:28px;">xl · 28</div>
+    <div class="radius-demo" style="border-radius:999px;">pill</div>
+  </div>
+
+  <h3 style="font-size:0.95rem;margin:30px 0 12px;">Buttons &amp; badges</h3>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+    <span class="btn btn-primary">Explore the Lab</span>
+    <span class="btn">View on GitHub</span>
+    <span class="btn btn-sm">Copy prompt</span>
+    <span class="btn btn-sm is-disabled">Convert</span>
+    <span class="hero-badge"><span class="dot"></span> Open for Collaboration</span>
+    <span class="blog-tag">Desktop App · Windows</span>
+    <span class="note-tag">#local-first</span>
+    <span class="gateway-count" style="background:#161616;">Runs in your browser</span>
+  </div>
+</section>
+
+<!-- ============================================================
+     01 · NAVIGATION
+     ============================================================ -->
+<section class="doc-section" id="nav">
+  <div class="doc-section-head">
+    <span class="doc-index">01</span>
+    <h2>Navigation &amp; footer</h2>
+  </div>
+  <p class="doc-note">
+    One bar on every page. Eleven destinations, four of them marked
+    <em>dev</em> — those are visible but unfinished, and the marker is the
+    honest signal rather than a hidden link. Below ~900px the links collapse
+    into a drawer; both states are shown.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space</span>
+      <span class="frame-label">navbar · desktop</span>
+    </div>
+    <div class="frame-body">
+      <nav class="navbar">
+        <a class="nav-logo">
+          <span class="nav-logo-mark">THL</span>
+          <span class="wordmark">THE HALLUCINATED LAB</span>
+        </a>
+        <ul class="nav-links">
+          <li><a class="active">Home</a></li>
+          <li><a>Tools</a></li>
+          <li><a>Pipelines</a></li>
+          <li><a>Assistant</a></li>
+          <li><a>Solutions</a></li>
+          <li><a>Media</a></li>
+          <li><a>Sitemap</a></li>
+          <li data-status="dev"><a>SLM</a></li>
+          <li data-status="dev"><a>Certification</a></li>
+          <li data-status="dev"><a>Consultancy</a></li>
+          <li data-status="dev"><a>Data</a></li>
+        </ul>
+        <div class="nav-actions">
+          <span class="icon-btn" title="Switch to light theme">
+            <svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1z"/></svg>
+          </span>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <div class="split">
+    <div>
+      <div class="frame" style="margin-bottom:12px;">
+        <div class="frame-bar"><span class="frame-dots"><span></span><span></span><span></span></span><span class="frame-label">drawer · closed</span></div>
+        <div class="frame-body">
+          <nav class="navbar">
+            <a class="nav-logo"><span class="nav-logo-mark">THL</span></a>
+            <div class="nav-actions">
+              <span class="icon-btn"><svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg></span>
+              <span class="icon-btn"><span class="hamburger" style="display:flex;"><span></span><span></span><span></span></span></span>
+            </div>
+          </nav>
+        </div>
+      </div>
+      <p class="state-note" style="margin:0;">Moon icon shown: the toggle advertises the theme it switches <em>to</em>.</p>
+    </div>
+
+    <div class="frame">
+      <div class="frame-bar"><span class="frame-dots"><span></span><span></span><span></span></span><span class="frame-label">drawer · open</span></div>
+      <div class="frame-body">
+        <nav class="navbar">
+          <a class="nav-logo"><span class="nav-logo-mark">THL</span></a>
+          <div class="nav-actions">
+            <span class="icon-btn"><span class="hamburger" style="display:flex;"><span></span><span></span><span></span></span></span>
+          </div>
+        </nav>
+        <div class="nav-drawer">
+          <a class="active">Home</a>
+          <a>Tools</a>
+          <a>Pipelines</a>
+          <a>Assistant</a>
+          <a>Solutions</a>
+          <a>Media</a>
+          <a>Sitemap</a>
+          <a style="color:var(--text-muted);">SLM &nbsp;·&nbsp; dev</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar"><span class="frame-dots"><span></span><span></span><span></span></span><span class="frame-label">footer · every page</span></div>
+    <div class="frame-body">
+      <footer class="footer">
+        <p class="footer-text">© 2026 <a>The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+      </footer>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     02 · HOME
+     ============================================================ -->
+<section class="doc-section" id="home">
+  <div class="doc-section-head">
+    <span class="doc-index">02</span>
+    <h2>Home</h2>
+    <span class="doc-index">/</span>
+  </div>
+  <p class="doc-note">
+    Hero, then four doors into the lab, then the people. The hero's particle
+    field and typing cursor are JavaScript on the real site — here the field is
+    a static dot pattern and the cursor is drawn mid-phrase.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/</span>
+      <span class="frame-label">index.html</span>
+    </div>
+    <div class="frame-body">
+
+      <nav class="navbar">
+        <a class="nav-logo"><span class="nav-logo-mark">THL</span><span class="wordmark">THE HALLUCINATED LAB</span></a>
+        <ul class="nav-links">
+          <li><a class="active">Home</a></li><li><a>Tools</a></li><li><a>Pipelines</a></li>
+          <li><a>Assistant</a></li><li><a>Solutions</a></li><li><a>Media</a></li><li><a>Sitemap</a></li>
+        </ul>
+        <div class="nav-actions"><span class="icon-btn"><svg viewBox="0 0 24 24"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5z"/></svg></span></div>
+      </nav>
+
+      <section class="hero">
+        <div class="hero-content">
+          <span class="hero-badge"><span class="dot"></span> Open for Collaboration</span>
+          <h1 class="hero-title">The Hallucinated Lab</h1>
+          <p class="hero-subtitle">
+            Open-source AI tools that run entirely on your machine — free, and without
+            any rate limits. <span class="typed">No cloud.</span><span style="color:var(--gold-primary);">|</span>
+          </p>
+          <div class="hero-actions">
+            <span class="btn btn-primary">Explore the Lab</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">Start Here</span>
+            <h2 class="section-title">Explore the Lab</h2>
+            <div class="section-line"></div>
+            <p class="section-intro">Six doors, one lab. Here's exactly what lives behind each tab in the menu above — so you know where to go before you click.</p>
+          </div>
+
+          <div class="explore-grid">
+            <div class="explore-card">
+              <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg></div>
+              <h3 class="explore-card-title">Tools</h3>
+              <p class="explore-card-desc">The working end of the lab — things you can take away and use today on your own machine.</p>
+              <ul class="explore-card-list">
+                <li>Prompts tuned for real use cases</li>
+                <li>LoRA adapters for your local LLM</li>
+                <li>Convert, extract, chunk, tokenize, embed, index</li>
+              </ul>
+              <span class="explore-card-cta">Open Tools <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+            </div>
+
+            <div class="explore-card">
+              <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg></div>
+              <h3 class="explore-card-title">Assistant</h3>
+              <p class="explore-card-desc">Say what you want in plain English and it runs the tool right here in the page. Nothing leaves the machine.</p>
+              <ul class="explore-card-list">
+                <li>Nothing to install — works on arrival</li>
+                <li>No API keys, no accounts, no logging</li>
+                <li>Understands plain requests like "convert this to webp"</li>
+              </ul>
+              <span class="explore-card-cta">Open Assistant <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+            </div>
+
+            <div class="explore-card">
+              <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg></div>
+              <h3 class="explore-card-title">Solutions</h3>
+              <p class="explore-card-desc">Finished products we've shipped — full applications, not snippets.</p>
+              <ul class="explore-card-list">
+                <li>ScoobyBench — AI hardware benchmarking</li>
+                <li>Local-first pipelines &amp; deployment tooling</li>
+                <li>Everything runs on your infrastructure</li>
+              </ul>
+              <span class="explore-card-cta">See Solutions <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+            </div>
+
+            <div class="explore-card">
+              <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+              <h3 class="explore-card-title">Media</h3>
+              <p class="explore-card-desc">What we write, build to be played with, and think out loud about.</p>
+              <ul class="explore-card-list">
+                <li>Blogs — AI &amp; software engineering, filed by tag</li>
+                <li>Artifacts — interactive, playable explainers</li>
+                <li>Notebooks — runnable research, landing soon</li>
+              </ul>
+              <span class="explore-card-cta">Browse Media <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">The Team</span>
+            <h2 class="section-title">About Us</h2>
+            <div class="section-line"></div>
+            <p class="section-intro">Three engineering students who got tired of renting access to their own ideas — so we started building the alternative in the open.</p>
+          </div>
+
+          <div class="about-grid">
+            <div class="member-card">
+              <div class="member-avatar">P</div>
+              <h3 class="member-name">Pratyush</h3>
+              <p class="member-handle">@06pratyush</p>
+              <p class="member-bio">3rd-year B.Tech CSE (Data Science). AI, machine learning, and building things that bridge technology with real-world impact.</p>
+              <div class="member-links">
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="member-card">
+              <div class="member-avatar">D</div>
+              <h3 class="member-name">Divyansh Tripathi</h3>
+              <p class="member-handle">@TheQMLGuy</p>
+              <p class="member-bio">3rd-year B.Tech CSE (AI &amp; ML). A builder at the intersection of machine learning and developer experience.</p>
+              <div class="member-links">
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="member-card">
+              <div class="member-avatar">S</div>
+              <h3 class="member-name">Shashwat Deep</h3>
+              <p class="member-handle">@shashwat-deep</p>
+              <p class="member-bio">3rd-year B.Tech CSE (Data Science). Using data to solve real problems — programming, machine learning and data analysis.</p>
+              <div class="member-links">
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>
+                <span class="hover-btn"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="contact-inline">
+            <p class="contact-text">Collaborations, open source, or just a good conversation about AI and the future of tech — the door's open.</p>
+            <div class="contact-links-row">
+              <span class="hover-btn hover-btn-lg"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></span>
+              <span class="hover-btn hover-btn-lg"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p class="footer-text">© 2026 <a>The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+      </footer>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     03 · TOOLS INDEX
+     ============================================================ -->
+<section class="doc-section" id="tools">
+  <div class="doc-section-head">
+    <span class="doc-index">03</span>
+    <h2>Tools index</h2>
+    <span class="doc-index">/tools.html</span>
+  </div>
+  <p class="doc-note">
+    Eleven gateway cards on one grid. Each cover is its own gradient — the
+    colour is the card's identity, not decoration — and each body carries a
+    three-line contract of what the tool takes and refuses. Four are shown;
+    the rest repeat the pattern.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/tools.html</span>
+      <span class="frame-label">tools.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">Take It And Run</span>
+        <h1 class="page-title">Tools</h1>
+        <p class="page-subtitle">Everything here is meant to leave with you. Run a tool in the page, copy a prompt, or load an adapter onto the model already running on your machine.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="gateway-grid">
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#0d1410 0%,#1a3326 55%,#2a5540 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>
+                <span class="gateway-count">Runs in your browser</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Convert</h2>
+                <p class="gateway-desc">Convert an image between PNG, JPEG, WebP and AVIF. The file never leaves the page — it is a canvas here, and Pillow in Python.</p>
+                <ul class="gateway-list">
+                  <li><span>format</span> png, jpeg, webp or avif</li>
+                  <li><span>quality</span> 1-100 for the lossy formats</li>
+                  <li><span>three doors</span> web page, assistant, or thl tool convert</li>
+                </ul>
+                <span class="gateway-cta">Open Convert <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#101410 0%,#1f331a 55%,#35552a 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M7 7h10l-3.5-4h2.5L21 8l-4.5 5H14l3.5-4H7V7zm10 10H7l3.5 4H8L3.5 16 8 11h2.5L7 15h10v2z"/></svg></div>
+                <span class="gateway-count">Forty-odd conversions</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Converters</h2>
+                <p class="gateway-desc">The everyday conversions, all in one tab: tabular data, encodings, naming conventions, units, number bases, colour spaces, timestamps and image scaling.</p>
+                <ul class="gateway-list">
+                  <li><span>data</span> CSV, TSV, JSON, JSONL, Markdown, HTML tables</li>
+                  <li><span>quantities</span> nine unit categories, bases 2-36, colour, time</li>
+                  <li><span>says no</span> video, audio and PDF need a server — so they are absent</li>
+                </ul>
+                <span class="gateway-cta">Open Converters <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#0a1014 0%,#14262e 55%,#1f4351 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 7V3.5L18.5 9H13z"/></svg></div>
+                <span class="gateway-count">Pipeline stage 1</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Extract</h2>
+                <p class="gateway-desc">Documents to Markdown with the structure still attached. Headings stay headings and pages stay marked, because that is what the next stage splits on.</p>
+                <ul class="gateway-list">
+                  <li><span>takes</span> PDF, DOCX, PPTX, XLSX, EPUB, HTML</li>
+                  <li><span>keeps</span> headings, tables, page boundaries</li>
+                  <li><span>needs</span> the local Python package</li>
+                </ul>
+                <span class="gateway-cta">Open Extract <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#140f0a 0%,#33251a 55%,#553f2a 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M3 5h18v2H3V5zm0 6h12v2H3v-2zm0 6h18v2H3v-2z"/></svg></div>
+                <span class="gateway-count">Pipeline stage 2</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Chunk</h2>
+                <p class="gateway-desc">Splits a Markdown document along its own heading structure rather than at arbitrary offsets, so a chunk is still a thought.</p>
+                <ul class="gateway-list">
+                  <li><span>strategy</span> structural, fixed or sentence</li>
+                  <li><span>size</span> target tokens with overlap</li>
+                  <li><span>writes</span> chunks.jsonl you can read</li>
+                </ul>
+                <span class="gateway-cta">Open Chunk <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <p class="state-note">
+    Remaining cards on the same grid: Tokenize, Embed, Index, Prompts,
+    LoRA Adapters, Gen AI, Small Models.
+  </p>
+</section>
+
+<!-- ============================================================
+     04 · A TOOL PAGE
+     ============================================================ -->
+<section class="doc-section" id="tool">
+  <div class="doc-section-head">
+    <span class="doc-index">04</span>
+    <h2>A tool page</h2>
+    <span class="doc-index">/convert.html</span>
+  </div>
+  <p class="doc-note">
+    The shape every in-browser tool shares: a drop target, a parameter block
+    driven by <code>spec/manifest.json</code>, one action, and a result panel.
+    Empty and completed states side by side, plus the CLI equivalent every
+    tool page prints underneath.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/convert.html</span>
+      <span class="frame-label">empty state</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero" style="padding-bottom:26px;">
+        <p class="breadcrumb"><a>Tools</a> &rsaquo; Convert</p>
+        <span class="section-label">Image · In The Page</span>
+        <h1 class="page-title" style="font-size:2.2rem;">Convert</h1>
+        <p class="page-subtitle">PNG, JPEG, WebP and AVIF. The file is decoded to a canvas in this tab and re-encoded here — it is never uploaded.</p>
+      </section>
+
+      <section class="section" style="padding-top:20px;">
+        <div class="tool-panel">
+          <div class="tool-drop">
+            <svg class="tool-drop-icon" viewBox="0 0 24 24"><path d="M19.35 10.04A7.49 7.49 0 0 0 12 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 0 0 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+            <p class="tool-drop-title">Drop an image here</p>
+            <p class="tool-drop-hint">or choose a file — PNG, JPEG, WebP, AVIF, GIF or BMP</p>
+            <p style="margin-top:16px;"><span class="btn btn-sm">Choose an image</span></p>
+          </div>
+
+          <div class="tool-controls">
+            <div class="form-field">
+              <label class="form-label">format <span class="form-required">*</span></label>
+              <select class="form-select"><option>webp</option></select>
+              <span class="form-hint">bounds come from the manifest</span>
+            </div>
+            <div class="form-field">
+              <label class="form-label">quality <span class="range-value">92</span></label>
+              <div class="range-track"><span class="range-fill"></span><span class="range-thumb"></span></div>
+              <span class="form-hint">1–100, lossy formats only</span>
+            </div>
+            <div class="form-field">
+              <label class="form-label">background</label>
+              <div class="swatch-input"></div>
+              <span class="form-hint">flattens alpha for JPEG</span>
+            </div>
+          </div>
+
+          <div class="tool-actions">
+            <span class="btn btn-primary is-disabled">Convert</span>
+            <span class="tool-status">Waiting for a file.</span>
+          </div>
+
+          <p class="tool-privacy">Nothing is uploaded. The conversion happens in this tab.</p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/convert.html</span>
+      <span class="frame-label">result state</span>
+    </div>
+    <div class="frame-body">
+      <section class="section" style="padding:34px 26px;">
+        <div class="tool-panel">
+          <div class="tool-drop" style="padding:22px;border-style:solid;">
+            <p class="tool-drop-title" style="margin-top:0;">diagram-source.png</p>
+            <p class="tool-drop-hint">1920 × 1080 · 842 KB · image/png</p>
+          </div>
+
+          <div class="tool-controls">
+            <div class="form-field">
+              <label class="form-label">format <span class="form-required">*</span></label>
+              <select class="form-select"><option>webp</option></select>
+            </div>
+            <div class="form-field">
+              <label class="form-label">quality <span class="range-value">92</span></label>
+              <div class="range-track"><span class="range-fill"></span><span class="range-thumb"></span></div>
+            </div>
+            <div class="form-field">
+              <label class="form-label">background</label>
+              <div class="swatch-input"></div>
+            </div>
+          </div>
+
+          <div class="tool-actions">
+            <span class="btn btn-primary">Convert</span>
+            <span class="tool-status">Done in 210 ms.</span>
+          </div>
+
+          <div class="tool-result">
+            <div class="tool-result-preview"></div>
+            <div class="tool-result-body">
+              <p class="tool-result-name">diagram-source.webp</p>
+              <ul class="tool-result-facts">
+                <li><b>size</b> &nbsp;842 KB → 214 KB &nbsp;(−75%)</li>
+                <li><b>dimensions</b> &nbsp;1920 × 1080, unchanged</li>
+                <li><b>encoder</b> &nbsp;canvas.toBlob, quality 92</li>
+              </ul>
+              <p style="margin-top:14px;"><span class="btn btn-sm">Download</span></p>
+            </div>
+          </div>
+
+          <p class="tool-privacy">Nothing is uploaded. The conversion happens in this tab.</p>
+        </div>
+
+        <div class="container" style="max-width:720px;margin-top:26px;">
+          <div class="how-panel" style="margin-top:0;">
+            <h3 class="how-panel-title">The same thing, on your machine</h3>
+            <div class="code-block"><span class="c-prompt">$</span> pip install thehallucinatedlab
+<span class="c-prompt">$</span> thl tool convert diagram-source.png <span class="c-flag">--format</span> webp <span class="c-flag">--quality</span> 92
+<span class="c-dim">wrote diagram-source.webp  214 KB  (-75%)</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     05 · PIPELINES
+     ============================================================ -->
+<section class="doc-section" id="pipelines">
+  <div class="doc-section-head">
+    <span class="doc-index">05</span>
+    <h2>Pipelines</h2>
+    <span class="doc-index">/pipelines.html</span>
+  </div>
+  <p class="doc-note">
+    Two pipelines, then the argument for the shape: every stage writes a file,
+    so the middle of a run is something you can read rather than something you
+    have to trust.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/pipelines.html</span>
+      <span class="frame-label">pipelines.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">Run The Whole Thing</span>
+        <h1 class="page-title">Pipelines</h1>
+        <p class="page-subtitle">A tool does one thing. A pipeline runs several of them in the order that actually gets you somewhere — and writes every stage to disk on the way.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="gateway-grid">
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#0a1014 0%,#14262e 55%,#1f4351 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M15.5 5H11l5 7-5 7h4.5l5-7zM8.5 5H4l5 7-5 7h4.5l5-7z"/></svg></div>
+                <span class="gateway-count">Four stages</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">RAG</h2>
+                <p class="gateway-desc">A document in, a searchable index out. Extract, chunk, embed, index — the same four tools you can run yourself, in the order that gets you there.</p>
+                <ul class="gateway-list">
+                  <li><span>one command</span> thl pipeline rag report.pdf</li>
+                  <li><span>every stage</span> on disk — read the chunks, not just the answer</li>
+                  <li><span>resumable</span> a stop keeps what it made</li>
+                </ul>
+                <span class="gateway-cta">How RAG runs <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#0a1016 0%,#12283a 55%,#1e4560 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z"/></svg></div>
+                <span class="gateway-count">Five stages</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">EDA</h2>
+                <p class="gateway-desc">A table in, a report you can hand to someone out — with the figures, a replayable recipe, and the Python script that produced all of it.</p>
+                <ul class="gateway-list">
+                  <li><span>one command</span> thl pipeline eda sales.csv</li>
+                  <li><span>reproducible</span> the recipe replays every choice</li>
+                  <li><span>five primitives</span> each callable on its own</li>
+                </ul>
+                <span class="gateway-cta">Open EDA <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">Pipeline · RAG</span>
+            <h2 class="section-title">extract → chunk → embed → index</h2>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="trait-grid">
+            <div class="trait-card">
+              <span class="trait-step">Stage 01</span>
+              <h3 class="trait-title">extract</h3>
+              <p class="trait-text">PDF, DOCX, PPTX or EPUB to Markdown, with headings and page boundaries intact.</p>
+            </div>
+            <div class="trait-card">
+              <span class="trait-step">Stage 02</span>
+              <h3 class="trait-title">chunk</h3>
+              <p class="trait-text">Splits on that structure, not on a character count, and writes chunks.jsonl.</p>
+            </div>
+            <div class="trait-card">
+              <span class="trait-step">Stage 03</span>
+              <h3 class="trait-title">embed</h3>
+              <p class="trait-text">BGE-M3 at 1024 dimensions, or all-MiniLM-L6-v2 at 384. Local either way.</p>
+            </div>
+            <div class="trait-card">
+              <span class="trait-step">Stage 04</span>
+              <h3 class="trait-title">index</h3>
+              <p class="trait-text">Vectors and chunks into a portable directory you own — Chroma, or plain numpy.</p>
+            </div>
+          </div>
+
+          <div class="how-panel">
+            <h3 class="how-panel-title">Running it</h3>
+            <div class="code-block"><span class="c-prompt">$</span> thl pipeline rag report.pdf <span class="c-flag">--out</span> ./index
+<span class="c-dim">[1/4] extract   report.pdf      → report.md        41 pages</span>
+<span class="c-dim">[2/4] chunk     report.md       → chunks.jsonl     318 chunks</span>
+<span class="c-dim">[3/4] embed     chunks.jsonl    → vectors.npy      318 × 1024</span>
+<span class="c-dim">[4/4] index     vectors.npy     → ./index/         chroma</span></div>
+          </div>
+
+          <div class="how-panel">
+            <h3 class="how-panel-title">What a stopped run looks like</h3>
+            <div class="code-block"><span class="c-prompt">$</span> thl pipeline rag report.pdf <span class="c-flag">--out</span> ./index
+<span class="c-dim">[1/4] extract   ✓  report.md</span>
+<span class="c-dim">[2/4] chunk     ✓  chunks.jsonl</span>
+<span class="c-dim">[3/4] embed     ✗  interrupted — 212/318 embedded, vectors.partial.npy kept</span>
+<span class="c-dim">resume with:  thl pipeline rag report.pdf --resume</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     06 · ASSISTANT
+     ============================================================ -->
+<section class="doc-section" id="assistant">
+  <div class="doc-section-head">
+    <span class="doc-index">06</span>
+    <h2>Assistant</h2>
+    <span class="doc-index">/interface.html</span>
+  </div>
+  <p class="doc-note">
+    A full-height chat surface with a quick-action row and an attach button.
+    The router is a local rule engine, not a model call — so the empty state
+    promises nothing to install, and the reply shows the tool and arguments it
+    resolved before it ran anything.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="split">
+    <div class="frame">
+      <div class="frame-bar">
+        <span class="frame-dots"><span></span><span></span><span></span></span>
+        <span class="frame-label">empty</span>
+      </div>
+      <div class="frame-body" style="padding:26px;">
+        <div class="chat-container">
+          <div class="chat-messages">
+            <div class="chat-empty">
+              <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/></svg>
+              <p>Attach an image and say <em>"convert this to webp"</em>. Everything runs here in the page — nothing to install, nothing uploaded.</p>
+            </div>
+          </div>
+          <div class="chat-quick">
+            <span class="chat-chip">convert · png</span>
+            <span class="chat-chip">convert · jpeg</span>
+            <span class="chat-chip">convert · webp</span>
+            <span class="chat-chip">quality · 70</span>
+          </div>
+          <div class="chat-input-bar">
+            <span class="chat-round-btn"><svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg></span>
+            <span class="chat-input">Type a message...</span>
+            <span class="chat-round-btn" style="opacity:0.4;"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="frame">
+      <div class="frame-bar">
+        <span class="frame-dots"><span></span><span></span><span></span></span>
+        <span class="frame-label">in conversation</span>
+      </div>
+      <div class="frame-body" style="padding:26px;">
+        <div class="chat-container">
+          <div class="chat-messages">
+            <div class="msg msg-user">
+              convert this to webp at 70 quality
+              <span class="msg-attach">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg>
+                screenshot.png · 842 KB
+              </span>
+            </div>
+            <div class="msg msg-bot">
+              Running <strong style="color:var(--gold-primary);font-weight:400;">convert</strong> in this tab.
+              <ul class="msg-plan">
+                <li><b>tool</b> &nbsp;convert</li>
+                <li><b>format</b> &nbsp;webp</li>
+                <li><b>quality</b> &nbsp;70</li>
+              </ul>
+            </div>
+            <div class="msg msg-bot">
+              Done — <strong style="color:var(--gold-primary);font-weight:400;">screenshot.webp</strong>, 842 KB → 138 KB (−84%).
+              <span class="msg-attach">Download · screenshot.webp</span>
+            </div>
+          </div>
+          <div class="chat-quick">
+            <span class="chat-chip">convert · png</span>
+            <span class="chat-chip">convert · jpeg</span>
+            <span class="chat-chip">quality · 70</span>
+          </div>
+          <div class="chat-input-bar">
+            <span class="chat-round-btn"><svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg></span>
+            <span class="chat-input" style="color:var(--text-primary);">now make it a png</span>
+            <span class="chat-round-btn chat-send"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     07 · SOLUTIONS
+     ============================================================ -->
+<section class="doc-section" id="solutions">
+  <div class="doc-section-head">
+    <span class="doc-index">07</span>
+    <h2>Solutions</h2>
+    <span class="doc-index">/solutions.html</span>
+  </div>
+  <p class="doc-note">
+    One spotlight panel per shipped product, each carrying a static preview of
+    the product's own interface. The tab strip switches screens with JavaScript
+    on the real site; here the first screen is shown and the rest are described.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/solutions.html</span>
+      <span class="frame-label">solutions.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">What We Build</span>
+        <h1 class="page-title">Solutions</h1>
+        <p class="page-subtitle">Finished products we have shipped — full applications, not snippets. Each one runs on your own infrastructure.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">Shipped Product</span>
+            <h2 class="section-title">Project Spotlight</h2>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="spotlight-panel">
+            <div class="spotlight-head">
+              <span class="blog-tag">Desktop App · Windows</span>
+              <span class="spotlight-status"><span class="dot"></span> v2.0.0 Stable</span>
+            </div>
+            <h3 class="spotlight-title">ScoobyBench</h3>
+            <p class="spotlight-tagline">Unmask your machine's true AI performance — actual vs. claimed, with evidence.</p>
+            <p class="spotlight-desc">
+              Vendors publish benchmark numbers under ideal lab conditions. Your laptop — with
+              thermal throttling, mixed drivers, and real power limits — tells a different story.
+              ScoobyBench runs reproducible AI inference workloads on your own hardware, captures
+              detailed telemetry, and hands you a clear scorecard of what your machine can
+              actually do, and why.
+            </p>
+
+            <div class="sb-app">
+              <div class="sb-titlebar">
+                <span class="sb-dots"><span></span><span></span><span></span></span>
+                <span class="sb-titlebar-name">ScoobyBench — interface preview</span>
+              </div>
+              <div class="sb-tabs">
+                <span class="sb-tab active">Benchmark</span>
+                <span class="sb-tab">System Monitor</span>
+                <span class="sb-tab">Model Browser</span>
+                <span class="sb-tab">Reports</span>
+              </div>
+              <div class="sb-screen">
+                <span class="sb-screen-label">Llama-2-7B · FP16 · 3 repeats</span>
+                <div class="sb-bar-row">
+                  <span class="sb-bar-label">Vendor claim</span>
+                  <div class="sb-bar-track"><div class="sb-bar-fill dim sb-w100"></div></div>
+                  <span class="sb-bar-val">82 tok/s</span>
+                </div>
+                <div class="sb-bar-row">
+                  <span class="sb-bar-label">Your result</span>
+                  <div class="sb-bar-track"><div class="sb-bar-fill sb-w66"></div></div>
+                  <span class="sb-bar-val">54 tok/s</span>
+                </div>
+                <span class="sb-grade">Grade · B+</span>
+                <p class="sb-note">Delta <strong>−34%</strong> · probable cause: <strong>thermal throttling</strong> — GPU sustained 91°C after 40s. p50 18ms · p90 31ms · p99 58ms.</p>
+              </div>
+            </div>
+
+            <div class="spotlight-actions">
+              <span class="btn btn-primary btn-sm">Download for Windows</span>
+              <span class="btn btn-sm">View source</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="split">
+            <div class="spotlight-panel">
+              <div class="spotlight-head">
+                <span class="blog-tag">Engine · Cross-platform</span>
+                <span class="spotlight-status"><span class="dot"></span> v1.1.0</span>
+              </div>
+              <h3 class="spotlight-title" style="font-size:1.5rem;">NexusLink Engine</h3>
+              <p class="spotlight-tagline">Wiring for local models — routing, memory and tools in one process.</p>
+              <p class="spotlight-desc" style="font-size:12px;">Runs beside whatever model you already have on the machine, and keeps every hop on loopback.</p>
+              <div class="spotlight-actions"><span class="btn btn-sm">View source</span></div>
+            </div>
+
+            <div class="spotlight-panel">
+              <div class="spotlight-head">
+                <span class="blog-tag">Pipeline · Python</span>
+                <span class="spotlight-status"><span class="dot"></span> Active</span>
+              </div>
+              <h3 class="spotlight-title" style="font-size:1.5rem;">AI Video Studio</h3>
+              <p class="spotlight-tagline">A local video pipeline: script, voice, frames, cut — end to end.</p>
+              <p class="spotlight-desc" style="font-size:12px;">Cloned and run from source, so every stage is a file you can inspect between steps.</p>
+              <div class="spotlight-actions">
+                <span class="btn btn-sm">git clone</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="utilities-empty" style="margin-top:26px;">
+            <h3 class="utilities-empty-title">More on the Shelf Soon</h3>
+            <p class="utilities-empty-text">The next products are being built in the open. When one ships, it appears here with its own spotlight — not before.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <p class="state-note">
+    The three inactive preview tabs hold: live CPU/GPU/RAM telemetry bars, a
+    model browser listing local ONNX and Ollama models, and a saved-report table.
+  </p>
+</section>
+
+<!-- ============================================================
+     08 · MEDIA
+     ============================================================ -->
+<section class="doc-section" id="media">
+  <div class="doc-section-head">
+    <span class="doc-index">08</span>
+    <h2>Media</h2>
+    <span class="doc-index">/media.html</span>
+  </div>
+  <p class="doc-note">
+    The same gateway grid as Tools, used as the entry point to everything
+    written or playable. Two of the four doors are not open yet, and say so on
+    the card rather than dead-ending after a click.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/media.html</span>
+      <span class="frame-label">media.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">Publications &amp; Ideas</span>
+        <h1 class="page-title">Media</h1>
+        <p class="page-subtitle">What we write, build to be played with, and think out loud about.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="gateway-grid">
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#1a1a2e 0%,#16213e 55%,#0f3460 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg></div>
+                <span class="gateway-count">Three notes</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Blogs</h2>
+                <p class="gateway-desc">A note board in two sections — Artificial Intelligence and Software Engineering — filed by tag rather than by date.</p>
+                <ul class="gateway-list">
+                  <li><span>filed by</span> tag, five to a subsection</li>
+                  <li><span>open to</span> submissions</li>
+                </ul>
+                <span class="gateway-cta">Read the notes <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#2b1a2e 0%,#3e1638 55%,#60104a 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+                <span class="gateway-count">Two live</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Artifacts</h2>
+                <p class="gateway-desc">Interactive explainers. Not articles with a diagram — pages where the diagram is the argument and you drive it.</p>
+                <ul class="gateway-list">
+                  <li><span>interactive</span> every claim is playable</li>
+                  <li><span>self-contained</span> one page, no dependencies</li>
+                </ul>
+                <span class="gateway-cta">Open Artifacts <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#141414 0%,#1e1e1e 55%,#2a2a2a 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM4 8h16v10H4V8z"/></svg></div>
+                <span class="gateway-count">Landing soon</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Notebooks</h2>
+                <p class="gateway-desc">Runnable research — the notebook as it was actually run, not a cleaned-up retelling of it.</p>
+                <ul class="gateway-list">
+                  <li><span>status</span> in preparation</li>
+                </ul>
+                <span class="gateway-cta" style="color:var(--text-muted);">Not open yet</span>
+              </div>
+            </div>
+
+            <div class="gateway-card">
+              <div class="gateway-cover" style="background:linear-gradient(135deg,#101414 0%,#183030 55%,#245050 100%);">
+                <div class="gateway-icon"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg></div>
+                <span class="gateway-count">Landing soon</span>
+              </div>
+              <div class="gateway-body">
+                <h2 class="gateway-title">Simulators</h2>
+                <p class="gateway-desc">Small worlds you can turn the knobs on, for the ideas that only make sense once you have broken them.</p>
+                <ul class="gateway-list">
+                  <li><span>status</span> in preparation</li>
+                </ul>
+                <span class="gateway-cta" style="color:var(--text-muted);">Not open yet</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="utilities-empty" style="margin-top:30px;">
+            <h2 class="utilities-empty-title">Written Something?</h2>
+            <p class="utilities-empty-text">The board takes submissions. Send a note and it goes up under the tag it belongs to.</p>
+            <p style="margin-top:18px;"><span class="btn btn-sm">Submit a note</span></p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     09 · BLOGS
+     ============================================================ -->
+<section class="doc-section" id="blogs">
+  <div class="doc-section-head">
+    <span class="doc-index">09</span>
+    <h2>Notes board</h2>
+    <span class="doc-index">/blogs.html</span>
+  </div>
+  <p class="doc-note">
+    Not a reverse-chronological feed. Tags are the filing system, and the ledger
+    across the top shows how close each tag is to earning a subsection of its
+    own — five notes. Below the board sits the submission form.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/blogs.html</span>
+      <span class="frame-label">blogs.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">The Written Work</span>
+        <h1 class="page-title">Blogs</h1>
+        <p class="page-subtitle">Two sections, filed by tag. A tag reaching five notes becomes a subsection of its own — the board reorganises itself as it fills.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="section-header">
+            <span class="section-label">Section</span>
+            <h2 class="section-title">Artificial Intelligence</h2>
+            <div class="section-line"></div>
+            <p class="section-intro">Notes on models, retrieval, orchestration, and what running them locally changes.</p>
+          </div>
+
+          <ul class="board-ledger">
+            <li class="ledger-tag"><span>#inference</span><span class="ledger-tag-count">1/5</span></li>
+            <li class="ledger-tag"><span>#local-first</span><span class="ledger-tag-count">1/5</span></li>
+            <li class="ledger-tag"><span>#privacy</span><span class="ledger-tag-count">1/5</span></li>
+          </ul>
+
+          <div class="note-group-head">
+            <h3 class="note-group-title">All notes</h3>
+            <span class="note-group-count">1 note</span>
+          </div>
+
+          <div class="note-stack">
+            <div class="note-card" style="--note-accent:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);">
+              <div class="note-card-chips">
+                <span class="note-chip">
+                  <svg viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                  Pinned
+                </span>
+              </div>
+              <h4 class="note-card-title">The Future of Local-First AI</h4>
+              <p class="note-card-text">Why running AI models entirely on your machine isn't just a privacy win — it's the future of personal computing. We explore the shift from cloud dependency to local-first intelligence.</p>
+              <ul class="note-tags">
+                <li class="note-tag">#local-first</li>
+                <li class="note-tag">#privacy</li>
+                <li class="note-tag">#inference</li>
+              </ul>
+              <div class="note-card-foot">
+                <span>Pratyush</span><span>·</span><span>Jul 10, 2026</span>
+                <span class="note-open"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+
+            <div class="note-card" style="--note-accent:linear-gradient(135deg,#2e1a1a 0%,#3e1616 50%,#600f0f 100%);">
+              <div class="note-card-chips"><span class="note-chip" style="color:var(--text-muted);border-color:var(--border-subtle);">Draft</span></div>
+              <h4 class="note-card-title">Raw: tokenisation, the questions</h4>
+              <p class="note-card-text">A notebook page — an overview, the open questions, and the reading list that goes with them. Marked dev in the navigation because it is not finished.</p>
+              <ul class="note-tags">
+                <li class="note-tag">#tokenisation</li>
+                <li class="note-tag">#notebook</li>
+              </ul>
+              <div class="note-card-foot">
+                <span>Divyansh</span><span>·</span><span>Aug 2, 2026</span>
+                <span class="note-open"><svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container" style="max-width:660px;">
+          <div class="section-header">
+            <span class="section-label">Write One</span>
+            <h2 class="section-title">Add a note</h2>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="tool-panel">
+            <h3 class="submit-head-title">New note</h3>
+            <p class="form-hint" style="margin-bottom:18px;">Submissions are reviewed before they go up. Tags decide where the note is filed.</p>
+
+            <div style="display:grid;gap:16px;">
+              <div class="form-field">
+                <label class="form-label">title <span class="form-required">*</span></label>
+                <input class="form-input" type="text" value="Why chunking on structure beats chunking on length">
+              </div>
+              <div class="form-field">
+                <label class="form-label">section <span class="form-required">*</span></label>
+                <select class="form-select"><option>Artificial Intelligence</option></select>
+              </div>
+              <div class="form-field">
+                <label class="form-label">tags</label>
+                <input class="form-input" type="text" placeholder="#retrieval #chunking">
+                <span class="form-hint">comma or space separated, three at most</span>
+              </div>
+              <div class="form-field">
+                <label class="form-label">note <span class="form-required">*</span></label>
+                <textarea class="form-textarea">Fixed-length chunks split sentences in half and the retriever pays for it later…</textarea>
+              </div>
+            </div>
+
+            <div class="tool-actions">
+              <span class="btn btn-primary">Submit note</span>
+              <span class="tool-status">Nothing is sent until you press submit.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     10 · ARTIFACTS
+     ============================================================ -->
+<section class="doc-section" id="artifacts">
+  <div class="doc-section-head">
+    <span class="doc-index">10</span>
+    <h2>Artifacts</h2>
+    <span class="doc-index">/artifacts.html</span>
+  </div>
+  <p class="doc-note">
+    Three traits define the format, two artifacts are live, and the workshop
+    section lists what is being built — dashed borders, so an unfinished thing
+    never looks like a finished one.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/artifacts.html</span>
+      <span class="frame-label">artifacts.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">Built To Be Poked At</span>
+        <h1 class="page-title">Artifacts</h1>
+        <p class="page-subtitle">Interactive explainers. Not an article with a diagram — a page where the diagram is the argument, and you are the one driving it.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="trait-grid">
+            <div class="trait-card">
+              <h3 class="trait-title">Interactive</h3>
+              <p class="trait-text">Every claim on the page has a control next to it. Disagree with one and you can go and check.</p>
+            </div>
+            <div class="trait-card">
+              <h3 class="trait-title">Visual</h3>
+              <p class="trait-text">The picture is the explanation, not an illustration bolted onto a paragraph that already said it.</p>
+            </div>
+            <div class="trait-card">
+              <h3 class="trait-title">Self-contained</h3>
+              <p class="trait-text">One page, no build, no dependencies. Save it and it still works offline.</p>
+            </div>
+          </div>
+
+          <div class="section-header" style="margin-top:56px;">
+            <span class="section-label">Open Now</span>
+            <h2 class="section-title">Live Artifacts</h2>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="gateway-grid">
+            <div class="artifact-card">
+              <div class="artifact-cover" style="background:linear-gradient(135deg,#0f1b2e 0%,#16274a 55%,#0f3460 100%);">
+                <svg viewBox="0 0 24 24"><path d="M3.5 18.5l6-6 4 4L22 6.92 20.59 5.5l-7.09 8.09-4-4L2 17l1.5 1.5z"/></svg>
+              </div>
+              <div class="artifact-body">
+                <span class="blog-tag">Algorithms</span>
+                <h3 class="artifact-title" style="margin-top:12px;">Time &amp; Space Complexity</h3>
+                <p class="artifact-text">Big-O through the Master Theorem, with a live growth explorer — change n and watch the curves separate.</p>
+                <p style="margin-top:16px;"><span class="btn btn-sm">Open artifact</span></p>
+              </div>
+            </div>
+
+            <div class="artifact-card">
+              <div class="artifact-cover" style="background:linear-gradient(135deg,#2b1a2e 0%,#3e1638 55%,#60104a 100%);">
+                <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              </div>
+              <div class="artifact-body">
+                <span class="blog-tag">AI Systems</span>
+                <h3 class="artifact-title" style="margin-top:12px;">The Model Is No Longer the Product</h3>
+                <p class="artifact-text">Prompting, RAG and finetuning, with playable demos for each — and the point at which one stops being enough.</p>
+                <p style="margin-top:16px;"><span class="btn btn-sm">Open artifact</span></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="section-header" style="margin-top:56px;">
+            <span class="section-label">Under Construction</span>
+            <h2 class="section-title">In the Workshop</h2>
+            <div class="section-line"></div>
+          </div>
+
+          <div class="split">
+            <div class="horizon-card">
+              <span class="horizon-badge">In progress</span>
+              <h3 class="horizon-card-title">Attention, Head by Head</h3>
+              <p class="horizon-card-text">One sentence, one layer, and every head drawn separately — so "attention" stops being a single word.</p>
+            </div>
+            <div class="horizon-card">
+              <span class="horizon-badge">In progress</span>
+              <h3 class="horizon-card-title">The Quantization Trade-Off</h3>
+              <p class="horizon-card-text">FP16 down to 4-bit on the same prompt, with the memory saved and the quality lost side by side.</p>
+            </div>
+          </div>
+
+          <div class="utilities-empty" style="margin-top:30px;">
+            <h3 class="utilities-empty-title">Something You'd Want to Play With?</h3>
+            <p class="utilities-empty-text">If there is an idea you have only ever seen explained in prose, say so — that is exactly the brief.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     11 · DEV-STATUS PAGES
+     ============================================================ -->
+<section class="doc-section" id="dev">
+  <div class="doc-section-head">
+    <span class="doc-index">11</span>
+    <h2>Dev-status pages</h2>
+    <span class="doc-index">/slm · /certification · /consultancy · /data</span>
+  </div>
+  <p class="doc-note">
+    Four pages exist behind <em>dev</em> markers in the navigation. They are real
+    pages with real content and an honest banner — the marker is the contract:
+    published, not finished.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/slm.html</span>
+      <span class="frame-label">slm.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <span class="section-label">Take It And Run</span>
+        <h1 class="page-title" style="font-size:2.4rem;">Small Language Models</h1>
+        <p class="page-subtitle">Nine small models, each shaped around one job rather than trying to be general. Sized to run on the machine you already have.</p>
+        <p style="margin-top:18px;"><span class="horizon-badge" style="border-color:var(--border-gold);color:var(--gold-primary);">In development · nothing downloadable yet</span></p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="trait-grid">
+            <div class="trait-card"><span class="trait-step">01</span><h2 class="trait-title">Document-first</h2><p class="trait-text">Reads long documents and answers from them, without pretending to know anything else.</p></div>
+            <div class="trait-card"><span class="trait-step">02</span><h2 class="trait-title">Tools-first</h2><p class="trait-text">Picks a tool and its arguments. Does not write prose, because that is not the job.</p></div>
+            <div class="trait-card"><span class="trait-step">03</span><h2 class="trait-title">Rule-first</h2><p class="trait-text">Applies a written policy to a case and shows which clause decided it.</p></div>
+            <div class="trait-card"><span class="trait-step">04</span><h2 class="trait-title">Personal-first</h2><p class="trait-text">Trained on your own corpus, on your own machine, and never leaves it.</p></div>
+          </div>
+
+          <div class="how-panel">
+            <h3 class="how-panel-title">How you'll run them</h3>
+            <div class="code-block"><span class="c-prompt">$</span> thl slm pull document-first
+<span class="c-dim">not yet — this page is published ahead of the models</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  <p class="state-note">
+    Certification, Consultancy and Data use the same layout: page hero, a
+    dev badge, trait cards, and a how-panel that says plainly what does not
+    exist yet.
+  </p>
+</section>
+
+<!-- ============================================================
+     12 · SITEMAP
+     ============================================================ -->
+<section class="doc-section" id="sitemap">
+  <div class="doc-section-head">
+    <span class="doc-index">12</span>
+    <h2>Sitemap</h2>
+    <span class="doc-index">/sitemap.html</span>
+  </div>
+  <p class="doc-note">
+    Every page in one list, grouped by purpose, each with a sentence saying what
+    it is for — including the machine-readable files nothing else on the site
+    links to.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/sitemap.html</span>
+      <span class="frame-label">sitemap.html</span>
+    </div>
+    <div class="frame-body">
+      <section class="page-hero">
+        <p class="breadcrumb"><a>Home</a> &rsaquo; Sitemap</p>
+        <span class="section-label">Everything, One Page</span>
+        <h1 class="page-title">Sitemap</h1>
+        <p class="page-subtitle">Every page on the site, grouped by what it is for. If you are looking for something specific and the navigation did not surface it, it is here.</p>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2 class="section-title" style="font-size:1.3rem;">Start here</h2>
+          <ul class="sitemap-list">
+            <li><a>Home</a> — what the lab is, and a guide to every section.</li>
+            <li><a>Tools</a> — the things you can take away and use today.</li>
+            <li><a>Solutions</a> — finished products we have shipped, led by ScoobyBench.</li>
+          </ul>
+
+          <h2 class="section-title" style="font-size:1.3rem;">Tools</h2>
+          <ul class="sitemap-list">
+            <li><a>Convert</a> — PNG, JPEG, WebP and AVIF in the browser. Nothing is uploaded.</li>
+            <li><a>Converters</a> — forty-odd conversions in the tab: CSV, JSON, Base64, hex, units, bases, colour, timestamps.</li>
+            <li><a>Extract</a> — PDFs, Word files, slides and e-books into Markdown that keeps its headings.</li>
+            <li><a>Chunk</a> — splits Markdown along its heading structure, not at arbitrary offsets.</li>
+            <li><a>Tokenize</a> — counts tokens and reports what would be silently truncated at embed time.</li>
+            <li><a>Embed</a> — vectors locally with BGE-M3 at 1024 dimensions or all-MiniLM-L6-v2 at 384.</li>
+            <li><a>Index</a> — vectors and chunks into a portable database directory you own.</li>
+            <li><a>Exploratory data analysis</a> — profiles a CSV and hands back report, figures, recipe and script.</li>
+            <li><a>Assistant</a> — say what you want in plain English and it runs the tool here in the page.</li>
+            <li><a>Prompts</a> — eight prompts for real engineering work, free to copy.</li>
+            <li><a>LoRA adapters</a> — small adapters that stack onto a base model you already run.</li>
+          </ul>
+
+          <h2 class="section-title" style="font-size:1.3rem;">Media</h2>
+          <ul class="sitemap-list">
+            <li><a>Media</a> — the entry point to everything we write and build.</li>
+            <li><a>Blogs</a> — a note board in two sections, filed by tag.</li>
+            <li><a>Artifacts</a> — interactive explainers you can play with.</li>
+            <li><a>Time &amp; Space Complexity</a> — Big-O through the Master Theorem, with a live growth explorer.</li>
+            <li><a>The Model Is No Longer the Product</a> — prompting, RAG and finetuning, with playable demos.</li>
+            <li><a>The Future of Local-First AI</a> — why running models on your own machine is more than a privacy win.</li>
+          </ul>
+
+          <h2 class="section-title" style="font-size:1.3rem;">For machines</h2>
+          <ul class="sitemap-list">
+            <li><a>sitemap.xml</a> — the XML sitemap search engines read.</li>
+            <li><a>llms.txt</a> — a concise summary of this site for LLM crawlers.</li>
+            <li><a>llms-full.txt</a> — the full machine-readable directory, page by page.</li>
+            <li><a>robots.txt</a> — crawl permissions. Every AI agent is allowed.</li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     13 · 404 + LIGHT THEME
+     ============================================================ -->
+<section class="doc-section" id="notfound">
+  <div class="doc-section-head">
+    <span class="doc-index">13</span>
+    <h2>404, and the light theme</h2>
+    <span class="doc-index">/404.html</span>
+  </div>
+  <p class="doc-note">
+    The 404 keeps the navigation and points at the sitemap rather than dead-ending.
+    Beside it, the same screen with the light tokens applied — the surfaces become
+    warm sand and the gold darkens rather than inverting.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="split">
+    <div class="frame">
+      <div class="frame-bar">
+        <span class="frame-dots"><span></span><span></span><span></span></span>
+        <span class="frame-label">404 · dark</span>
+      </div>
+      <div class="frame-body">
+        <nav class="navbar">
+          <a class="nav-logo"><span class="nav-logo-mark">THL</span><span class="wordmark">THE HALLUCINATED LAB</span></a>
+        </nav>
+        <div class="notfound">
+          <div class="notfound-code">404</div>
+          <h1 class="section-title" style="font-size:1.4rem;">This page hallucinated itself</h1>
+          <p class="page-subtitle" style="font-size:12.5px;">The address exists in someone's model of the site, but not in the site. The sitemap has the real list.</p>
+          <p style="margin-top:26px;"><span class="btn btn-primary btn-sm">Open the sitemap</span></p>
+        </div>
+        <footer class="footer">
+          <p class="footer-text">© 2026 <a>The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+        </footer>
+      </div>
+    </div>
+
+    <div class="frame theme-light">
+      <div class="frame-bar" style="background:#e2d8c1;border-color:var(--border-subtle);">
+        <span class="frame-dots"><span style="background:#cbbfa2;"></span><span style="background:#cbbfa2;"></span><span style="background:#cbbfa2;"></span></span>
+        <span class="frame-label">404 · light</span>
+      </div>
+      <div class="frame-body">
+        <nav class="navbar">
+          <a class="nav-logo"><span class="nav-logo-mark">THL</span><span class="wordmark">THE HALLUCINATED LAB</span></a>
+        </nav>
+        <div class="notfound">
+          <div class="notfound-code">404</div>
+          <h1 class="section-title" style="font-size:1.4rem;">This page hallucinated itself</h1>
+          <p class="page-subtitle" style="font-size:12.5px;">The address exists in someone's model of the site, but not in the site. The sitemap has the real list.</p>
+          <p style="margin-top:26px;"><span class="btn btn-primary btn-sm">Open the sitemap</span></p>
+        </div>
+        <footer class="footer">
+          <p class="footer-text">© 2026 <a>The Hallucinated Lab</a>. Built with curiosity and caffeine.</p>
+        </footer>
+      </div>
+    </div>
+  </div>
+
+  <p class="state-note">
+    On the live site the theme is set on <code>&lt;html&gt;</code> by
+    <code>theme.js</code> before first paint, so there is no flash of the wrong
+    theme. Here it is a scoped class on the frame, since there is no script.
+  </p>
+</section>
+
+<!-- ============================================================
+     14 · MOBILE
+     ============================================================ -->
+<section class="doc-section" id="mobile" style="padding-bottom:80px;">
+  <div class="doc-section-head">
+    <span class="doc-index">14</span>
+    <h2>Mobile</h2>
+  </div>
+  <p class="doc-note">
+    Below ~900px the nav links collapse behind the hamburger, the grids fall to
+    one column, and the hero type steps down. Two representative screens at
+    340px.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div style="display:flex;gap:26px;flex-wrap:wrap;">
+
+    <div class="phone">
+      <nav class="navbar">
+        <a class="nav-logo"><span class="nav-logo-mark">THL</span><span class="wordmark" style="font-size:10px;">THE HALLUCINATED LAB</span></a>
+        <div class="nav-actions">
+          <span class="icon-btn" style="width:30px;height:30px;"><span class="hamburger" style="display:flex;"><span></span><span></span><span></span></span></span>
+        </div>
+      </nav>
+      <section class="hero">
+        <div class="hero-content">
+          <span class="hero-badge" style="font-size:9px;">
+            <span class="dot"></span> Open for Collaboration
+          </span>
+          <h1 class="hero-title">The Hallucinated Lab</h1>
+          <p class="hero-subtitle">Open-source AI tools that run entirely on your machine. <span class="typed">No cloud.</span><span style="color:var(--gold-primary);">|</span></p>
+          <div class="hero-actions"><span class="btn btn-primary btn-sm">Explore the Lab</span></div>
+        </div>
+      </section>
+      <section class="section">
+        <div class="explore-card">
+          <div class="explore-card-icon"><svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg></div>
+          <h3 class="explore-card-title">Tools</h3>
+          <p class="explore-card-desc">The working end of the lab — things you can take away and use today.</p>
+          <span class="explore-card-cta">Open Tools <svg viewBox="0 0 24 24"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg></span>
+        </div>
+      </section>
+      <footer class="footer"><p class="footer-text">© 2026 The Hallucinated Lab.</p></footer>
+    </div>
+
+    <div class="phone">
+      <nav class="navbar">
+        <a class="nav-logo"><span class="nav-logo-mark">THL</span></a>
+        <div class="nav-actions">
+          <span class="icon-btn" style="width:30px;height:30px;"><span class="hamburger" style="display:flex;"><span></span><span></span><span></span></span></span>
+        </div>
+      </nav>
+      <div class="nav-drawer">
+        <a class="active">Home</a>
+        <a>Tools</a>
+        <a>Pipelines</a>
+        <a>Assistant</a>
+        <a>Solutions</a>
+        <a>Media</a>
+        <a>Sitemap</a>
+        <a style="color:var(--text-muted);">SLM · dev</a>
+        <a style="color:var(--text-muted);">Certification · dev</a>
+        <a style="color:var(--text-muted);">Consultancy · dev</a>
+        <a style="color:var(--text-muted);border-bottom:0;">Data · dev</a>
+      </div>
+    </div>
+
+    <div class="phone">
+      <nav class="navbar">
+        <a class="nav-logo"><span class="nav-logo-mark">THL</span></a>
+        <div class="nav-actions">
+          <span class="icon-btn" style="width:30px;height:30px;"><span class="hamburger" style="display:flex;"><span></span><span></span><span></span></span></span>
+        </div>
+      </nav>
+      <div class="chat-container" style="border:0;border-radius:0;min-height:420px;">
+        <div class="chat-messages" style="padding:18px;">
+          <div class="msg msg-user" style="max-width:88%;">convert this to webp
+            <span class="msg-attach">screenshot.png · 842 KB</span>
+          </div>
+          <div class="msg msg-bot" style="max-width:88%;">
+            Done — screenshot.webp, 138 KB (−84%).
+          </div>
+        </div>
+        <div class="chat-quick"><span class="chat-chip">convert · png</span><span class="chat-chip">quality · 70</span></div>
+        <div class="chat-input-bar">
+          <span class="chat-round-btn" style="width:32px;height:32px;"><svg viewBox="0 0 24 24"><path d="M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5c0 1.38 1.12 2.5 2.5 2.5s2.5-1.12 2.5-2.5V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z"/></svg></span>
+          <span class="chat-input">Type a message...</span>
+          <span class="chat-round-btn chat-send" style="width:32px;height:32px;"><svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer" style="margin-top:40px;">
+  <p class="footer-text">
+    UI reference for The Hallucinated Lab — static, self-contained, no JavaScript.
+    Not a page of the live site.
+  </p>
+</footer>
+
+</body>
+</html>
