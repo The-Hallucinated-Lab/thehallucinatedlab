@@ -155,6 +155,38 @@ test('every local asset reference resolves to a file that exists', () => {
   assert.equal(missing.length, 0, `broken references:\n  ${missing.join('\n  ')}`);
 });
 
+/* The test above reads src/href/srcset out of HTML, so a path fetched at
+   runtime by a script is invisible to it. dictionary/assets/js/app.js
+   fetches 'data/search-index.json', the bare `data/` rule in .gitignore
+   swallowed the directory, and the dictionary shipped with a search box
+   that 404s into its own fallback message. Nothing failed. */
+test('every relative path fetched by a script resolves to a file that exists', () => {
+  const missing = [];
+  for (const page of htmlFiles()) {
+    const pageDir = path.dirname(page);
+    const scripts = [...read(page).matchAll(/<script[^>]+src="([^"]+)"/g)].map(m => m[1]);
+    for (const src of scripts) {
+      if (/^https?:/.test(src)) continue;
+      /* A <script src> is resolved against the page, like any other
+         reference; the fetch inside it is resolved against the page too. */
+      const jsPath = (src.startsWith('/') ? src.slice(1) : path.join(pageDir, src))
+        .replace(/\\/g, '/').split('?')[0];
+      if (!fs.existsSync(path.join(ROOT, jsPath))) continue;   // covered by the test above
+      for (const m of read(jsPath).matchAll(/fetch\(\s*['"]([^'"]+)['"]/g)) {
+        const ref = m[1];
+        if (/^(https?:|data:|blob:)/.test(ref)) continue;
+        const rel = (ref.startsWith('/') ? ref.slice(1) : path.join(pageDir, ref))
+          .replace(/\\/g, '/').split('?')[0].split('#')[0];
+        if (!fs.existsSync(path.join(ROOT, rel))) {
+          missing.push(`${page} loads ${jsPath}, which fetches '${ref}' -> ${rel} (no such file)`);
+        }
+      }
+    }
+  }
+  assert.equal(missing.length, 0,
+    `a script fetches a path with no committed file behind it:\n  ${missing.join('\n  ')}`);
+});
+
 test('no <img> points at a master image', () => {
   const MASTERS = ['logo.jpeg', 'pratyush.jpeg', 'divyansh.jpeg', 'shashwat.jpeg'];
   const offenders = [];
