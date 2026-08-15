@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https://thehallucinatedlab.space; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Softmax — The Hallucinated Lab Dictionary</title>
+<meta name="description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements...">
+<link rel="canonical" href="https://thehallucinatedlab.space/dictionary/terms/softmax.html">
+<meta property="og:title" content="Softmax — The Hallucinated Lab Dictionary">
+<meta property="og:description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://thehallucinatedlab.space/dictionary/terms/softmax.html">
+<meta property="og:site_name" content="The Hallucinated Lab">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="The Hallucinated Lab">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Softmax — The Hallucinated Lab Dictionary">
+<meta name="twitter:description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.">
+<meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+<link rel="icon" href="https://thehallucinatedlab.space/assets/images/logo.jpeg">
+<link rel="stylesheet" href="../../fonts.css">
+<link rel="stylesheet" href="../assets/css/tokens.css">
+<link rel="stylesheet" href="../assets/css/dictionary.css">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "DefinedTerm",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/softmax.html#term",
+      "name": "Softmax",
+      "description": "a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.",
+      "termCode": "AIM-00011",
+      "inDefinedTermSet": {
+        "@type": "DefinedTermSet",
+        "@id": "https://thehallucinatedlab.space/dictionary/#ai-mathematics",
+        "name": "AI & Mathematics",
+        "url": "https://thehallucinatedlab.space/dictionary/#ai-mathematics"
+      },
+      "url": "https://thehallucinatedlab.space/dictionary/terms/softmax.html"
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://thehallucinatedlab.space/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Dictionary",
+          "item": "https://thehallucinatedlab.space/dictionary/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "AI & Mathematics",
+          "item": "https://thehallucinatedlab.space/dictionary/#ai-mathematics"
+        },
+        {
+          "@type": "ListItem",
+          "position": 4,
+          "name": "Softmax",
+          "item": "https://thehallucinatedlab.space/dictionary/terms/softmax.html"
+        }
+      ]
+    }
+  ]
+}
+</script>
+<script src="../../theme.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+  <header>
+    <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
+      <a href="../../" class="nav-logo">
+        <picture>
+          <source srcset="../../assets/images/logo-72.avif" type="image/avif">
+          <source srcset="../../assets/images/logo-72.webp" type="image/webp">
+          <img src="../../assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
+        </picture>
+        <span>THE HALLUCINATED LAB</span>
+      </a>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="../../">Home</a></li>
+        <li><a href="../../tools.html">Tools</a></li>
+        <li><a href="../../pipelines.html">Pipelines</a></li>
+        <li><a href="../../interface.html">Assistant</a></li>
+        <li><a href="../../solutions.html">Solutions</a></li>
+        <li><a href="../index.html" class="active">Dictionary</a></li>
+        <li><a href="../../media.html">Media</a></li>
+        <li><a href="../../sitemap.html">Sitemap</a></li>
+        <li data-status="dev"><a href="../../slm.html">SLM</a></li>
+        <li data-status="dev"><a href="../../certification.html">Certification</a></li>
+        <li data-status="dev"><a href="../../consultancy.html">Consultancy</a></li>
+      </ul>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </button>
+      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
+<main id="main">
+  <article class="term-page">
+    <div>
+      <header class="term-hero">
+        <p class="page-breadcrumb">
+          <a href="../index.html">Dictionary</a> /
+          <a href="../index.html#ai-mathematics">AI &amp; Mathematics</a>
+        </p>
+        <h1>Softmax</h1>
+        <div class="term-phonetics"><span class="term-ipa">/ˈsɒftmæks/</span><span>soft·max</span><span class="term-pos">noun</span></div>
+        <div class="term-meta-row">
+          <span class="badge">Deep Learning</span>
+          <span class="badge">Core</span>
+        </div>
+      </header>
+
+      <section class="term-section">
+        <h2>Definition</h2>
+        <div class="definition">
+  <p><span class="definition-number">1.</span><span class="definition-context">[in machine learning] </span><span class="definition-text">a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.</span></p>
+  <p class="definition-example">We applied the Softmax function to the final layer&#x27;s logits to get class probabilities.</p>
+</div>
+      </section>
+
+      <section class="term-section">
+  <h2>Formal statement</h2>
+  <div class="formula-block"><code>softmax(z)_i = e^z_i / sum(e^z_j)</code></div>
+  <p class="formula-note">z is the vector of raw scores (logits), and K is the number of classes.</p>
+</section>
+      <section class="term-section">
+  <h2>Etymology</h2>
+  <p class="etymology-text">A compound of soft and max, naming a smooth relaxation of the maximum: where max returns a single winner, this returns a graded distribution over all candidates. Named by John Bridle in 1990, who introduced it as a differentiable stand-in for winner-take-all selection.</p>
+</section>
+      <section class="term-section"><h2>Synonyms</h2><ul class="relation-list"><li><span class="relation-chip">probability-distribution-function<span class="relation-tag">sense 1 · Near</span></span></li></ul></section>
+      <section class="term-section">
+  <h2>References</h2>
+  <ul class="citation-list"><li>Goodfellow et al. (2016). Deep Learning, ch. 7.<span class="citation-source">MIT Press.</span></li></ul>
+</section>
+
+      <nav class="term-nav" aria-label="Adjacent entries"><a href="reinforcement-learning.html"><span class="term-nav-label">Previous</span>Reinforcement Learning</a><a href="transformer.html" style="text-align:right"><span class="term-nav-label">Next</span>Transformer</a></nav>
+    </div>
+    <aside class="term-aside"><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00011</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Deep Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>unigram</dd><dt>First attested</dt><dd>2010</dd><dt>Also written</dt><dd>SM</dd><dt>Opacity</dt><dd>2 of 3</dd></dl></aside>
+  </article>
+</main>
+<footer class="footer">
+  <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine. <a href="../../sitemap.html">Sitemap</a>.</p>
+</footer>
+<script src="../assets/js/nav.js" type="module"></script>
+<script src="../../script.js" defer></script>
+</body>
+</html>

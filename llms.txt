@@ -24,6 +24,7 @@ The Hallucinated Lab operates in three modes:
 - [Index](https://thehallucinatedlab.space/vector-index.html): Writes vectors and their chunks into a portable database directory you own, as Chroma or as plain numpy.
 - [Exploratory data analysis](https://thehallucinatedlab.space/eda.html): Profiles a tabular file from the command line. `thl pipeline eda sales.csv` writes a Markdown report, the figures, a replayable recipe and a runnable analysis.py that reproduces the report.
 - [Assistant](https://thehallucinatedlab.space/interface.html): Browser interface that parses a plain-English request and runs the matching tool locally. No model, no install, no cloud relay.
+- [Dictionary](https://thehallucinatedlab.space/dictionary/index.html): A 39-entry reference covering AI, mathematics and software engineering.
 - [Solutions](https://thehallucinatedlab.space/solutions.html): Shipped desktop products — ScoobyBench benchmarks real AI inference performance against vendor claims, NexusLink Engine is an encrypted peer-to-peer networking SDK, and AI Video Studio generates narrated video from a script on local hardware.
 - [Media](https://thehallucinatedlab.space/media.html): Entry point to Blogs, Artifacts, and (upcoming) Notebooks.
 - [Sitemap](https://thehallucinatedlab.space/sitemap.html): Every page on the site in one list, grouped by section, with a line on what each is for.
@@ -51,6 +52,49 @@ The Hallucinated Lab operates in three modes:
 - [Time & Space Complexity](https://thehallucinatedlab.space/blogs/complexity.html): Interactive teaching session on asymptotic analysis, Big-O through the Master Theorem, with a growth-rate explorer and twelve worked examples.
 - [The Model Is No Longer the Product](https://thehallucinatedlab.space/blogs/ai-orchestration.html): Interactive piece on AI engineering as orchestration, with a runnable RAG pipeline and a failure-diagnosis game.
 - [The Future of Local-First AI](https://thehallucinatedlab.space/blogs/sample-blog.html): Blog on the shift from cloud dependency to local-first intelligence.
+
+
+## Dictionary Terms
+
+- [Acid](https://thehallucinatedlab.space/dictionary/terms/acid.html)
+- [Activation Function](https://thehallucinatedlab.space/dictionary/terms/activation-function.html)
+- [Attention Mechanism](https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html)
+- [Backpropagation](https://thehallucinatedlab.space/dictionary/terms/backpropagation.html)
+- [Bayes Theorem](https://thehallucinatedlab.space/dictionary/terms/bayes-theorem.html)
+- [Bias Variance Tradeoff](https://thehallucinatedlab.space/dictionary/terms/bias-variance-tradeoff.html)
+- [Big O Notation](https://thehallucinatedlab.space/dictionary/terms/big-o-notation.html)
+- [Cap Theorem](https://thehallucinatedlab.space/dictionary/terms/cap-theorem.html)
+- [Cohesion](https://thehallucinatedlab.space/dictionary/terms/cohesion.html)
+- [Convolutional Neural Network](https://thehallucinatedlab.space/dictionary/terms/convolutional-neural-network.html)
+- [Coupling](https://thehallucinatedlab.space/dictionary/terms/coupling.html)
+- [Cross Validation](https://thehallucinatedlab.space/dictionary/terms/cross-validation.html)
+- [Deadlock](https://thehallucinatedlab.space/dictionary/terms/deadlock.html)
+- [Dependency Injection](https://thehallucinatedlab.space/dictionary/terms/dependency-injection.html)
+- [Eigenvector](https://thehallucinatedlab.space/dictionary/terms/eigenvector.html)
+- [Embedding](https://thehallucinatedlab.space/dictionary/terms/embedding.html)
+- [Entropy](https://thehallucinatedlab.space/dictionary/terms/entropy.html)
+- [Eventual Consistency](https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html)
+- [Gradient Descent](https://thehallucinatedlab.space/dictionary/terms/gradient-descent.html)
+- [Hash Table](https://thehallucinatedlab.space/dictionary/terms/hash-table.html)
+- [Idempotence](https://thehallucinatedlab.space/dictionary/terms/idempotence.html)
+- [Learning Rate](https://thehallucinatedlab.space/dictionary/terms/learning-rate.html)
+- [Loss Function](https://thehallucinatedlab.space/dictionary/terms/loss-function.html)
+- [Markov Chain](https://thehallucinatedlab.space/dictionary/terms/markov-chain.html)
+- [Maximum Likelihood Estimation](https://thehallucinatedlab.space/dictionary/terms/maximum-likelihood-estimation.html)
+- [Memoization](https://thehallucinatedlab.space/dictionary/terms/memoization.html)
+- [Mutex](https://thehallucinatedlab.space/dictionary/terms/mutex.html)
+- [Overfitting](https://thehallucinatedlab.space/dictionary/terms/overfitting.html)
+- [Principal Component Analysis](https://thehallucinatedlab.space/dictionary/terms/principal-component-analysis.html)
+- [Pure Function](https://thehallucinatedlab.space/dictionary/terms/pure-function.html)
+- [Race Condition](https://thehallucinatedlab.space/dictionary/terms/race-condition.html)
+- [Refactoring](https://thehallucinatedlab.space/dictionary/terms/refactoring.html)
+- [Regularization](https://thehallucinatedlab.space/dictionary/terms/regularization.html)
+- [Reinforcement Learning](https://thehallucinatedlab.space/dictionary/terms/reinforcement-learning.html)
+- [Softmax](https://thehallucinatedlab.space/dictionary/terms/softmax.html)
+- [Sql Injection](https://thehallucinatedlab.space/dictionary/terms/sql-injection.html)
+- [Technical Debt](https://thehallucinatedlab.space/dictionary/terms/technical-debt.html)
+- [Transformer](https://thehallucinatedlab.space/dictionary/terms/transformer.html)
+- [Yak Shaving](https://thehallucinatedlab.space/dictionary/terms/yak-shaving.html)
 
 ## Technical capabilities
 

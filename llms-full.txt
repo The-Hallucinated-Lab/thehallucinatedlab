@@ -226,6 +226,53 @@ Purpose: a browser chat interface that turns a plain-English request into a tool
 
 ---
 
+
+## Page: Dictionary — https://thehallucinatedlab.space/dictionary/index.html
+
+Purpose: a 39-entry reference covering AI, mathematics and software engineering.
+
+- Two corpora: AI & Mathematics (21 entries) and Software Engineering Core (18 entries).
+- Full client-side instant search across terms, domains, and definitions.
+- [acid.html](https://thehallucinatedlab.space/dictionary/terms/acid.html): Term definition page.
+- [activation-function.html](https://thehallucinatedlab.space/dictionary/terms/activation-function.html): Term definition page.
+- [attention-mechanism.html](https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html): Term definition page.
+- [backpropagation.html](https://thehallucinatedlab.space/dictionary/terms/backpropagation.html): Term definition page.
+- [bayes-theorem.html](https://thehallucinatedlab.space/dictionary/terms/bayes-theorem.html): Term definition page.
+- [bias-variance-tradeoff.html](https://thehallucinatedlab.space/dictionary/terms/bias-variance-tradeoff.html): Term definition page.
+- [big-o-notation.html](https://thehallucinatedlab.space/dictionary/terms/big-o-notation.html): Term definition page.
+- [cap-theorem.html](https://thehallucinatedlab.space/dictionary/terms/cap-theorem.html): Term definition page.
+- [cohesion.html](https://thehallucinatedlab.space/dictionary/terms/cohesion.html): Term definition page.
+- [convolutional-neural-network.html](https://thehallucinatedlab.space/dictionary/terms/convolutional-neural-network.html): Term definition page.
+- [coupling.html](https://thehallucinatedlab.space/dictionary/terms/coupling.html): Term definition page.
+- [cross-validation.html](https://thehallucinatedlab.space/dictionary/terms/cross-validation.html): Term definition page.
+- [deadlock.html](https://thehallucinatedlab.space/dictionary/terms/deadlock.html): Term definition page.
+- [dependency-injection.html](https://thehallucinatedlab.space/dictionary/terms/dependency-injection.html): Term definition page.
+- [eigenvector.html](https://thehallucinatedlab.space/dictionary/terms/eigenvector.html): Term definition page.
+- [embedding.html](https://thehallucinatedlab.space/dictionary/terms/embedding.html): Term definition page.
+- [entropy.html](https://thehallucinatedlab.space/dictionary/terms/entropy.html): Term definition page.
+- [eventual-consistency.html](https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html): Term definition page.
+- [gradient-descent.html](https://thehallucinatedlab.space/dictionary/terms/gradient-descent.html): Term definition page.
+- [hash-table.html](https://thehallucinatedlab.space/dictionary/terms/hash-table.html): Term definition page.
+- [idempotence.html](https://thehallucinatedlab.space/dictionary/terms/idempotence.html): Term definition page.
+- [learning-rate.html](https://thehallucinatedlab.space/dictionary/terms/learning-rate.html): Term definition page.
+- [loss-function.html](https://thehallucinatedlab.space/dictionary/terms/loss-function.html): Term definition page.
+- [markov-chain.html](https://thehallucinatedlab.space/dictionary/terms/markov-chain.html): Term definition page.
+- [maximum-likelihood-estimation.html](https://thehallucinatedlab.space/dictionary/terms/maximum-likelihood-estimation.html): Term definition page.
+- [memoization.html](https://thehallucinatedlab.space/dictionary/terms/memoization.html): Term definition page.
+- [mutex.html](https://thehallucinatedlab.space/dictionary/terms/mutex.html): Term definition page.
+- [overfitting.html](https://thehallucinatedlab.space/dictionary/terms/overfitting.html): Term definition page.
+- [principal-component-analysis.html](https://thehallucinatedlab.space/dictionary/terms/principal-component-analysis.html): Term definition page.
+- [pure-function.html](https://thehallucinatedlab.space/dictionary/terms/pure-function.html): Term definition page.
+- [race-condition.html](https://thehallucinatedlab.space/dictionary/terms/race-condition.html): Term definition page.
+- [refactoring.html](https://thehallucinatedlab.space/dictionary/terms/refactoring.html): Term definition page.
+- [regularization.html](https://thehallucinatedlab.space/dictionary/terms/regularization.html): Term definition page.
+- [reinforcement-learning.html](https://thehallucinatedlab.space/dictionary/terms/reinforcement-learning.html): Term definition page.
+- [softmax.html](https://thehallucinatedlab.space/dictionary/terms/softmax.html): Term definition page.
+- [sql-injection.html](https://thehallucinatedlab.space/dictionary/terms/sql-injection.html): Term definition page.
+- [technical-debt.html](https://thehallucinatedlab.space/dictionary/terms/technical-debt.html): Term definition page.
+- [transformer.html](https://thehallucinatedlab.space/dictionary/terms/transformer.html): Term definition page.
+- [yak-shaving.html](https://thehallucinatedlab.space/dictionary/terms/yak-shaving.html): Term definition page.
+
 ## Page: Solutions — https://thehallucinatedlab.space/solutions.html
 
 Purpose: finished applications the lab has shipped.
