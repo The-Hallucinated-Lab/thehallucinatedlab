@@ -374,3 +374,15 @@
 - **Bugs/Gaps Addressed:** Integrates 39 term pages, static search engine, and dictionary styling into the live site layout.
 - **Context Modifications:** Added `dictionary/` directory (index.html, 39 term pages, datasets, assets), updated navigation links across 70+ HTML files, updated `sitemap.html`, `sitemap.xml`, `llms.txt`, and `llms-full.txt`, updated ESLint module config for dictionary JS, and passed 377/377 site invariant tests.
 
+
+---
+
+- **Timestamp:** 2026-08-15T11:40:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `dictionary/index.html`, `dictionary/terms/*.html` (40 files)
+- **Intent:** Live-site audit of the deployed commit `f81730d`. The dictionary integration shipped a CSP that is weaker than the rest of the site: every one of its 40 pages granted `https://fonts.googleapis.com` in `style-src` and `https://fonts.gstatic.com` in `font-src`. Normalised all 40 to the site baseline so the whole site is once again same-origin only.
+- **Bugs/Gaps Addressed:** Closes a live [RULE-01] violation — a third-party origin was permitted on 40 indexable production pages.
+- **Context Modifications:** The grant was verifiably **unused**. `dictionary/index.html` loads only `../fonts.css`, `assets/css/tokens.css` and `assets/css/dictionary.css`; there is no `@font-face`, `@import` or `preconnect` naming either Google origin anywhere in the tree, and `BUDGET.thirdPartyOrigins` is already `0`, so no subresource ever resolved there. Removing the two origins therefore changes nothing a visitor sees — it only removes standing permission for an origin the site does not use. The redundant `https://thehallucinatedlab.space` in `img-src` was dropped in the same pass; it is the site's own origin and `'self'` already covers it. All 40 pages carried one byte-identical CSP string, so this was a single mechanical substitution, verified by a residual grep returning nothing.
+- **Decision — normalise rather than justify.** The alternative was to keep the grant and document it. Rejected: a CSP that permits an origin no page requests is pure attack surface, and `[GAP-02]` already notes the policy is `<meta>`-delivered and therefore weaker than a header. Widening it further on the newest and most numerous pages is the wrong direction.
+- **Verification:** `npm run check` — eslint clean, 377/377 tests pass, spec in sync. Grep confirms zero residual references to either origin under `dictionary/`.
