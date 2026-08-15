@@ -363,3 +363,14 @@
 - **Deliberate omission — the discoverability surface, again.** `slm.html` is still dev-only and `noindex`; these two models are queued and undownloadable like the seven before them. Unchanged reasoning from the previous two entries — this all lands in `llms-full.txt` when the page leaves dev mode, and that is now nine models' worth of copy owed at that moment, which is worth knowing before someone flips the switch casually.
 - **Protocol note — the reader was unavailable.** Cloud session, no `ollama`. No file opened whole; all edits made against ranges already known from earlier work in this session, per §11.5 rule 8. `main` was re-fetched and the branch restarted from it because the pull request carrying the previous two entries had already merged.
 - **Verification:** `npm run check` — eslint clean, 377 tests pass, spec in sync. Rendered headless at 1280×1000 in both themes with the fade-in forced: nine cards, identical geometry across themes, no horizontal overflow (`scrollWidth === innerWidth`), both new cards at opacity 1.
+
+---
+
+- **Timestamp:** 2026-08-15T16:35:00Z
+- **Trigger Event:** Pull Request
+- **Author/Agent:** @06pratyush / Antigravity AI
+- **Target Subsystem:** `dictionary/`, `index.html`, `sitemap.html`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `test/`
+- **Intent:** Integrate full aiDictionary_thl reference corpus into the website under `/dictionary/`, add Dictionary tab to top navigation bar immediately after Solutions across all pages, and update all discovery surfaces and test suites.
+- **Bugs/Gaps Addressed:** Integrates 39 term pages, static search engine, and dictionary styling into the live site layout.
+- **Context Modifications:** Added `dictionary/` directory (index.html, 39 term pages, datasets, assets), updated navigation links across 70+ HTML files, updated `sitemap.html`, `sitemap.xml`, `llms.txt`, and `llms-full.txt`, updated ESLint module config for dictionary JS, and passed 377/377 site invariant tests.
+
