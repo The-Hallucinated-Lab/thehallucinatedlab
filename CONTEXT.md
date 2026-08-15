@@ -382,3 +382,26 @@
 - **Scope note — multiple `<h1>` elements, on purpose.** The file contains its own `<h1>` plus each mocked page's `<h1>`, which would violate the site's one-`<h1>` invariant. That invariant applies to indexable pages; this is a reference sheet that shows what each page's `<h1>` looks like, and it is outside the scanned directories. If this file is ever promoted to a real page, that is the first thing that has to change.
 - **Protocol note — the reader was unavailable.** Cloud session, no `ollama`. Per §11.5, structure was mapped with `grep -n` and read in targeted ranges — nav and hero from `index.html`, one gateway card each from `tools.html` and `pipelines.html`, the chat container from `interface.html`, the spotlight from `solutions.html`, the note card from `blogs.html`, the tool panel controls from `convert.html` via grep alone, the token blocks from `styles.css`. No file was opened whole; the 100-line ceiling held throughout.
 - **Verification:** `npm run check` — eslint clean, 377 tests pass, spec in sync (run after `npm ci --ignore-scripts`; the container starts without `node_modules`). Checked directly on the new file: zero `<script>` tags, zero inline event handlers, zero occurrences of `http://`, `https://`, `src=`, `<link`, `@import` or `url(` — so nothing can leave the page. CSS brace depth returns to 0 with no negative excursion, and the block-level tags balance.
+
+---
+
+- **Timestamp:** 2026-08-15T16:35:00Z
+- **Trigger Event:** Pull Request
+- **Author/Agent:** @06pratyush / Antigravity AI
+- **Target Subsystem:** `dictionary/`, `index.html`, `sitemap.html`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `test/`
+- **Intent:** Integrate full aiDictionary_thl reference corpus into the website under `/dictionary/`, add Dictionary tab to top navigation bar immediately after Solutions across all pages, and update all discovery surfaces and test suites.
+- **Bugs/Gaps Addressed:** Integrates 39 term pages, static search engine, and dictionary styling into the live site layout.
+- **Context Modifications:** Added `dictionary/` directory (index.html, 39 term pages, datasets, assets), updated navigation links across 70+ HTML files, updated `sitemap.html`, `sitemap.xml`, `llms.txt`, and `llms-full.txt`, updated ESLint module config for dictionary JS, and passed 377/377 site invariant tests.
+
+
+---
+
+- **Timestamp:** 2026-08-15T17:30:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `design/ui-reference.html`, `CONTEXT.md`
+- **Intent:** Merge `main` into the UI-reference branch after the dictionary integration landed, and re-sync the mocked navigation so the reference still depicts the site that exists.
+- **Bugs/Gaps Addressed:** None. This is the first observed instance of the drift the previous entry predicted — the reference is downstream of the real pages, and a navigation change upstream silently invalidated it within a day.
+- **Context Modifications:** `CONTEXT.md` conflicted because both branches appended to the section 5 timeline. Resolved by keeping **both** entries in timestamp order with the standard `---` separator — the timeline is append-only under [RULE-11], so neither side may be dropped, and a conflict here is never a choice between entries. `design/ui-reference.html` gained a `Dictionary` item after `Solutions` in all four mocked navigation surfaces (desktop bar, section-01 drawer, home mockup, mobile drawer) and a matching line in the mocked sitemap list.
+- **Deliberate omission — no Dictionary screen was drawn.** The reference gains the nav entry, not a mock of `dictionary/index.html`. Its term pages and search index are a distinct surface with its own components, and inventing a screen for it from the nav link alone would put markup in the reference that no one has checked against the real page. Drawing it is its own change, made by reading that page.
+- **Verification:** `npm run check` after the merge — eslint clean, 377 tests pass, spec in sync. No conflict markers remain in `CONTEXT.md`.

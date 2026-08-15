@@ -111,6 +111,21 @@ module.exports = [
     rules: CORRECTNESS,
   },
 
+  // Dictionary ES module scripts.
+  {
+    files: ['dictionary/assets/js/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 2023,
+      sourceType: 'module',
+      globals: { ...globals.browser },
+    },
+    rules: {
+      ...CORRECTNESS,
+      'no-shadow': 'off',
+      'no-unused-vars': 'off',
+    },
+  },
+
   // Node: tests, and the spec-sync script.
   {
     files: ['test/**/*.js', 'scripts/**/*.js', 'eslint.config.js'],

@@ -50,7 +50,11 @@ jobs:
           set -e
           for f in $(git ls-files '*.js'); do
             case "$f" in assets/vendor/*) continue ;; esac
-            node --check "$f"
+            if [[ "$f" == dictionary/assets/js/* ]]; then
+              node --input-type=module --check < "$f"
+            else
+              node --check "$f"
+            fi
           done
           echo "all scripts parse"
 
