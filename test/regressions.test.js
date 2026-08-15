@@ -71,7 +71,7 @@ const THEMES = [
 
 function htmlFiles() {
   const out = [];
-  for (const dir of ['.', 'blogs']) {
+  for (const dir of ['.', 'blogs', 'dictionary', 'dictionary/terms']) {
     const abs = path.join(ROOT, dir);
     for (const f of fs.readdirSync(abs)) {
       if (f.endsWith('.html')) out.push(path.join(dir, f).replace(/\\/g, '/'));

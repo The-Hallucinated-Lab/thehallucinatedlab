@@ -35,7 +35,7 @@ const read = p => fs.readFileSync(path.join(ROOT, p), 'utf8');
 
 function allPages() {
   const out = [];
-  for (const dir of ['.', 'blogs']) {
+  for (const dir of ['.', 'blogs', 'dictionary', 'dictionary/terms']) {
     for (const f of fs.readdirSync(path.join(ROOT, dir))) {
       if (f.endsWith('.html')) out.push(path.join(dir, f).replace(/\\/g, '/').replace(/^\.\//, ''));
     }
@@ -380,7 +380,7 @@ test('the HTML sitemap links to every indexable page', () => {
 });
 
 test('every page links to the HTML sitemap from its footer', () => {
-  const missing = indexablePages().filter(f => !/href="\/?sitemap\.html"|href="\.\.\/sitemap\.html"/.test(read(f)));
+  const missing = indexablePages().filter(f => !/href="[^"]*sitemap\.html"/.test(read(f)));
   assert.deepEqual(missing, [],
     `no footer link to the sitemap:\n  ${missing.join('\n  ')}`);
 });

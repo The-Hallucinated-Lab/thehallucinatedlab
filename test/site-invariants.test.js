@@ -37,7 +37,7 @@ const BUDGET = {
 
 function htmlFiles() {
   const out = [];
-  for (const dir of ['.', 'blogs']) {
+  for (const dir of ['.', 'blogs', 'dictionary', 'dictionary/terms']) {
     const abs = path.join(ROOT, dir);
     for (const f of fs.readdirSync(abs)) {
       if (f.endsWith('.html')) out.push(path.join(dir, f).replace(/\\/g, '/'));
@@ -226,7 +226,7 @@ test('every stylesheet closes every block it opens', () => {
      this file exists to catch — the two article stylesheets were added
      after this test was written and would not have been covered. */
   const sheets = [];
-  for (const dir of ['.', 'blogs']) {
+  for (const dir of ['.', 'blogs', 'dictionary', 'dictionary/terms']) {
     for (const f of fs.readdirSync(path.join(ROOT, dir))) {
       if (f.endsWith('.css')) sheets.push(path.join(dir, f).replace(/\\/g, '/').replace(/^\.\//, ''));
     }
