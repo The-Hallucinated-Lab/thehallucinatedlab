@@ -42,7 +42,7 @@
 - [GAP-03]: `llms.txt` and `llms-full.txt` are maintained by hand. Tests confirm every link resolves and every indexable page is covered, but nothing verifies that the *prose* still describes what the page currently does — this has drifted twice before.
 - [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer, so a site-wide head change is a mechanical edit across every HTML file.
 - [GAP-05]: Solutions are documented on the site but their source repositories live outside it, so a version number here can silently fall behind the upstream release.
-- [GAP-06]: The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command. The `thehallucinatedlab` package implements no `solutions` subcommand, so both lines are aspirational and read as fact. Either implement the subcommand or replace the two lines.
+- [GAP-06]: ~~The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command that the package does not implement.~~ **CLOSED 2026-08-15** — both replaced with the real `git clone` for the repository each card already links to, matching the AI Video Studio card. Nothing on the site now advertises a `solutions` subcommand.
 - [GAP-08]: `dictionary/assets/js/search-engine.js` carries two functions far over the complexity ceiling — `metaphone` at 55 and `search` at 62, against a maximum of 20. ESLint reports them as warnings, so `npm run check` stays green and CI does not block. They arrived with the dictionary integration and have no unit tests of their own, so any split is a regression risk on the search surface.
 - [GAP-07]: NexusLink Engine has a one-line entry in `llms.txt` but no `## Page:`-level coverage in `llms-full.txt`, where ScoobyBench and AI Video Studio both have full sections. An answer engine reading the long-form file sees two of the three shipped products. The tests do not catch this — they check that every *page* is covered, not every product on a page.
 
@@ -401,3 +401,16 @@
 - **Decision — parse directives, don't regex the whole string.** Splitting on `;` and whitespace catches an origin in any directive including ones not yet written, where a pattern aimed at `style-src`/`font-src` would have to be extended every time a directive is added — exactly the failure mode being fixed.
 - **Deliberate omission — the two complexity warnings are left alone.** `dictionary/assets/js/search-engine.js` has `metaphone` at complexity 55 and `search` at 62 against a maximum of 20. They are warnings, they predate this session, and they arrived with the dictionary integration. Splitting a phonetic algorithm and a ranked-search routine is a real refactor with real regression risk on a search surface that has no unit tests of its own; doing it inside a CSP audit would be unreviewable. Recorded as `[GAP-08]` instead.
 - **Verification:** `npm run check` — eslint 0 errors (2 pre-existing warnings, unchanged), 378/378 tests pass, spec in sync.
+
+---
+
+- **Timestamp:** 2026-08-15T11:56:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `solutions.html`
+- **Intent:** Close [GAP-06]. The ScoobyBench and NexusLink cards told visitors to run `thl solutions install scoobybench` / `… nexuslink`. The `thehallucinatedlab` package implements no `solutions` subcommand, so both commands fail for anyone who copies them off the live page.
+- **Bugs/Gaps Addressed:** Closes [GAP-06]. Section 4 updated in this commit.
+- **Context Modifications:** Confirmed against the CLI rather than assumed — `grep add_parser python/` gives `tool`, `pipeline`, `convert`, `extract`, `chunk`, `tokenize`, `embed`, `index`, `rag`, `serve`, `assistant`. No `solutions`, at any nesting level. Both lines replaced with `git clone github.com/06pratyush/ScoobyBench-ai_benchmarking_system` and `git clone github.com/06pratyush/NexusLinkEngine`.
+- **Decision — follow the third card instead of inventing a fix.** AI Video Studio, the one card that was already honest, shows `git clone github.com/06pratyush/ai-video-pipeline` — its code line mirrors its own GitHub CTA. Applying that shape to the other two makes all three consistent and required no new fact: each replacement reuses the exact URL that card's "View on GitHub" button already points at. The alternative in the gap text — implement a `solutions` subcommand — is a package feature justified by a marketing line, which is backwards, and would ship a new CLI surface with no tests to satisfy a copy fix.
+- **Decision — kept the `<code>` element rather than deleting it.** Deleting was simpler and equally honest, but `.spotlight-code` is styled in `pages.css:1293` and carries the `.spotlight-actions` two-item layout; dropping it from two of three cards would leave the grid visibly uneven for a copy defect.
+- **Verification:** `npm run check` — 378/378 tests pass, spec in sync, eslint 0 errors. `grep -rn "thl solutions"` across all HTML, Markdown and text now returns nothing outside this log.
