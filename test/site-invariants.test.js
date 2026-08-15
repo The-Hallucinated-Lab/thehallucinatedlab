@@ -108,6 +108,34 @@ test('no CSP grants unsafe-inline or unsafe-eval to script-src', () => {
   }
 });
 
+/* The test above only guards script-src, which is how 40 dictionary pages
+   shipped with https://fonts.googleapis.com in style-src and
+   https://fonts.gstatic.com in font-src. A CSP that names an origin the
+   site never requests is standing permission for nothing, and [GAP-02]
+   already makes this policy weaker than a header would be. Loopback is
+   the one legitimate remote: [RULE-02] tools talk to the user's own
+   Python package over 127.0.0.1/localhost. */
+const LOOPBACK = /^https?:\/\/(127\.0\.0\.1|localhost)(:(\d+|\*))?$/;
+
+test('no CSP directive grants a third-party origin', () => {
+  const offenders = [];
+  for (const f of htmlFiles()) {
+    const m = read(f).match(/http-equiv="Content-Security-Policy" content="([^"]+)"/);
+    assert.ok(m, `${f} CSP unreadable`);
+    for (const directive of m[1].split(';')) {
+      const [name, ...values] = directive.trim().split(/\s+/);
+      if (!name) continue;
+      for (const v of values) {
+        if (!/^https?:\/\//.test(v)) continue;
+        if (LOOPBACK.test(v)) continue;
+        offenders.push(`${f} -> ${name} ${v}`);
+      }
+    }
+  }
+  assert.equal(offenders.length, BUDGET.thirdPartyOrigins,
+    `CSP grants a third-party origin; the site is same-origin only:\n  ${offenders.join('\n  ')}`);
+});
+
 /* ---- asset integrity ---- */
 
 test('every local asset reference resolves to a file that exists', () => {
