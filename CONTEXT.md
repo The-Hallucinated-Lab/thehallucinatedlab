@@ -14,7 +14,7 @@
 | :--- | :--- | :--- | :--- |
 | **Pages** | Hand-written HTML5 | — | One `<h1>` per page, `<main>` landmark, no skipped heading levels, `alt` on every `<img>` |
 | **Styling** | Plain CSS (`styles.css`, `pages.css`, `fonts.css`) | — | No preprocessor, no framework, no third-party origin |
-| **Client JS** | Classic `<script>`, no modules, no bundler | ES2022 | No inline `<script>`, no inline event handlers — the CSP blocks both |
+| **Client JS** | Classic `<script>`, no bundler. **Exception:** `dictionary/assets/js/**` is native ES modules, loaded with `type="module"` on the 40 pages under `dictionary/` | ES2022 | No inline `<script>`, no inline event handlers — the CSP blocks both. Still no bundler and no transpiler anywhere: the modules are what the browser gets |
 | **Security** | Per-page `Content-Security-Policy` meta | — | `script-src 'self'` only; `unsafe-inline`/`unsafe-eval` are never permitted |
 | **Tool contract** | `spec/manifest.json` | — | Single source of truth for tool params; mirrored into `python/` via `npm run spec:sync` |
 | **Python package** | `thehallucinatedlab` (pip) | see `python/` | Bounded dependency ranges only (`>=x,<y`); lint with `ruff` |
@@ -429,3 +429,17 @@
 - **Decision — recorded as "foundation build", not a version.** The other two entries carry "version 2.0.0 stable" and "version 1.0.0 stable". NexusLink's card shows the status badge "Foundation Build" and no version, so the entry says so and states plainly that it is a library surface rather than a tagged release. Inventing a version number to make three entries symmetrical is precisely the drift [GAP-03] warns about.
 - **Deliberate omission — the test hole is left open as [GAP-09].** The right guard asserts that every product named on a page appears in the long-form file, which means teaching the tests what a "product" is — a `.spotlight-title`, today, on one page. Writing that selector-coupled test inside a content fix would bind the discoverability suite to `solutions.html`'s current markup, and it belongs in its own change with its own argument.
 - **Verification:** `npm run check` — 378/378 tests pass, spec in sync, eslint 0 errors. NexusLink now appears in both `llms.txt` and `llms-full.txt`; all three products on the page have long-form coverage.
+
+---
+
+- **Timestamp:** 2026-08-15T12:12:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `CONTEXT.md` section 2
+- **Intent:** Section 2 stated "Classic `<script>`, no modules, no bundler" as the Client JS rule. That has been false since the dictionary integration merged: all 40 pages under `dictionary/` load `assets/js/nav.js` and `assets/js/app.js` with `type="module"`, and `eslint.config.js` carries a matching `sourceType: 'module'` block for `dictionary/assets/js/**`. Corrected the row to describe what actually ships.
+- **Bugs/Gaps Addressed:** No code defect. Fixes a false statement in the authoritative half of this manifest, which [RULE-11] says agents must trust without re-deriving.
+- **Context Modifications:** The exception is confined — `grep -rln 'type="module"' --include=*.html` outside `dictionary/` returns nothing, so no root or `blogs/` page is affected. The zero-build guarantee is untouched and the row now says so explicitly: native modules are what the browser receives, with no bundler and no transpiler in the path.
+- **Decision — corrected the manifest, did not convert the modules.** The other direction was available: rewrite `dictionary/assets/js/**` as classic scripts and restore the original rule. Rejected. The integration chose modules deliberately and CI was extended to parse them (`56f1eed`); unpicking that is a refactor of the dictionary's entire JS surface, justified by nothing but a sentence, and it would risk a working search feature that has no unit tests of its own. A rule that the codebase has already outgrown should be amended in the open, not enforced retroactively by a fix nobody asked for.
+- **Decision — written as a named exception rather than a softened rule.** "No modules except where there are" would let the next tree add modules by precedent. Naming the exact path and the exact page count means the next deviation has to be argued rather than assumed, and a reader can check the claim in one grep.
+- **Protocol note.** No `ollama` in this cloud session, so the §11 reader was unavailable and the §11.5 ceiling was held by other means — `wc -l`, `grep -n`, targeted `sed -n` ranges, and `--stat`. No file was read whole. Logged per the fallback in §2 of `CLAUDE.md`.
+- **Verification:** `npm run check` — 378/378 tests pass, spec in sync, eslint 0 errors (2 pre-existing complexity warnings, see [GAP-08]).
