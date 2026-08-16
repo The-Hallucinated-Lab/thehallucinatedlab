@@ -443,7 +443,8 @@ const navVisible = item => navEntryVisible(item, readMode());
    are all filled Material paths, and outlined nav glyphs beside them read
    as a different icon set rather than the same one at a smaller size.
    These must stay closed paths: an open subpath fills into a wedge. */
-/* Hoisted out of the table because two keys share it — see below. */
+/* Hoisted out of the table because several keys share them — see below. */
+const MEDIA_GLYPH = 'M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z';
 const DICTIONARY_GLYPH = 'M4 3.5h3v17H4zM8.5 3.5H20v17H8.5zm2 4v2h7v-2zm0 4v2h7v-2zm0 4v2h4v-2z';
 
 const NAV_ICONS = {
@@ -455,7 +456,14 @@ const NAV_ICONS = {
   'pipelines.html': 'M15.5 5H11l5 7-5 7h4.5l5-7zM8.5 5H4l5 7-5 7h4.5l5-7z',
   'interface.html': 'M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z',
   'solutions.html': 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z',
-  'media.html': 'M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z',
+  /* Media, and the two pages the blog templates point their Media tab
+     at instead. Same destination in the reader's mind, three spellings in
+     the markup — without the aliases the tab lost its glyph and rendered
+     as a bare word on the five blog pages, which is the one place the bar
+     is meant to look exactly like it does everywhere else. */
+  'media.html': MEDIA_GLYPH,
+  'artifacts.html': MEDIA_GLYPH,
+  'blogs.html': MEDIA_GLYPH,
   /* A closed volume seen spine-on, with three ruled lines cut out of the
      cover. Media already owns the open book, and two books in one bar
      read as one section split in half. The inner rectangles wind against

@@ -15,14 +15,17 @@
 
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { loadPure } = require('./helpers/load-pure');
+const fs = require('node:fs');
+const path = require('node:path');
+const { loadPure, ROOT } = require('./helpers/load-pure');
 
 const {
   PER_PAGE, letterOf, filterByLetter, pageCount, clampPage, sliceBounds,
-  pageWindow, rangeLabel,
+  pageWindow, rangeLabel, encodeState, decodeState, sortEntries,
 } = loadPure('dictionary/assets/js/browse.js', [
   'PER_PAGE', 'letterOf', 'filterByLetter', 'pageCount', 'clampPage',
-  'sliceBounds', 'pageWindow', 'rangeLabel',
+  'sliceBounds', 'pageWindow', 'rangeLabel', 'encodeState', 'decodeState',
+  'sortEntries',
 ]);
 
 const entry = title => ({ title });
@@ -135,4 +138,109 @@ test('the announced range is one-based and inclusive', () => {
   assert.equal(rangeLabel(1, 21), 'Showing 1–12 of 21');
   assert.equal(rangeLabel(2, 21), 'Showing 13–21 of 21');
   assert.equal(rangeLabel(1, 5), 'Showing 1–5 of 5');
+});
+
+/* ---- URL state ----
+   Each section keeps its filter in a query parameter so that Back undoes
+   a filter rather than leaving the dictionary, and so a narrowed view is
+   a shareable link. That makes the parameter an input from outside the
+   program: it arrives hand-edited, truncated and stale, and none of
+   those may blank the grid. */
+
+test('the default view puts nothing in the URL', () => {
+  assert.equal(encodeState('all', 1), '');
+  assert.equal(encodeState(null, 1), '');
+});
+
+test('a filter or a page beyond the first round-trips', () => {
+  for (const [letter, page] of [['E', 1], ['E', 3], ['all', 2], ['#', 1]]) {
+    const decoded = decodeState(encodeState(letter, page));
+    assert.deepEqual(decoded, { letter, page }, `${letter}.${page} did not survive`);
+  }
+});
+
+test('deep in the unfiltered corpus still round-trips', () => {
+  /* encodeState emits "all.2" here — the one form where the letter is
+     ALL but the parameter is not empty. An earlier validator rejected it
+     and silently threw the reader back to page 1. */
+  assert.equal(encodeState('all', 2), 'all.2');
+  assert.deepEqual(decodeState('all.2'), { letter: 'all', page: 2 });
+});
+
+test('an absent parameter is the full corpus, not an error', () => {
+  assert.deepEqual(decodeState(''), { letter: 'all', page: 1 });
+  assert.deepEqual(decodeState(null), { letter: 'all', page: 1 });
+  assert.deepEqual(decodeState(undefined), { letter: 'all', page: 1 });
+});
+
+test('a malformed letter drops its page instead of honouring it', () => {
+  /* The page number was a position inside a filter that does not exist.
+     Keeping it lands the reader on page 2 of a corpus they never asked
+     to page through — which is what "?x=ññ.99" used to do. */
+  assert.deepEqual(decodeState('ññ.99'), { letter: 'all', page: 1 });
+  assert.deepEqual(decodeState('EE.2'), { letter: 'all', page: 1 });
+  assert.deepEqual(decodeState('<script>.1'), { letter: 'all', page: 1 });
+});
+
+test('a bad page on a good letter keeps the letter', () => {
+  assert.deepEqual(decodeState('E.nonsense'), { letter: 'E', page: 1 });
+  assert.deepEqual(decodeState('E'), { letter: 'E', page: 1 });
+  assert.deepEqual(decodeState('E.-4'), { letter: 'E', page: 1 });
+  assert.deepEqual(decodeState('E.0'), { letter: 'E', page: 1 });
+});
+
+test('a lowercase letter in a hand-typed URL still works', () => {
+  assert.deepEqual(decodeState('e.2'), { letter: 'E', page: 2 });
+});
+
+/* ---- ordering ---- */
+
+test('entries are alphabetical regardless of markup order', () => {
+  const scrambled = ['Softmax', 'ACID', 'entropy', 'Backpropagation'].map(entry);
+  assert.deepEqual(titles(sortEntries(scrambled)),
+    ['ACID', 'Backpropagation', 'entropy', 'Softmax']);
+});
+
+test('sorting does not mutate the caller\'s array', () => {
+  const entries = ['Softmax', 'ACID'].map(entry);
+  sortEntries(entries);
+  assert.deepEqual(titles(entries), ['Softmax', 'ACID']);
+});
+
+test('paging slices the sorted order, not the markup order', () => {
+  /* Paging takes a slice, so if the sort and the slice disagree the
+     reader gets a page of entries that were never adjacent. */
+  const scrambled = Array.from({ length: 20 }, (_, i) => entry(`term-${String(19 - i).padStart(2, '0')}`));
+  const sorted = sortEntries(scrambled);
+  const { start, end } = sliceBounds(1, sorted.length);
+  assert.equal(titles(sorted.slice(start, end))[0], 'term-00');
+});
+
+/* ---- the filter has to actually hide something ----
+   This is a CSS assertion rather than a behavioural one because the bug
+   it guards was invisible to every behavioural check written against the
+   DOM. browse.js hides a card by setting the `hidden` attribute, whose
+   `display: none` comes from the UA stylesheet — and any author rule
+   setting `display` beats it. `.entry-card { display: block }` did, so
+   filtering set the attribute on 18 of 21 cards, updated the count and
+   the status line, and left all 21 painted on screen. Asserting on the
+   property told you nothing; only the rendered box did. */
+
+test('a hidden entry card is actually hidden by the stylesheet', () => {
+  const css = fs.readFileSync(path.join(ROOT, 'dictionary/assets/css/dictionary.css'), 'utf8');
+  assert.match(css, /\.corpus-grid\s+\.entry-card\[hidden\]\s*\{\s*display:\s*none/,
+    'nothing overrides .entry-card display:block for [hidden] cards — the letter filter will set the attribute and change nothing on screen');
+});
+
+test('the rule outranks the .entry-card display it has to beat', () => {
+  /* If .entry-card ever stops setting display, this rule is redundant
+     rather than wrong — but while it does, the override must be more
+     specific, and specificity is the entire reason this works. */
+  const css = fs.readFileSync(path.join(ROOT, 'dictionary/assets/css/dictionary.css'), 'utf8');
+  const setsDisplay = /\.entry-card\s*\{[^}]*display:/.test(css);
+  if (!setsDisplay) return;
+  const override = css.match(/(\.corpus-grid\s+\.entry-card\[hidden\])/);
+  assert.ok(override, 'the [hidden] override is gone while .entry-card still sets display');
+  assert.ok(override[1].split(/[.[]/).length - 1 >= 3,
+    'the override must carry more specificity than .entry-card alone');
 });
