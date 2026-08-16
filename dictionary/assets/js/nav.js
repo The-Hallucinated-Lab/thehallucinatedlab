@@ -6,8 +6,6 @@
  * open menu inside the 68px navbar strip.
  */
 const navbar = document.querySelector('.navbar');
-const toggle = document.querySelector('.nav-toggle');
-const links = document.querySelector('.nav-links');
 
 if (navbar) {
   const onScroll = () => navbar.classList.toggle('scrolled', window.scrollY > 10);
@@ -15,18 +13,10 @@ if (navbar) {
   window.addEventListener('scroll', onScroll, { passive: true });
 }
 
-if (toggle && links) {
-  toggle.addEventListener('click', () => {
-    const open = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!open));
-    links.classList.toggle('open', !open);
-    navbar.classList.toggle('menu-open', !open);
-  });
-
-  links.addEventListener('click', (event) => {
-    if (event.target.tagName !== 'A') return;
-    toggle.setAttribute('aria-expanded', 'false');
-    links.classList.remove('open');
-    navbar.classList.remove('menu-open');
-  });
-}
+/* The menu toggle used to be wired here against `.nav-toggle`, which is
+   not what the markup ships — the button is `#nav-hamburger`, so the
+   handler bound to nothing and the mobile menu on these pages was dead.
+   It is not re-implemented here: script.js already owns the hamburger,
+   the theme toggle and the dev/live mode for every page on the site,
+   and these pages load it. A second implementation of the same control
+   is how the two drift apart. */
