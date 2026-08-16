@@ -788,6 +788,17 @@ main {
    row still costs a gap above and below. */
 .is-enhanced .corpus-grid > span[id^="letter-"] { display: none; }
 
+/* The filter's teeth.
+
+   browse.js hides a card with the `hidden` attribute, which the UA
+   stylesheet renders as `display: none`. Any author `display` beats a UA
+   rule, and `.entry-card` sets `display: block` — so every "hidden" card
+   went on painting. The filter looked correct from script (the attribute
+   was set, the count and the status line agreed) and did nothing at all
+   on screen. Two class names of specificity puts it back, without
+   reaching for !important. */
+.corpus-grid .entry-card[hidden] { display: none; }
+
 /* ============ BROWSE: LETTER FILTER + PAGER ============
    Everything here styles controls that browse.js creates, so it is inert
    until the script runs. The no-JS page keeps the plain alphabet and the

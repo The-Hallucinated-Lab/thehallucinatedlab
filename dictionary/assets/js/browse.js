@@ -90,6 +90,42 @@ function rangeLabel(page, total, perPage = PER_PAGE) {
   return `Showing ${start + 1}–${end} of ${total}`;
 }
 
+/** Serialise a section's state for the URL: "E.2", or "" when default. */
+function encodeState(letter, page) {
+  if ((!letter || letter === ALL) && page <= 1) return '';
+  return `${letter || ALL}.${page}`;
+}
+
+/**
+ * Parse "E.2" back, and "all.2" — encodeState emits that form whenever
+ * the reader is deep in the unfiltered corpus, so it has to round-trip.
+ *
+ * A hand-edited or truncated URL must never blank the grid, so anything
+ * unrecognised falls back to the whole corpus at page 1. The page is
+ * dropped along with a bad letter rather than kept: it was a position
+ * within a filter that no longer exists, and honouring it lands the
+ * reader on page 2 of a corpus they did not ask to page through.
+ */
+function decodeState(raw) {
+  const [letterPart = '', pagePart] = String(raw || '').split('.');
+  const upper = letterPart.toUpperCase();
+  const valid = upper === ALL.toUpperCase() || /^[A-Z#]$/.test(upper);
+  if (letterPart !== '' && !valid) return { letter: ALL, page: 1 };
+
+  const page = Number.parseInt(pagePart, 10);
+  return {
+    letter: valid && upper !== ALL.toUpperCase() ? upper : ALL,
+    page: Number.isFinite(page) && page > 0 ? page : 1,
+  };
+}
+
+/** Alphabetical by term, so the grid order never depends on the order
+    the markup happens to be generated in. */
+function sortEntries(entries) {
+  return entries.slice().sort((a, b) =>
+    String(a.title).localeCompare(String(b.title), 'en', { sensitivity: 'base' }));
+}
+
 /* @pure-end */
 
 /* ---------- DOM wiring ---------- */
@@ -100,6 +136,26 @@ function rangeLabel(page, total, perPage = PER_PAGE) {
 const STAGGER_MS = 28;
 const STAGGER_CAP = 10;
 
+/* Each section owns one query parameter keyed by its id, e.g.
+   ?ai-mathematics=E.2 — so the two corpora keep independent state, a
+   filtered view is a shareable link, and most importantly Back undoes a
+   filter instead of leaving the page. Without this the browser's Back
+   button is the reader's instinctive way out of a narrowed grid and it
+   takes them off the dictionary entirely. */
+function readParam(id) {
+  return new URLSearchParams(window.location.search).get(id) || '';
+}
+
+function writeParam(id, value, { replace = false } = {}) {
+  const params = new URLSearchParams(window.location.search);
+  if (value) params.set(id, value); else params.delete(id);
+  const qs = params.toString();
+  const url = `${window.location.pathname}${qs ? `?${qs}` : ''}${window.location.hash}`;
+  /* replaceState for the initial read so the first entry in the session
+     history is not a duplicate of the page the reader arrived on. */
+  window.history[replace ? 'replaceState' : 'pushState']({}, '', url);
+}
+
 function setupSection(section) {
   const grid = section.querySelector('.corpus-grid');
   const alpha = section.querySelector('.alpha-nav');
@@ -108,10 +164,15 @@ function setupSection(section) {
   const cards = [...grid.querySelectorAll('.entry-card')];
   if (!cards.length) return;
 
-  const entries = cards.map(el => ({
+  /* Sorted rather than trusted: the corpora happen to be alphabetical in
+     the markup today, but paging slices this array, so the order it is in
+     is the order the reader gets. `order` keeps the painted grid in step
+     with the array without moving any nodes. */
+  const entries = sortEntries(cards.map(el => ({
     el,
     title: (el.querySelector('h3')?.textContent || '').trim(),
-  }));
+  })));
+  entries.forEach(({ el }, i) => { el.style.order = String(i); });
 
   const countEl = section.querySelector('.results-count');
   const totalEntries = entries.length;
@@ -170,7 +231,7 @@ function setupSection(section) {
      <a> elements are live, and those become filter controls. */
   const letterLinks = [...alpha.querySelectorAll('a')];
 
-  function render({ animate = true } = {}) {
+  function render({ animate = true, pushHistory = false } = {}) {
     const matching = filterByLetter(entries, state.letter);
     state.page = clampPage(state.page, matching.length);
     const { start, end } = sliceBounds(state.page, matching.length);
@@ -194,7 +255,11 @@ function setupSection(section) {
     }
 
     const pages = pageCount(matching.length);
-    controls.hidden = pages <= 1;
+    /* Always rendered, never hidden on a short result. The controls are
+       how the reader knows whether there is more — a pager that vanishes
+       when a letter matches three entries reads as "the page broke",
+       not as "this is all of them". */
+    controls.hidden = false;
     prev.disabled = state.page <= 1;
     next.disabled = state.page >= pages;
 
@@ -214,7 +279,7 @@ function setupSection(section) {
         b.setAttribute('aria-current', 'page');
         b.classList.add('is-current');
       }
-      b.addEventListener('click', () => { state.page = n; render(); });
+      b.addEventListener('click', () => { state.page = n; render({ pushHistory: true }); });
       return b;
     }));
 
@@ -225,6 +290,10 @@ function setupSection(section) {
     }
     allBtn.classList.toggle('is-active', state.letter === ALL);
     allBtn.setAttribute('aria-pressed', String(state.letter === ALL));
+
+    if (pushHistory) {
+      writeParam(section.id, encodeState(state.letter, state.page));
+    }
 
     const scope = state.letter === ALL ? '' : ` starting with ${state.letter}`;
     status.textContent = `${rangeLabel(state.page, matching.length)}${scope}.`;
@@ -246,21 +315,32 @@ function setupSection(section) {
       event.preventDefault();          // the whole point: no jump
       state.letter = state.letter === letter ? ALL : letter;
       state.page = 1;
-      render();
+      render({ pushHistory: true });
     });
   }
 
   allBtn.addEventListener('click', () => {
     state.letter = ALL;
     state.page = 1;
-    render();
+    render({ pushHistory: true });
   });
 
-  prev.addEventListener('click', () => { state.page -= 1; render(); });
-  next.addEventListener('click', () => { state.page += 1; render(); });
+  prev.addEventListener('click', () => { state.page -= 1; render({ pushHistory: true }); });
+  next.addEventListener('click', () => { state.page += 1; render({ pushHistory: true }); });
+
+  /* Adopt whatever the URL already says — a shared link, a reload, or a
+     Back that landed here. */
+  function adoptFromUrl({ animate }) {
+    const { letter, page } = decodeState(readParam(section.id));
+    state.letter = letter;
+    state.page = page;
+    render({ animate });
+  }
+
+  window.addEventListener('popstate', () => adoptFromUrl({ animate: true }));
 
   section.classList.add('is-enhanced');
-  render({ animate: false });
+  adoptFromUrl({ animate: false });
 }
 
 for (const section of document.querySelectorAll('.section')) {

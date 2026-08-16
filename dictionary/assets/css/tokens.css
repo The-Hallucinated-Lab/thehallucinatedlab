@@ -214,155 +214,25 @@ code,
   margin: 0;
 }
 
-/* ---------- Navbar ---------- */
+/* ---------- Navbar ----------
 
-.navbar {
-  position: fixed;
-  inset: 0 0 auto 0;
-  z-index: 100;
-  background: rgba(5, 5, 5, 0.8);
-  backdrop-filter: blur(20px);
-  border-bottom: 1px solid transparent;
-  transition: background var(--transition), border-color var(--transition);
-}
+   Deliberately empty. This file used to carry a second, complete navbar
+   implementation — .navbar, .nav-inner, .nav-wordmark, .nav-toggle and a
+   <=1024px block — written against markup these pages do not use (the
+   shared bar is .nav-logo plus #nav-hamburger) and loaded after
+   styles.css, so it won.
 
-.navbar.scrolled {
-  background: rgba(5, 5, 5, 0.95);
-  border-bottom-color: var(--border-subtle);
-}
+   It hardcoded `background: rgba(5, 5, 5, 0.8)`, a literal the theme
+   switch cannot reach, so in light mode these pages painted a near-black
+   bar over a #e8dfcb page while --bg-nav sat correctly resolved at
+   rgba(232, 223, 203, 0.86) and unused. styles.css carries a comment
+   about fixing exactly this bug once already.
 
-.navbar.menu-open {
-  backdrop-filter: none;
-}
+   A second implementation of a shared component is also how the two
+   drift apart: the navbar is meant to look and behave the same on every
+   page of the site, which it cannot do while two stylesheets define it.
 
-.nav-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0.9rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1.5rem;
-}
-
-.nav-logo {
-  display: flex;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.nav-logo img {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-}
-
-.nav-wordmark {
-  font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-  background: var(--gradient-gold);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.nav-links {
-  display: flex;
-  align-items: center;
-  gap: 1.75rem;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.nav-links a {
-  position: relative;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  transition: color var(--transition);
-}
-
-.nav-links a::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  bottom: -6px;
-  width: 0;
-  height: 1px;
-  background: var(--gold-primary);
-  transition: width var(--transition);
-}
-
-.nav-links a:hover,
-.nav-links a[aria-current="page"] {
-  color: var(--gold-primary);
-}
-
-.nav-links a:hover::after,
-.nav-links a[aria-current="page"]::after {
-  width: 100%;
-}
-
-.nav-toggle {
-  display: none;
-  width: 32px;
-  height: 24px;
-  background: none;
-  border: 0;
-  cursor: pointer;
-  padding: 0;
-}
-
-.nav-toggle span {
-  display: block;
-  height: 2px;
-  background: var(--gold-primary);
-  margin: 5px 0;
-  transition: transform var(--transition), opacity var(--transition);
-}
-
-.nav-toggle[aria-expanded="true"] span:nth-child(1) {
-  transform: translateY(7px) rotate(45deg);
-}
-
-.nav-toggle[aria-expanded="true"] span:nth-child(2) {
-  opacity: 0;
-}
-
-.nav-toggle[aria-expanded="true"] span:nth-child(3) {
-  transform: translateY(-7px) rotate(-45deg);
-}
-
-@media (max-width: 1024px) {
-  .nav-toggle {
-    display: block;
-  }
-
-  .nav-links {
-    position: fixed;
-    inset: 68px 0 auto 0;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0;
-    background: var(--bg-secondary);
-    border-bottom: 1px solid var(--border-subtle);
-    padding: 1rem 2rem 2rem;
-    display: none;
-  }
-
-  .nav-links.open {
-    display: flex;
-  }
-
-  .nav-links li {
-    width: 100%;
-    padding: 0.7rem 0;
-  }
-}
+   styles.css owns the navbar. Nothing about it belongs here. */
 
 /* ---------- Pills & badges ---------- */
 
