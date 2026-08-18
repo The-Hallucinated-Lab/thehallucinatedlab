@@ -129,6 +129,56 @@
         </div>
       </header>
 
+      <div class="search-block">
+        <div class="search-shell">
+          <form class="search-bar" id="search-form" role="search" autocomplete="off">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2" aria-hidden="true">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="m20 20-3.5-3.5"></path>
+            </svg>
+            <label class="sr-only" for="search-input">Search both dictionaries</label>
+            <input id="search-input" type="search" name="q"
+                   placeholder="Search a term, an idea, or a definition…"
+                   aria-describedby="search-hint"
+                   aria-expanded="false" aria-controls="search-suggest"
+                   role="combobox" aria-autocomplete="list">
+            <button class="search-clear" id="search-clear" type="button"
+                    aria-label="Clear search">&times;</button>
+            <button class="search-submit" type="submit"><span>Search</span></button>
+            <ul class="search-suggest" id="search-suggest" role="listbox"
+                aria-label="Suggestions"></ul>
+          </form>
+
+          <div class="search-scopes" role="group" aria-label="Search scope">
+            <button class="scope-btn" type="button" data-scope="all"
+                    aria-pressed="true">Search both</button>
+            <button class="scope-btn" type="button" data-scope="ai-mathematics"
+                    aria-pressed="false">AI &amp; Mathematics</button>
+            <button class="scope-btn" type="button" data-scope="software-engineering"
+                    aria-pressed="false">Software Engineering</button>
+          </div>
+
+          <p class="search-hint" id="search-hint">
+            <code>"exact phrase"</code> · <code>*ology</code> wildcard ·
+            <code>tensor NOT physics</code> · misspellings are corrected automatically
+          </p>
+        </div>
+      </div>
+
+      <section class="results-block" id="results-block" aria-live="polite">
+        <div class="results-head">
+          <div>
+            <span class="section-label">Results</span>
+            <h2 class="section-title" id="results-title">Search</h2>
+          </div>
+          <span class="results-count" id="results-count"></span>
+        </div>
+        <div id="results-suggestion"></div>
+        <div class="corpus-grid" id="results-grid"></div>
+        <div id="results-more"></div>
+      </section>
+
       <section class="term-section">
         <h2>Definition</h2>
         <div class="definition">
@@ -157,6 +207,7 @@
   <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine. <a href="../../sitemap.html">Sitemap</a>.</p>
 </footer>
 <script src="../assets/js/nav.js" type="module"></script>
+<script src="../assets/js/app.js" type="module"></script>
 <script src="../../script.js" defer></script>
 </body>
 </html>

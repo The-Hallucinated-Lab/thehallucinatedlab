@@ -172,13 +172,30 @@ test('every relative path fetched by a script resolves to a file that exists', (
       const jsPath = (src.startsWith('/') ? src.slice(1) : path.join(pageDir, src))
         .replace(/\\/g, '/').split('?')[0];
       if (!fs.existsSync(path.join(ROOT, jsPath))) continue;   // covered by the test above
-      for (const m of read(jsPath).matchAll(/fetch\(\s*['"]([^'"]+)['"]/g)) {
+      const js = read(jsPath);
+
+      for (const m of js.matchAll(/fetch\(\s*['"]([^'"]+)['"]/g)) {
         const ref = m[1];
         if (/^(https?:|data:|blob:)/.test(ref)) continue;
         const rel = (ref.startsWith('/') ? ref.slice(1) : path.join(pageDir, ref))
           .replace(/\\/g, '/').split('?')[0].split('#')[0];
         if (!fs.existsSync(path.join(ROOT, rel))) {
           missing.push(`${page} loads ${jsPath}, which fetches '${ref}' -> ${rel} (no such file)`);
+        }
+      }
+
+      /* new URL(x, import.meta.url) resolves against the *module*, not the
+         document — which is exactly why app.js uses it: the hub and the term
+         pages sit at different depths and a page-relative path can only be
+         right for one of them. Resolve it the same way the browser will, or
+         this guard silently stops covering the path it was written for. */
+      for (const m of js.matchAll(/new URL\(\s*['"]([^'"]+)['"]\s*,\s*import\.meta\.url\s*\)/g)) {
+        const ref = m[1];
+        if (/^(https?:|data:|blob:)/.test(ref)) continue;
+        const rel = path.join(path.dirname(jsPath), ref)
+          .replace(/\\/g, '/').split('?')[0].split('#')[0];
+        if (!fs.existsSync(path.join(ROOT, rel))) {
+          missing.push(`${page} loads ${jsPath}, which resolves '${ref}' against import.meta.url -> ${rel} (no such file)`);
         }
       }
     }
@@ -374,4 +391,53 @@ test('every search index entry declares a section that exists', () => {
     .map(e => `${e.slug} -> "${e.section}"`);
   assert.deepEqual(orphans, [],
     `entries reference a section absent from the index's own "sections" map:\n  ${orphans.join('\n  ')}`);
+});
+
+/* Search used to exist only on the dictionary hub: a reader on a term page
+   had no way to look anything up without navigating back. app.js now runs
+   on both, which is why its index path is resolved against the module
+   rather than the document (see the fetch guard above). */
+test('every dictionary term page ships the search UI and its controller', () => {
+  const missing = [];
+  for (const f of fs.readdirSync(path.join(ROOT, 'dictionary/terms'))) {
+    if (!f.endsWith('.html')) continue;
+    const src = read(`dictionary/terms/${f}`);
+    /* The ids app.js binds to. A page missing any one of them leaves the
+       controller half-wired rather than visibly broken. */
+    for (const id of ['search-form', 'search-input', 'search-clear', 'search-suggest',
+      'results-block', 'results-title', 'results-count', 'results-grid',
+      'results-more', 'results-suggestion']) {
+      if (!src.includes(`id="${id}"`)) missing.push(`${f}: no #${id}`);
+    }
+    if (!/<script src="\.\.\/assets\/js\/app\.js" type="module"><\/script>/.test(src)) {
+      missing.push(`${f}: does not load app.js`);
+    }
+    for (const scope of ['all', 'ai-mathematics', 'software-engineering']) {
+      if (!src.includes(`data-scope="${scope}"`)) missing.push(`${f}: no "${scope}" scope button`);
+    }
+  }
+  assert.deepEqual(missing, [],
+    `term pages with incomplete search:\n  ${missing.slice(0, 12).join('\n  ')}`);
+});
+
+
+/* app.js runs at two depths — dictionary/ and dictionary/terms/ — so any
+   path it builds relative to the *document* is wrong on one of them. Both
+   the index fetch and the term links were written page-relative for the
+   hub; on a term page `terms/x.html` resolved to
+   dictionary/terms/terms/x.html and every search result 404'd. Caught in
+   Chromium, not by this suite, because the hrefs are built at runtime.
+   The string check below stands in for a browser: crude, but it fails the
+   moment someone reintroduces the assumption. */
+test('the dictionary controller builds no document-relative paths', () => {
+  const src = read('dictionary/assets/js/app.js');
+  const offenders = [];
+  for (const m of src.matchAll(/\.href\s*=\s*[`'"]([^`'"]*)[`'"]/g)) {
+    if (!/^(https?:|#|\/)/.test(m[1])) offenders.push(`.href = "${m[1]}"`);
+  }
+  for (const m of src.matchAll(/fetch\(\s*['"]([^'"]+)['"]/g)) {
+    offenders.push(`fetch("${m[1]}")`);
+  }
+  assert.deepEqual(offenders, [],
+    `app.js runs at two depths; resolve against import.meta.url instead:\n  ${offenders.join('\n  ')}`);
 });

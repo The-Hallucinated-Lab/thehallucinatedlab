@@ -29,6 +29,14 @@ const resultsMore = document.getElementById('results-more');
 const resultsSuggestion = document.getElementById('results-suggestion');
 const browse = document.getElementById('browse');
 
+/* Term links are resolved against this module for the same reason the
+   index is: `terms/x.html` is correct from the hub and points at
+   dictionary/terms/terms/x.html from a term page. Deriving the base
+   from import.meta.url keeps one expression right on both, and keeps
+   the origin the document's own rather than a hardcoded host. */
+const TERMS_BASE = new URL('../../terms/', import.meta.url);
+const termHref = slug => new URL(`${slug}.html`, TERMS_BASE).href;
+
 let engine = null;
 let scope = 'all';
 let activeSuggestion = -1;
@@ -42,7 +50,11 @@ init();
 async function init() {
   if (!form) return;
   try {
-    const response = await fetch('data/search-index.json');
+    /* Resolved against this module, not the document: the hub sits at
+       dictionary/ and term pages at dictionary/terms/, so a path
+       relative to the page would only be correct on one of them. */
+    const indexUrl = new URL('../../data/search-index.json', import.meta.url);
+    const response = await fetch(indexUrl);
     if (!response.ok) throw new Error(`index ${response.status}`);
     engine = new SearchEngine(await response.json());
   } catch (error) {
@@ -142,7 +154,7 @@ function renderSuggestions(entries) {
     li.setAttribute('role', 'option');
 
     const link = document.createElement('a');
-    link.href = `terms/${entry.slug}.html`;
+    link.href = termHref(entry.slug);
 
     const term = document.createElement('span');
     term.className = 'suggest-term';
@@ -205,7 +217,7 @@ function runSearch(rawQuery) {
   });
 
   resultsBlock.classList.add('active');
-  browse.hidden = true;
+  if (browse) browse.hidden = true;
   resultsTitle.textContent = `“${query}”`;
   resultsCount.textContent = total === 0
     ? 'no matches'
@@ -232,7 +244,7 @@ function runSearch(rawQuery) {
     empty.className = 'results-empty';
     empty.textContent = 'Nothing matched. Try a shorter query, or browse the sections below.';
     resultsGrid.append(empty);
-    browse.hidden = false;
+    if (browse) browse.hidden = false;
     return;
   }
 
@@ -263,7 +275,7 @@ function appendResults(results, total) {
 function resultCard(entry) {
   const card = document.createElement('a');
   card.className = 'entry-card';
-  card.href = `terms/${entry.slug}.html`;
+  card.href = termHref(entry.slug);
 
   const top = document.createElement('div');
   top.className = 'entry-card-top';
@@ -307,7 +319,7 @@ function reset() {
   resultsGrid.textContent = '';
   resultsMore.textContent = '';
   resultsSuggestion.textContent = '';
-  browse.hidden = false;
+  if (browse) browse.hidden = false;
 }
 
 /* ------------------------------- helpers ------------------------------- */
