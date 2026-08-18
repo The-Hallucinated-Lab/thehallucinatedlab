@@ -63,7 +63,13 @@ main {
   position: sticky;
   top: 68px;
   z-index: 50;
-  background: linear-gradient(180deg, var(--bg-primary) 72%, transparent);
+  /* Opaque behind the content, fading only across the bottom padding.
+     At 72% the fade started level with the hint line, so scrolled content
+     showed straight through the sticky bar and the two ran together as
+     one block of overlapping text — worst on a narrow screen, where the
+     scope chips wrap and the hint runs to three lines, making the
+     transparent band tall enough to swallow a whole paragraph. */
+  background: linear-gradient(180deg, var(--bg-primary) 94%, transparent);
   padding: 1.25rem 2rem 1.5rem;
 }
 
@@ -504,6 +510,13 @@ main {
 }
 
 .term-section {
+  /* These pages now load the site stylesheet for the navbar, and it
+     carries a site-wide `section { padding: 6rem 2rem }` written for the
+     marketing pages. A term page spaces itself with the margin below and
+     never wanted that: inherited, it put 96px above and below every
+     block and took the page from 1,299px to 2,551px of mostly nothing.
+     The hub is unaffected — its .section rule sets that padding itself. */
+  padding: 0;
   margin-bottom: 2.5rem;
 }
 
@@ -753,4 +766,159 @@ main {
   .search-submit::after {
     content: "GO";
   }
+}
+
+/* The scattered grid.
+
+   Each letter ships an empty <span id="letter-X"> immediately before its
+   first card, as the target for the old jump links. They are direct
+   children of .corpus-grid, so every one of them was consuming a grid
+   cell — fifteen invisible placeholders scattered through the corpus,
+   which is why the first row started in column two and the cards never
+   lined up into rows. Spanning the row at zero height takes them out of
+   the card flow while they are still anchorable without JavaScript. */
+.corpus-grid > span[id^="letter-"] {
+  grid-column: 1 / -1;
+  height: 0;
+  margin: 0;
+  padding: 0;
+}
+
+/* Once browse.js is running nothing ever jumps to them, and a zero-height
+   row still costs a gap above and below. */
+.is-enhanced .corpus-grid > span[id^="letter-"] { display: none; }
+
+/* The filter's teeth.
+
+   browse.js hides a card with the `hidden` attribute, which the UA
+   stylesheet renders as `display: none`. Any author `display` beats a UA
+   rule, and `.entry-card` sets `display: block` — so every "hidden" card
+   went on painting. The filter looked correct from script (the attribute
+   was set, the count and the status line agreed) and did nothing at all
+   on screen. Two class names of specificity puts it back, without
+   reaching for !important. */
+.corpus-grid .entry-card[hidden] { display: none; }
+
+/* ============ BROWSE: LETTER FILTER + PAGER ============
+   Everything here styles controls that browse.js creates, so it is inert
+   until the script runs. The no-JS page keeps the plain alphabet and the
+   full grid, which is why none of this uses `display: none` as a default
+   state — a reader without JavaScript must never be left with a hidden
+   corpus and no control to reveal it. */
+
+.alpha-all {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 0.72rem;
+  padding: 0.2rem 0.6rem;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.alpha-nav a { cursor: pointer; }
+
+.alpha-all:hover,
+.alpha-nav a:focus-visible,
+.alpha-all:focus-visible {
+  background: var(--gold-glow);
+  border-color: var(--border-gold);
+}
+
+/* The chosen letter has to be obvious at a glance — it is the only thing
+   telling the reader why the grid below shrank. */
+.alpha-nav a.is-active,
+.alpha-all.is-active {
+  background: var(--gold-primary);
+  border-color: var(--gold-primary);
+  color: var(--bg-primary);
+  font-weight: 600;
+}
+
+/* Cards animate in on every filter and page turn. Delay is set per card
+   by browse.js and capped, so a full page settles quickly. */
+.corpus-grid.is-entering .entry-card:not([hidden]) {
+  animation: entry-in 0.34s ease both;
+  animation-delay: var(--card-delay, 0ms);
+}
+
+@keyframes entry-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.corpus-pager {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 2rem;
+}
+
+.pager-numbers {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.pager-step,
+.pager-num {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.72rem;
+  min-width: 32px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.pager-step:hover:not(:disabled),
+.pager-num:hover:not(.is-current),
+.pager-step:focus-visible,
+.pager-num:focus-visible {
+  background: var(--gold-glow);
+  border-color: var(--border-gold);
+}
+
+.pager-num.is-current {
+  background: var(--gold-primary);
+  border-color: var(--gold-primary);
+  color: var(--bg-primary);
+  font-weight: 600;
+  cursor: default;
+}
+
+/* Kept in the flow rather than removed: the row must not change width
+   when you reach the first or last page. */
+.pager-step:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pager-gap {
+  align-self: end;
+  color: var(--text-muted);
+  padding: 0.3rem 0.2rem;
+}
+
+.corpus-status {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  margin-top: 0.9rem;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .corpus-grid.is-entering .entry-card:not([hidden]) { animation: none; }
+}
+
+@media (max-width: 640px) {
+  .corpus-pager { gap: 0.3rem; }
+  .pager-step { padding: 0.3rem 0.55rem; }
 }
