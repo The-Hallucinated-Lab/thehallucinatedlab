@@ -336,3 +336,42 @@ test('no source file contains a NUL byte', () => {
   walk('.');
   assert.equal(offenders.length, 0, `NUL bytes in:\n  ${offenders.join('\n  ')}`);
 });
+
+/* ---- dictionary search index integrity ---- */
+
+/* The index is generated in 06pratyush/ai_dictionary_thl and committed
+   here, so nothing in this repo regenerates it and CI cannot reach the
+   source ([GAP-10]). A byte-for-byte sync like scripts/sync-spec.js is
+   therefore impossible. What is checkable is the symptom that matters:
+   the index and the term pages must describe the same 39 terms. Copy the
+   pages across without the index and a term is unsearchable; update the
+   index without the pages and search offers a dead link. Either way this
+   fails, which is the drift signal the cross-repo copy cannot give. */
+test('the dictionary search index and the term pages describe the same terms', () => {
+  const indexPath = 'dictionary/data/search-index.json';
+  const index = JSON.parse(read(indexPath));
+
+  const onDisk = new Set(
+    fs.readdirSync(path.join(ROOT, 'dictionary/terms'))
+      .filter(f => f.endsWith('.html'))
+      .map(f => f.replace(/\.html$/, '')));
+  const indexed = new Set(index.entries.map(e => e.slug));
+
+  const unsearchable = [...onDisk].filter(s => !indexed.has(s)).sort();
+  const dangling = [...indexed].filter(s => !onDisk.has(s)).sort();
+
+  assert.deepEqual(unsearchable, [],
+    `term pages missing from ${indexPath} — search cannot find them. Regenerate the index in ai_dictionary_thl and copy it across.`);
+  assert.deepEqual(dangling, [],
+    `${indexPath} lists terms with no page under dictionary/terms/ — search would offer a dead link.`);
+});
+
+test('every search index entry declares a section that exists', () => {
+  const index = JSON.parse(read('dictionary/data/search-index.json'));
+  const sections = new Set(Object.keys(index.sections));
+  const orphans = index.entries
+    .filter(e => !sections.has(e.section))
+    .map(e => `${e.slug} -> "${e.section}"`);
+  assert.deepEqual(orphans, [],
+    `entries reference a section absent from the index's own "sections" map:\n  ${orphans.join('\n  ')}`);
+});
