@@ -922,3 +922,389 @@ main {
   .corpus-pager { gap: 0.3rem; }
   .pager-step { padding: 0.3rem 0.55rem; }
 }
+
+/* >>> topic-page-interface — synced block, do not edit downstream.
+   scripts/sync-dictionary.js in the site repo replaces everything between
+   this marker and its closing pair, and leaves the rest of the file alone,
+   because the site patches other parts of this stylesheet. */
+/* ---------- Topic page interface (docs/TOPIC-PAGE-SPEC.md) ---------- */
+
+/* §0 metadata strip, on the term hero and on the hub cards. */
+.topic-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-top: 0.9rem;
+}
+
+.meta-chip {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.2rem 0.6rem;
+  color: var(--text-secondary);
+  font-size: 0.68rem;
+  letter-spacing: 0.5px;
+}
+
+.meta-category {
+  border-color: var(--border-gold);
+  color: var(--gold-primary);
+}
+
+.meta-difficulty[data-level="beginner"] { color: var(--text-secondary); }
+.meta-difficulty[data-level="intermediate"] { color: var(--gold-dark); }
+.meta-difficulty[data-level="advanced"] { color: var(--gold-primary); }
+
+.meta-status {
+  border-style: dashed;
+}
+
+.entry-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.7rem;
+  color: var(--text-muted);
+  font-size: 0.66rem;
+  letter-spacing: 0.5px;
+}
+
+.card-difficulty[data-level="advanced"] { color: var(--gold-primary); }
+.card-difficulty[data-level="intermediate"] { color: var(--gold-dark); }
+
+.card-reading::before {
+  content: "· ";
+}
+
+/* The contents list. The spec's page is long; this is how a reader sees its
+   shape without scrolling it first. */
+.topic-contents {
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.topic-contents ol {
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: toc;
+}
+
+.topic-contents li {
+  counter-increment: toc;
+  margin-bottom: 0.3rem;
+  font-size: 0.78rem;
+}
+
+.topic-contents li::before {
+  content: counter(toc) ". ";
+  color: var(--text-muted);
+}
+
+.topic-contents a {
+  color: var(--text-secondary);
+  text-decoration: none;
+}
+
+.topic-contents a:hover,
+.topic-contents a:focus-visible {
+  color: var(--gold-primary);
+}
+
+/* §1 Quick Take — the block most likely to be lifted verbatim, so it reads as
+   the answer rather than as an introduction. */
+.quick-take {
+  border-left: 3px solid var(--gold-primary);
+  padding-left: 1rem;
+  color: var(--text-primary);
+  font-size: 1.02rem;
+  line-height: 1.7;
+}
+
+/* §2 Formal Definitions — attributed blockquotes. */
+.formal-definition {
+  margin: 0 0 1.1rem;
+  padding: 1rem 1.2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+}
+
+.formal-definition p {
+  margin: 0;
+  font-style: italic;
+}
+
+.definition-attribution {
+  display: block;
+  margin-top: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  font-style: normal;
+}
+
+.ref-marker {
+  color: var(--gold-dark);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+/* §3 Final Formal Statement — the page's citation asset. */
+.formal-statement {
+  padding: 1.1rem 1.3rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.etymology-attested {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+/* §6 Prerequisites — the links that turn isolated pages into a graph. */
+.prerequisite-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.prerequisite-list li {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+}
+
+.prerequisite-list a {
+  color: var(--gold-primary);
+  text-decoration: none;
+}
+
+/* §7 In-Depth Explanation. */
+.derivation-steps {
+  margin: 1rem 0 0;
+  padding-left: 1.3rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.8;
+}
+
+.video-list {
+  margin-top: 1.4rem;
+}
+
+.video-list h3 {
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.video-list ul {
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.video-list li {
+  margin-bottom: 0.7rem;
+  font-size: 0.85rem;
+}
+
+.video-creator,
+.video-why {
+  display: block;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* §8 Worked Example. */
+.worked-steps {
+  margin: 0.8rem 0 0;
+  padding-left: 1.3rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+/* §9 Variants — comparison table plus the lexical relations. */
+.table-scroll {
+  overflow-x: auto;
+}
+
+.variants-table,
+.revision-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+}
+
+.variants-table th,
+.variants-table td,
+.revision-table th,
+.revision-table td {
+  border-bottom: 1px solid var(--border-subtle);
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+}
+
+.variants-table th,
+.revision-table th {
+  color: var(--gold-primary);
+  font-size: 0.68rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.relation-block {
+  margin-top: 1.3rem;
+}
+
+.relation-block h3 {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+/* §10 Common Misconceptions. */
+.misconception {
+  margin-bottom: 1rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border-subtle);
+}
+
+.misconception-claim {
+  margin: 0;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.misconception-claim::before {
+  content: "Myth: ";
+  font-style: normal;
+  font-weight: 600;
+}
+
+.misconception-correction {
+  margin: 0.3rem 0 0;
+}
+
+.misconception-correction::before {
+  content: "Actually: ";
+  font-weight: 600;
+  color: var(--gold-primary);
+}
+
+/* §11 Real-World Applications. */
+.application-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.application-list li {
+  margin-bottom: 0.7rem;
+}
+
+.application-name {
+  font-weight: 600;
+}
+
+.application-detail {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+/* §12 / §13 link buttons. */
+.resource-buttons,
+.reading-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.link-button {
+  display: block;
+  padding: 0.75rem 1rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.88rem;
+  text-decoration: none;
+  transition: border-color var(--transition), transform var(--transition);
+}
+
+.link-button:hover,
+.link-button:focus-visible {
+  border-color: var(--border-gold);
+  transform: translateX(3px);
+}
+
+.link-note {
+  display: block;
+  margin-top: 0.2rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
+}
+
+/* §14 FAQ. */
+.faq-item {
+  margin-bottom: 1.1rem;
+  padding-bottom: 1.1rem;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.faq-item:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.faq-item h3 {
+  font-size: 0.95rem;
+  margin: 0 0 0.4rem;
+}
+
+.faq-item p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+
+/* §17 Author & Review — the E-E-A-T block. */
+.author-line,
+.reviewer-line,
+.updated-line {
+  margin: 0 0 0.3rem;
+  font-size: 0.88rem;
+}
+
+.author-name {
+  color: var(--gold-primary);
+  font-weight: 600;
+}
+
+.updated-line {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.author-bio-link a {
+  color: var(--gold-primary);
+  font-size: 0.85rem;
+}
+
+/* <<< topic-page-interface */

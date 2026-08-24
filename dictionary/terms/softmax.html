@@ -8,7 +8,7 @@
 <meta name="description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements...">
 <link rel="canonical" href="https://thehallucinatedlab.space/dictionary/terms/softmax.html">
 <meta property="og:title" content="Softmax — The Hallucinated Lab Dictionary">
-<meta property="og:description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.">
+<meta property="og:description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements...">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://thehallucinatedlab.space/dictionary/terms/softmax.html">
 <meta property="og:site_name" content="The Hallucinated Lab">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The Hallucinated Lab">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Softmax — The Hallucinated Lab Dictionary">
-<meta name="twitter:description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.">
+<meta name="twitter:description" content="Softmax (noun, Deep Learning) — a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements...">
 <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
 <link rel="icon" href="../../assets/images/logo.jpeg">
 <link rel="stylesheet" href="../../fonts.css">
@@ -43,6 +43,21 @@
         "url": "https://thehallucinatedlab.space/dictionary/#ai-mathematics"
       },
       "url": "https://thehallucinatedlab.space/dictionary/terms/softmax.html"
+    },
+    {
+      "@type": "Article",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/softmax.html#article",
+      "headline": "Softmax",
+      "description": "a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.",
+      "mainEntityOfPage": "https://thehallucinatedlab.space/dictionary/terms/softmax.html",
+      "about": {
+        "@id": "https://thehallucinatedlab.space/dictionary/terms/softmax.html#term"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://thehallucinatedlab.space/#website",
+        "name": "The Hallucinated Lab"
+      }
     },
     {
       "@type": "BreadcrumbList",
@@ -127,34 +142,44 @@
           <span class="badge">Deep Learning</span>
           <span class="badge">Core</span>
         </div>
+        
       </header>
 
-      <section class="term-section">
-        <h2>Definition</h2>
-        <div class="definition">
+<section class="term-section" id="quick-take" aria-labelledby="quick-take-heading">
+  <h2 id="quick-take-heading">Quick Take</h2>
+  <p class="quick-take" data-derived="true">Softmax is a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.</p>
+</section>
+<section class="term-section" id="definitions" aria-labelledby="definitions-heading">
+  <h2 id="definitions-heading">Formal Definitions</h2>
+  <div class="definition">
   <p><span class="definition-number">1.</span><span class="definition-context">[in machine learning] </span><span class="definition-text">a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.</span></p>
   <p class="definition-example">We applied the Softmax function to the final layer&#x27;s logits to get class probabilities.</p>
 </div>
-      </section>
-
-      <section class="term-section">
-  <h2>Formal statement</h2>
-  <div class="formula-block"><code>softmax(z)_i = e^z_i / sum(e^z_j)</code></div>
-  <p class="formula-note">z is the vector of raw scores (logits), and K is the number of classes.</p>
 </section>
-      <section class="term-section">
-  <h2>Etymology</h2>
-  <p class="etymology-text">A compound of soft and max, naming a smooth relaxation of the maximum: where max returns a single winner, this returns a graded distribution over all candidates. Named by John Bridle in 1990, who introduced it as a differentiable stand-in for winner-take-all selection.</p>
+<section class="term-section" id="formal-statement" aria-labelledby="formal-statement-heading">
+  <h2 id="formal-statement-heading">Final Formal Statement</h2>
+  <p class="formal-statement" data-derived="true">Softmax (noun, Deep Learning): a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.</p>
 </section>
-      <section class="term-section"><h2>Synonyms</h2><ul class="relation-list"><li><span class="relation-chip">probability-distribution-function<span class="relation-tag">sense 1 · Near</span></span></li></ul></section>
-      <section class="term-section">
-  <h2>References</h2>
+<section class="term-section" id="etymology" aria-labelledby="etymology-heading">
+  <h2 id="etymology-heading">Etymology</h2>
+  <p class="etymology-text">A compound of soft and max, naming a smooth relaxation of the maximum: where max returns a single winner, this returns a graded distribution over all candidates. Named by John Bridle in 1990, who introduced it as a differentiable stand-in for winner-take-all selection.</p><p class="etymology-attested">First attested 2010.</p>
+</section>
+<section class="term-section" id="deep-dive" aria-labelledby="deep-dive-heading">
+  <h2 id="deep-dive-heading">In-Depth Explanation</h2>
+  <div class="formula-block"><code>softmax(z)_i = e^z_i / sum(e^z_j)</code></div><p class="formula-note">z is the vector of raw scores (logits), and K is the number of classes.</p>
+</section>
+<section class="term-section" id="variants" aria-labelledby="variants-heading">
+  <h2 id="variants-heading">Variants &amp; Related Concepts</h2>
+  <div class="relation-block"><h3>Synonyms</h3><ul class="relation-list"><li><span class="relation-chip">probability-distribution-function<span class="relation-tag">sense 1 · Near</span></span></li></ul></div>
+</section>
+<section class="term-section" id="references" aria-labelledby="references-heading">
+  <h2 id="references-heading">References</h2>
   <ul class="citation-list"><li>Goodfellow et al. (2016). Deep Learning, ch. 7.<span class="citation-source">MIT Press.</span></li></ul>
 </section>
 
       <nav class="term-nav" aria-label="Adjacent entries"><a href="reinforcement-learning.html"><span class="term-nav-label">Previous</span>Reinforcement Learning</a><a href="transformer.html" style="text-align:right"><span class="term-nav-label">Next</span>Transformer</a></nav>
     </div>
-    <aside class="term-aside"><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00011</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Deep Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>unigram</dd><dt>First attested</dt><dd>2010</dd><dt>Also written</dt><dd>SM</dd><dt>Opacity</dt><dd>2 of 3</dd></dl></aside>
+    <aside class="term-aside"><nav class="topic-contents" aria-labelledby="contents-heading"><h2 id="contents-heading">On this page</h2><ol><li><a href="#quick-take">Quick Take</a></li><li><a href="#definitions">Formal Definitions</a></li><li><a href="#formal-statement">Final Formal Statement</a></li><li><a href="#etymology">Etymology</a></li><li><a href="#deep-dive">In-Depth Explanation</a></li><li><a href="#variants">Variants &amp; Related Concepts</a></li><li><a href="#references">References</a></li></ol></nav><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00011</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Deep Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>unigram</dd><dt>First attested</dt><dd>2010</dd><dt>Also written</dt><dd>SM</dd><dt>Opacity</dt><dd>2 of 3</dd></dl></aside>
   </article>
 </main>
 <footer class="footer">

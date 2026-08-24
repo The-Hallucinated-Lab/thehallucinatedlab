@@ -5,10 +5,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Eventual Consistency — The Hallucinated Lab Dictionary</title>
-<meta name="description" content="Eventual Consistency (noun, Distributed Systems) — the guarantee that if updates stop arriving, every replica will converge on the same values —...">
+<meta name="description" content="Eventual Consistency (noun, Distributed Systems) — the guarantee that if updates stop arriving, every replica will converge on the same values — with...">
 <link rel="canonical" href="https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html">
 <meta property="og:title" content="Eventual Consistency — The Hallucinated Lab Dictionary">
-<meta property="og:description" content="Eventual Consistency (noun, Distributed Systems) — the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.">
+<meta property="og:description" content="Eventual Consistency (noun, Distributed Systems) — the guarantee that if updates stop arriving, every replica will converge on the same values — with...">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html">
 <meta property="og:site_name" content="The Hallucinated Lab">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The Hallucinated Lab">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Eventual Consistency — The Hallucinated Lab Dictionary">
-<meta name="twitter:description" content="Eventual Consistency (noun, Distributed Systems) — the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.">
+<meta name="twitter:description" content="Eventual Consistency (noun, Distributed Systems) — the guarantee that if updates stop arriving, every replica will converge on the same values — with...">
 <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
 <link rel="icon" href="../../assets/images/logo.jpeg">
 <link rel="stylesheet" href="../../fonts.css">
@@ -43,6 +43,21 @@
         "url": "https://thehallucinatedlab.space/dictionary/#software-engineering"
       },
       "url": "https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html"
+    },
+    {
+      "@type": "Article",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html#article",
+      "headline": "Eventual Consistency",
+      "description": "the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.",
+      "mainEntityOfPage": "https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html",
+      "about": {
+        "@id": "https://thehallucinatedlab.space/dictionary/terms/eventual-consistency.html#term"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://thehallucinatedlab.space/#website",
+        "name": "The Hallucinated Lab"
+      }
     },
     {
       "@type": "BreadcrumbList",
@@ -127,32 +142,42 @@
           <span class="badge">Distributed Systems</span>
           <span class="badge">Core</span>
         </div>
+        
       </header>
 
-      <section class="term-section">
-        <h2>Definition</h2>
-        <div class="definition">
+<section class="term-section" id="quick-take" aria-labelledby="quick-take-heading">
+  <h2 id="quick-take-heading">Quick Take</h2>
+  <p class="quick-take" data-derived="true">Eventual Consistency is the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.</p>
+</section>
+<section class="term-section" id="definitions" aria-labelledby="definitions-heading">
+  <h2 id="definitions-heading">Formal Definitions</h2>
+  <div class="definition">
   <p><span class="definition-number">1.</span><span class="definition-context">[in distributed systems] </span><span class="definition-text">the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.</span></p>
   <p class="definition-example">The shopping cart is eventually consistent, so a second device may lag by a few seconds.</p>
 </div>
-      </section>
-
-      
-      <section class="term-section">
-  <h2>Etymology</h2>
-  <p class="etymology-text">From eventual, Latin eventus &#x27;outcome&#x27;, plus consistency. Named by Douglas Terry and colleagues at Xerox PARC in 1994 for the Bayou replicated store, and popularised by Werner Vogels&#x27; account of Amazon&#x27;s Dynamo.</p>
 </section>
-      <section class="term-section"><h2>Synonyms</h2><ul class="relation-list"><li><span class="relation-chip">optimistic replication<span class="relation-tag">sense 1 · Near</span></span></li></ul></section>
-<section class="term-section"><h2>Antonyms</h2><ul class="relation-list"><li><span class="relation-chip">strong consistency<span class="relation-tag">sense 1 · Gradable</span></span></li></ul></section>
-<section class="term-section"><h2>See also</h2><ul class="relation-list"><li><a href="cap-theorem.html">CAP Theorem</a></li><li><a href="acid.html">ACID</a></li></ul></section>
-      <section class="term-section">
-  <h2>References</h2>
+<section class="term-section" id="formal-statement" aria-labelledby="formal-statement-heading">
+  <h2 id="formal-statement-heading">Final Formal Statement</h2>
+  <p class="formal-statement" data-derived="true">Eventual Consistency (noun, Distributed Systems): the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.</p>
+</section>
+<section class="term-section" id="etymology" aria-labelledby="etymology-heading">
+  <h2 id="etymology-heading">Etymology</h2>
+  <p class="etymology-text">From eventual, Latin eventus &#x27;outcome&#x27;, plus consistency. Named by Douglas Terry and colleagues at Xerox PARC in 1994 for the Bayou replicated store, and popularised by Werner Vogels&#x27; account of Amazon&#x27;s Dynamo.</p><p class="etymology-attested">First attested 1994.</p>
+</section>
+<section class="term-section" id="variants" aria-labelledby="variants-heading">
+  <h2 id="variants-heading">Variants &amp; Related Concepts</h2>
+  <div class="relation-block"><h3>Synonyms</h3><ul class="relation-list"><li><span class="relation-chip">optimistic replication<span class="relation-tag">sense 1 · Near</span></span></li></ul></div>
+<div class="relation-block"><h3>Antonyms</h3><ul class="relation-list"><li><span class="relation-chip">strong consistency<span class="relation-tag">sense 1 · Gradable</span></span></li></ul></div>
+<div class="relation-block"><h3>See also</h3><ul class="relation-list"><li><a href="cap-theorem.html">CAP Theorem</a></li><li><a href="acid.html">ACID</a></li></ul></div>
+</section>
+<section class="term-section" id="references" aria-labelledby="references-heading">
+  <h2 id="references-heading">References</h2>
   <ul class="citation-list"><li><a href="https://doi.org/10.1145/1435417.1435432" rel="noopener">Vogels, W. (2009). Eventually Consistent.</a><span class="citation-source">Communications of the ACM, 52(1), 40–44.</span></li></ul>
 </section>
 
       <nav class="term-nav" aria-label="Adjacent entries"><a href="dependency-injection.html"><span class="term-nav-label">Previous</span>Dependency Injection</a><a href="hash-table.html" style="text-align:right"><span class="term-nav-label">Next</span>Hash Table</a></nav>
     </div>
-    <aside class="term-aside"><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>SWE-00031</dd><dt>Section</dt><dd>Software Engineering Core</dd><dt>Domain</dt><dd>Distributed Systems</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>bigram</dd><dt>First attested</dt><dd>1994</dd></dl></aside>
+    <aside class="term-aside"><nav class="topic-contents" aria-labelledby="contents-heading"><h2 id="contents-heading">On this page</h2><ol><li><a href="#quick-take">Quick Take</a></li><li><a href="#definitions">Formal Definitions</a></li><li><a href="#formal-statement">Final Formal Statement</a></li><li><a href="#etymology">Etymology</a></li><li><a href="#variants">Variants &amp; Related Concepts</a></li><li><a href="#references">References</a></li></ol></nav><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>SWE-00031</dd><dt>Section</dt><dd>Software Engineering Core</dd><dt>Domain</dt><dd>Distributed Systems</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>bigram</dd><dt>First attested</dt><dd>1994</dd></dl></aside>
   </article>
 </main>
 <footer class="footer">
