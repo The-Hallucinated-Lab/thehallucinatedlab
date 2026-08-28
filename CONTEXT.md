@@ -479,3 +479,28 @@
 - **Deliberate omission — three of 21 AI entries and two of 18 engineering entries are shown.** The grid repeats one card shape; more cards would lengthen the file without adding a component.
 - **Known drift, unchanged:** this file remains downstream of `styles.css`, `pages.css` and now `dictionary/assets/css/`, and it still restates rather than imports. [GAP-09] (the dictionary's 23 duplicated tokens) is untouched here and is not this file's problem to fix.
 - **Verification:** `npm run check` — eslint clean, 402 tests pass, spec in sync. On the file itself: zero `<script>` tags, zero inline handlers, zero occurrences of `http://`, `https://`, `src=`, `<link`, `@import` or `url(`. CSS brace depth returns to 0 with no negative excursion; every block-level tag balances, and each `doc-section` balances its `span` nesting independently. Section numbering runs 00–15 with no gap or repeat.
+
+---
+
+- **Timestamp:** 2026-08-28T18:55:00Z
+- **Trigger Event:** Protocol Change
+- **Author/Agent:** Claude Code (Master Orchestrator)
+- **Target Subsystem:** `CLAUDE.md`
+- **Intent:** Adopt Master Orchestrator Protocol v3 — the expert-ensemble revision — while keeping the repository-specific rules that v3, being generic, does not carry.
+- **Bugs/Gaps Addressed:** v3 brings two things v2 lacked: a dual adversarial audit (a GPU auditor and a CPU-pinned adversary reviewing the same file on different weights in parallel, their union of CRITICAL/MAJOR findings going to a repairer) and a mandated post-run verification that runs the whole suite against a captured baseline after *every* integration, so a unit passing its own gate can no longer hide a regression elsewhere.
+- **Context Modifications:** `CLAUDE.md` replaced v2 → v3, plus a new §19/§20 addendum. **The addendum is not decoration.** v3 as written is stack-agnostic and drops both the §10.0 non-negotiables (zero build step, CSP `script-src 'self'`, the silent discoverability surface, SEO invariants, JSON-LD honesty, budgets, `main` is production) and the `CONTEXT.md` mandate. Adopting it verbatim would have left the protocol silently contradicting this repository's own CI: `enforce-context-sync.yml` fails any PR that does not extend `CONTEXT.md`, and a protocol that never mentions `CONTEXT.md` would have had every future session discover that gate by failing it. §19 restores the non-negotiables and states that the addendum outranks the generic protocol where they disagree; §20 restores the mandate and marks the timeline entry as permanently RETAIN.
+- **Deliberate omission:** The ensemble harness (`.orchestrator/*`) is not created. This environment has no Ollama, so those scripts would be committed on the strength of a description rather than a run. §6's mandate is met by running `npm run check` directly, which is what §19.1 now records as this repository's concrete form of it.
+- **Verification:** Baseline captured on `main` first — 0 pre-existing failures. `npm run check` exits 0: eslint clean, 402/402 tests, spec in sync.
+
+---
+
+- **Timestamp:** 2026-08-28T19:10:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `CONTEXT.md`
+- **Intent:** Third merge of `main` into the UI-reference branch, this time bringing Protocol v3 and the §19/§20 addendum onto the branch, and re-verifying the reference against the rules as they now read.
+- **Bugs/Gaps Addressed:** None.
+- **Context Modifications:** `CONTEXT.md` only — the same append-only timeline conflict as the previous two merges, resolved the same way: both sides kept in timestamp order, neither dropped. `design/ui-reference.html` needed no change; the merge touched `CLAUDE.md` and nothing the reference depicts.
+- **What I now know that is not in the diff — the dictionary is generated, not authored here.** §19.1 states that `/dictionary/` comes from `06pratyush/ai_dictionary_thl` via `node scripts/sync-dictionary.js` and is not hand-edited in this repository. That matters for section 08 of the reference, which was drawn by transcribing `dictionary/index.html` and one term page: those are **build output**, so they can be regenerated wholesale by an upstream change with no reviewable diff here. The Dictionary section of the reference will therefore drift faster and more silently than the sections mirroring hand-written pages. Re-check it against a fresh sync, not against a page diff.
+- **Re-checked against §19.1 rather than assumed:** the reference is not served, so the CSP, discoverability, JSON-LD, image and SEO rules do not bind it — but the two that would bind it anywhere still hold: it adds no third-party origin and no `<script>`, and it introduces no dependency. The multiple-`<h1>` scope note from the 2026-08-14 entry stands unchanged and is still the first thing to fix if this file is ever promoted to a page.
+- **Verification (§6 form, baseline-compared as v3 now requires):** baseline captured on `origin/main` at `bdf5466` in a separate worktree — 402 tests, 402 pass, 0 pre-existing failures. Post-merge on this branch: `npm run check` exits 0 — eslint clean, 402/402, spec in sync. No regression attributable to this branch. No conflict markers remain in `CONTEXT.md`.
