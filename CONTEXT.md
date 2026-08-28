@@ -366,6 +366,25 @@
 
 ---
 
+- **Timestamp:** 2026-08-14T12:00:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `design/ui-reference.html` (new directory)
+- **Intent:** Produce a single standalone HTML file that shows the whole site's UI in one place — navigation and footer, home, the tools index, a tool page in its empty and result states, pipelines, the assistant, solutions, media, the notes board, artifacts, a dev-status page, the sitemap, the 404, both themes, and the mobile layouts. Requested as a UI-only artefact: no JavaScript, no external assets, nothing fetched.
+- **Bugs/Gaps Addressed:** None. No gap opened or closed in section 4. Note that it does not address [GAP-04] — it is a picture of the UI, not a templating layer, and no page now sources its markup from it.
+- **Context Modifications:** One new file in one new directory, `design/`. Nothing under `.` or `blogs/` was touched, so no page, stylesheet, script, image, or dependency changed and the site's runtime behaviour is identical.
+- **Decision — it lives in `design/`, not at the repository root.** The invariant suites discover pages by reading `.` and `blogs/` only (`htmlFiles()` in `test/site-invariants.test.js` and `test/seo-invariants.test.js`). Dropping this at the root would enrol a design mockup in the site's SEO, CSP and budget contracts and — under [RULE-03] — oblige `sitemap.xml`, `sitemap.html`, `llms.txt` and `llms-full.txt` to list a file that is not part of the site. A new directory keeps it a reference artefact and keeps the discoverability surface honest. It carries `noindex, nofollow` as a second line of defence in case it is ever served.
+- **Decision — the CSS is a condensed re-implementation, not a copy of `styles.css` + `pages.css`.** Those are 4,430 lines and load-bearing; vendoring them into a standalone file would create a second copy that drifts silently and would read as authoritative. The file instead restates the tokens verbatim (both themes, exact hex values) and rebuilds the component surfaces from them. Consequence to know: **this file is downstream of the stylesheets and will drift.** It is a snapshot of the UI as of this entry, not a spec — the stylesheets remain the source of truth for anything measured.
+- **Decision — every moving part is drawn at rest, and states are shown side by side.** With no script there is no theme toggle, no drawer, no tab switching, no typing cursor, no fade-in-on-scroll, no particle canvas. Rather than fake them, the file renders the resting state and lays the alternate state next to it: nav drawer closed and open, tool panel empty and completed, chat empty and mid-conversation, 404 dark and light. The particle field is a static radial-gradient dot pattern and is labelled as a stand-in. The light theme is a scoped `.theme-light` class rather than the real `data-theme` attribute, because `theme.js` is what sets that.
+- **Deliberate omission — no fonts are embedded.** Outfit and JetBrains Mono are real files under `assets/fonts/`, but base64-inlining two woff2 subsets would add roughly 60 KB to a reference file for a cosmetic gain. It falls back to the nearest system stacks (`system-ui` for headings, `ui-monospace` for body), so the rhythm holds and the letterforms differ. The header says so.
+- **Deliberate omission — no images.** Every logo, avatar and tool preview is CSS or inline SVG. The nav mark is the letters `THL`, the team avatars are initials, and the converted-image preview is a checkerboard. This is what keeps the file genuinely standalone; the trade is that it does not show how real photography sits in the member cards.
+- **Deliberate omission — not every page is drawn.** Eleven of the tool gateway cards exist; four are rendered and the remaining seven are named in a caption, because they repeat one pattern exactly. Certification, Consultancy and Data are covered by the SLM screen and a caption for the same reason. Drawing all thirty-six pages would have made the file longer without showing a single new component.
+- **Scope note — multiple `<h1>` elements, on purpose.** The file contains its own `<h1>` plus each mocked page's `<h1>`, which would violate the site's one-`<h1>` invariant. That invariant applies to indexable pages; this is a reference sheet that shows what each page's `<h1>` looks like, and it is outside the scanned directories. If this file is ever promoted to a real page, that is the first thing that has to change.
+- **Protocol note — the reader was unavailable.** Cloud session, no `ollama`. Per §11.5, structure was mapped with `grep -n` and read in targeted ranges — nav and hero from `index.html`, one gateway card each from `tools.html` and `pipelines.html`, the chat container from `interface.html`, the spotlight from `solutions.html`, the note card from `blogs.html`, the tool panel controls from `convert.html` via grep alone, the token blocks from `styles.css`. No file was opened whole; the 100-line ceiling held throughout.
+- **Verification:** `npm run check` — eslint clean, 377 tests pass, spec in sync (run after `npm ci --ignore-scripts`; the container starts without `node_modules`). Checked directly on the new file: zero `<script>` tags, zero inline event handlers, zero occurrences of `http://`, `https://`, `src=`, `<link`, `@import` or `url(` — so nothing can leave the page. CSS brace depth returns to 0 with no negative excursion, and the block-level tags balance.
+
+---
+
 - **Timestamp:** 2026-08-15T16:35:00Z
 - **Trigger Event:** Pull Request
 - **Author/Agent:** @06pratyush / Antigravity AI
@@ -374,6 +393,18 @@
 - **Bugs/Gaps Addressed:** Integrates 39 term pages, static search engine, and dictionary styling into the live site layout.
 - **Context Modifications:** Added `dictionary/` directory (index.html, 39 term pages, datasets, assets), updated navigation links across 70+ HTML files, updated `sitemap.html`, `sitemap.xml`, `llms.txt`, and `llms-full.txt`, updated ESLint module config for dictionary JS, and passed 377/377 site invariant tests.
 
+
+---
+
+- **Timestamp:** 2026-08-15T17:30:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `design/ui-reference.html`, `CONTEXT.md`
+- **Intent:** Merge `main` into the UI-reference branch after the dictionary integration landed, and re-sync the mocked navigation so the reference still depicts the site that exists.
+- **Bugs/Gaps Addressed:** None. This is the first observed instance of the drift the previous entry predicted — the reference is downstream of the real pages, and a navigation change upstream silently invalidated it within a day.
+- **Context Modifications:** `CONTEXT.md` conflicted because both branches appended to the section 5 timeline. Resolved by keeping **both** entries in timestamp order with the standard `---` separator — the timeline is append-only under [RULE-11], so neither side may be dropped, and a conflict here is never a choice between entries. `design/ui-reference.html` gained a `Dictionary` item after `Solutions` in all four mocked navigation surfaces (desktop bar, section-01 drawer, home mockup, mobile drawer) and a matching line in the mocked sitemap list.
+- **Deliberate omission — no Dictionary screen was drawn.** The reference gains the nav entry, not a mock of `dictionary/index.html`. Its term pages and search index are a distinct surface with its own components, and inventing a screen for it from the nav link alone would put markup in the reference that no one has checked against the real page. Drawing it is its own change, made by reading that page.
+- **Verification:** `npm run check` after the merge — eslint clean, 377 tests pass, spec in sync. No conflict markers remain in `CONTEXT.md`.
 
 ---
 
@@ -424,6 +455,33 @@
 
 ---
 
+- **Timestamp:** 2026-08-16T09:00:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `CONTEXT.md`
+- **Intent:** Second merge of `main` into the UI-reference branch, after the dictionary letter-filter fix and navbar unification landed. Keep the branch mergeable and confirm whether the reference had drifted again.
+- **Bugs/Gaps Addressed:** None. [GAP-08] and [GAP-09] arrived from `main` and are untouched here.
+- **Context Modifications:** `CONTEXT.md` only — the same append-only timeline conflict as the previous merge, resolved the same way: both entries kept in timestamp order, neither side dropped. `design/ui-reference.html` needed **no** change this time, and that was checked rather than assumed: the "unify the navbar" work altered the dictionary pages' navbar backgrounds and mobile menu to match the rest of the site, not the link list, so the eleven items the reference already depicts are still the eleven items `index.html` renders.
+- **Note for the next merge:** this is the second `CONTEXT.md` conflict on this branch in two days, and both were the identical shape — two appended entries, no semantic disagreement. It is not a sign of anything wrong; a long-lived branch and an append-only log will always collide here. Resolve by keeping both in timestamp order, never by taking one side.
+- **Verification:** `npm run check` after the merge — eslint clean, 402 tests pass, spec in sync. No conflict markers remain in `CONTEXT.md`.
+
+---
+
+- **Timestamp:** 2026-08-28T18:40:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `design/ui-reference.html`
+- **Intent:** Draw the Dictionary into the UI reference — the one surface the file's first version deliberately left out. Two screens: the hub (hero, search bar with scope buttons, per-section letter nav, entry-card grid, pager) and one term page (lexical hero, numbered sense, formal statement, relations, references, adjacent-entry nav, entry-data panel).
+- **Bugs/Gaps Addressed:** Closes the omission recorded in the 2026-08-15T17:30 entry, which said this had to be drawn by reading the real page rather than inferred from a nav link. It was.
+- **Context Modifications:** New section `08 · DICTIONARY` inserted after Solutions, matching the site's own navigation order rather than being appended at the end; sections 08–14 renumbered to 09–15 and a `Dictionary` link added to the reference's own jump bar. About 170 lines of CSS added for the dictionary components. Content is transcribed from `dictionary/index.html` and `dictionary/terms/attention-mechanism.html` — the real glosses, lexical IDs (AIM-00005, AIM-00022, AIM-00001, SEC-00003, SEC-00011), IPA, formula and entry-data values, not invented stand-ins.
+- **Decision — the letter nav shows dead letters as plain text.** `D`, `F`, `H` and the rest render as unlinked text in the mock because that is what the real `alpha-nav` does: a letter no entry starts under is a `span`, not an anchor. Drawing all 26 as links would have made the mock prettier and wrong.
+- **Deliberate omission — the filtered and searched states are not drawn.** Search, the letter filter and the pager are all JavaScript, so the mock shows the landing state only: scope *All*, no letter, page 1, status reading "Showing 1–9 of 21". The caption says so. Drawing a filtered result would mean asserting what the filter returns, which this file cannot verify.
+- **Deliberate omission — three of 21 AI entries and two of 18 engineering entries are shown.** The grid repeats one card shape; more cards would lengthen the file without adding a component.
+- **Known drift, unchanged:** this file remains downstream of `styles.css`, `pages.css` and now `dictionary/assets/css/`, and it still restates rather than imports. [GAP-09] (the dictionary's 23 duplicated tokens) is untouched here and is not this file's problem to fix.
+- **Verification:** `npm run check` — eslint clean, 402 tests pass, spec in sync. On the file itself: zero `<script>` tags, zero inline handlers, zero occurrences of `http://`, `https://`, `src=`, `<link`, `@import` or `url(`. CSS brace depth returns to 0 with no negative excursion; every block-level tag balances, and each `doc-section` balances its `span` nesting independently. Section numbering runs 00–15 with no gap or repeat.
+
+---
+
 - **Timestamp:** 2026-08-28T18:55:00Z
 - **Trigger Event:** Protocol Change
 - **Author/Agent:** Claude Code (Master Orchestrator)
@@ -433,3 +491,16 @@
 - **Context Modifications:** `CLAUDE.md` replaced v2 → v3, plus a new §19/§20 addendum. **The addendum is not decoration.** v3 as written is stack-agnostic and drops both the §10.0 non-negotiables (zero build step, CSP `script-src 'self'`, the silent discoverability surface, SEO invariants, JSON-LD honesty, budgets, `main` is production) and the `CONTEXT.md` mandate. Adopting it verbatim would have left the protocol silently contradicting this repository's own CI: `enforce-context-sync.yml` fails any PR that does not extend `CONTEXT.md`, and a protocol that never mentions `CONTEXT.md` would have had every future session discover that gate by failing it. §19 restores the non-negotiables and states that the addendum outranks the generic protocol where they disagree; §20 restores the mandate and marks the timeline entry as permanently RETAIN.
 - **Deliberate omission:** The ensemble harness (`.orchestrator/*`) is not created. This environment has no Ollama, so those scripts would be committed on the strength of a description rather than a run. §6's mandate is met by running `npm run check` directly, which is what §19.1 now records as this repository's concrete form of it.
 - **Verification:** Baseline captured on `main` first — 0 pre-existing failures. `npm run check` exits 0: eslint clean, 402/402 tests, spec in sync.
+
+---
+
+- **Timestamp:** 2026-08-28T19:10:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for thehallucinatedlab
+- **Target Subsystem:** `CONTEXT.md`
+- **Intent:** Third merge of `main` into the UI-reference branch, this time bringing Protocol v3 and the §19/§20 addendum onto the branch, and re-verifying the reference against the rules as they now read.
+- **Bugs/Gaps Addressed:** None.
+- **Context Modifications:** `CONTEXT.md` only — the same append-only timeline conflict as the previous two merges, resolved the same way: both sides kept in timestamp order, neither dropped. `design/ui-reference.html` needed no change; the merge touched `CLAUDE.md` and nothing the reference depicts.
+- **What I now know that is not in the diff — the dictionary is generated, not authored here.** §19.1 states that `/dictionary/` comes from `06pratyush/ai_dictionary_thl` via `node scripts/sync-dictionary.js` and is not hand-edited in this repository. That matters for section 08 of the reference, which was drawn by transcribing `dictionary/index.html` and one term page: those are **build output**, so they can be regenerated wholesale by an upstream change with no reviewable diff here. The Dictionary section of the reference will therefore drift faster and more silently than the sections mirroring hand-written pages. Re-check it against a fresh sync, not against a page diff.
+- **Re-checked against §19.1 rather than assumed:** the reference is not served, so the CSP, discoverability, JSON-LD, image and SEO rules do not bind it — but the two that would bind it anywhere still hold: it adds no third-party origin and no `<script>`, and it introduces no dependency. The multiple-`<h1>` scope note from the 2026-08-14 entry stands unchanged and is still the first thing to fix if this file is ever promoted to a page.
+- **Verification (§6 form, baseline-compared as v3 now requires):** baseline captured on `origin/main` at `bdf5466` in a separate worktree — 402 tests, 402 pass, 0 pre-existing failures. Post-merge on this branch: `npm run check` exits 0 — eslint clean, 402/402, spec in sync. No regression attributable to this branch. No conflict markers remain in `CONTEXT.md`.
