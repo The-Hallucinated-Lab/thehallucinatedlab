@@ -915,6 +915,175 @@ img, svg { display: block; }
   color: var(--text-muted);
 }
 
+/* ---- dictionary: hub ---- */
+.dict-hero { padding: 74px 26px 34px; text-align: center; background: linear-gradient(180deg, var(--bg-primary), var(--bg-secondary)); }
+.dict-hero h1 {
+  margin-top: 12px;
+  font-size: clamp(2.1rem, 6vw, 3.2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dict-hero .section-intro { max-width: 660px; margin: 18px auto 0; }
+.dict-stats { margin-top: 22px; display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; }
+.badge {
+  display: inline-block;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 4px 11px;
+}
+
+.search-block { padding: 0 26px 8px; }
+.search-shell { max-width: 720px; margin: 0 auto; }
+.search-bar {
+  display: flex; align-items: center; gap: 11px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-gold);
+  border-radius: 999px;
+  padding: 11px 18px;
+}
+.search-icon { width: 17px; height: 17px; stroke: var(--gold-dark); stroke-width: 2; fill: none; flex: none; }
+.search-input { flex: 1; font-family: var(--font-body); font-size: 12.5px; color: var(--text-muted); }
+.search-submit {
+  font-family: var(--font-body);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: #0a0a0a;
+  background: var(--gradient-gold);
+  border: 0;
+  border-radius: 999px;
+  padding: 7px 18px;
+}
+.search-scopes { margin-top: 13px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.scope-btn {
+  font-family: var(--font-body);
+  font-size: 10.5px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 5px 14px;
+}
+.scope-btn.is-active { color: var(--gold-primary); border-color: var(--border-gold); background: rgba(var(--gold-rgb), 0.07); }
+.search-hint { margin-top: 12px; text-align: center; font-size: 10.5px; color: var(--text-muted); }
+
+.corpus-head { display: flex; align-items: flex-end; gap: 18px; flex-wrap: wrap; margin-bottom: 20px; }
+.corpus-head .section-header { text-align: left; margin: 0; }
+.corpus-head .section-line { margin-left: 0; }
+.results-count { margin-left: auto; font-size: 10.5px; color: var(--text-muted); white-space: nowrap; }
+
+.alpha-nav { display: flex; gap: 3px; flex-wrap: wrap; margin-bottom: 22px; }
+.alpha-nav a, .alpha-nav span {
+  min-width: 24px;
+  text-align: center;
+  font-size: 11px;
+  padding: 4px 5px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+}
+.alpha-nav a { color: var(--gold-primary); border-color: var(--border-subtle); }
+/* A letter no entry starts under renders as plain text, not a link — present, but
+   plainly not a target. The real page does the same. */
+.alpha-nav span { color: #3a3733; }
+
+.corpus-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+.entry-card {
+  display: block;
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 18px;
+}
+.entry-card-top { display: flex; align-items: center; gap: 10px; }
+.entry-card-domain { font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-dark); }
+.entry-card-lid { margin-left: auto; font-size: 9.5px; color: var(--text-muted); }
+.entry-card h3 { margin-top: 11px; font-size: 1.05rem; font-weight: 700; }
+.entry-card-pos { display: inline-block; margin-top: 4px; font-size: 10.5px; font-style: italic; color: var(--text-muted); }
+.entry-card-gloss { margin-top: 9px; font-size: 11.5px; color: var(--text-secondary); line-height: 1.75; }
+.entry-card-tags { margin-top: 13px; display: flex; gap: 7px; flex-wrap: wrap; }
+
+.corpus-pager { margin-top: 24px; display: flex; align-items: center; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.pager-step, .pager-num {
+  font-family: var(--font-body);
+  font-size: 11px;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 6px 12px;
+}
+.pager-num { min-width: 32px; }
+.pager-num.is-current { color: #0a0a0a; background: var(--gradient-gold); border-color: transparent; font-weight: 700; }
+.pager-numbers { display: flex; gap: 6px; }
+.pager-gap { color: var(--text-muted); padding: 6px 2px; font-size: 11px; }
+.corpus-status { margin-top: 12px; text-align: center; font-size: 10.5px; color: var(--text-muted); }
+
+/* ---- dictionary: one term page ---- */
+.term-layout { display: grid; gap: 26px; grid-template-columns: minmax(0, 1fr) 250px; align-items: start; }
+.term-hero { padding-bottom: 20px; border-bottom: 1px solid var(--border-subtle); }
+.term-hero h1 { margin-top: 12px; font-size: clamp(1.7rem, 4vw, 2.4rem); font-weight: 800; letter-spacing: -0.02em; }
+.term-phonetics { margin-top: 10px; display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-muted); }
+.term-ipa { color: var(--gold-dark); }
+.term-pos { font-style: italic; }
+.term-meta-row { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+.term-section { margin-top: 26px; }
+.term-section h2 { font-size: 0.95rem; font-weight: 700; color: var(--gold-primary); letter-spacing: 0.02em; }
+.definition { margin-top: 12px; }
+.definition p { font-size: 12.5px; line-height: 1.85; color: var(--text-secondary); }
+.definition-number { color: var(--gold-primary); margin-right: 7px; }
+.definition-context { color: var(--text-muted); font-style: italic; }
+.definition-text { color: var(--text-primary); }
+.definition-example { margin-top: 11px; padding-left: 13px; border-left: 2px solid var(--border-gold); font-style: italic; color: var(--text-muted) !important; }
+.formula-block {
+  margin-top: 12px;
+  background: #070707;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+  font-size: 12px;
+  color: var(--gold-light);
+  overflow-x: auto;
+}
+.formula-note { margin-top: 9px; font-size: 11px; color: var(--text-muted); line-height: 1.7; }
+.relation-list { margin-top: 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.relation-chip, .relation-list a {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: 11px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 5px 13px;
+}
+.relation-list a { color: var(--gold-primary); border-color: var(--border-gold); }
+.relation-tag { font-size: 9.5px; color: var(--text-muted); }
+.term-refs { margin-top: 12px; display: grid; gap: 8px; }
+.term-refs li { font-size: 11px; color: var(--text-muted); line-height: 1.7; padding-left: 15px; position: relative; }
+.term-refs li::before { content: "\25C6"; position: absolute; left: 0; top: 0; font-size: 7px; color: var(--gold-dark); }
+.term-nav { margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-between; gap: 16px; }
+.term-nav a { font-size: 12px; color: var(--gold-primary); }
+.term-nav-label { display: block; font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+.term-aside {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+.term-aside h2 { font-size: 0.9rem; font-weight: 700; margin-bottom: 14px; }
+.term-aside dl { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 9px 12px; }
+.term-aside dt { font-size: 9.5px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); }
+.term-aside dd { margin: 0; font-size: 11px; color: var(--text-secondary); }
+
+@media (max-width: 760px) {
+  .term-layout { grid-template-columns: 1fr; }
+}
+
 /* ---- responsive ---- */
 @media (max-width: 900px) {
   .nav-links { display: none; }
@@ -963,6 +1132,7 @@ img, svg { display: block; }
     <a href="#pipelines">Pipelines</a>
     <a href="#assistant">Assistant</a>
     <a href="#solutions">Solutions</a>
+    <a href="#dictionary">Dictionary</a>
     <a href="#media">Media</a>
     <a href="#blogs">Blogs</a>
     <a href="#artifacts">Artifacts</a>
@@ -1928,11 +2098,262 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     08 · MEDIA
+     08 · DICTIONARY
+     ============================================================ -->
+<section class="doc-section" id="dictionary">
+  <div class="doc-section-head">
+    <span class="doc-index">08</span>
+    <h2>Dictionary</h2>
+    <span class="doc-index">/dictionary/</span>
+  </div>
+  <p class="doc-note">
+    Two corpora on one page — 21 AI &amp; mathematics entries, 18 software
+    engineering — with a search bar over both and a letter filter per section.
+    Then one term page, which is the denser surface: a lexical hero, numbered
+    senses, a formal statement, relations, and an entry-data panel.
+  </p>
+  <div class="doc-rule"></div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/dictionary/</span>
+      <span class="frame-label">the hub</span>
+    </div>
+    <div class="frame-body">
+
+      <section class="dict-hero">
+        <span class="section-label">Reference</span>
+        <h1>The Dictionary</h1>
+        <p class="section-intro">Two corpora, one search. The vocabulary of AI and mathematics on one side, the working language of software engineering on the other — every term defined so it can be substituted back into a sentence, and every claim pointed at the paper it came from.</p>
+        <div class="dict-stats">
+          <span class="badge">21 AI &amp; Mathematics</span>
+          <span class="badge">18 Software Engineering Core</span>
+          <span class="badge">39 entries total</span>
+        </div>
+      </section>
+
+      <div class="search-block">
+        <div class="search-shell">
+          <div class="search-bar">
+            <svg class="search-icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+            <span class="search-input">Search both dictionaries</span>
+            <span class="search-submit">Search</span>
+          </div>
+          <div class="search-scopes">
+            <span class="scope-btn is-active">All</span>
+            <span class="scope-btn">AI &amp; Mathematics</span>
+            <span class="scope-btn">Software Engineering</span>
+          </div>
+          <p class="search-hint">Both corpora are already on the page — search narrows what is shown, it does not fetch.</p>
+        </div>
+      </div>
+
+      <section class="section">
+        <div class="container">
+          <div class="corpus-head">
+            <div class="section-header">
+              <span class="section-label">Section One</span>
+              <h2 class="section-title">AI &amp; Mathematics</h2>
+              <div class="section-line"></div>
+            </div>
+            <span class="results-count">21 entries</span>
+          </div>
+
+          <nav class="alpha-nav" aria-label="Jump to letter">
+            <a>A</a><a>B</a><a>C</a><span>D</span><a>E</a><span>F</span><a>G</a><span>H</span><span>I</span><span>J</span><span>K</span><a>L</a><a>M</a><span>N</span><a>O</a><a>P</a><span>Q</span><a>R</a><a>S</a><a>T</a><span>U</span><span>V</span><span>W</span><span>X</span><span>Y</span><span>Z</span>
+          </nav>
+
+          <div class="corpus-grid">
+            <div class="entry-card">
+              <div class="entry-card-top">
+                <span class="entry-card-domain">Neural Networks</span>
+                <span class="entry-card-lid">AIM-00022</span>
+              </div>
+              <h3>Activation Function</h3>
+              <span class="entry-card-pos">noun</span>
+              <p class="entry-card-gloss">a mathematical function that introduces non-linearity into the output of a layer, allowing the network to learn complex patterns.</p>
+              <div class="entry-card-tags"><span class="badge">Core</span><span class="badge">Foundational</span></div>
+            </div>
+
+            <div class="entry-card">
+              <div class="entry-card-top">
+                <span class="entry-card-domain">Deep Learning</span>
+                <span class="entry-card-lid">AIM-00005</span>
+              </div>
+              <h3>Attention Mechanism</h3>
+              <span class="entry-card-pos">noun</span>
+              <p class="entry-card-gloss">a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.</p>
+              <div class="entry-card-tags"><span class="badge">Core</span></div>
+            </div>
+
+            <div class="entry-card">
+              <div class="entry-card-top">
+                <span class="entry-card-domain">Neural Networks</span>
+                <span class="entry-card-lid">AIM-00001</span>
+              </div>
+              <h3>Backpropagation</h3>
+              <span class="entry-card-pos">noun</span>
+              <p class="entry-card-gloss">the algorithm that assigns each weight its share of the output error by applying the chain rule backwards through the network.</p>
+              <div class="entry-card-tags"><span class="badge">Core</span><span class="badge">Foundational</span></div>
+            </div>
+          </div>
+
+          <nav class="corpus-pager" aria-label="Entry pages">
+            <span class="pager-step">Previous</span>
+            <span class="pager-numbers">
+              <span class="pager-num is-current">1</span>
+              <span class="pager-num">2</span>
+              <span class="pager-num">3</span>
+            </span>
+            <span class="pager-step">Next</span>
+          </nav>
+          <p class="corpus-status">Showing 1–9 of 21.</p>
+        </div>
+      </section>
+
+      <section class="section section--alt">
+        <div class="container">
+          <div class="corpus-head">
+            <div class="section-header">
+              <span class="section-label">Section Two</span>
+              <h2 class="section-title">Software Engineering Core</h2>
+              <div class="section-line"></div>
+            </div>
+            <span class="results-count">18 entries</span>
+          </div>
+          <div class="corpus-grid">
+            <div class="entry-card">
+              <div class="entry-card-top">
+                <span class="entry-card-domain">Databases</span>
+                <span class="entry-card-lid">SEC-00003</span>
+              </div>
+              <h3>ACID</h3>
+              <span class="entry-card-pos">noun</span>
+              <p class="entry-card-gloss">the four guarantees a transaction is expected to hold: atomicity, consistency, isolation and durability.</p>
+              <div class="entry-card-tags"><span class="badge">Core</span></div>
+            </div>
+            <div class="entry-card">
+              <div class="entry-card-top">
+                <span class="entry-card-domain">Design</span>
+                <span class="entry-card-lid">SEC-00011</span>
+              </div>
+              <h3>Coupling</h3>
+              <span class="entry-card-pos">noun</span>
+              <p class="entry-card-gloss">the degree to which one module depends on the internals of another, and therefore how far a change in one propagates into the other.</p>
+              <div class="entry-card-tags"><span class="badge">Core</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <p class="state-note">
+    The letter filter, the pager and the search all need JavaScript, so they are
+    drawn in their landing state: scope <em>All</em>, letter unfiltered, page 1.
+    Letters no entry starts under render as plain text rather than links —
+    that is the real page's behaviour, not a limitation of this mock.
+  </p>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dots"><span></span><span></span><span></span></span>
+      <span class="frame-url">thehallucinatedlab.space/dictionary/terms/attention-mechanism.html</span>
+      <span class="frame-label">one term</span>
+    </div>
+    <div class="frame-body">
+      <section class="section">
+        <div class="container">
+          <div class="term-layout">
+            <article>
+              <header class="term-hero">
+                <p class="breadcrumb"><a>Dictionary</a> / <a>AI &amp; Mathematics</a></p>
+                <h1>Attention Mechanism</h1>
+                <div class="term-phonetics">
+                  <span class="term-ipa">/əˈtɛnʃən ˈmɛkəˌnɪzəm/</span>
+                  <span>at·ten·tion mech·a·nism</span>
+                  <span class="term-pos">noun</span>
+                </div>
+                <div class="term-meta-row">
+                  <span class="badge">Deep Learning</span>
+                  <span class="badge">Core</span>
+                </div>
+              </header>
+
+              <section class="term-section">
+                <h2>Definition</h2>
+                <div class="definition">
+                  <p>
+                    <span class="definition-number">1.</span><span class="definition-context">[in deep learning] </span><span class="definition-text">a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.</span>
+                  </p>
+                  <p class="definition-example">The attention mechanism let the decoder consult any source token instead of a single fixed summary vector.</p>
+                </div>
+              </section>
+
+              <section class="term-section">
+                <h2>Formal statement</h2>
+                <div class="formula-block"><code>Attention(Q,K,V) = softmax(Q K^T / sqrt(d_k)) V</code></div>
+                <p class="formula-note">Division by sqrt(d_k) keeps the dot products in a range where softmax gradients do not vanish.</p>
+              </section>
+
+              <section class="term-section">
+                <h2>Synonyms</h2>
+                <ul class="relation-list">
+                  <li><span class="relation-chip">soft alignment <span class="relation-tag">sense 1 · Near</span></span></li>
+                </ul>
+              </section>
+
+              <section class="term-section">
+                <h2>See also</h2>
+                <ul class="relation-list">
+                  <li><a>Transformer</a></li>
+                  <li><a>Softmax</a></li>
+                  <li><a>Embedding</a></li>
+                </ul>
+              </section>
+
+              <section class="term-section">
+                <h2>References</h2>
+                <ul class="term-refs">
+                  <li>Bahdanau, Cho &amp; Bengio (2014) — <em>Neural Machine Translation by Jointly Learning to Align and Translate</em></li>
+                  <li>Vaswani et al. (2017) — <em>Attention Is All You Need</em></li>
+                </ul>
+              </section>
+
+              <nav class="term-nav" aria-label="Adjacent entries">
+                <a><span class="term-nav-label">Previous</span>Activation Function</a>
+                <a style="text-align:right"><span class="term-nav-label">Next</span>Backpropagation</a>
+              </nav>
+            </article>
+
+            <aside class="term-aside">
+              <h2>Entry data</h2>
+              <dl>
+                <dt>Lexical ID</dt><dd>AIM-00005</dd>
+                <dt>Section</dt><dd>AI &amp; Mathematics</dd>
+                <dt>Domain</dt><dd>Deep Learning</dd>
+                <dt>Part of speech</dt><dd>noun</dd>
+                <dt>Form</dt><dd>bigram</dd>
+                <dt>First attested</dt><dd>2014</dd>
+                <dt>Variants</dt><dd>attention</dd>
+                <dt>Inflections</dt><dd>attention mechanisms</dd>
+                <dt>Opacity</dt><dd>2 of 3</dd>
+              </dl>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     09 · MEDIA
      ============================================================ -->
 <section class="doc-section" id="media">
   <div class="doc-section-head">
-    <span class="doc-index">08</span>
+    <span class="doc-index">09</span>
     <h2>Media</h2>
     <span class="doc-index">/media.html</span>
   </div>
@@ -2036,11 +2457,11 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     09 · BLOGS
+     10 · BLOGS
      ============================================================ -->
 <section class="doc-section" id="blogs">
   <div class="doc-section-head">
-    <span class="doc-index">09</span>
+    <span class="doc-index">10</span>
     <h2>Notes board</h2>
     <span class="doc-index">/blogs.html</span>
   </div>
@@ -2166,11 +2587,11 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     10 · ARTIFACTS
+     11 · ARTIFACTS
      ============================================================ -->
 <section class="doc-section" id="artifacts">
   <div class="doc-section-head">
-    <span class="doc-index">10</span>
+    <span class="doc-index">11</span>
     <h2>Artifacts</h2>
     <span class="doc-index">/artifacts.html</span>
   </div>
@@ -2273,11 +2694,11 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     11 · DEV-STATUS PAGES
+     12 · DEV-STATUS PAGES
      ============================================================ -->
 <section class="doc-section" id="dev">
   <div class="doc-section-head">
-    <span class="doc-index">11</span>
+    <span class="doc-index">12</span>
     <h2>Dev-status pages</h2>
     <span class="doc-index">/slm · /certification · /consultancy · /data</span>
   </div>
@@ -2328,11 +2749,11 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     12 · SITEMAP
+     13 · SITEMAP
      ============================================================ -->
 <section class="doc-section" id="sitemap">
   <div class="doc-section-head">
-    <span class="doc-index">12</span>
+    <span class="doc-index">13</span>
     <h2>Sitemap</h2>
     <span class="doc-index">/sitemap.html</span>
   </div>
@@ -2406,11 +2827,11 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     13 · 404 + LIGHT THEME
+     14 · 404 + LIGHT THEME
      ============================================================ -->
 <section class="doc-section" id="notfound">
   <div class="doc-section-head">
-    <span class="doc-index">13</span>
+    <span class="doc-index">14</span>
     <h2>404, and the light theme</h2>
     <span class="doc-index">/404.html</span>
   </div>
@@ -2473,11 +2894,11 @@ img, svg { display: block; }
 </section>
 
 <!-- ============================================================
-     14 · MOBILE
+     15 · MOBILE
      ============================================================ -->
 <section class="doc-section" id="mobile" style="padding-bottom:80px;">
   <div class="doc-section-head">
-    <span class="doc-index">14</span>
+    <span class="doc-index">15</span>
     <h2>Mobile</h2>
   </div>
   <p class="doc-note">
