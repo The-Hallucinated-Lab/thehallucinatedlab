@@ -377,6 +377,24 @@
 
 ---
 
+- **Timestamp:** 2026-08-16T03:46:00Z
+- **Trigger Event:** Pull Request
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `slm.html`, `tools.html`
+- **Intent:** Add a tenth posture to the SLM bench — **Prompt-first**, a model that turns a rough intent into a prompt that holds its shape. It stays behind dev mode with the other nine: `slm.html` is `noindex` and every route in is `data-status="dev"`, so nothing here is visible to a live visitor.
+- **Bugs/Gaps Addressed:** None fixed. No gap opened or closed in section 4.
+- **Context Modifications:** One `.slm-card` appended to `.slm-grid`, structured like the nine before it. `thl-prompt-3b` — Llama 3.2 3B Instruct, 16k, ~1.9 GB at Q4_K_M, "Pairs with: Prompts, Tokenize". Counts updated on `slm.html` in six places (description, og/twitter description, page subtitle, section intro, the "smallest of the ten" line on Personal-first, and the closing note) and in `.gateway-desc` on `tools.html`. Description now 143 characters, og/twitter 148, `<title>` unchanged at 44. No JS, CSS, dependency or spec change.
+- **Decision — the posture is the prompt, not prompting.** The seam against Tools-first matters: Tools-first emits a validated call against a schema it was given; Prompt-first has no schema and produces the instruction itself. Written loosely the two collapse into "turns what you said into what the machine wants", and two cards claiming the same job is worse than one. Prompt-first owns the instruction, the constraints, the output format and the failure the prompt has to survive; it hands off the moment a schema exists.
+- **Decision — the honesty clause, per the page's standing pattern.** Every card names the failure it refuses. This one refuses two: substituting an easier task for the one you asked for, and resolving a genuinely ambiguous intent by picking a reading. The second returns a question instead of an answer, which is the only refusal on the page that hands work back to the reader — deliberate, because a confidently-wrong prompt is the defect this posture exists to prevent.
+- **Decision — "Pairs with" rather than "Output".** Seven of the ten cards close on `Output`; Document-first closes on `Pairs with`, and this one follows it. A prompt's useful output shape is "a prompt", which says nothing, whereas the two live tools it feeds (`prompts.html`, `tokenize.html`) are real pages a reader can open today. Both were checked to exist rather than assumed.
+- **Closed — the orphan card.** The previous two entries recorded a seventh and then a ninth card sitting alone in the left column of the two-column grid, and both deferred the `grid-column` CSS on the grounds that an even-numbered posture would remove the need for it. Ten is that posture. No CSS was added, which is the outcome those two entries were holding out for.
+- **Deliberate omission — the discoverability surface, again.** `slm.html` remains dev-only and `noindex`, so `sitemap.xml`, `sitemap.html`, `llms.txt` and `llms-full.txt` are untouched, unchanged from the previous three entries. The debt owed when this page leaves dev mode is now ten models' worth of `llms-full.txt` copy, not nine.
+- **Protocol note — the reader was unavailable.** Cloud session, no `ollama`, no `.orchestrator/` harness. Per §2 this falls back to direct work with the §11.5 ceiling intact: no file was read whole — `slm.html` (264 lines) was reached only through `grep -n` and four targeted ranges, and `test/dev-mode.test.js` was read in two halves to establish what actually gates a dev page before touching one.
+- **Verification:** `npm run check` — eslint clean, 402/402 tests pass after merging `main` twice, spec in sync. Rendered headless in Chromium at 1280×1000 and 390×900, in both themes, with dev mode set and the fade-in forced: ten cards, **five rows of exactly two**, `Prompt-first` beside `DL-first` in the last row, identical card geometry across themes (588×387 at 1280), one `<h1>`, no horizontal overflow at either width (`scrollWidth === innerWidth`), and no console errors. The grid-orphan claim above is therefore measured, not inferred — it was written as an inference and is now an observation.
+- **Merge note.** `main` moved twice while this sat open (the dictionary CSP alignment and the dictionary navigation work), and both appended here, so this entry conflicted with theirs on the tail of the file. Resolved by keeping all three in timestamp order — this one first, since it was authored at 03:46Z, and the two entries below it untouched. Nothing outside `CONTEXT.md` conflicted: neither incoming change touches `slm.html` or `tools.html`.
+
+---
+
 - **Timestamp:** 2026-08-16T08:10:00Z
 - **Trigger Event:** AI Edit
 - **Author/Agent:** Claude (Master Orchestrator) for 06pratyush

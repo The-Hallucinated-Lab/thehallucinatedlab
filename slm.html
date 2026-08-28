@@ -6,16 +6,16 @@
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'; frame-src 'none'; manifest-src 'self'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Small Language Models — The Hallucinated Lab</title>
-  <meta name="description" content="Nine small language models on the bench, each tuned for one posture rather than for everything at once. Sized to run on hardware you already own.">
+  <meta name="description" content="Ten small language models on the bench, each tuned for one posture rather than for everything at once. Sized to run on hardware you already own.">
   <meta name="robots" content="noindex, nofollow">
   <meta property="og:title" content="Small Language Models — The Hallucinated Lab">
-  <meta property="og:description" content="Nine small models — documents, tools, rules, you, hypotheses, reproducibility, context, classical ML, deep learning — each for your own machine.">
+  <meta property="og:description" content="Ten small models — documents, tools, rules, prompts, you, hypotheses, reproducibility, context, classical ML, deep learning — for your own machine.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://thehallucinatedlab.space/slm.html">
   <link rel="canonical" href="https://thehallucinatedlab.space/slm.html">
   <meta name="twitter:card" content="summary">
   <meta name="twitter:title" content="Small Language Models — The Hallucinated Lab">
-  <meta name="twitter:description" content="Nine small models — documents, tools, rules, you, hypotheses, reproducibility, context, classical ML, deep learning — each for your own machine.">
+  <meta name="twitter:description" content="Ten small models — documents, tools, rules, prompts, you, hypotheses, reproducibility, context, classical ML, deep learning — for your own machine.">
   <meta property="og:site_name" content="The Hallucinated Lab">
   <meta property="og:locale" content="en_US">
   <meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
@@ -76,12 +76,12 @@
     <section class="page-hero">
       <span class="section-label">Take It And Run</span>
       <h1 class="page-title">Small Language Models</h1>
-      <p class="page-subtitle">Nine small models, each tuned for one posture rather than for everything at once.</p>
+      <p class="page-subtitle">Ten small models, each tuned for one posture rather than for everything at once.</p>
     </section>
 
     <section class="media-section">
       <div class="container">
-        <p class="section-intro">A small model that does one job well beats a large one that does every job adequately — and it does it on a laptop, offline, for free. These nine are split by what they are pointed at: your documents, your tools, your rules, your data, your analysis, a prediction problem, a perception problem, everything too long to read, or you. Pick the posture, not the parameter count.</p>
+        <p class="section-intro">A small model that does one job well beats a large one that does every job adequately — and it does it on a laptop, offline, for free. These ten are split by what they are pointed at: your documents, your tools, your rules, the prompt itself, your data, your analysis, a prediction problem, a perception problem, everything too long to read, or you. Pick the posture, not the parameter count.</p>
 
         <div class="slm-grid">
 
@@ -135,7 +135,7 @@
               <h2 class="slm-title">Personal-first</h2>
               <span class="slm-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
             </div>
-            <p class="slm-desc">The smallest of the nine, for notes, mail and everything else you would not paste into a hosted chat box. Sized to fit a machine with no discrete GPU — a personal model that needs a server is not personal.</p>
+            <p class="slm-desc">The smallest of the ten, for notes, mail and everything else you would not paste into a hosted chat box. Sized to fit a machine with no discrete GPU — a personal model that needs a server is not personal.</p>
             <dl class="slm-specs">
               <div><dt>Model</dt><dd>thl-personal-1b</dd></div>
               <div><dt>Base</dt><dd>Llama 3.2 1B Instruct</dd></div>
@@ -220,10 +220,25 @@
             </dl>
           </div>
 
+          <div class="slm-card fade-in fade-in-delay-2">
+            <div class="slm-head">
+              <h2 class="slm-title">Prompt-first</h2>
+              <span class="slm-status queued"><span class="dot" aria-hidden="true"></span>Queued</span>
+            </div>
+            <p class="slm-desc">Turns a rough intent into a prompt that holds its shape — the instruction, the constraints, the output format, and the failure the prompt has to survive. It rewrites what you gave it rather than quietly substituting a task it finds easier, and where the intent is genuinely ambiguous it returns the one question that settles it instead of picking a reading and running with it.</p>
+            <dl class="slm-specs">
+              <div><dt>Model</dt><dd>thl-prompt-3b</dd></div>
+              <div><dt>Base</dt><dd>Llama 3.2 3B Instruct</dd></div>
+              <div><dt>Context</dt><dd>16k tokens</dd></div>
+              <div><dt>Footprint</dt><dd>~1.9 GB at Q4_K_M</dd></div>
+              <div><dt>Pairs with</dt><dd>Prompts, Tokenize</dd></div>
+            </dl>
+          </div>
+
         </div>
 
         <div class="slm-note fade-in">
-          <p><strong>None of these are downloadable yet.</strong> They are the nine postures currently on the bench. Each card publishes weights, an evaluation card and a licence the moment that model clears its benchmark — and if it does not clear it, the card comes down rather than shipping something that only looks finished.</p>
+          <p><strong>None of these are downloadable yet.</strong> They are the ten postures currently on the bench. Each card publishes weights, an evaluation card and a licence the moment that model clears its benchmark — and if it does not clear it, the card comes down rather than shipping something that only looks finished.</p>
         </div>
 
         <div class="how-panel fade-in">
