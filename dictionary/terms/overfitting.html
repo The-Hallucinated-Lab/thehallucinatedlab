@@ -8,7 +8,7 @@
 <meta name="description" content="Overfitting (noun, Statistical Learning) — the failure mode in which a model absorbs noise particular to its training sample and therefore predicts...">
 <link rel="canonical" href="https://thehallucinatedlab.space/dictionary/terms/overfitting.html">
 <meta property="og:title" content="Overfitting — The Hallucinated Lab Dictionary">
-<meta property="og:description" content="Overfitting (noun, Statistical Learning) — the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.">
+<meta property="og:description" content="Overfitting (noun, Statistical Learning) — the failure mode in which a model absorbs noise particular to its training sample and therefore predicts...">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://thehallucinatedlab.space/dictionary/terms/overfitting.html">
 <meta property="og:site_name" content="The Hallucinated Lab">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The Hallucinated Lab">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Overfitting — The Hallucinated Lab Dictionary">
-<meta name="twitter:description" content="Overfitting (noun, Statistical Learning) — the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.">
+<meta name="twitter:description" content="Overfitting (noun, Statistical Learning) — the failure mode in which a model absorbs noise particular to its training sample and therefore predicts...">
 <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
 <link rel="icon" href="../../assets/images/logo.jpeg">
 <link rel="stylesheet" href="../../fonts.css">
@@ -43,6 +43,21 @@
         "url": "https://thehallucinatedlab.space/dictionary/#ai-mathematics"
       },
       "url": "https://thehallucinatedlab.space/dictionary/terms/overfitting.html"
+    },
+    {
+      "@type": "Article",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/overfitting.html#article",
+      "headline": "Overfitting",
+      "description": "the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.",
+      "mainEntityOfPage": "https://thehallucinatedlab.space/dictionary/terms/overfitting.html",
+      "about": {
+        "@id": "https://thehallucinatedlab.space/dictionary/terms/overfitting.html#term"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://thehallucinatedlab.space/#website",
+        "name": "The Hallucinated Lab"
+      }
     },
     {
       "@type": "BreadcrumbList",
@@ -127,36 +142,46 @@
           <span class="badge">Statistical Learning</span>
           <span class="badge">Core</span>
         </div>
+        
       </header>
 
-      <section class="term-section">
-        <h2>Definition</h2>
-        <div class="definition">
+<section class="term-section" id="quick-take" aria-labelledby="quick-take-heading">
+  <h2 id="quick-take-heading">Quick Take</h2>
+  <p class="quick-take" data-derived="true">Overfitting is the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.</p>
+</section>
+<section class="term-section" id="definitions" aria-labelledby="definitions-heading">
+  <h2 id="definitions-heading">Formal Definitions</h2>
+  <div class="definition">
   <p><span class="definition-number">1.</span><span class="definition-context">[in statistical learning] </span><span class="definition-text">the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.</span></p>
   <p class="definition-example">Validation error rose while training error kept falling — textbook overfitting.</p>
 </div>
-      </section>
-
-      <section class="term-section">
-  <h2>Formal statement</h2>
-  <div class="formula-block"><code>E[(y - fhat(x))^2] = Bias[fhat]^2 + Var[fhat] + sigma^2</code></div>
-  <p class="formula-note">Overfitting is the regime where the variance term dominates the decomposition.</p>
 </section>
-      <section class="term-section">
-  <h2>Etymology</h2>
-  <p class="etymology-text">From over- &#x27;excessively&#x27; plus fit, in the statistical sense of fitting a curve to points; in use in the regression literature from the mid-twentieth century.</p>
+<section class="term-section" id="formal-statement" aria-labelledby="formal-statement-heading">
+  <h2 id="formal-statement-heading">Final Formal Statement</h2>
+  <p class="formal-statement" data-derived="true">Overfitting (noun, Statistical Learning): the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.</p>
 </section>
-      <section class="term-section"><h2>Synonyms</h2><ul class="relation-list"><li><span class="relation-chip">high variance<span class="relation-tag">sense 1 · Near</span></span></li></ul></section>
-<section class="term-section"><h2>Antonyms</h2><ul class="relation-list"><li><span class="relation-chip">underfitting<span class="relation-tag">sense 1 · Gradable</span></span></li></ul></section>
-<section class="term-section"><h2>See also</h2><ul class="relation-list"><li><a href="regularization.html">Regularization</a></li><li><a href="bias-variance-tradeoff.html">Bias-Variance Tradeoff</a></li><li><a href="cross-validation.html">Cross-Validation</a></li></ul></section>
-      <section class="term-section">
-  <h2>References</h2>
+<section class="term-section" id="etymology" aria-labelledby="etymology-heading">
+  <h2 id="etymology-heading">Etymology</h2>
+  <p class="etymology-text">From over- &#x27;excessively&#x27; plus fit, in the statistical sense of fitting a curve to points; in use in the regression literature from the mid-twentieth century.</p><p class="etymology-attested">First attested 1950s.</p>
+</section>
+<section class="term-section" id="deep-dive" aria-labelledby="deep-dive-heading">
+  <h2 id="deep-dive-heading">In-Depth Explanation</h2>
+  <div class="formula-block"><code>E[(y - fhat(x))^2] = Bias[fhat]^2 + Var[fhat] + sigma^2</code></div><p class="formula-note">Overfitting is the regime where the variance term dominates the decomposition.</p>
+</section>
+<section class="term-section" id="variants" aria-labelledby="variants-heading">
+  <h2 id="variants-heading">Variants &amp; Related Concepts</h2>
+  <div class="relation-block"><h3>Synonyms</h3><ul class="relation-list"><li><span class="relation-chip">high variance<span class="relation-tag">sense 1 · Near</span></span></li></ul></div>
+<div class="relation-block"><h3>Antonyms</h3><ul class="relation-list"><li><span class="relation-chip">underfitting<span class="relation-tag">sense 1 · Gradable</span></span></li></ul></div>
+<div class="relation-block"><h3>See also</h3><ul class="relation-list"><li><a href="regularization.html">Regularization</a></li><li><a href="bias-variance-tradeoff.html">Bias-Variance Tradeoff</a></li><li><a href="cross-validation.html">Cross-Validation</a></li></ul></div>
+</section>
+<section class="term-section" id="references" aria-labelledby="references-heading">
+  <h2 id="references-heading">References</h2>
   <ul class="citation-list"><li><a href="https://hastie.su.domains/ElemStatLearn/" rel="noopener">Hastie, T., Tibshirani, R. &amp; Friedman, J. (2009). The Elements of Statistical Learning, ch. 7.</a><span class="citation-source">Springer.</span></li></ul>
 </section>
 
       <nav class="term-nav" aria-label="Adjacent entries"><a href="maximum-likelihood-estimation.html"><span class="term-nav-label">Previous</span>Maximum Likelihood Estimation</a><a href="principal-component-analysis.html" style="text-align:right"><span class="term-nav-label">Next</span>Principal Component Analysis</a></nav>
     </div>
-    <aside class="term-aside"><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00003</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Statistical Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>unigram</dd><dt>First attested</dt><dd>1950s</dd><dt>Variants</dt><dd>over-fitting</dd><dt>Inflections</dt><dd>overfit, overfits</dd><dt>Opacity</dt><dd>1 of 3</dd></dl></aside>
+    <aside class="term-aside"><nav class="topic-contents" aria-labelledby="contents-heading"><h2 id="contents-heading">On this page</h2><ol><li><a href="#quick-take">Quick Take</a></li><li><a href="#definitions">Formal Definitions</a></li><li><a href="#formal-statement">Final Formal Statement</a></li><li><a href="#etymology">Etymology</a></li><li><a href="#deep-dive">In-Depth Explanation</a></li><li><a href="#variants">Variants &amp; Related Concepts</a></li><li><a href="#references">References</a></li></ol></nav><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00003</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Statistical Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>unigram</dd><dt>First attested</dt><dd>1950s</dd><dt>Variants</dt><dd>over-fitting</dd><dt>Inflections</dt><dd>overfit, overfits</dd><dt>Opacity</dt><dd>1 of 3</dd></dl></aside>
   </article>
 </main>
 <footer class="footer">
