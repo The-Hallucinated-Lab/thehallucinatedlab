@@ -233,6 +233,8 @@ Purpose: a 39-entry reference covering AI, mathematics and software engineering.
 
 - Two corpora: AI & Mathematics (21 entries) and Software Engineering Core (18 entries).
 - Full client-side instant search across terms, domains, and definitions.
+- Every term page follows one fixed structure (the Topic Page Specification): Quick Take, Formal Definitions, Final Formal Statement, Etymology, Background, Prerequisites, In-Depth Explanation, Worked Example, Variants, Common Misconceptions, Applications, Further Reading, FAQ, References, Revision History and Author — in that order, under stable anchors such as #quick-take, #deep-dive and #faq.
+- Sections appear only where the entry has content for them; a page never pads a section to look complete.
 - [acid.html](https://thehallucinatedlab.space/dictionary/terms/acid.html): Term definition page.
 - [activation-function.html](https://thehallucinatedlab.space/dictionary/terms/activation-function.html): Term definition page.
 - [attention-mechanism.html](https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html): Term definition page.

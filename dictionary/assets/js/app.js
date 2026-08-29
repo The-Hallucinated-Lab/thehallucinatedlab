@@ -50,9 +50,10 @@ init();
 async function init() {
   if (!form) return;
   try {
-    /* Resolved against this module, not the document: the hub sits at
-       dictionary/ and term pages at dictionary/terms/, so a path
-       relative to the page would only be correct on one of them. */
+    /* Resolved against this module, not the document. Only the hub
+       loads app.js today, but the term pages are generated upstream and
+       may load it again; a module-relative path is correct from any
+       depth, a document-relative one only from dictionary/. */
     const indexUrl = new URL('../../data/search-index.json', import.meta.url);
     const response = await fetch(indexUrl);
     if (!response.ok) throw new Error(`index ${response.status}`);

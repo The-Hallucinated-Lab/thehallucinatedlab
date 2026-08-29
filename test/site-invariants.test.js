@@ -393,34 +393,6 @@ test('every search index entry declares a section that exists', () => {
     `entries reference a section absent from the index's own "sections" map:\n  ${orphans.join('\n  ')}`);
 });
 
-/* Search used to exist only on the dictionary hub: a reader on a term page
-   had no way to look anything up without navigating back. app.js now runs
-   on both, which is why its index path is resolved against the module
-   rather than the document (see the fetch guard above). */
-test('every dictionary term page ships the search UI and its controller', () => {
-  const missing = [];
-  for (const f of fs.readdirSync(path.join(ROOT, 'dictionary/terms'))) {
-    if (!f.endsWith('.html')) continue;
-    const src = read(`dictionary/terms/${f}`);
-    /* The ids app.js binds to. A page missing any one of them leaves the
-       controller half-wired rather than visibly broken. */
-    for (const id of ['search-form', 'search-input', 'search-clear', 'search-suggest',
-      'results-block', 'results-title', 'results-count', 'results-grid',
-      'results-more', 'results-suggestion']) {
-      if (!src.includes(`id="${id}"`)) missing.push(`${f}: no #${id}`);
-    }
-    if (!/<script src="\.\.\/assets\/js\/app\.js" type="module"><\/script>/.test(src)) {
-      missing.push(`${f}: does not load app.js`);
-    }
-    for (const scope of ['all', 'ai-mathematics', 'software-engineering']) {
-      if (!src.includes(`data-scope="${scope}"`)) missing.push(`${f}: no "${scope}" scope button`);
-    }
-  }
-  assert.deepEqual(missing, [],
-    `term pages with incomplete search:\n  ${missing.slice(0, 12).join('\n  ')}`);
-});
-
-
 /* app.js runs at two depths — dictionary/ and dictionary/terms/ — so any
    path it builds relative to the *document* is wrong on one of them. Both
    the index fetch and the term links were written page-relative for the

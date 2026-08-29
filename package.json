@@ -15,7 +15,8 @@
     "test": "node --test \"test/**/*.test.js\"",
     "test:coverage": "node --test --experimental-test-coverage \"test/**/*.test.js\"",
     "check": "npm run lint && npm test && node scripts/sync-spec.js --check",
-    "spec:sync": "node scripts/sync-spec.js"
+    "spec:sync": "node scripts/sync-spec.js",
+    "dictionary:sync": "node scripts/sync-dictionary.js"
   },
   "repository": {
     "type": "git",

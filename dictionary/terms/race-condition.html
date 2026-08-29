@@ -8,7 +8,7 @@
 <meta name="description" content="Race Condition (noun, Concurrency) — a defect in which the correctness of a result depends on the unpredictable relative timing of two or more...">
 <link rel="canonical" href="https://thehallucinatedlab.space/dictionary/terms/race-condition.html">
 <meta property="og:title" content="Race Condition — The Hallucinated Lab Dictionary">
-<meta property="og:description" content="Race Condition (noun, Concurrency) — a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.">
+<meta property="og:description" content="Race Condition (noun, Concurrency) — a defect in which the correctness of a result depends on the unpredictable relative timing of two or more...">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://thehallucinatedlab.space/dictionary/terms/race-condition.html">
 <meta property="og:site_name" content="The Hallucinated Lab">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The Hallucinated Lab">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Race Condition — The Hallucinated Lab Dictionary">
-<meta name="twitter:description" content="Race Condition (noun, Concurrency) — a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.">
+<meta name="twitter:description" content="Race Condition (noun, Concurrency) — a defect in which the correctness of a result depends on the unpredictable relative timing of two or more...">
 <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
 <link rel="icon" href="../../assets/images/logo.jpeg">
 <link rel="stylesheet" href="../../fonts.css">
@@ -43,6 +43,21 @@
         "url": "https://thehallucinatedlab.space/dictionary/#software-engineering"
       },
       "url": "https://thehallucinatedlab.space/dictionary/terms/race-condition.html"
+    },
+    {
+      "@type": "Article",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/race-condition.html#article",
+      "headline": "Race Condition",
+      "description": "a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.",
+      "mainEntityOfPage": "https://thehallucinatedlab.space/dictionary/terms/race-condition.html",
+      "about": {
+        "@id": "https://thehallucinatedlab.space/dictionary/terms/race-condition.html#term"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://thehallucinatedlab.space/#website",
+        "name": "The Hallucinated Lab"
+      }
     },
     {
       "@type": "BreadcrumbList",
@@ -127,89 +142,48 @@
           <span class="badge">Concurrency</span>
           <span class="badge">Core</span>
         </div>
+        
       </header>
 
-      <div class="search-block">
-        <div class="search-shell">
-          <form class="search-bar" id="search-form" role="search" autocomplete="off">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-              <path d="m20 20-3.5-3.5"></path>
-            </svg>
-            <label class="sr-only" for="search-input">Search both dictionaries</label>
-            <input id="search-input" type="search" name="q"
-                   placeholder="Search a term, an idea, or a definition…"
-                   aria-describedby="search-hint"
-                   aria-expanded="false" aria-controls="search-suggest"
-                   role="combobox" aria-autocomplete="list">
-            <button class="search-clear" id="search-clear" type="button"
-                    aria-label="Clear search">&times;</button>
-            <button class="search-submit" type="submit"><span>Search</span></button>
-            <ul class="search-suggest" id="search-suggest" role="listbox"
-                aria-label="Suggestions"></ul>
-          </form>
-
-          <div class="search-scopes" role="group" aria-label="Search scope">
-            <button class="scope-btn" type="button" data-scope="all"
-                    aria-pressed="true">Search both</button>
-            <button class="scope-btn" type="button" data-scope="ai-mathematics"
-                    aria-pressed="false">AI &amp; Mathematics</button>
-            <button class="scope-btn" type="button" data-scope="software-engineering"
-                    aria-pressed="false">Software Engineering</button>
-          </div>
-
-          <p class="search-hint" id="search-hint">
-            <code>"exact phrase"</code> · <code>*ology</code> wildcard ·
-            <code>tensor NOT physics</code> · misspellings are corrected automatically
-          </p>
-        </div>
-      </div>
-
-      <section class="results-block" id="results-block" aria-live="polite">
-        <div class="results-head">
-          <div>
-            <span class="section-label">Results</span>
-            <h2 class="section-title" id="results-title">Search</h2>
-          </div>
-          <span class="results-count" id="results-count"></span>
-        </div>
-        <div id="results-suggestion"></div>
-        <div class="corpus-grid" id="results-grid"></div>
-        <div id="results-more"></div>
-      </section>
-
-      <section class="term-section">
-        <h2>Definition</h2>
-        <div class="definition">
+<section class="term-section" id="quick-take" aria-labelledby="quick-take-heading">
+  <h2 id="quick-take-heading">Quick Take</h2>
+  <p class="quick-take" data-derived="true">Race Condition is a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.</p>
+</section>
+<section class="term-section" id="definitions" aria-labelledby="definitions-heading">
+  <h2 id="definitions-heading">Formal Definitions</h2>
+  <div class="definition">
   <p><span class="definition-number">1.</span><span class="definition-context">[in concurrent programming] </span><span class="definition-text">a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.</span></p>
   <p class="definition-example">The counter lost updates under load — a classic race condition on the read-modify-write.</p>
 </div>
-      </section>
-
-      
-      <section class="term-section">
-  <h2>Etymology</h2>
-  <p class="etymology-text">From the image of two signals racing to arrive first, borrowed from electrical engineering, where competing paths through a logic circuit could settle in either order. In use for digital logic from the 1950s.</p>
 </section>
-      <section class="term-section"><h2>Synonyms</h2><ul class="relation-list"><li><span class="relation-chip">data race<span class="relation-tag">sense 1 · Near</span></span></li></ul></section>
-<section class="term-section"><h2>Antonyms</h2><ul class="relation-list"><li><span class="relation-chip">thread safety<span class="relation-tag">sense 1 · Relational</span></span></li></ul></section>
-<section class="term-section"><h2>See also</h2><ul class="relation-list"><li><a href="mutex.html">Mutex</a></li><li><a href="deadlock.html">Deadlock</a></li></ul></section>
-      <section class="term-section">
-  <h2>References</h2>
+<section class="term-section" id="formal-statement" aria-labelledby="formal-statement-heading">
+  <h2 id="formal-statement-heading">Final Formal Statement</h2>
+  <p class="formal-statement" data-derived="true">Race Condition (noun, Concurrency): a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.</p>
+</section>
+<section class="term-section" id="etymology" aria-labelledby="etymology-heading">
+  <h2 id="etymology-heading">Etymology</h2>
+  <p class="etymology-text">From the image of two signals racing to arrive first, borrowed from electrical engineering, where competing paths through a logic circuit could settle in either order. In use for digital logic from the 1950s.</p><p class="etymology-attested">First attested 1950s.</p>
+</section>
+<section class="term-section" id="variants" aria-labelledby="variants-heading">
+  <h2 id="variants-heading">Variants &amp; Related Concepts</h2>
+  <div class="relation-block"><h3>Synonyms</h3><ul class="relation-list"><li><span class="relation-chip">data race<span class="relation-tag">sense 1 · Near</span></span></li></ul></div>
+<div class="relation-block"><h3>Antonyms</h3><ul class="relation-list"><li><span class="relation-chip">thread safety<span class="relation-tag">sense 1 · Relational</span></span></li></ul></div>
+<div class="relation-block"><h3>See also</h3><ul class="relation-list"><li><a href="mutex.html">Mutex</a></li><li><a href="deadlock.html">Deadlock</a></li></ul></div>
+</section>
+<section class="term-section" id="references" aria-labelledby="references-heading">
+  <h2 id="references-heading">References</h2>
   <ul class="citation-list"><li><a href="https://doi.org/10.1145/359545.359563" rel="noopener">Lamport, L. (1978). Time, Clocks, and the Ordering of Events in a Distributed System.</a><span class="citation-source">Communications of the ACM, 21(7), 558–565.</span></li></ul>
 </section>
 
       <nav class="term-nav" aria-label="Adjacent entries"><a href="pure-function.html"><span class="term-nav-label">Previous</span>Pure Function</a><a href="refactoring.html" style="text-align:right"><span class="term-nav-label">Next</span>Refactoring</a></nav>
     </div>
-    <aside class="term-aside"><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>SWE-00003</dd><dt>Section</dt><dd>Software Engineering Core</dd><dt>Domain</dt><dd>Concurrency</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>bigram</dd><dt>First attested</dt><dd>1950s</dd><dt>Inflections</dt><dd>race conditions</dd><dt>Opacity</dt><dd>1 of 3</dd></dl></aside>
+    <aside class="term-aside"><nav class="topic-contents" aria-labelledby="contents-heading"><h2 id="contents-heading">On this page</h2><ol><li><a href="#quick-take">Quick Take</a></li><li><a href="#definitions">Formal Definitions</a></li><li><a href="#formal-statement">Final Formal Statement</a></li><li><a href="#etymology">Etymology</a></li><li><a href="#variants">Variants &amp; Related Concepts</a></li><li><a href="#references">References</a></li></ol></nav><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>SWE-00003</dd><dt>Section</dt><dd>Software Engineering Core</dd><dt>Domain</dt><dd>Concurrency</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>bigram</dd><dt>First attested</dt><dd>1950s</dd><dt>Inflections</dt><dd>race conditions</dd><dt>Opacity</dt><dd>1 of 3</dd></dl></aside>
   </article>
 </main>
 <footer class="footer">
   <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine. <a href="../../sitemap.html">Sitemap</a>.</p>
 </footer>
 <script src="../assets/js/nav.js" type="module"></script>
-<script src="../assets/js/app.js" type="module"></script>
 <script src="../../script.js" defer></script>
 </body>
 </html>

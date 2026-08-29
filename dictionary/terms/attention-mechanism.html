@@ -5,10 +5,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Attention Mechanism — The Hallucinated Lab Dictionary</title>
-<meta name="description" content="Attention Mechanism (noun, Deep Learning) — a layer that produces each output as a weighted blend of all available inputs, where the weights are...">
+<meta name="description" content="Attention lets a model weigh every input position by learned relevance instead of compressing a sequence into one fixed vector. How it works, and why.">
 <link rel="canonical" href="https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html">
 <meta property="og:title" content="Attention Mechanism — The Hallucinated Lab Dictionary">
-<meta property="og:description" content="Attention Mechanism (noun, Deep Learning) — a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.">
+<meta property="og:description" content="Attention lets a model weigh every input position by learned relevance instead of compressing a sequence into one fixed vector. How it works, and why.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html">
 <meta property="og:site_name" content="The Hallucinated Lab">
@@ -19,7 +19,7 @@
 <meta property="og:image:alt" content="The Hallucinated Lab">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Attention Mechanism — The Hallucinated Lab Dictionary">
-<meta name="twitter:description" content="Attention Mechanism (noun, Deep Learning) — a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.">
+<meta name="twitter:description" content="Attention lets a model weigh every input position by learned relevance instead of compressing a sequence into one fixed vector. How it works, and why.">
 <meta name="twitter:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">
 <link rel="icon" href="../../assets/images/logo.jpeg">
 <link rel="stylesheet" href="../../fonts.css">
@@ -34,7 +34,7 @@
       "@type": "DefinedTerm",
       "@id": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html#term",
       "name": "Attention Mechanism",
-      "description": "a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.",
+      "description": "Attention lets a model decide, for each position it is working on, how much to draw from every other position in the input. Instead of squeezing a whole sequence into one fixed summary, it keeps everything available and learns what is worth looking at, one output at a time.",
       "termCode": "AIM-00005",
       "inDefinedTermSet": {
         "@type": "DefinedTermSet",
@@ -43,6 +43,28 @@
         "url": "https://thehallucinatedlab.space/dictionary/#ai-mathematics"
       },
       "url": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html"
+    },
+    {
+      "@type": "Article",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html#article",
+      "headline": "Attention Mechanism",
+      "description": "Attention lets a model weigh every input position by learned relevance instead of compressing a sequence into one fixed vector. How it works, and why.",
+      "mainEntityOfPage": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html",
+      "about": {
+        "@id": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html#term"
+      },
+      "isPartOf": {
+        "@type": "WebSite",
+        "@id": "https://thehallucinatedlab.space/#website",
+        "name": "The Hallucinated Lab"
+      },
+      "author": {
+        "@type": "Person",
+        "name": "The Hallucinated Lab"
+      },
+      "datePublished": "2026-08-24",
+      "dateModified": "2026-08-24",
+      "articleSection": "Architecture"
     },
     {
       "@type": "BreadcrumbList",
@@ -70,6 +92,52 @@
           "position": 4,
           "name": "Attention Mechanism",
           "item": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html"
+        }
+      ]
+    },
+    {
+      "@type": "FAQPage",
+      "@id": "https://thehallucinatedlab.space/dictionary/terms/attention-mechanism.html#faq",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What problem does attention actually solve?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The fixed-length bottleneck in encoder-decoder models. Without it, everything about the input must fit in one vector regardless of input length, and quality degrades as sequences grow. Attention keeps every input representation available and learns which to draw on."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why divide by the square root of the key dimension?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Dot products over d_k dimensions have variance proportional to d_k, so scores grow with dimension. Large scores saturate softmax, where gradients are close to zero and learning stalls. Scaling holds the scores where softmax still trains."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What is the difference between attention and self-attention?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Self-attention is attention where queries, keys and values all come from the same sequence, so positions attend to each other. Plain attention makes no such requirement — in cross-attention the queries come from one sequence and the keys and values from another."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is attention the same as the transformer?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. Attention is the operation; the transformer is an architecture built almost entirely out of it. Attention was introduced in 2014 inside a recurrent model, and the transformer's contribution in 2017 was removing the recurrence."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Why is long context expensive if attention removed the bottleneck?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Every query is scored against every key, so cost grows with the square of sequence length in both time and memory. The constraint shifted from how much can be summarised into one vector to how much compute a longer sequence is worth."
+          }
         }
       ]
     }
@@ -127,92 +195,84 @@
           <span class="badge">Deep Learning</span>
           <span class="badge">Core</span>
         </div>
+        <div class="topic-meta"><span class="meta-chip meta-category">Architecture</span><span class="meta-chip meta-difficulty" data-level="intermediate">Intermediate</span><span class="meta-chip meta-reading">12 min read</span></div>
       </header>
 
-      <div class="search-block">
-        <div class="search-shell">
-          <form class="search-bar" id="search-form" role="search" autocomplete="off">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2" aria-hidden="true">
-              <circle cx="11" cy="11" r="7"></circle>
-              <path d="m20 20-3.5-3.5"></path>
-            </svg>
-            <label class="sr-only" for="search-input">Search both dictionaries</label>
-            <input id="search-input" type="search" name="q"
-                   placeholder="Search a term, an idea, or a definition…"
-                   aria-describedby="search-hint"
-                   aria-expanded="false" aria-controls="search-suggest"
-                   role="combobox" aria-autocomplete="list">
-            <button class="search-clear" id="search-clear" type="button"
-                    aria-label="Clear search">&times;</button>
-            <button class="search-submit" type="submit"><span>Search</span></button>
-            <ul class="search-suggest" id="search-suggest" role="listbox"
-                aria-label="Suggestions"></ul>
-          </form>
-
-          <div class="search-scopes" role="group" aria-label="Search scope">
-            <button class="scope-btn" type="button" data-scope="all"
-                    aria-pressed="true">Search both</button>
-            <button class="scope-btn" type="button" data-scope="ai-mathematics"
-                    aria-pressed="false">AI &amp; Mathematics</button>
-            <button class="scope-btn" type="button" data-scope="software-engineering"
-                    aria-pressed="false">Software Engineering</button>
-          </div>
-
-          <p class="search-hint" id="search-hint">
-            <code>"exact phrase"</code> · <code>*ology</code> wildcard ·
-            <code>tensor NOT physics</code> · misspellings are corrected automatically
-          </p>
-        </div>
-      </div>
-
-      <section class="results-block" id="results-block" aria-live="polite">
-        <div class="results-head">
-          <div>
-            <span class="section-label">Results</span>
-            <h2 class="section-title" id="results-title">Search</h2>
-          </div>
-          <span class="results-count" id="results-count"></span>
-        </div>
-        <div id="results-suggestion"></div>
-        <div class="corpus-grid" id="results-grid"></div>
-        <div id="results-more"></div>
-      </section>
-
-      <section class="term-section">
-        <h2>Definition</h2>
-        <div class="definition">
-  <p><span class="definition-number">1.</span><span class="definition-context">[in deep learning] </span><span class="definition-text">a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.</span></p>
-  <p class="definition-example">The attention mechanism let the decoder consult any source token instead of a single fixed summary vector.</p>
-</div>
-      </section>
-
-      <section class="term-section">
-  <h2>Formal statement</h2>
-  <div class="formula-block"><code>Attention(Q,K,V) = softmax(Q K^T / sqrt(d_k)) V</code></div>
-  <p class="formula-note">Division by sqrt(d_k) keeps the dot products in a range where softmax gradients do not vanish.</p>
+<section class="term-section" id="quick-take" aria-labelledby="quick-take-heading">
+  <h2 id="quick-take-heading">Quick Take</h2>
+  <p class="quick-take">Attention lets a model decide, for each position it is working on, how much to draw from every other position in the input. Instead of squeezing a whole sequence into one fixed summary, it keeps everything available and learns what is worth looking at, one output at a time.</p>
 </section>
-      <section class="term-section">
-  <h2>Etymology</h2>
-  <p class="etymology-text">Borrowed from cognitive psychology, where attention names the selective allocation of processing. Introduced to neural machine translation by Bahdanau et al. in 2014.</p>
+<section class="term-section" id="definitions" aria-labelledby="definitions-heading">
+  <h2 id="definitions-heading">Formal Definitions</h2>
+  <blockquote class="formal-definition"><p>Allowing a model to automatically (soft-)search for parts of a source sentence that are relevant to predicting a target word.</p><cite class="definition-attribution">Bahdanau, Cho &amp; Bengio, 2015</cite> <a class="ref-marker" href="#references">[1]</a></blockquote><blockquote class="formal-definition"><p>An attention function can be described as mapping a query and a set of key-value pairs to an output, where the query, keys, values and output are all vectors.</p><cite class="definition-attribution">Vaswani et al., 2017</cite> <a class="ref-marker" href="#references">[2]</a></blockquote>
 </section>
-      <section class="term-section"><h2>Synonyms</h2><ul class="relation-list"><li><span class="relation-chip">soft alignment<span class="relation-tag">sense 1 · Near</span></span></li></ul></section>
-<section class="term-section"><h2>See also</h2><ul class="relation-list"><li><a href="transformer.html">Transformer</a></li><li><a href="softmax.html">Softmax</a></li><li><a href="embedding.html">Embedding</a></li></ul></section>
-      <section class="term-section">
-  <h2>References</h2>
+<section class="term-section" id="formal-statement" aria-labelledby="formal-statement-heading">
+  <h2 id="formal-statement-heading">Final Formal Statement</h2>
+  <p class="formal-statement">Attention is a differentiable content-based lookup: it scores a query against a set of keys, normalises those scores into weights that sum to one, and returns the correspondingly weighted sum of the values. Because every step of that is differentiable, the notion of relevance is learned rather than specified.</p>
+</section>
+<section class="term-section" id="etymology" aria-labelledby="etymology-heading">
+  <h2 id="etymology-heading">Etymology</h2>
+  <p class="etymology-text">Borrowed from cognitive psychology, where attention names the selective allocation of processing. Introduced to neural machine translation by Bahdanau et al. in 2014.</p><p class="etymology-attested">First attested 2014.</p>
+</section>
+<section class="term-section" id="background" aria-labelledby="background-heading">
+  <h2 id="background-heading">Background &amp; Motivation</h2>
+  <p>Before attention, a sequence-to-sequence model had to pass everything it knew about the input through a single fixed-length vector. The encoder read the source sentence, compressed it to that vector, and the decoder worked from the compression alone. For a short sentence this is merely lossy; for a long one it is fatal, and translation quality was observed to fall off sharply as source length grew.</p><p>The bottleneck is structural rather than a matter of capacity. However wide the vector, it is a constant-size budget describing a variable-size input, so the cost of remembering the fiftieth token is paid by forgetting something else. Bahdanau et al. proposed removing the constraint instead of enlarging it: keep every encoder state, and let the decoder choose among them at each output step.</p><p>That choice had to be soft. A hard selection — pick token seventeen — is a discrete decision with no gradient, so it cannot be trained by backpropagation. Making the selection a set of continuous weights is what turned the idea into something learnable, and is the reason attention spread far beyond translation.</p>
+</section>
+<section class="term-section" id="prerequisites" aria-labelledby="prerequisites-heading">
+  <h2 id="prerequisites-heading">Prerequisites</h2>
+  <ul class="prerequisite-list"><li><a href="softmax.html">Softmax</a></li><li><a href="embedding.html">Embedding</a></li><li><a href="backpropagation.html">Backpropagation</a></li></ul>
+</section>
+<section class="term-section" id="deep-dive" aria-labelledby="deep-dive-heading">
+  <h2 id="deep-dive-heading">In-Depth Explanation</h2>
+  <p>Start with the intuition. You are translating a sentence and about to emit one word. Some source words matter a great deal to that decision and most matter very little. Attention formalises exactly that: it produces a relevance score for every source position, turns the scores into weights, and blends the source representations accordingly.</p><p>The three roles are query, key and value. The query represents what the current position is looking for. Each input position offers a key, advertising what it can answer, and a value, carrying the content to return if selected. Scoring a query against every key gives a compatibility score per position; softmax turns those into a distribution; the output is the weighted sum of the values. This is a dictionary lookup where, instead of one key matching, every key matches to a degree.</p><p>The scaling factor is not cosmetic. If query and key components are roughly independent with unit variance, a dot product over d_k dimensions has variance d_k, so raw scores grow with dimension. Push large values through softmax and the distribution saturates towards one-hot, where its gradient is nearly zero and learning stalls. Dividing by the square root of d_k holds the scores in the range where softmax still has useful gradients.</p><p>Everything here is differentiable, which is the whole point. The model is never told which positions are relevant. It learns the projections that produce queries and keys, and relevance falls out of them as a by-product of minimising the loss.</p><div class="formula-block"><code>Attention(Q,K,V) = softmax(Q K^T / sqrt(d_k)) V</code></div><p class="formula-note">Division by sqrt(d_k) keeps the dot products in a range where softmax gradients do not vanish.</p><ol class="derivation-steps"><li>Project the inputs into queries, keys and values: Q = XW_Q, K = XW_K, V = XW_V.</li><li>Score every query against every key with a dot product: S = QK^T.</li><li>Scale by sqrt(d_k) so the scores stay inside softmax&#x27;s useful gradient range.</li><li>Normalise each row with softmax so the weights over positions sum to 1.</li><li>Return the weighted sum of the values: the attention output is (softmax(S/sqrt(d_k)))V.</li></ol><div class="video-list"><h3>Watch</h3><ul><li><a href="https://www.youtube.com/watch?v=eMlx5fFNoYc" rel="noopener">Attention in transformers, step by step</a><span class="video-creator">3Blue1Brown</span><span class="video-why">Builds the query/key/value picture geometrically before any algebra appears.</span></li><li><a href="https://www.youtube.com/watch?v=kCc8FmEb1nY" rel="noopener">Let&#x27;s build GPT: from scratch, in code, spelled out</a><span class="video-creator">Andrej Karpathy</span><span class="video-why">Implements attention line by line, so the formula becomes running code.</span></li></ul></div>
+</section>
+<section class="term-section" id="worked-example" aria-labelledby="worked-example-heading">
+  <h2 id="worked-example-heading">Worked Example</h2>
+  <p>Three positions, two dimensions, numbers chosen so the arithmetic can be followed by hand. Take the query for position 1 as q = [1, 0], the keys k1 = [1, 0], k2 = [0, 1], k3 = [1, 1], and the values v1 = [2, 0], v2 = [0, 2], v3 = [1, 1].</p><ol class="worked-steps"><li>Scores: q·k1 = 1, q·k2 = 0, q·k3 = 1.</li><li>Scale by sqrt(d_k) = sqrt(2) ≈ 1.414: [0.707, 0, 0.707].</li><li>Exponentiate: [2.028, 1.000, 2.028]; the sum is 5.056.</li><li>Weights: [0.401, 0.198, 0.401] — note they sum to 1.</li><li>Output: 0.401·[2,0] + 0.198·[0,2] + 0.401·[1,1] = [1.203, 0.797].</li><li>Read it back: positions 1 and 3 both align with the query and dominate the blend, position 2 is orthogonal to it and contributes least. Nothing is discarded — position 2 is down-weighted, not dropped.</li></ol>
+</section>
+<section class="term-section" id="variants" aria-labelledby="variants-heading">
+  <h2 id="variants-heading">Variants &amp; Related Concepts</h2>
+  <div class="table-scroll"><table class="variants-table"><thead><tr><th scope="col">Variant</th><th scope="col">Key difference</th></tr></thead><tbody><tr><td>Self-attention</td><td>Q, K and V are all projections of the same sequence.</td></tr><tr><td>Cross-attention</td><td>Q comes from one sequence, K and V from another.</td></tr><tr><td>Multi-head attention</td><td>Several attention functions run in parallel subspaces and are concatenated.</td></tr><tr><td>Masked attention</td><td>Future positions are scored at negative infinity, so a position sees only its past.</td></tr><tr><td>Grouped-query attention</td><td>Several query heads share one key/value head, cutting cache size at inference.</td></tr></tbody></table></div><div class="relation-block"><h3>Synonyms</h3><ul class="relation-list"><li><span class="relation-chip">soft alignment<span class="relation-tag">sense 1 · Near</span></span></li></ul></div>
+<div class="relation-block"><h3>See also</h3><ul class="relation-list"><li><a href="transformer.html">Transformer</a></li><li><a href="softmax.html">Softmax</a></li><li><a href="embedding.html">Embedding</a></li></ul></div>
+</section>
+<section class="term-section" id="misconceptions" aria-labelledby="misconceptions-heading">
+  <h2 id="misconceptions-heading">Common Misconceptions</h2>
+  <div class="misconception"><p class="misconception-claim">Attention weights explain what the model is thinking.</p><p class="misconception-correction">They show where the blend drew from, which is not the same as why a prediction was made. Different weight patterns can produce the same output, so attention maps are evidence about the computation, not an explanation of it.</p></div><div class="misconception"><p class="misconception-claim">Attention selects one input position and ignores the rest.</p><p class="misconception-correction">Softmax returns a distribution over every position. Weights become small but never zero, and that softness is precisely what makes the operation differentiable and therefore trainable.</p></div><div class="misconception"><p class="misconception-claim">Attention is a transformer thing.</p><p class="misconception-correction">It predates transformers by three years. Bahdanau et al. added it to a recurrent translation model in 2014; the transformer&#x27;s contribution was removing the recurrence and keeping the attention.</p></div><div class="misconception"><p class="misconception-claim">Attention gives a model unlimited memory of its input.</p><p class="misconception-correction">It removes the fixed-vector bottleneck, but scoring every query against every key costs time and memory quadratic in sequence length. The limit moved from what can be remembered to what can be afforded.</p></div>
+</section>
+<section class="term-section" id="applications" aria-labelledby="applications-heading">
+  <h2 id="applications-heading">Real-World Applications</h2>
+  <ul class="application-list"><li><span class="application-name">Machine translation</span><span class="application-detail">The original application: soft alignment between source and target tokens, which also made attention weights readable as an approximate alignment matrix.</span></li><li><span class="application-name">Large language models</span><span class="application-detail">Masked self-attention is the mechanism through which a decoder-only model conditions each token on the entire preceding context.</span></li><li><span class="application-name">Vision transformers</span><span class="application-detail">Images are split into patches and treated as a sequence, so attention replaces convolution as the mechanism that mixes spatial information.</span></li><li><span class="application-name">Protein structure prediction</span><span class="application-detail">AlphaFold&#x27;s Evoformer attends over residue pairs and multiple sequence alignments to propagate structural constraints.</span></li></ul>
+</section>
+<section class="term-section" id="further-reading" aria-labelledby="further-reading-heading">
+  <h2 id="further-reading-heading">Further Reading</h2>
+  <div class="reading-buttons"><a class="link-button" href="https://jalammar.github.io/illustrated-transformer/" rel="noopener"><span>The Illustrated Transformer</span><span class="link-note">Jay Alammar — the diagrams most people picture when they think about Q, K and V.</span></a><a class="link-button" href="https://nlp.seas.harvard.edu/annotated-transformer/" rel="noopener"><span>The Annotated Transformer</span><span class="link-note">Harvard NLP — the 2017 paper rebuilt as runnable, annotated PyTorch.</span></a></div>
+</section>
+<section class="term-section" id="faq" aria-labelledby="faq-heading">
+  <h2 id="faq-heading">FAQ</h2>
+  <div class="faq-item"><h3>What problem does attention actually solve?</h3><p>The fixed-length bottleneck in encoder-decoder models. Without it, everything about the input must fit in one vector regardless of input length, and quality degrades as sequences grow. Attention keeps every input representation available and learns which to draw on.</p></div><div class="faq-item"><h3>Why divide by the square root of the key dimension?</h3><p>Dot products over d_k dimensions have variance proportional to d_k, so scores grow with dimension. Large scores saturate softmax, where gradients are close to zero and learning stalls. Scaling holds the scores where softmax still trains.</p></div><div class="faq-item"><h3>What is the difference between attention and self-attention?</h3><p>Self-attention is attention where queries, keys and values all come from the same sequence, so positions attend to each other. Plain attention makes no such requirement — in cross-attention the queries come from one sequence and the keys and values from another.</p></div><div class="faq-item"><h3>Is attention the same as the transformer?</h3><p>No. Attention is the operation; the transformer is an architecture built almost entirely out of it. Attention was introduced in 2014 inside a recurrent model, and the transformer&#x27;s contribution in 2017 was removing the recurrence.</p></div><div class="faq-item"><h3>Why is long context expensive if attention removed the bottleneck?</h3><p>Every query is scored against every key, so cost grows with the square of sequence length in both time and memory. The constraint shifted from how much can be summarised into one vector to how much compute a longer sequence is worth.</p></div>
+</section>
+<section class="term-section" id="references" aria-labelledby="references-heading">
+  <h2 id="references-heading">References</h2>
   <ul class="citation-list"><li><a href="https://arxiv.org/abs/1409.0473" rel="noopener">Bahdanau, D., Cho, K. &amp; Bengio, Y. (2015). Neural Machine Translation by Jointly Learning to Align and Translate.</a><span class="citation-source">ICLR 2015.</span></li><li><a href="https://arxiv.org/abs/1706.03762" rel="noopener">Vaswani, A. et al. (2017). Attention Is All You Need.</a><span class="citation-source">NeurIPS 2017.</span></li></ul>
+</section>
+<section class="term-section" id="revision-history" aria-labelledby="revision-history-heading">
+  <h2 id="revision-history-heading">Revision History</h2>
+  <div class="table-scroll"><table class="revision-table"><thead><tr><th scope="col">Version</th><th scope="col">Date</th><th scope="col">Change</th><th scope="col">Editor</th></tr></thead><tbody><tr><td>1.0</td><td>2026-08-24</td><td>Initial publish under Topic Page Specification v1.0.</td><td>The Hallucinated Lab</td></tr></tbody></table></div>
+</section>
+<section class="term-section" id="about-author" aria-labelledby="about-author-heading">
+  <h2 id="about-author-heading">Author &amp; Review</h2>
+  <p class="author-line">Written by <span class="author-name">The Hallucinated Lab</span>.</p><p class="updated-line">Last updated <time datetime="2026-08-24">2026-08-24</time>.</p><p class="author-bio-link"><a href="https://thehallucinatedlab.space/consultancy.html">About The Hallucinated Lab</a></p>
 </section>
 
       <nav class="term-nav" aria-label="Adjacent entries"><a href="activation-function.html"><span class="term-nav-label">Previous</span>Activation Function</a><a href="backpropagation.html" style="text-align:right"><span class="term-nav-label">Next</span>Backpropagation</a></nav>
     </div>
-    <aside class="term-aside"><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00005</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Deep Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>bigram</dd><dt>First attested</dt><dd>2014</dd><dt>Variants</dt><dd>attention</dd><dt>Inflections</dt><dd>attention mechanisms</dd><dt>Opacity</dt><dd>2 of 3</dd></dl></aside>
+    <aside class="term-aside"><nav class="topic-contents" aria-labelledby="contents-heading"><h2 id="contents-heading">On this page</h2><ol><li><a href="#quick-take">Quick Take</a></li><li><a href="#definitions">Formal Definitions</a></li><li><a href="#formal-statement">Final Formal Statement</a></li><li><a href="#etymology">Etymology</a></li><li><a href="#background">Background &amp; Motivation</a></li><li><a href="#prerequisites">Prerequisites</a></li><li><a href="#deep-dive">In-Depth Explanation</a></li><li><a href="#worked-example">Worked Example</a></li><li><a href="#variants">Variants &amp; Related Concepts</a></li><li><a href="#misconceptions">Common Misconceptions</a></li><li><a href="#applications">Real-World Applications</a></li><li><a href="#further-reading">Further Reading</a></li><li><a href="#faq">FAQ</a></li><li><a href="#references">References</a></li><li><a href="#revision-history">Revision History</a></li><li><a href="#about-author">Author &amp; Review</a></li></ol></nav><h2>Entry data</h2><dl><dt>Lexical ID</dt><dd>AIM-00005</dd><dt>Section</dt><dd>AI &amp; Mathematics</dd><dt>Domain</dt><dd>Deep Learning</dd><dt>Part of speech</dt><dd>noun</dd><dt>Form</dt><dd>bigram</dd><dt>Category</dt><dd>Architecture</dd><dt>Difficulty</dt><dd>Intermediate</dd><dt>Reading time</dt><dd>12 min</dd><dt>First attested</dt><dd>2014</dd><dt>Variants</dt><dd>attention</dd><dt>Inflections</dt><dd>attention mechanisms</dd><dt>Opacity</dt><dd>2 of 3</dd></dl></aside>
   </article>
 </main>
 <footer class="footer">
   <p class="footer-text">© 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a>. Built with curiosity and caffeine. <a href="../../sitemap.html">Sitemap</a>.</p>
 </footer>
 <script src="../assets/js/nav.js" type="module"></script>
-<script src="../assets/js/app.js" type="module"></script>
 <script src="../../script.js" defer></script>
 </body>
 </html>
