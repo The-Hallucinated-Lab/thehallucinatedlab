@@ -454,3 +454,14 @@
 - **Deliberate omission:** The 38 un-migrated entries were **not** backfilled with generated prose. Background and In-Depth Explanation cannot be derived from a lexical entry without inventing claims, and a fabricated section on a reference site is worse than an absent one. They are gated instead: the upstream validator now refuses any *new* entry without a complete topic block, so the backlog can only shrink.
 - **New gap recorded:** [GAP-10] — 38 of 39 dictionary entries predate the Topic Page Specification and render partial pages. Upstream tracks the list and prints coverage on every build; this repo inherits whatever that produces.
 - **Verification:** `npm run check` — eslint clean, 402/402 tests, spec in sync. `node scripts/sync-dictionary.js --check ../ai_dictionary_thl` reports in sync. Letter-filter CSS and `browse.js` confirmed intact after the sync.
+
+---
+
+- **Timestamp:** 2026-08-29T06:20:00Z
+- **Trigger Event:** Protocol Change
+- **Author/Agent:** @06pratyush (Owner) with Claude Code
+- **Target Subsystem:** `CLAUDE.md`
+- **Intent:** Carry Master Orchestrator Protocol v3 verbatim, with no local additions.
+- **Bugs/Gaps Addressed:** The v3 adoption in #52 appended a 76-line §19/§20 addendum restoring this repository's non-negotiables and the `CONTEXT.md` mandate, on the reasoning that stack-agnostic v3 dropped them. That reasoning was wrong about where those rules live. Every one of them is already stated authoritatively in §3 of this file — RULE-01 through RULE-09 cover the browser/backend/discoverability/SEO/JSON-LD/budget/secret constraints, RULE-10 states that `CLAUDE.md` is the mandatory development protocol, and RULE-11 states that this file is read first and updated last and that `enforce-context-sync.yml` blocks any pull request that does not extend it. The addendum was therefore a second copy of rules that already had a single source of truth, which is precisely the duplication §3 exists to prevent.
+- **Context Modifications:** `CLAUDE.md` is now byte-identical to the supplied v3 document, 740 lines, no local sections. Nothing is lost by the removal: the constraints remain enforced by §3 of this file, by `test/site-invariants.test.js` and `test/seo-invariants.test.js`, and by the CI workflows. Verified before removing rather than assumed — all eleven rules were confirmed present in §3 on `main` first.
+- **Deliberate omission:** The dictionary repository's `CLAUDE.md` was not touched, because it is already byte-identical to the same v3 document and carries no addendum. No commit was manufactured there to match this one.
