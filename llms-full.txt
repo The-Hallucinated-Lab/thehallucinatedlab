@@ -294,6 +294,20 @@ What it does:
 
 Source: https://github.com/06pratyush/ScoobyBench-ai_benchmarking_system
 
+NexusLink Engine — headless peer-to-peer networking SDK for local-first applications. Foundation build; unlike the two applications on this page it is a library surface, not a tagged release.
+
+The problem it addresses: an application that wants its users' devices to talk directly must first build peer discovery, key agreement, session encryption, ordered delivery and verified file transfer. The usual shortcut is a hosted relay, which reintroduces the server, the hosting bill and the single point of failure that a local-first application exists to avoid.
+
+What it does:
+- Discovers peers and connects them directly over LAN or WAN, with no server anywhere in the loop.
+- Establishes sessions with X25519 key agreement and per-direction ChaCha20-Poly1305 with perfect forward secrecy. The calling application never handles key material itself.
+- Delivers ordered, replay-protected messaging.
+- Transfers files in chunks, each verified by SHA-256.
+- Provides encrypted storage behind the same API.
+- Embeds as a Rust crate, a stable C ABI header, or a pip-installable Python SDK, with interop paths for Node, Flutter and Go.
+
+Source: https://github.com/06pratyush/NexusLinkEngine
+
 AI Video Studio — local text-to-video desktop application for Windows, Linux and macOS, version 1.0.0 stable.
 
 The problem it addresses: hosted text-to-video services run generation on infrastructure the user does not control, which means the script, the rendered footage and the usage history all leave the machine, and access depends on a subscription and an API key. This application performs the same work entirely on local hardware.

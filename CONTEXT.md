@@ -14,7 +14,7 @@
 | :--- | :--- | :--- | :--- |
 | **Pages** | Hand-written HTML5 | — | One `<h1>` per page, `<main>` landmark, no skipped heading levels, `alt` on every `<img>` |
 | **Styling** | Plain CSS (`styles.css`, `pages.css`, `fonts.css`) | — | No preprocessor, no framework, no third-party origin |
-| **Client JS** | Classic `<script>`, no modules, no bundler | ES2022 | No inline `<script>`, no inline event handlers — the CSP blocks both |
+| **Client JS** | Classic `<script>`, no bundler. **Exception:** `dictionary/assets/js/**` is native ES modules, loaded with `type="module"` on the 40 pages under `dictionary/` | ES2022 | No inline `<script>`, no inline event handlers — the CSP blocks both. Still no bundler and no transpiler anywhere: the modules are what the browser gets |
 | **Security** | Per-page `Content-Security-Policy` meta | — | `script-src 'self'` only; `unsafe-inline`/`unsafe-eval` are never permitted |
 | **Tool contract** | `spec/manifest.json` | — | Single source of truth for tool params; mirrored into `python/` via `npm run spec:sync` |
 | **Python package** | `thehallucinatedlab` (pip) | see `python/` | Bounded dependency ranges only (`>=x,<y`); lint with `ruff` |
@@ -42,8 +42,15 @@
 - [GAP-03]: `llms.txt` and `llms-full.txt` are maintained by hand. Tests confirm every link resolves and every indexable page is covered, but nothing verifies that the *prose* still describes what the page currently does — this has drifted twice before.
 - [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer, so a site-wide head change is a mechanical edit across every HTML file.
 - [GAP-05]: Solutions are documented on the site but their source repositories live outside it, so a version number here can silently fall behind the upstream release.
-- [GAP-06]: The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command. The `thehallucinatedlab` package implements no `solutions` subcommand, so both lines are aspirational and read as fact. Either implement the subcommand or replace the two lines.
-- [GAP-07]: NexusLink Engine has a one-line entry in `llms.txt` but no `## Page:`-level coverage in `llms-full.txt`, where ScoobyBench and AI Video Studio both have full sections. An answer engine reading the long-form file sees two of the three shipped products. The tests do not catch this — they check that every *page* is covered, not every product on a page.
+- [GAP-06]: ~~The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command that the package does not implement.~~ **CLOSED 2026-08-15** — both replaced with the real `git clone` for the repository each card already links to, matching the AI Video Studio card. Nothing on the site now advertises a `solutions` subcommand.
+- [GAP-10]: **Narrowed 2026-08-16, not closed.** `dictionary/data/search-index.json` is generated in `06pratyush/ai_dictionary_thl` and committed here by hand. A byte-for-byte sync like `scripts/sync-spec.js` is impossible — the source is a different repository and CI cannot reach it — so the copy can still be stale relative to upstream and nothing here can tell. What *is* enforced now is the symptom that matters: `test/site-invariants.test.js` fails if the index and the pages under `dictionary/terms/` do not describe the same set of terms, so a term added on either side without the other turns the build red. Silent drift is gone; genuine cross-repo sync is still manual, and the remaining hole is an index whose *entry contents* (gloss, tags, synonyms) drift while the slugs stay put.
+- [GAP-09]: The `llms.txt` / `llms-full.txt` coverage tests assert that every indexable *page* appears. Nothing asserts that every product, tool or section *within* a page is described. [GAP-07] was exactly this failure — a shipped product missing from the long-form file for as long as it took a human to notice — and the same hole would hide the next one.
+- **Identifier note (2026-08-16) — two aliases, and this list is authoritative.** PRs #49 and #50 each minted a gap number in their timeline prose without adding it to this section, so two identifiers now mean different things depending on where you read them. In *those merged entries*: **[GAP-08]** means the dictionary's dead search — **now fixed** by the `fix(dictionary)` entry in section 5, which commits the missing `dictionary/data/search-index.json` — and **[GAP-09]** means the `tokens.css` token duplication, recorded properly below as **[GAP-11]**. In *this section*, [GAP-08] and [GAP-09] are the two entries listed here and nothing else. The merged entries are append-only and were not edited. The underlying cause is worth naming: two agents on two branches both take "the next number" from a list neither is updating, so they collide every time. A gap only exists once it is written here.
+- [GAP-12]: ~~`CLAUDE.md` §19.1 referenced `scripts/sync-dictionary.js`, which did not exist.~~ **CLOSED 2026-08-29** — PR #53 built it and wired `npm run dictionary:sync`. The rule now has a mechanism behind it.
+- [GAP-13]: `scripts/sync-dictionary.js` copies `index.html`, `terms/*.html` and one delimited CSS block. It does **not** copy `data/`, and `.gitignore`'s bare `data/` rule still swallows `dictionary/data/` on `main`. So a clean checkout plus a full `npm run dictionary:sync` still produces a dictionary whose search 404s — the index only reaches the site because this branch commits it and negates the ignore rule. Either the sync should carry `data/`, or the index's provenance should be stated somewhere the next person will look.
+- [GAP-11]: `dictionary/assets/css/tokens.css` redeclares 23 design tokens that `styles.css` already owns (`--bg-card`, `--gold-primary`, `--text-muted` among them) with no light-theme block of its own. Currently harmless — `styles.css` scopes its light values as `:root[data-theme="light"]`, which outranks a bare `:root` — and it stops being harmless the moment anyone raises the dictionary's specificity or adds a theme block there. Carried over from PR #50, which recorded it in prose as its "[GAP-09]" but never added it here; removing 23 tokens is a visual-regression risk across 40 pages and deserves its own pull request.
+- [GAP-08]: `dictionary/assets/js/search-engine.js` carries two functions far over the complexity ceiling — `metaphone` at 55 and `search` at 62, against a maximum of 20. ESLint reports them as warnings, so `npm run check` stays green and CI does not block. They arrived with the dictionary integration and have no unit tests of their own, so any split is a regression risk on the search surface.
+- [GAP-07]: ~~NexusLink Engine has a one-line entry in `llms.txt` but no coverage in `llms-full.txt`.~~ **CLOSED 2026-08-15** — full section added between ScoobyBench and AI Video Studio, in page order. The underlying weakness remains and is now tracked as [GAP-09]: the tests still verify only that every *page* is covered, not every product on a page.
 
 ## 5. IMMUTABLE EXECUTION TIMELINE & BUG LOG
 
@@ -377,6 +384,84 @@
 
 ---
 
+- **Timestamp:** 2026-08-15T11:40:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `dictionary/index.html`, `dictionary/terms/*.html` (40 files)
+- **Intent:** Live-site audit of the deployed commit `f81730d`. The dictionary integration shipped a CSP that is weaker than the rest of the site: every one of its 40 pages granted `https://fonts.googleapis.com` in `style-src` and `https://fonts.gstatic.com` in `font-src`. Normalised all 40 to the site baseline so the whole site is once again same-origin only.
+- **Bugs/Gaps Addressed:** Closes a live [RULE-01] violation — a third-party origin was permitted on 40 indexable production pages.
+- **Context Modifications:** The grant was verifiably **unused**. `dictionary/index.html` loads only `../fonts.css`, `assets/css/tokens.css` and `assets/css/dictionary.css`; there is no `@font-face`, `@import` or `preconnect` naming either Google origin anywhere in the tree, and `BUDGET.thirdPartyOrigins` is already `0`, so no subresource ever resolved there. Removing the two origins therefore changes nothing a visitor sees — it only removes standing permission for an origin the site does not use. The redundant `https://thehallucinatedlab.space` in `img-src` was dropped in the same pass; it is the site's own origin and `'self'` already covers it. All 40 pages carried one byte-identical CSP string, so this was a single mechanical substitution, verified by a residual grep returning nothing.
+- **Decision — normalise rather than justify.** The alternative was to keep the grant and document it. Rejected: a CSP that permits an origin no page requests is pure attack surface, and `[GAP-02]` already notes the policy is `<meta>`-delivered and therefore weaker than a header. Widening it further on the newest and most numerous pages is the wrong direction.
+- **Verification:** `npm run check` — eslint clean, 377/377 tests pass, spec in sync. Grep confirms zero residual references to either origin under `dictionary/`.
+
+---
+
+- **Timestamp:** 2026-08-15T11:48:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `test/site-invariants.test.js`
+- **Intent:** Close the hole that let the previous entry's defect ship. The existing CSP test inspects `script-src` only, so a third-party origin in `style-src` or `font-src` passed the gate on all 40 dictionary pages. New test walks every directive of every page's CSP and fails on any `http(s)://` origin.
+- **Bugs/Gaps Addressed:** Closes the enforcement gap behind the [RULE-01] violation fixed in the entry above. `[GAP-08]` opened for the two pre-existing lint warnings found while verifying.
+- **Context Modifications:** Loopback is the single exemption, matched by `LOOPBACK` (`127.0.0.1` / `localhost`, optional port or `*`) — [RULE-02] tools legitimately reach the user's own Python package there, and several root pages already declare it in `connect-src`. The assertion reuses `BUDGET.thirdPartyOrigins` (`0`) rather than a bare `0`, so the subresource budget and the policy budget cannot drift apart. Test count 377 → 378.
+- **Decision — verified the test can actually fail.** A guard that cannot fail is theater. Reintroduced `https://fonts.gstatic.com` into `dictionary/terms/mutex.html`, confirmed `not ok 6 ... font-src https://fonts.gstatic.com`, then restored the file. The negative result is the evidence this entry rests on, not the passing run.
+- **Decision — parse directives, don't regex the whole string.** Splitting on `;` and whitespace catches an origin in any directive including ones not yet written, where a pattern aimed at `style-src`/`font-src` would have to be extended every time a directive is added — exactly the failure mode being fixed.
+- **Deliberate omission — the two complexity warnings are left alone.** `dictionary/assets/js/search-engine.js` has `metaphone` at complexity 55 and `search` at 62 against a maximum of 20. They are warnings, they predate this session, and they arrived with the dictionary integration. Splitting a phonetic algorithm and a ranked-search routine is a real refactor with real regression risk on a search surface that has no unit tests of its own; doing it inside a CSP audit would be unreviewable. Recorded as `[GAP-08]` instead.
+- **Verification:** `npm run check` — eslint 0 errors (2 pre-existing warnings, unchanged), 378/378 tests pass, spec in sync.
+
+---
+
+- **Timestamp:** 2026-08-15T11:56:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `solutions.html`
+- **Intent:** Close [GAP-06]. The ScoobyBench and NexusLink cards told visitors to run `thl solutions install scoobybench` / `… nexuslink`. The `thehallucinatedlab` package implements no `solutions` subcommand, so both commands fail for anyone who copies them off the live page.
+- **Bugs/Gaps Addressed:** Closes [GAP-06]. Section 4 updated in this commit.
+- **Context Modifications:** Confirmed against the CLI rather than assumed — `grep add_parser python/` gives `tool`, `pipeline`, `convert`, `extract`, `chunk`, `tokenize`, `embed`, `index`, `rag`, `serve`, `assistant`. No `solutions`, at any nesting level. Both lines replaced with `git clone github.com/06pratyush/ScoobyBench-ai_benchmarking_system` and `git clone github.com/06pratyush/NexusLinkEngine`.
+- **Decision — follow the third card instead of inventing a fix.** AI Video Studio, the one card that was already honest, shows `git clone github.com/06pratyush/ai-video-pipeline` — its code line mirrors its own GitHub CTA. Applying that shape to the other two makes all three consistent and required no new fact: each replacement reuses the exact URL that card's "View on GitHub" button already points at. The alternative in the gap text — implement a `solutions` subcommand — is a package feature justified by a marketing line, which is backwards, and would ship a new CLI surface with no tests to satisfy a copy fix.
+- **Decision — kept the `<code>` element rather than deleting it.** Deleting was simpler and equally honest, but `.spotlight-code` is styled in `pages.css:1293` and carries the `.spotlight-actions` two-item layout; dropping it from two of three cards would leave the grid visibly uneven for a copy defect.
+- **Verification:** `npm run check` — 378/378 tests pass, spec in sync, eslint 0 errors. `grep -rn "thl solutions"` across all HTML, Markdown and text now returns nothing outside this log.
+
+---
+
+- **Timestamp:** 2026-08-15T12:04:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `llms-full.txt`
+- **Intent:** Close [GAP-07]. `solutions.html` ships three products; `llms-full.txt` described two. An answer engine reading the long-form file saw ScoobyBench and AI Video Studio and had no idea NexusLink Engine existed, even though `llms.txt` names it.
+- **Bugs/Gaps Addressed:** Closes [GAP-07]. Opens [GAP-09] for the test weakness underneath it. Section 4 updated in this commit.
+- **Context Modifications:** Section inserted between ScoobyBench and AI Video Studio so the file's order matches the order the cards render in. Follows the established shape — one-line identification, "The problem it addresses:", "What it does:" bullets, `Source:`.
+- **Decision — written only from what the page renders.** Every claim traces to the NexusLink card in `solutions.html` lines 279–315: zero-server peer discovery over LAN/WAN, X25519 with per-direction ChaCha20-Poly1305 and perfect forward secrecy, ordered replay-protected messaging, SHA-256-verified chunked file transfer, encrypted storage, and the Rust crate / C ABI / Python SDK embedding surface with Node, Flutter and Go interop. [RULE-05] governs JSON-LD, but the same honesty requirement applies here for the same reason — this file exists to be quoted by machines that cannot check it.
+- **Decision — recorded as "foundation build", not a version.** The other two entries carry "version 2.0.0 stable" and "version 1.0.0 stable". NexusLink's card shows the status badge "Foundation Build" and no version, so the entry says so and states plainly that it is a library surface rather than a tagged release. Inventing a version number to make three entries symmetrical is precisely the drift [GAP-03] warns about.
+- **Deliberate omission — the test hole is left open as [GAP-09].** The right guard asserts that every product named on a page appears in the long-form file, which means teaching the tests what a "product" is — a `.spotlight-title`, today, on one page. Writing that selector-coupled test inside a content fix would bind the discoverability suite to `solutions.html`'s current markup, and it belongs in its own change with its own argument.
+- **Verification:** `npm run check` — 378/378 tests pass, spec in sync, eslint 0 errors. NexusLink now appears in both `llms.txt` and `llms-full.txt`; all three products on the page have long-form coverage.
+
+---
+
+- **Timestamp:** 2026-08-15T12:12:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `CONTEXT.md` section 2
+- **Intent:** Section 2 stated "Classic `<script>`, no modules, no bundler" as the Client JS rule. That has been false since the dictionary integration merged: all 40 pages under `dictionary/` load `assets/js/nav.js` and `assets/js/app.js` with `type="module"`, and `eslint.config.js` carries a matching `sourceType: 'module'` block for `dictionary/assets/js/**`. Corrected the row to describe what actually ships.
+- **Bugs/Gaps Addressed:** No code defect. Fixes a false statement in the authoritative half of this manifest, which [RULE-11] says agents must trust without re-deriving.
+- **Context Modifications:** The exception is confined — `grep -rln 'type="module"' --include=*.html` outside `dictionary/` returns nothing, so no root or `blogs/` page is affected. The zero-build guarantee is untouched and the row now says so explicitly: native modules are what the browser receives, with no bundler and no transpiler in the path.
+- **Decision — corrected the manifest, did not convert the modules.** The other direction was available: rewrite `dictionary/assets/js/**` as classic scripts and restore the original rule. Rejected. The integration chose modules deliberately and CI was extended to parse them (`56f1eed`); unpicking that is a refactor of the dictionary's entire JS surface, justified by nothing but a sentence, and it would risk a working search feature that has no unit tests of its own. A rule that the codebase has already outgrown should be amended in the open, not enforced retroactively by a fix nobody asked for.
+- **Decision — written as a named exception rather than a softened rule.** "No modules except where there are" would let the next tree add modules by precedent. Naming the exact path and the exact page count means the next deviation has to be argued rather than assumed, and a reader can check the claim in one grep.
+- **Protocol note.** No `ollama` in this cloud session, so the §11 reader was unavailable and the §11.5 ceiling was held by other means — `wc -l`, `grep -n`, targeted `sed -n` ranges, and `--stat`. No file was read whole. Logged per the fallback in §2 of `CLAUDE.md`.
+- **Verification:** `npm run check` — 378/378 tests pass, spec in sync, eslint 0 errors (2 pre-existing complexity warnings, see [GAP-08]).
+
+---
+
+- **Timestamp:** 2026-08-15T12:26:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `.gitignore`, `dictionary/data/search-index.json`, `test/site-invariants.test.js`
+- **Intent:** **The dictionary's search box has been broken on the live site since the integration merged.** `dictionary/assets/js/app.js:45` fetches `data/search-index.json`. That file was never committed, so the request 404s and the page falls into its own error branch — the input is disabled and relabelled "Search unavailable — browse the sections below". Every visitor to `/dictionary/` since `f81730d` has seen a dead search box on a page whose entire purpose is lookup.
+- **Bugs/Gaps Addressed:** Fixes the live defect. Closes the enforcement hole that hid it. Opens [GAP-10]. Section 4 updated in this commit.
+- **Context Modifications:** Root cause is `.gitignore` — a bare `data/` rule, written for downloaded torchvision datasets ("the MNIST download alone is 63.5MB"), matches a directory named `data` at *any* depth. It silently swallowed `dictionary/data/` when the dictionary landed. `git log --all -- dictionary/data` confirms the directory has never existed in history. Added `!dictionary/data/` and `!dictionary/data/**` with a comment naming this incident, and committed the 30KB index from the source repo, where it has all 39 entries matching the 39 term pages one-for-one.
+- **Decision — shipped one file, not three.** The source repo's `data/` also holds `ai-mathematics.json` (43.5KB) and `software-engineering.json` (31.6KB). `grep` across the dictionary's JS and HTML shows exactly one runtime data reference — `fetch('data/search-index.json')` — so the other two are corpus inputs to the upstream build, not site payload. Copying all three would have added 75KB the browser never requests.
+- **Decision — the new guard resolves against the page, not the script.** First version resolved the fetch relative to the JS file's own directory and failed immediately, looking for `dictionary/assets/js/data/search-index.json`. That was the test being wrong, not the fix: a browser resolves `fetch()` against the *document* URL, so the correct target is `dictionary/data/search-index.json`. The rewrite walks each page, follows its `<script src>` tags, and resolves each fetch from the page's directory — which is also why its failure message can name the exact resolved path. Worth recording because the wrong version looked plausible and would have sent the data file to the wrong place.
+- **Deliberate omission — no sync automation.** Recorded as [GAP-10] instead. The right fix mirrors `scripts/sync-spec.js`, and inventing a second sync mechanism while fixing a production 404 would bury the fix in tooling.
+- **Verification:** `npm run check` — **379/379** pass (377 before this session), spec in sync, eslint 0 errors. Guard verified against the real defect: with `dictionary/data/search-index.json` removed it reports `dictionary/index.html loads dictionary/assets/js/app.js, which fetches 'data/search-index.json' -> dictionary/data/search-index.json (no such file)`; with it present, green.
 - **Timestamp:** 2026-08-16T08:10:00Z
 - **Trigger Event:** AI Edit
 - **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
@@ -408,6 +493,17 @@
 
 ---
 
+- **Timestamp:** 2026-08-16T09:30:00Z
+- **Trigger Event:** Merge (origin/main into `claude/live-site-check-hvmzm9`)
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `CONTEXT.md` (conflict), 40 dictionary pages (auto-merged)
+- **Intent:** PR #49 merged to `main` while this branch was open and did overlapping work — it normalised the same 40 dictionary CSPs and made the dictionary browsable. GitHub flipped this pull request to `dirty`. Merged `main` in and resolved.
+- **Bugs/Gaps Addressed:** None new. Reconciles two branches that fixed the same defect independently.
+- **Context Modifications:** Only `CONTEXT.md` conflicted; the 40 HTML files auto-merged because both branches produced the byte-identical site-standard CSP. The timeline is append-only, so both sides' entries were kept in chronological order and nothing was rewritten or dropped — 32 entries now. Merged tree: **392/392** tests (377 baseline + 13 from PR #49's `dictionary-browse.test.js` + 2 added here), eslint 0 errors, spec in sync.
+- **Correction — PR #49 caught something this branch got wrong.** The `fix(csp)` entry above removed `https://thehallucinatedlab.space` from `img-src` on the grounds that `'self'` already covers the site's own origin. That is true *in production* and false everywhere else: every dictionary page declared its favicon as an absolute `https://thehallucinatedlab.space/assets/images/logo.jpeg`, which is a cross-origin load from `localhost` or any preview host, so dropping the grant alone broke the favicon off-production. PR #49 found it by loading the pages in Chromium — the suite has no assertion about absolute same-origin references — and fixed it properly by making the reference relative (`../` from `dictionary/`, `../../` from `dictionary/terms/`). That fix survived the merge and is what ships; verified `rel="icon" href="../../assets/images/logo.jpeg"` on a term page. The remaining absolute URLs in those files are `og:image` and `twitter:image`, which are crawler metadata rather than page subresources, so `img-src` does not apply to them.
+- **Decision — [GAP-08] now means two different things, and section 4 wins.** PR #49's entries use [GAP-08] for the dead search index; this branch had already used [GAP-08] for the `search-engine.js` complexity warnings, and PR #49 never added its gap to section 4. Renumbering would mean editing merged timeline entries, which [RULE-11] forbids. Added a disambiguating note at the top of section 4 instead, pointing at the entry that fixes the search. The collision itself is worth recording: two agents on two branches both minting "the next gap number" will collide every time, and the number is only meaningful because section 4 defines it.
+- **Note — PR #49 declined this branch's headline fix, deliberately.** Its entries state that committing a search index is "a feature, not a CSP cleanup" and leave [GAP-08] open, twice. That was the right call for that pull request. This branch fixes it, so the gap closes here rather than staying open across both.
+- **Verification:** `npm run check` on the merged tree — 392/392 pass, eslint 0 errors (2 pre-existing complexity warnings), spec in sync. No conflict markers remain in any file.
 - **Timestamp:** 2026-08-16T10:40:00Z
 - **Trigger Event:** AI Edit
 - **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
@@ -424,6 +520,46 @@
 
 ---
 
+- **Timestamp:** 2026-08-16T10:45:00Z
+- **Trigger Event:** Merge (origin/main into `claude/live-site-check-hvmzm9`)
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `CONTEXT.md` (conflict + section 4)
+- **Intent:** Second merge from `main` in one session. PR #50 landed the dictionary letter-filter fix and navbar unification; `main` moved from `2bf48e1` to `4cc89d4` and flipped this pull request to `dirty` again. Merged and resolved.
+- **Bugs/Gaps Addressed:** None new here. Adopts PR #50's unrecorded gap into section 4 as [GAP-11].
+- **Context Modifications:** `CONTEXT.md` was again the only conflict — PR #50 touched `tokens.css`, `dictionary.css`, `browse.js`, `script.js` and `dictionary-browse.test.js`, none of which this branch has ever edited. Both timeline entries kept in chronological order, nothing rewritten. This branch's diff against `main` is unchanged at 6 files.
+- **Decision — recorded PR #50's gap here rather than leaving it in prose.** It minted "[GAP-09]" for `tokens.css` redeclaring 23 tokens that `styles.css` owns, exactly as PR #49 minted "[GAP-08]" for the dead search: announced in a timeline entry, never added to section 4. That gap is real, and section 4 is the list agents are told to trust, so leaving it in prose means the next agent never sees it. Added as [GAP-11] with the finding attributed, and the identifier note generalised to cover both aliases.
+- **Decision — did not renumber anything in the merged entries.** [RULE-11] makes section 5 append-only, and the entries are correct in their own frame. The note carries the translation instead.
+- **Observation worth acting on later.** Three PRs in two days have each minted "the next gap number" against a section 4 that none of the others had updated, producing two collisions. The number is only meaningful because section 4 defines it, so the convention needs to be that a gap is *allocated by editing section 4*, not by writing a number in an entry. Not fixed here — it is a change to the protocol in `CLAUDE.md`, which [RULE-10] says is its own deliberate pull request, never a side effect.
+- **Verification:** `npm run check` on the merged tree — **404/404** pass (402 from `main` after PR #50, plus this branch's 2 guards), eslint 0 errors (2 pre-existing complexity warnings, [GAP-08]), spec in sync. No conflict markers remain.
+
+---
+
+- **Timestamp:** 2026-08-16T13:20:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `test/site-invariants.test.js`
+- **Intent:** Narrow [GAP-10]. The search index this branch committed to fix the dead search is generated in another repository, so nothing here regenerates it and nothing noticed when it went missing in the first place. Added two guards so the same class of defect cannot return silently.
+- **Bugs/Gaps Addressed:** Narrows [GAP-10]. Does **not** close it — see below.
+- **Context Modifications:** Two tests. The first asserts the index and `dictionary/terms/*.html` describe the same slugs in both directions: a page with no entry is an unsearchable term, an entry with no page is a dead link from search. The second asserts every entry's `section` exists in the index's own `sections` map. Currently 39 slugs on each side with zero difference either way. Test count 404 → 406.
+- **Decision — an integrity check, not a sync script, and the distinction is the point.** `scripts/sync-spec.js` works because `spec/manifest.json` and its packaged copy are both inside this repository; CI can compare bytes. The dictionary corpus is not — it lives in `06pratyush/ai_dictionary_thl`, which CI has no access to and should not be given for a static site. So a `dictionary:sync` script mirroring `spec:sync` cannot exist in any honest form, and writing one that pretends would be worse than the gap. What is checkable without the upstream repo is internal consistency, and that happens to catch exactly the failure modes that hurt: a term copied across without its index entry, or an index listing terms whose pages were never copied.
+- **Decision — put them in `site-invariants.test.js`, not `dictionary-browse.test.js`.** The dictionary file is the more natural home by subject. It is also the file PRs #49 and #50 both edited, and this branch has already been forced through two merges in a day. Choosing the file the other agent is not working in is a merge-cost decision, not an architectural one, and is recorded here so the next person can move them once the dictionary work settles.
+- **Deliberate omission — entry *contents* are still unchecked.** The guards compare slugs. If upstream rewrites a gloss, retags an entry or adds a synonym, the slug set is unchanged and this stays green while the site serves the older text. Fixing that needs a content hash agreed with the upstream repo, which is a cross-repo convention rather than a test, and is now named explicitly in [GAP-10] so it is not mistaken for covered ground.
+- **Protocol note.** No `ollama` in this cloud session, so the §11 reader was again unavailable; §11.5 held via `wc -l`, `grep -n`, targeted `sed -n` ranges and a 42-line read of `scripts/sync-spec.js`, which is under the ceiling. The `.orchestrator/` harness was deliberately **not** created: with no local model to run them the scripts would be inert, and §15 forbids letting the pipeline become theater.
+- **Verification:** `npm run check` — **406/406** pass, eslint 0 errors (2 pre-existing warnings, [GAP-08]), spec in sync. Guard verified against a synthetic regression: removing the `mutex` entry from the index produces `not ok 17 ... + 'mutex'`; the file was then restored from a copy and the suite re-run green.
+
+---
+
+- **Timestamp:** 2026-08-18T11:05:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `dictionary/terms/*.html` (39 pages), `dictionary/assets/js/app.js`, `test/site-invariants.test.js`
+- **Intent:** Make search available from every dictionary page, not just the hub. A reader on a term page had no way to look anything up without navigating back to `/dictionary/`. The hub's live search — both corpora, all three scopes — now runs on all 39 term pages.
+- **Bugs/Gaps Addressed:** Fixes the missing-search surface. Fixes two depth defects in `app.js` found while doing it, one of which this change would otherwise have shipped broken.
+- **Context Modifications:** Each term page gains the hub's `.search-block` (form, clear, suggestions, three scope buttons, hint) and its `.results-block`, inserted between the `term-hero` header and the first `.term-section` so the `h1` still precedes the results `h2` and heading order holds. Term pages already load `dictionary.css`, so no new CSS and no new origin; the only new request is `app.js`, which pulls `search-engine.js` and the 29KB index. `browse` is now null-guarded at its three call sites — the letter grid exists only on the hub, and `browse.hidden` threw on any page without it.
+- **Decision — paths resolve against the module, not the document.** `app.js` now runs at two depths, so every page-relative path in it is wrong on one of them. `fetch('data/search-index.json')` became `new URL('../../data/search-index.json', import.meta.url)`, and term links became `termHref(slug)` built from a `TERMS_BASE` derived the same way. This keeps the origin the document's own rather than hardcoding a host — the mistake PR #49 had to undo for the favicon.
+- **Defect caught in the browser, not by the suite.** The first version shipped the markup and the index fix but left `card.href = \`terms/${slug}.html\``. From a term page that resolves to `dictionary/terms/terms/<slug>.html`, so **every search result 404'd** — the suite was green because those hrefs are built at runtime. Found by driving Chromium against a loopback server. Recorded because it is the second time in this session that a page-relative path in shared JS was wrong at one depth and invisible to static tests.
+- **Verification — actually exercised, not just parsed.** `npm run check`: **408/408**, eslint 0 errors, spec in sync. Then Chromium (`playwright-core` installed outside the repo, so `package.json` is untouched) against `python3 -m http.server` on loopback, on three pages — a Software Engineering term, an AI & Mathematics term, and the hub as a regression check. On all three: the input is enabled, "entropy" returns `1 match in both sections`, the result link follows to HTTP 200 and the `h1` reads "Entropy", the Software Engineering scope returns `1 match in Software Engineering Core`, an AI-maths term under that scope returns `no matches`, and the console is clean. Both new guards were verified to fail on the real defects before being kept.
+- **Deliberate omission — the index is fetched per page.** Every term page now downloads the 29KB index on load. A shared cache across navigations is what HTTP caching already gives; anything better (a service worker, a prebuilt per-letter shard) is a performance project, not part of making search reachable. No budget is breached: the per-page JS budget only measures root-level scripts, and `dictionary/assets/js/**` has never been in its scope — worth knowing before someone assumes it is covered.
 - **Timestamp:** 2026-08-28T18:55:00Z
 - **Trigger Event:** Protocol Change
 - **Author/Agent:** Claude Code (Master Orchestrator)
@@ -458,6 +594,16 @@
 ---
 
 - **Timestamp:** 2026-08-29T06:20:00Z
+- **Trigger Event:** Merge (origin/main into `claude/live-site-check-hvmzm9`)
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `CONTEXT.md` (conflict + section 4)
+- **Intent:** Third merge from `main` on this branch. PR #52 replaced `CLAUDE.md` with Master Orchestrator Protocol v3 plus a §19/§20 repository addendum, moving `main` from `4cc89d4` to `bdf5466`. Merged and resolved.
+- **Bugs/Gaps Addressed:** None fixed. Opens [GAP-12] — the new addendum describes tooling that does not exist.
+- **Context Modifications:** `CONTEXT.md` was the only conflict; this branch has never touched `CLAUDE.md`, so v3 came across whole. Both timeline entries kept in order, nothing rewritten. Merged tree: 408/408 tests, eslint 0 errors, spec in sync. This branch's own diff is unchanged.
+- **Finding — the new addendum asserts a script that is not in the repository.** §19.1 says the dictionary "is brought over by `node scripts/sync-dictionary.js <path> [--check]`" and "is not hand-edited here". `scripts/` contains only `sync-spec.js`, `package.json` declares only `spec:sync`, and `git ls-tree origin/main scripts/` confirms the same on `main`. Recorded as [GAP-12] rather than fixed here.
+- **Consequence for this branch, stated plainly.** The `feat(dictionary)` commit on this branch hand-edits 39 term pages under `dictionary/` to put the search UI on them — precisely what §19.1 now forbids. The rule landed after that work and cannot currently be complied with: with no sync script and no write access from here to `06pratyush/ai_dictionary_thl`, editing in place is the only mechanism that exists. The work is not being reverted on the strength of a rule whose tooling is absent, and the conflict is recorded here rather than quietly ignored. Whoever resolves [GAP-12] decides which way it goes: build `sync-dictionary.js` and re-land the search markup upstream, or correct the sentence.
+- **Decision — did not edit `CLAUDE.md` to fix it.** Both v2 §0.1 and the v3 addendum make the protocol its own deliberate pull request, never a side effect of a feature. Correcting §19.1 inside a live-site audit branch would be exactly the side effect both versions prohibit, however small the edit.
+- **Verification:** `npm run check` on the merged tree — 408/408 pass, eslint 0 errors (2 pre-existing complexity warnings), spec in sync. No conflict markers remain. Script absence verified three ways: `ls scripts/`, `git ls-tree origin/main scripts/`, and the `scripts` block of `main`'s `package.json`.
 - **Trigger Event:** Protocol Change
 - **Author/Agent:** @06pratyush (Owner) with Claude Code
 - **Target Subsystem:** `CLAUDE.md`
@@ -465,3 +611,18 @@
 - **Bugs/Gaps Addressed:** The v3 adoption in #52 appended a 76-line §19/§20 addendum restoring this repository's non-negotiables and the `CONTEXT.md` mandate, on the reasoning that stack-agnostic v3 dropped them. That reasoning was wrong about where those rules live. Every one of them is already stated authoritatively in §3 of this file — RULE-01 through RULE-09 cover the browser/backend/discoverability/SEO/JSON-LD/budget/secret constraints, RULE-10 states that `CLAUDE.md` is the mandatory development protocol, and RULE-11 states that this file is read first and updated last and that `enforce-context-sync.yml` blocks any pull request that does not extend it. The addendum was therefore a second copy of rules that already had a single source of truth, which is precisely the duplication §3 exists to prevent.
 - **Context Modifications:** `CLAUDE.md` is now byte-identical to the supplied v3 document, 740 lines, no local sections. Nothing is lost by the removal: the constraints remain enforced by §3 of this file, by `test/site-invariants.test.js` and `test/seo-invariants.test.js`, and by the CI workflows. Verified before removing rather than assumed — all eleven rules were confirmed present in §3 on `main` first.
 - **Deliberate omission:** The dictionary repository's `CLAUDE.md` was not touched, because it is already byte-identical to the same v3 document and carries no addendum. No commit was manufactured there to match this one.
+
+---
+
+- **Timestamp:** 2026-08-29T07:05:00Z
+- **Trigger Event:** Merge (origin/main into `claude/live-site-check-hvmzm9`)
+- **Author/Agent:** Claude (Master Orchestrator) for 06pratyush
+- **Target Subsystem:** `dictionary/terms/` (39 pages), `test/site-invariants.test.js`, `dictionary/assets/js/app.js`
+- **Intent:** Fourth merge from `main`. PR #53 added `scripts/sync-dictionary.js`, PR #54 regenerated every term page onto the Topic Page Specification, and `6d0555e` carried Protocol v3 verbatim. `main` moved `bdf5466` → `6d0555e`. All 39 term pages conflicted, because this branch had hand-added a search UI to the same files.
+- **Bugs/Gaps Addressed:** Closes [GAP-12] — the sync script now exists. Opens [GAP-13]. Section 4 updated in this commit.
+- **Context Modifications:** Resolved all 39 term pages to `main`'s regenerated version and **withdrew this branch's term-page search UI**. With `sync-dictionary.js` now real, those files are generated artifacts: §19.1's "not hand-edited here" has a mechanism behind it, and anything added here by hand is silently reverted by the next sync. Keeping the search markup would have meant either reverting PR #54's topic-page interface or shipping 39 files that the next `npm run dictionary:sync` quietly undoes. `CONTEXT.md` conflicted in two regions and was resolved append-only as before.
+- **Decision — the search feature moves upstream, it is not abandoned.** The user asked for search on both dictionaries and chose the full-UI option, and that is still the right feature; what changed is where it has to be built. The term pages are generated in `06pratyush/ai_dictionary_thl`, so the markup belongs in that repository's page template, after which `npm run dictionary:sync` carries it here. Doing it in the site repo now would be work with a known expiry date.
+- **Decision — removed the guard for the withdrawn feature, and this is not weakening a test.** `every dictionary term page ships the search UI and its controller` asserted an invariant this commit deliberately ends. A test that asserts something the project has chosen not to do is a false statement, not protection, and §19.1's prohibition is on weakening a test to make a change pass — not on retiring one whose feature was withdrawn by an argued decision. It returns with the feature, upstream. Test count 408 → 407.
+- **Kept — the site-owned half of the work, which the sync does not touch.** `sync-dictionary.js` copies `index.html`, `terms/*.html` and a CSS block only. `dictionary/data/search-index.json`, the `.gitignore` negation, `dictionary/assets/js/app.js` and the tests are all outside its reach, so the production fix for the dead search survives this merge intact and is still the only fix for it: `main` today still has no `dictionary/data/` and still ignores it.
+- **Correction to my own note in the previous entry.** I suspected the `import.meta.url` change had made the fetch guard blind to `app.js`, since `fetch('literal')` no longer appears there. It had not — the same commit added a `new URL(x, import.meta.url)` matcher. Verified by removing the index: tests 8, 17 and 18 all fail. The `app.js` comment was corrected, since it described term pages loading the module and they no longer do.
+- **Verification:** `npm run check` — **407/407** pass, eslint 0 errors (2 pre-existing warnings), spec in sync. No conflict markers in any file. Missing-index regression still caught by three independent tests.

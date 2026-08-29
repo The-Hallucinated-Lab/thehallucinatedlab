@@ -108,6 +108,34 @@ test('no CSP grants unsafe-inline or unsafe-eval to script-src', () => {
   }
 });
 
+/* The test above only guards script-src, which is how 40 dictionary pages
+   shipped with https://fonts.googleapis.com in style-src and
+   https://fonts.gstatic.com in font-src. A CSP that names an origin the
+   site never requests is standing permission for nothing, and [GAP-02]
+   already makes this policy weaker than a header would be. Loopback is
+   the one legitimate remote: [RULE-02] tools talk to the user's own
+   Python package over 127.0.0.1/localhost. */
+const LOOPBACK = /^https?:\/\/(127\.0\.0\.1|localhost)(:(\d+|\*))?$/;
+
+test('no CSP directive grants a third-party origin', () => {
+  const offenders = [];
+  for (const f of htmlFiles()) {
+    const m = read(f).match(/http-equiv="Content-Security-Policy" content="([^"]+)"/);
+    assert.ok(m, `${f} CSP unreadable`);
+    for (const directive of m[1].split(';')) {
+      const [name, ...values] = directive.trim().split(/\s+/);
+      if (!name) continue;
+      for (const v of values) {
+        if (!/^https?:\/\//.test(v)) continue;
+        if (LOOPBACK.test(v)) continue;
+        offenders.push(`${f} -> ${name} ${v}`);
+      }
+    }
+  }
+  assert.equal(offenders.length, BUDGET.thirdPartyOrigins,
+    `CSP grants a third-party origin; the site is same-origin only:\n  ${offenders.join('\n  ')}`);
+});
+
 /* ---- asset integrity ---- */
 
 test('every local asset reference resolves to a file that exists', () => {
@@ -125,6 +153,55 @@ test('every local asset reference resolves to a file that exists', () => {
     }
   }
   assert.equal(missing.length, 0, `broken references:\n  ${missing.join('\n  ')}`);
+});
+
+/* The test above reads src/href/srcset out of HTML, so a path fetched at
+   runtime by a script is invisible to it. dictionary/assets/js/app.js
+   fetches 'data/search-index.json', the bare `data/` rule in .gitignore
+   swallowed the directory, and the dictionary shipped with a search box
+   that 404s into its own fallback message. Nothing failed. */
+test('every relative path fetched by a script resolves to a file that exists', () => {
+  const missing = [];
+  for (const page of htmlFiles()) {
+    const pageDir = path.dirname(page);
+    const scripts = [...read(page).matchAll(/<script[^>]+src="([^"]+)"/g)].map(m => m[1]);
+    for (const src of scripts) {
+      if (/^https?:/.test(src)) continue;
+      /* A <script src> is resolved against the page, like any other
+         reference; the fetch inside it is resolved against the page too. */
+      const jsPath = (src.startsWith('/') ? src.slice(1) : path.join(pageDir, src))
+        .replace(/\\/g, '/').split('?')[0];
+      if (!fs.existsSync(path.join(ROOT, jsPath))) continue;   // covered by the test above
+      const js = read(jsPath);
+
+      for (const m of js.matchAll(/fetch\(\s*['"]([^'"]+)['"]/g)) {
+        const ref = m[1];
+        if (/^(https?:|data:|blob:)/.test(ref)) continue;
+        const rel = (ref.startsWith('/') ? ref.slice(1) : path.join(pageDir, ref))
+          .replace(/\\/g, '/').split('?')[0].split('#')[0];
+        if (!fs.existsSync(path.join(ROOT, rel))) {
+          missing.push(`${page} loads ${jsPath}, which fetches '${ref}' -> ${rel} (no such file)`);
+        }
+      }
+
+      /* new URL(x, import.meta.url) resolves against the *module*, not the
+         document — which is exactly why app.js uses it: the hub and the term
+         pages sit at different depths and a page-relative path can only be
+         right for one of them. Resolve it the same way the browser will, or
+         this guard silently stops covering the path it was written for. */
+      for (const m of js.matchAll(/new URL\(\s*['"]([^'"]+)['"]\s*,\s*import\.meta\.url\s*\)/g)) {
+        const ref = m[1];
+        if (/^(https?:|data:|blob:)/.test(ref)) continue;
+        const rel = path.join(path.dirname(jsPath), ref)
+          .replace(/\\/g, '/').split('?')[0].split('#')[0];
+        if (!fs.existsSync(path.join(ROOT, rel))) {
+          missing.push(`${page} loads ${jsPath}, which resolves '${ref}' against import.meta.url -> ${rel} (no such file)`);
+        }
+      }
+    }
+  }
+  assert.equal(missing.length, 0,
+    `a script fetches a path with no committed file behind it:\n  ${missing.join('\n  ')}`);
 });
 
 test('no <img> points at a master image', () => {
@@ -275,4 +352,64 @@ test('no source file contains a NUL byte', () => {
   };
   walk('.');
   assert.equal(offenders.length, 0, `NUL bytes in:\n  ${offenders.join('\n  ')}`);
+});
+
+/* ---- dictionary search index integrity ---- */
+
+/* The index is generated in 06pratyush/ai_dictionary_thl and committed
+   here, so nothing in this repo regenerates it and CI cannot reach the
+   source ([GAP-10]). A byte-for-byte sync like scripts/sync-spec.js is
+   therefore impossible. What is checkable is the symptom that matters:
+   the index and the term pages must describe the same 39 terms. Copy the
+   pages across without the index and a term is unsearchable; update the
+   index without the pages and search offers a dead link. Either way this
+   fails, which is the drift signal the cross-repo copy cannot give. */
+test('the dictionary search index and the term pages describe the same terms', () => {
+  const indexPath = 'dictionary/data/search-index.json';
+  const index = JSON.parse(read(indexPath));
+
+  const onDisk = new Set(
+    fs.readdirSync(path.join(ROOT, 'dictionary/terms'))
+      .filter(f => f.endsWith('.html'))
+      .map(f => f.replace(/\.html$/, '')));
+  const indexed = new Set(index.entries.map(e => e.slug));
+
+  const unsearchable = [...onDisk].filter(s => !indexed.has(s)).sort();
+  const dangling = [...indexed].filter(s => !onDisk.has(s)).sort();
+
+  assert.deepEqual(unsearchable, [],
+    `term pages missing from ${indexPath} — search cannot find them. Regenerate the index in ai_dictionary_thl and copy it across.`);
+  assert.deepEqual(dangling, [],
+    `${indexPath} lists terms with no page under dictionary/terms/ — search would offer a dead link.`);
+});
+
+test('every search index entry declares a section that exists', () => {
+  const index = JSON.parse(read('dictionary/data/search-index.json'));
+  const sections = new Set(Object.keys(index.sections));
+  const orphans = index.entries
+    .filter(e => !sections.has(e.section))
+    .map(e => `${e.slug} -> "${e.section}"`);
+  assert.deepEqual(orphans, [],
+    `entries reference a section absent from the index's own "sections" map:\n  ${orphans.join('\n  ')}`);
+});
+
+/* app.js runs at two depths — dictionary/ and dictionary/terms/ — so any
+   path it builds relative to the *document* is wrong on one of them. Both
+   the index fetch and the term links were written page-relative for the
+   hub; on a term page `terms/x.html` resolved to
+   dictionary/terms/terms/x.html and every search result 404'd. Caught in
+   Chromium, not by this suite, because the hrefs are built at runtime.
+   The string check below stands in for a browser: crude, but it fails the
+   moment someone reintroduces the assumption. */
+test('the dictionary controller builds no document-relative paths', () => {
+  const src = read('dictionary/assets/js/app.js');
+  const offenders = [];
+  for (const m of src.matchAll(/\.href\s*=\s*[`'"]([^`'"]*)[`'"]/g)) {
+    if (!/^(https?:|#|\/)/.test(m[1])) offenders.push(`.href = "${m[1]}"`);
+  }
+  for (const m of src.matchAll(/fetch\(\s*['"]([^'"]+)['"]/g)) {
+    offenders.push(`fetch("${m[1]}")`);
+  }
+  assert.deepEqual(offenders, [],
+    `app.js runs at two depths; resolve against import.meta.url instead:\n  ${offenders.join('\n  ')}`);
 });

@@ -64,4 +64,11 @@ ai-ide/
 # The data is reproducible from a one-line download; the repo is not.
 data/
 *.idx3-ubyte
+
+# ...but the dictionary's search index is source, not a download. The bare
+# `data/` above matches at any depth, so it silently swallowed
+# dictionary/data/ during the dictionary integration and shipped a
+# dictionary whose search box 404s. It is 30KB of committed JSON.
+!dictionary/data/
+!dictionary/data/**
 *.idx1-ubyte

@@ -1,0 +1,995 @@
+{
+ "version": 1,
+ "sections": {
+  "ai-mathematics": {
+   "id": "ai-mathematics",
+   "title": "AI & Mathematics",
+   "label": "Section One",
+   "lidPrefix": "AIM",
+   "description": "The vocabulary of machine learning, statistics, optimisation and the linear algebra underneath all of it. Every entry is defined in terms a reader can substitute back into a sentence, then anchored to the paper or theorem it came from."
+  },
+  "software-engineering": {
+   "id": "software-engineering",
+   "title": "Software Engineering Core",
+   "label": "Section Two",
+   "lidPrefix": "SWE",
+   "description": "The working vocabulary of building and running software — algorithms, architecture, concurrency, databases, security and the field's durable jargon. Definitions are written to be substitutable, and the idioms carry the origin story only where it is actually documented."
+  }
+ },
+ "entries": [
+  {
+   "lid": "AIM-00022",
+   "term": "Activation Function",
+   "slug": "activation-function",
+   "section": "ai-mathematics",
+   "domain": "Neural Networks",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "g(x)"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "non-linearity"
+   ],
+   "gloss": "a mathematical function that introduces non-linearity into the output of a layer, allowing the network to learn complex patterns.",
+   "defText": "a mathematical function that introduces non-linearity into the output of a layer, allowing the network to learn complex patterns.",
+   "frequency": 78
+  },
+  {
+   "lid": "AIM-00005",
+   "term": "Attention Mechanism",
+   "slug": "attention-mechanism",
+   "section": "ai-mathematics",
+   "domain": "Deep Learning",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "attention mechanisms"
+   ],
+   "variants": [
+    "attention"
+   ],
+   "synonyms": [
+    "soft alignment"
+   ],
+   "gloss": "a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.",
+   "defText": "a layer that produces each output as a weighted blend of all available inputs, where the weights are computed from the similarity between a query and a set of keys.",
+   "frequency": 90
+  },
+  {
+   "lid": "AIM-00002",
+   "term": "Backpropagation",
+   "slug": "backpropagation",
+   "section": "ai-mathematics",
+   "domain": "Neural Networks",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "backprop",
+    "BP"
+   ],
+   "inflections": [],
+   "variants": [
+    "back-propagation",
+    "back propagation"
+   ],
+   "synonyms": [
+    "reverse-mode automatic differentiation"
+   ],
+   "gloss": "an application of the chain rule that computes the sensitivity of a loss to every parameter in a layered network by passing partial derivatives from the output back toward the input.",
+   "defText": "an application of the chain rule that computes the sensitivity of a loss to every parameter in a layered network by passing partial derivatives from the output back toward the input.",
+   "frequency": 94
+  },
+  {
+   "lid": "AIM-00006",
+   "term": "Bayes' Theorem",
+   "slug": "bayes-theorem",
+   "section": "ai-mathematics",
+   "domain": "Probability",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [
+    "Bayes theorem",
+    "Bayes's theorem",
+    "Bayes rule"
+   ],
+   "synonyms": [
+    "Bayes' rule"
+   ],
+   "gloss": "the identity that converts the likelihood of evidence given a hypothesis into the probability of the hypothesis given that evidence, by weighting it with the hypothesis's prior probability.",
+   "defText": "the identity that converts the likelihood of evidence given a hypothesis into the probability of the hypothesis given that evidence, by weighting it with the hypothesis's prior probability.",
+   "frequency": 88
+  },
+  {
+   "lid": "AIM-00018",
+   "term": "Bias-Variance Tradeoff",
+   "slug": "bias-variance-tradeoff",
+   "section": "ai-mathematics",
+   "domain": "Statistical Learning",
+   "pos": "noun",
+   "ngram": "polygram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "bias-variance dilemma"
+   ],
+   "gloss": "the fundamental tension between the complexity of a model and its ability to generalize to unseen data.",
+   "defText": "the fundamental tension between the complexity of a model and its ability to generalize to unseen data.",
+   "frequency": 75
+  },
+  {
+   "lid": "AIM-00010",
+   "term": "Convolutional Neural Network",
+   "slug": "convolutional-neural-network",
+   "section": "ai-mathematics",
+   "domain": "Deep Learning",
+   "pos": "noun",
+   "ngram": "polygram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [
+    "CNN",
+    "ConvNet"
+   ],
+   "inflections": [
+    "convolutional neural networks"
+   ],
+   "variants": [],
+   "synonyms": [
+    "ConvNet"
+   ],
+   "gloss": "an architecture that slides a small set of learned filters across grid-structured input, so the same local pattern is recognised wherever it appears and far fewer weights are needed than a fully connected design.",
+   "defText": "an architecture that slides a small set of learned filters across grid-structured input, so the same local pattern is recognised wherever it appears and far fewer weights are needed than a fully connected design.",
+   "frequency": 91
+  },
+  {
+   "lid": "AIM-00012",
+   "term": "Cross-Validation",
+   "slug": "cross-validation",
+   "section": "ai-mathematics",
+   "domain": "Model Evaluation",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [
+    "cross validation"
+   ],
+   "synonyms": [
+    "k-fold validation"
+   ],
+   "gloss": "a technique used to estimate the performance of a model on unseen data by partitioning the dataset into multiple subsets.",
+   "defText": "a technique used to estimate the performance of a model on unseen data by partitioning the dataset into multiple subsets.",
+   "frequency": 65
+  },
+  {
+   "lid": "AIM-00004",
+   "term": "Eigenvector",
+   "slug": "eigenvector",
+   "section": "ai-mathematics",
+   "domain": "Linear Algebra",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "eigenvectors"
+   ],
+   "variants": [
+    "eigen vector"
+   ],
+   "synonyms": [
+    "characteristic vector",
+    "proper vector"
+   ],
+   "gloss": "a non-zero vector whose direction is unchanged by a given linear map, so the map merely rescales it by a constant factor.",
+   "defText": "a non-zero vector whose direction is unchanged by a given linear map, so the map merely rescales it by a constant factor.",
+   "frequency": 84
+  },
+  {
+   "lid": "AIM-00016",
+   "term": "Embedding",
+   "slug": "embedding",
+   "section": "ai-mathematics",
+   "domain": "Representation Learning",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "embeddings"
+   ],
+   "variants": [
+    "embeding"
+   ],
+   "synonyms": [
+    "vector representation"
+   ],
+   "gloss": "a low-dimensional vector representation of high-dimensional data, such as words or images, that captures semantic or structural relationships.",
+   "defText": "a low-dimensional vector representation of high-dimensional data, such as words or images, that captures semantic or structural relationships.",
+   "frequency": 78
+  },
+  {
+   "lid": "AIM-00013",
+   "term": "Entropy",
+   "slug": "entropy",
+   "section": "ai-mathematics",
+   "domain": "Information Theory",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "disorder"
+   ],
+   "gloss": "a measure of the uncertainty or randomness inherent in a random variable or source of data.",
+   "defText": "a measure of the uncertainty or randomness inherent in a random variable or source of data.",
+   "frequency": 78
+  },
+  {
+   "lid": "AIM-00001",
+   "term": "Gradient Descent",
+   "slug": "gradient-descent",
+   "section": "ai-mathematics",
+   "domain": "Optimization",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "GD"
+   ],
+   "inflections": [
+    "gradient descents"
+   ],
+   "variants": [],
+   "synonyms": [
+    "steepest descent"
+   ],
+   "gloss": "an iterative procedure that reduces a differentiable objective by repeatedly stepping in the direction opposite to its slope at the current point.",
+   "defText": "an iterative procedure that reduces a differentiable objective by repeatedly stepping in the direction opposite to its slope at the current point. the family of training algorithms that update model parameters from the slope of a loss surface, including the stochastic and mini-batch variants used in practice.",
+   "frequency": 96
+  },
+  {
+   "lid": "AIM-00008",
+   "term": "Learning Rate",
+   "slug": "learning-rate",
+   "section": "ai-mathematics",
+   "domain": "Optimization",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "LR"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "step size"
+   ],
+   "gloss": "a hyperparameter that controls the step size taken at each iteration of an optimization algorithm.",
+   "defText": "a hyperparameter that controls the step size taken at each iteration of an optimization algorithm.",
+   "frequency": 75
+  },
+  {
+   "lid": "AIM-00007",
+   "term": "Loss Function",
+   "slug": "loss-function",
+   "section": "ai-mathematics",
+   "domain": "Optimization",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "L(y, ŷ)"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "cost function"
+   ],
+   "gloss": "a measure of the difference between predicted and actual values, quantifying the error of a model's output.",
+   "defText": "a measure of the difference between predicted and actual values, quantifying the error of a model's output.",
+   "frequency": 78
+  },
+  {
+   "lid": "AIM-00014",
+   "term": "Markov Chain",
+   "slug": "markov-chain",
+   "section": "ai-mathematics",
+   "domain": "Probability",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "stochastic process"
+   ],
+   "gloss": "a sequence of random variables where the probability of transitioning to the next state depends only on the current state, and not on the sequence of states that preceded it.",
+   "defText": "a sequence of random variables where the probability of transitioning to the next state depends only on the current state, and not on the sequence of states that preceded it.",
+   "frequency": 75
+  },
+  {
+   "lid": "AIM-00020",
+   "term": "Maximum Likelihood Estimation",
+   "slug": "maximum-likelihood-estimation",
+   "section": "ai-mathematics",
+   "domain": "Statistics",
+   "pos": "noun",
+   "ngram": "polygram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "MLE"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [],
+   "gloss": "a method that picks the parameter values under which the observed data would have been most probable, by maximising the probability the model assigns to that data.",
+   "defText": "a method that picks the parameter values under which the observed data would have been most probable, by maximising the probability the model assigns to that data.",
+   "frequency": 86
+  },
+  {
+   "lid": "AIM-00003",
+   "term": "Overfitting",
+   "slug": "overfitting",
+   "section": "ai-mathematics",
+   "domain": "Statistical Learning",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "overfit",
+    "overfits"
+   ],
+   "variants": [
+    "over-fitting"
+   ],
+   "synonyms": [
+    "high variance"
+   ],
+   "gloss": "the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.",
+   "defText": "the failure mode in which a model absorbs noise particular to its training sample and therefore predicts unseen data worse than a simpler model would.",
+   "frequency": 92
+  },
+  {
+   "lid": "AIM-00019",
+   "term": "Principal Component Analysis",
+   "slug": "principal-component-analysis",
+   "section": "ai-mathematics",
+   "domain": "Dimensionality Reduction",
+   "pos": "noun",
+   "ngram": "polygram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [
+    "PCA"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "Karhunen-Loève transform"
+   ],
+   "gloss": "a transformation that rewrites correlated measurements as a smaller set of uncorrelated axes, ordered so the first captures as much of the spread as any single direction can.",
+   "defText": "a transformation that rewrites correlated measurements as a smaller set of uncorrelated axes, ordered so the first captures as much of the spread as any single direction can.",
+   "frequency": 85
+  },
+  {
+   "lid": "AIM-00009",
+   "term": "Regularization",
+   "slug": "regularization",
+   "section": "ai-mathematics",
+   "domain": "Statistical Learning",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "regularizing",
+    "regularized"
+   ],
+   "variants": [
+    "regularisation"
+   ],
+   "synonyms": [
+    "weight-decay"
+   ],
+   "gloss": "a technique used to prevent overfitting by adding a penalty term to the loss function, which discourages overly complex models.",
+   "defText": "a technique used to prevent overfitting by adding a penalty term to the loss function, which discourages overly complex models.",
+   "frequency": 65
+  },
+  {
+   "lid": "AIM-00017",
+   "term": "Reinforcement Learning",
+   "slug": "reinforcement-learning",
+   "section": "ai-mathematics",
+   "domain": "Machine Learning",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [
+    "RL"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "trial-and-error learning"
+   ],
+   "gloss": "a training paradigm in which an agent improves its policy purely from rewards collected while acting in an environment, with no labelled examples of correct behaviour to imitate.",
+   "defText": "a training paradigm in which an agent improves its policy purely from rewards collected while acting in an environment, with no labelled examples of correct behaviour to imitate.",
+   "frequency": 89
+  },
+  {
+   "lid": "AIM-00011",
+   "term": "Softmax",
+   "slug": "softmax",
+   "section": "ai-mathematics",
+   "domain": "Deep Learning",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [
+    "SM"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "probability-distribution-function"
+   ],
+   "gloss": "a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.",
+   "defText": "a function that takes a vector of real numbers and maps it to a probability distribution, ensuring that all elements are positive and sum to one.",
+   "frequency": 75
+  },
+  {
+   "lid": "AIM-00015",
+   "term": "Transformer",
+   "slug": "transformer",
+   "section": "ai-mathematics",
+   "domain": "Deep Learning",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "transformers"
+   ],
+   "variants": [],
+   "synonyms": [
+    "attention-based model"
+   ],
+   "gloss": "a neural network architecture that relies solely on attention mechanisms, allowing it to process sequential data efficiently.",
+   "defText": "a neural network architecture that relies solely on attention mechanisms, allowing it to process sequential data efficiently.",
+   "frequency": 95
+  },
+  {
+   "lid": "SWE-00019",
+   "term": "ACID",
+   "slug": "acid",
+   "section": "software-engineering",
+   "domain": "Databases",
+   "pos": "abbreviation",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Acronym"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [],
+   "gloss": "the guarantee that a group of statements either takes effect entirely or not at all, never observes a partial state, does not interfere with concurrent work, and survives a crash once confirmed.",
+   "defText": "the guarantee that a group of statements either takes effect entirely or not at all, never observes a partial state, does not interfere with concurrent work, and survives a crash once confirmed.",
+   "frequency": 88
+  },
+  {
+   "lid": "SWE-00007",
+   "term": "Big O Notation",
+   "slug": "big-o-notation",
+   "section": "software-engineering",
+   "domain": "Algorithms",
+   "pos": "noun",
+   "ngram": "polygram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [
+    "big-O notation",
+    "O notation"
+   ],
+   "synonyms": [
+    "asymptotic notation"
+   ],
+   "gloss": "a way of describing how the cost of an algorithm grows as its input grows, keeping only the dominant term and discarding constants.",
+   "defText": "a way of describing how the cost of an algorithm grows as its input grows, keeping only the dominant term and discarding constants.",
+   "frequency": 94
+  },
+  {
+   "lid": "SWE-00032",
+   "term": "CAP Theorem",
+   "slug": "cap-theorem",
+   "section": "software-engineering",
+   "domain": "Distributed Systems",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Acronym"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [
+    "Brewer's theorem"
+   ],
+   "synonyms": [
+    "Brewer's theorem"
+   ],
+   "gloss": "the result that when a network splits, a replicated store must give up either answering every request or returning the newest written value — it cannot preserve both.",
+   "defText": "the result that when a network splits, a replicated store must give up either answering every request or returning the newest written value — it cannot preserve both.",
+   "frequency": 85
+  },
+  {
+   "lid": "SWE-00016",
+   "term": "Cohesion",
+   "slug": "cohesion",
+   "section": "software-engineering",
+   "domain": "Architecture",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "single responsibility"
+   ],
+   "gloss": "the degree to which the parts of a single module all serve one purpose, rather than being grouped together for incidental reasons.",
+   "defText": "the degree to which the parts of a single module all serve one purpose, rather than being grouped together for incidental reasons.",
+   "frequency": 83
+  },
+  {
+   "lid": "SWE-00015",
+   "term": "Coupling",
+   "slug": "coupling",
+   "section": "software-engineering",
+   "domain": "Architecture",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "interdependence"
+   ],
+   "gloss": "the degree to which one module depends on the internals of another, and therefore how far a change in one propagates into the other.",
+   "defText": "the degree to which one module depends on the internals of another, and therefore how far a change in one propagates into the other.",
+   "frequency": 87
+  },
+  {
+   "lid": "SWE-00004",
+   "term": "Deadlock",
+   "slug": "deadlock",
+   "section": "software-engineering",
+   "domain": "Concurrency",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "mutual-blocking"
+   ],
+   "gloss": "a state in which two or more processes are each waiting for the other to release a resource, resulting in a permanent halt of execution.",
+   "defText": "a state in which two or more processes are each waiting for the other to release a resource, resulting in a permanent halt of execution.",
+   "frequency": 65
+  },
+  {
+   "lid": "SWE-00013",
+   "term": "Dependency Injection",
+   "slug": "dependency-injection",
+   "section": "software-engineering",
+   "domain": "Architecture",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [
+    "DI"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "inversion of control"
+   ],
+   "gloss": "the practice of supplying a component's collaborators from outside rather than letting it construct them, so the component can be reconfigured or tested without being modified.",
+   "defText": "the practice of supplying a component's collaborators from outside rather than letting it construct them, so the component can be reconfigured or tested without being modified.",
+   "frequency": 84
+  },
+  {
+   "lid": "SWE-00031",
+   "term": "Eventual Consistency",
+   "slug": "eventual-consistency",
+   "section": "software-engineering",
+   "domain": "Distributed Systems",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "optimistic replication"
+   ],
+   "gloss": "the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.",
+   "defText": "the guarantee that if updates stop arriving, every replica will converge on the same values — with no promise about what a reader sees before then.",
+   "frequency": 82
+  },
+  {
+   "lid": "SWE-00008",
+   "term": "Hash Table",
+   "slug": "hash-table",
+   "section": "software-engineering",
+   "domain": "Data Structures",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "hashmap"
+   ],
+   "inflections": [
+    "hash tables"
+   ],
+   "variants": [
+    "hashtable",
+    "hash map"
+   ],
+   "synonyms": [
+    "dictionary",
+    "associative array"
+   ],
+   "gloss": "a container that converts each key into an array position by arithmetic, giving constant-time average lookup at the cost of handling positions that collide.",
+   "defText": "a container that converts each key into an array position by arithmetic, giving constant-time average lookup at the cost of handling positions that collide.",
+   "frequency": 92
+  },
+  {
+   "lid": "SWE-00002",
+   "term": "Idempotence",
+   "slug": "idempotence",
+   "section": "software-engineering",
+   "domain": "API Design",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "idempotency"
+   ],
+   "variants": [
+    "idempotency"
+   ],
+   "synonyms": [
+    "retry-safe"
+   ],
+   "gloss": "the property of an operation whose repeated application produces the same result as a single application, so a retry cannot cause additional change.",
+   "defText": "the property of an operation whose repeated application produces the same result as a single application, so a retry cannot cause additional change.",
+   "frequency": 86
+  },
+  {
+   "lid": "SWE-00006",
+   "term": "Memoization",
+   "slug": "memoization",
+   "section": "software-engineering",
+   "domain": "Algorithms",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Optimization"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "memoizing"
+   ],
+   "variants": [],
+   "synonyms": [
+    "caching"
+   ],
+   "gloss": "the technique of storing the results of expensive function calls and returning the cached result when the same inputs occur again.",
+   "defText": "the technique of storing the results of expensive function calls and returning the cached result when the same inputs occur again.",
+   "frequency": 65
+  },
+  {
+   "lid": "SWE-00005",
+   "term": "Mutex",
+   "slug": "mutex",
+   "section": "software-engineering",
+   "domain": "Concurrency",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core",
+    "Foundational"
+   ],
+   "flags": [],
+   "abbr": [
+    "M"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "lock"
+   ],
+   "gloss": "a synchronization primitive used to ensure that only one thread can access a shared resource at any given time.",
+   "defText": "a synchronization primitive used to ensure that only one thread can access a shared resource at any given time.",
+   "frequency": 75
+  },
+  {
+   "lid": "SWE-00040",
+   "term": "Pure Function",
+   "slug": "pure-function",
+   "section": "software-engineering",
+   "domain": "Programming Paradigms",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "pure functions"
+   ],
+   "variants": [],
+   "synonyms": [
+    "referentially transparent function"
+   ],
+   "gloss": "a routine whose result is determined entirely by its arguments and which changes nothing outside itself, so calling it twice with the same input is indistinguishable from calling it once.",
+   "defText": "a routine whose result is determined entirely by its arguments and which changes nothing outside itself, so calling it twice with the same input is indistinguishable from calling it once.",
+   "frequency": 80
+  },
+  {
+   "lid": "SWE-00003",
+   "term": "Race Condition",
+   "slug": "race-condition",
+   "section": "software-engineering",
+   "domain": "Concurrency",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "race conditions"
+   ],
+   "variants": [],
+   "synonyms": [
+    "data race"
+   ],
+   "gloss": "a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.",
+   "defText": "a defect in which the correctness of a result depends on the unpredictable relative timing of two or more independent threads of execution.",
+   "frequency": 90
+  },
+  {
+   "lid": "SWE-00035",
+   "term": "Refactoring",
+   "slug": "refactoring",
+   "section": "software-engineering",
+   "domain": "Craft",
+   "pos": "noun",
+   "ngram": "unigram",
+   "tags": [
+    "Core"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [
+    "refactor",
+    "refactored"
+   ],
+   "variants": [],
+   "synonyms": [
+    "restructuring"
+   ],
+   "gloss": "a change to the internal structure of existing code that leaves its observable behaviour exactly as it was, undertaken to make later changes cheaper.",
+   "defText": "a change to the internal structure of existing code that leaves its observable behaviour exactly as it was, undertaken to make later changes cheaper.",
+   "frequency": 91
+  },
+  {
+   "lid": "SWE-00023",
+   "term": "SQL Injection",
+   "slug": "sql-injection",
+   "section": "software-engineering",
+   "domain": "Security",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Vulnerability"
+   ],
+   "flags": [],
+   "abbr": [
+    "SQLi"
+   ],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [],
+   "gloss": "an attack in which text supplied by a user is concatenated into a database query and thereby executed as part of the command rather than treated as a value.",
+   "defText": "an attack in which text supplied by a user is concatenated into a database query and thereby executed as part of the command rather than treated as a value.",
+   "frequency": 89
+  },
+  {
+   "lid": "SWE-00001",
+   "term": "Technical Debt",
+   "slug": "technical-debt",
+   "section": "software-engineering",
+   "domain": "Craft",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Core",
+    "Metaphor"
+   ],
+   "flags": [],
+   "abbr": [
+    "tech debt"
+   ],
+   "inflections": [],
+   "variants": [
+    "technical-debt"
+   ],
+   "synonyms": [
+    "design debt",
+    "code debt"
+   ],
+   "gloss": "the future cost incurred by choosing an expedient implementation now instead of a sounder one, paid back as extra effort on every later change.",
+   "defText": "the future cost incurred by choosing an expedient implementation now instead of a sounder one, paid back as extra effort on every later change. the accumulated backlog of deferred cleanup, upgrades and documentation that a codebase carries as a measurable liability.",
+   "frequency": 93
+  },
+  {
+   "lid": "SWE-00047",
+   "term": "Yak Shaving",
+   "slug": "yak-shaving",
+   "section": "software-engineering",
+   "domain": "Jargon",
+   "pos": "noun",
+   "ngram": "bigram",
+   "tags": [
+    "Jargon",
+    "Idiom"
+   ],
+   "flags": [],
+   "abbr": [],
+   "inflections": [],
+   "variants": [],
+   "synonyms": [
+    "incidental complexity"
+   ],
+   "gloss": "the state of working through a chain of unplanned prerequisite tasks, each apparently necessary for the last, so far from the original goal that the connection is no longer obvious.",
+   "defText": "the state of working through a chain of unplanned prerequisite tasks, each apparently necessary for the last, so far from the original goal that the connection is no longer obvious.",
+   "frequency": 62
+  }
+ ]
+}
