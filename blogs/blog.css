@@ -9,11 +9,11 @@
   top: 0;
   left: 0;
   height: 3px;
-  background: var(--gradient-gold);
+  background: var(--gradient-accent);
   width: 0%;
   z-index: 1001;
   border-radius: 0 2px 2px 0;
-  box-shadow: 0 0 10px rgba(var(--gold-rgb), 0.4);
+  box-shadow: 0 0 10px rgba(var(--accent-rgb), 0.4);
 }
 
 /* ============ ARTICLE LAYOUT ============ */
@@ -60,10 +60,10 @@
   inset: 0;
   background: linear-gradient(
     to top,
-    rgba(5, 5, 5, 1) 0%,
-    rgba(5, 5, 5, 0.85) 30%,
-    rgba(5, 5, 5, 0.3) 70%,
-    rgba(5, 5, 5, 0.1) 100%
+    rgba(11, 15, 20, 1) 0%,
+    rgba(11, 15, 20, 0.85) 30%,
+    rgba(11, 15, 20, 0.3) 70%,
+    rgba(11, 15, 20, 0.1) 100%
   );
   z-index: 1;
 }
@@ -88,9 +88,9 @@
 .blog-category-badge {
   padding: 4px 12px;
   border-radius: 50px;
-  background: rgba(var(--gold-rgb), 0.15);
-  border: 1px solid var(--border-gold);
-  color: var(--gold-primary);
+  background: rgba(var(--accent-rgb), 0.15);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 1px;
@@ -111,7 +111,7 @@
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--gold-light) 60%, var(--gold-primary) 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 60%, var(--accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -134,7 +134,7 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 2px solid var(--border-gold);
+  border: 2px solid var(--border-accent);
   object-fit: cover;
 }
 
@@ -172,7 +172,7 @@
   font-weight: 700;
   letter-spacing: 2px;
   text-transform: uppercase;
-  color: var(--gold-primary);
+  color: var(--accent);
   margin-bottom: 1rem;
   display: block;
 }
@@ -203,9 +203,9 @@
 }
 
 .toc-link.active {
-  color: var(--gold-primary);
-  border-left-color: var(--gold-primary);
-  background: var(--gold-glow);
+  color: var(--accent);
+  border-left-color: var(--accent);
+  background: var(--accent-glow);
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
 }
 
@@ -225,9 +225,9 @@
 }
 
 .toc-back:hover {
-  border-color: var(--border-gold);
-  color: var(--gold-primary);
-  background: var(--gold-glow);
+  border-color: var(--border-accent);
+  color: var(--accent);
+  background: var(--accent-glow);
 }
 
 /* ============ ARTICLE CONTENT ============ */
@@ -255,7 +255,7 @@
   transform: translateY(-50%);
   width: 4px;
   height: 60%;
-  background: var(--gradient-gold);
+  background: var(--gradient-accent);
   border-radius: 2px;
   opacity: 0;
   transition: opacity 0.4s ease;
@@ -269,7 +269,7 @@
   font-family: var(--font-heading);
   font-size: clamp(1.1rem, 2vw, 1.3rem);
   font-weight: 600;
-  color: var(--gold-light);
+  color: var(--accent-light);
   margin-top: 2rem;
   margin-bottom: 0.8rem;
   line-height: 1.3;
@@ -288,19 +288,19 @@
 }
 
 .blog-content a {
-  color: var(--gold-primary);
+  color: var(--accent);
   text-decoration: none;
-  border-bottom: 1px solid var(--border-gold);
+  border-bottom: 1px solid var(--border-accent);
   transition: var(--transition);
 }
 
 .blog-content a:hover {
-  border-bottom-color: var(--gold-primary);
+  border-bottom-color: var(--accent);
 }
 
 /* ============ ANIMATED HIGHLIGHT ============ */
 .highlight {
-  background: linear-gradient(120deg, rgba(var(--gold-rgb), 0.25) 0%, rgba(var(--gold-rgb), 0.25) 100%);
+  background: linear-gradient(120deg, rgba(var(--accent-rgb), 0.25) 0%, rgba(var(--accent-rgb), 0.25) 100%);
   background-repeat: no-repeat;
   background-size: 0% 100%;
   transition: background-size 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
@@ -316,8 +316,8 @@
 /* ============ TOOLTIP ============ */
 .tooltip-term {
   position: relative;
-  color: var(--gold-primary);
-  border-bottom: 1px dashed rgba(var(--gold-rgb), 0.4);
+  color: var(--accent);
+  border-bottom: 1px dashed rgba(var(--accent-rgb), 0.4);
   cursor: help;
 }
 
@@ -330,8 +330,8 @@
   padding: 8px 14px;
   border-radius: var(--radius-sm);
   background: var(--bg-card);
-  border: 1px solid var(--border-gold);
-  color: var(--gold-light);
+  border: 1px solid var(--border-accent);
+  color: var(--accent-light);
   font-size: 0.72rem;
   font-weight: 400;
   font-family: var(--font-body);
@@ -404,13 +404,13 @@
 .blog-content blockquote {
   margin: 2rem 0;
   padding: 1.5rem 2rem;
-  border-left: 3px solid var(--gold-primary);
-  background: rgba(var(--gold-rgb), 0.04);
+  border-left: 3px solid var(--accent);
+  background: rgba(var(--accent-rgb), 0.04);
   border-radius: 0 var(--radius-md) var(--radius-md) 0;
 }
 
 .blog-content blockquote p {
-  color: var(--gold-light);
+  color: var(--accent-light);
   font-size: 1rem;
   font-style: italic;
   line-height: 1.7;
@@ -427,11 +427,11 @@
 
 /* ============ CODE BLOCKS ============ */
 .blog-content code {
-  background: rgba(var(--gold-rgb), 0.08);
+  background: rgba(var(--accent-rgb), 0.08);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.85em;
-  color: var(--gold-light);
+  color: var(--accent-light);
   font-family: var(--font-body);
 }
 
@@ -463,7 +463,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   border: 1px solid var(--border-subtle);
   color: var(--text-muted);
   cursor: pointer;
@@ -472,13 +472,13 @@
 }
 
 .code-copy-btn:hover {
-  border-color: var(--border-gold);
-  color: var(--gold-primary);
+  border-color: var(--border-accent);
+  color: var(--accent);
 }
 
 .code-copy-btn.copied {
-  color: var(--gold-primary);
-  border-color: var(--gold-primary);
+  color: var(--accent);
+  border-color: var(--accent);
 }
 
 /* ============ INTERACTIVE BOX ============ */
@@ -492,8 +492,8 @@
 }
 
 .interactive-box:hover {
-  border-color: var(--border-gold);
-  box-shadow: var(--shadow-gold);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-accent);
   transform: translateY(-2px);
 }
 
@@ -520,8 +520,8 @@
 }
 
 .deep-dive[open] {
-  border-color: var(--border-gold);
-  box-shadow: 0 0 30px rgba(var(--gold-rgb), 0.06);
+  border-color: var(--border-accent);
+  box-shadow: 0 0 30px rgba(var(--accent-rgb), 0.06);
 }
 
 .deep-dive summary {
@@ -530,7 +530,7 @@
   font-family: var(--font-heading);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--gold-light);
+  color: var(--accent-light);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -542,7 +542,7 @@
 
 .deep-dive summary::before {
   content: '▸';
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.8rem;
   transition: transform 0.3s ease;
 }
@@ -552,7 +552,7 @@
 }
 
 .deep-dive summary:hover {
-  background: rgba(var(--gold-rgb), 0.04);
+  background: rgba(var(--accent-rgb), 0.04);
 }
 
 .deep-dive-content {
@@ -604,7 +604,7 @@
   transform: translate(-50%, -50%);
   background: var(--bg-primary);
   padding: 0 12px;
-  color: var(--gold-dark);
+  color: var(--accent-dark);
   font-size: 0.6rem;
 }
 
@@ -625,9 +625,9 @@
 .blog-tag {
   padding: 4px 14px;
   border-radius: 50px;
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   border: 1px solid var(--border-subtle);
-  color: var(--gold-light);
+  color: var(--accent-light);
   font-size: 0.7rem;
   font-weight: 500;
 }
@@ -638,8 +638,8 @@
   gap: 8px;
   padding: 10px 24px;
   border-radius: 50px;
-  border: 1px solid var(--border-gold);
-  color: var(--gold-primary);
+  border: 1px solid var(--border-accent);
+  color: var(--accent);
   text-decoration: none;
   font-size: 0.82rem;
   font-weight: 600;
@@ -647,9 +647,9 @@
 }
 
 .blog-back-link:hover {
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(var(--gold-rgb), 0.12);
+  box-shadow: 0 8px 30px rgba(var(--accent-rgb), 0.12);
 }
 
 /* ============ GSAP INITIAL STATE ============ */
@@ -722,9 +722,9 @@
 .raw-banner {
   margin-bottom: 2rem;
   padding: 1rem 1.2rem;
-  border: 1px dashed var(--border-gold);
+  border: 1px dashed var(--border-accent);
   border-radius: 10px;
-  background: rgba(212, 175, 55, 0.05);
+  background: rgba(var(--accent-rgb), 0.05);
 }
 
 .raw-banner p {
@@ -767,7 +767,7 @@
   content: "—";
   position: absolute;
   left: -1.1rem;
-  color: var(--gold-dark);
+  color: var(--accent-dark);
 }
 
 .ref-list strong { color: var(--text-primary); }

@@ -1,57 +1,10 @@
 /* ============================================================
-   THE HALLUCINATED LAB — DESIGN TOKENS & SHARED SHELL
-   Mirrors DESIGN-LANGUAGE.txt. Every value here is the single
-   source of truth; components must never hard-code a colour,
-   radius, or easing curve.
+   THE HALLUCINATED LAB — DICTIONARY SHELL
+   Design tokens live in /styles.css, which every dictionary page loads
+   first. This file used to redeclare 23 of them (GAP-09) and, because it
+   loads later, silently pinned the dictionary to a stale palette. It now
+   carries only the rules the dictionary adds on top of the shared shell.
    ============================================================ */
-
-:root {
-  /* Backgrounds */
-  --bg-primary: #050505;
-  --bg-secondary: #0a0a0a;
-  --bg-card: #0f0f0f;
-  --bg-glass: rgba(15, 15, 15, 0.7);
-
-  /* Gold accent family */
-  --gold-primary: #c9a84c;
-  --gold-light: #e8d48b;
-  --gold-dark: #8a7232;
-  --gold-glow: rgba(201, 168, 76, 0.15);
-
-  /* Text */
-  --text-primary: #f0ece4;
-  --text-secondary: #9a9590;
-  /* Design language 2b: #5a5550 measures 2.60:1 and fails WCAG AA.
-     #827b74 is the darkest value in the same warm-grey hue that
-     clears AA at 4.60:1 on --bg-card. Adopted here deliberately. */
-  --text-muted: #827b74;
-
-  /* Borders & effects */
-  --border-subtle: rgba(201, 168, 76, 0.1);
-  --border-gold: rgba(201, 168, 76, 0.3);
-  --gradient-gold: linear-gradient(135deg, #c9a84c, #e8d48b, #c9a84c);
-  --gradient-dark: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
-  --shadow-gold: 0 0 40px rgba(201, 168, 76, 0.08);
-
-  /* Status — the only non-gold hues on the site */
-  --status-warn: #f1c40f;
-  --status-error: #e74c3c;
-  --status-ok: #2ecc71;
-
-  /* Radii */
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-
-  /* Motion */
-  --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-
-  /* Type */
-  --font-heading: "Outfit", sans-serif;
-  --font-body: "JetBrains Mono", "Courier New", monospace;
-}
-
 /* ---------- Reset ---------- */
 
 *,
@@ -87,7 +40,7 @@ h4 {
 
 h3 {
   font-weight: 600;
-  color: var(--gold-light);
+  color: var(--accent-light);
 }
 
 strong {
@@ -101,7 +54,7 @@ img {
 }
 
 a {
-  color: var(--gold-primary);
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -112,9 +65,9 @@ code,
 
 /* Inline code */
 :not(pre) > code {
-  background: rgba(201, 168, 76, 0.08);
+  background: rgba(var(--accent-rgb), 0.08);
   border-radius: 4px;
-  color: var(--gold-light);
+  color: var(--accent-light);
   padding: 2px 6px;
 }
 
@@ -126,9 +79,9 @@ code,
   top: 0;
   z-index: 999;
   background: var(--bg-card);
-  border: 1px solid var(--border-gold);
+  border: 1px solid var(--border-accent);
   border-radius: var(--radius-sm);
-  color: var(--gold-primary);
+  color: var(--accent);
   padding: 0.75rem 1.25rem;
 }
 
@@ -150,7 +103,7 @@ code,
 }
 
 :focus-visible {
-  outline: 2px solid var(--gold-primary);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 
@@ -166,7 +119,7 @@ code,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--gold-dark);
+  background: var(--accent-dark);
   border-radius: 50px;
 }
 
@@ -188,7 +141,7 @@ code,
 
 .section-label {
   display: block;
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 3px;
@@ -204,7 +157,7 @@ code,
 .section-line {
   width: 60px;
   height: 2px;
-  background: var(--gradient-gold);
+  background: var(--gradient-accent);
   margin: 1.25rem 0;
 }
 
@@ -241,9 +194,9 @@ code,
   align-items: center;
   gap: 0.5rem;
   background: transparent;
-  border: 1px solid var(--border-gold);
+  border: 1px solid var(--border-accent);
   border-radius: 50px;
-  color: var(--gold-primary);
+  color: var(--accent);
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 0.78rem;
@@ -253,16 +206,16 @@ code,
 }
 
 .pill:hover {
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   transform: translateY(-2px);
 }
 
 .badge {
   display: inline-block;
-  background: rgba(201, 168, 76, 0.08);
-  border: 1px solid var(--border-gold);
+  background: rgba(var(--accent-rgb), 0.08);
+  border: 1px solid var(--border-accent);
   border-radius: 50px;
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.62rem;
   letter-spacing: 1px;
   padding: 0.15rem 0.65rem;
@@ -279,7 +232,7 @@ code,
 }
 
 .page-breadcrumb a {
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 
 .site-footer {
@@ -288,39 +241,4 @@ code,
   font-size: 0.8rem;
   padding: 2.5rem 2rem;
   text-align: center;
-}
-
-/* ---------- Motion ---------- */
-
-.fade-in {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: fadeUp 0.7s ease-out forwards;
-}
-
-.fade-in-delay-1 { animation-delay: 0.1s; }
-.fade-in-delay-2 { animation-delay: 0.2s; }
-.fade-in-delay-3 { animation-delay: 0.3s; }
-
-@keyframes fadeUp {
-  to {
-    opacity: 1;
-    transform: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
-  }
-
-  .fade-in {
-    opacity: 1;
-    transform: none;
-  }
 }

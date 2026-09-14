@@ -192,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (rel >= 90) verdict = 'Flawless diagnosis. Your product ships — and stays shipped. This is the orchestration instinct the article is about.';
     else if (rel >= 70) verdict = 'Solid. The product ships with a few scars. Each wrong lever cost a sprint — but you found the right one eventually.';
     else verdict = 'The demo was cool; the product wobbled. Re-read the three pillars and try again — diagnosis is a learnable skill.';
-    gEls.scenario.innerHTML = '<strong style="color:var(--gold-light)">Post-mortem.</strong> Final reliability: <strong style="color:var(--gold-primary)">' + rel + '%</strong>. ' + verdict;
+    gEls.scenario.innerHTML = '<strong style="color:var(--accent-light)">Post-mortem.</strong> Final reliability: <strong style="color:var(--accent)">' + rel + '%</strong>. ' + verdict;
     levers.forEach(b => { b.disabled = true; b.classList.remove('good', 'bad'); });
     gEls.feedback.classList.remove('show', 'miss');
     gEls.next.style.display = 'none';
@@ -209,7 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
     gEls.feedback.classList.toggle('miss', !hit);
     gEls.feedback.innerHTML = (hit
       ? '<strong>✓ Right lever.</strong> ' + r.why[pick]
-      : '<strong>✗ Not this one.</strong> ' + r.why[pick] + '<br><span style="color:var(--gold-light)">The fix: ' + leverNames[r.a] + ' — ' + r.why[r.a] + '</span>');
+      : '<strong>✗ Not this one.</strong> ' + r.why[pick] + '<br><span style="color:var(--accent-light)">The fix: ' + leverNames[r.a] + ' — ' + r.why[r.a] + '</span>');
     gEls.next.style.display = round < rounds.length - 1 ? 'inline-flex' : 'none';
     if (round === rounds.length - 1) {
       gEls.next.style.display = 'inline-flex';
@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let html = '';
     active.forEach(m => baseCaps[m].forEach(c => { html += '<div class="orch-cap">' + c + '</div>'; }));
     fusedCaps.forEach(f => {
-      if (f.needs.every(n => modeState[n])) html += '<div class="orch-cap fused">' + f.cap + ' <span style="margin-left:auto;font-size:0.58rem;letter-spacing:1px;color:var(--gold-primary);text-transform:uppercase;">fused</span></div>';
+      if (f.needs.every(n => modeState[n])) html += '<div class="orch-cap fused">' + f.cap + ' <span style="margin-left:auto;font-size:0.58rem;letter-spacing:1px;color:var(--accent);text-transform:uppercase;">fused</span></div>';
     });
     capsEl.innerHTML = html || '<div class="orch-caps-empty">No senses enabled. The model is a very expensive paperweight.</div>';
   }

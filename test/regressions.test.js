@@ -63,7 +63,7 @@ function tokens(selector = ':root') {
 }
 
 /* Both themes ship, so both are tested. The light theme cannot inherit
-   the dark theme's gold: #c9a84c measures about 1.9:1 on white. */
+   the dark theme's saffron: #F28A3D measures about 2.2:1 on ivory. */
 const THEMES = [
   { name: 'dark', selector: ':root' },
   { name: 'light', selector: ':root[data-theme="light"]' },
@@ -96,7 +96,9 @@ for (const theme of THEMES) {
     const surfaces = ['bg-primary', 'bg-secondary', 'bg-card'];
     // Tokens used for prose or placeholders. Anything here must clear
     // 4.5:1 for normal text, not the 3:1 that only large text may use.
-    const textTokens = ['text-primary', 'text-secondary', 'text-muted', 'gold-primary', 'gold-dark'];
+    // --signal (raw saffron) is deliberately absent: it is never text. It
+    // paints dots, rings and button fills whose label is --bg-primary.
+    const textTokens = ['text-primary', 'text-secondary', 'text-muted', 'accent', 'accent-dark', 'ok', 'error'];
 
     const failures = [];
     for (const fg of textTokens) {
@@ -118,7 +120,7 @@ for (const theme of THEMES) {
 
 test('the resting nav glyph clears 1.4.11 in both themes', () => {
   // Non-text UI, so the bar is 3:1. The resting opacity differs per theme
-  // on purpose: reducing opacity in dark blends gold toward black and
+  // on purpose: reducing opacity in dark blends saffron toward charcoal and
   // contrast barely moves, but in light it blends toward white and
   // collapses — 0.6 measures 2.54:1 there.
   const css = fs.readFileSync(path.join(ROOT, 'styles.css'), 'utf8');
@@ -142,11 +144,11 @@ test('the resting nav glyph clears 1.4.11 in both themes', () => {
     ['light', ':root[data-theme="light"]', lightOpacity],
   ]) {
     const t = tokens(selector);
-    const ratio = contrast(blend(t['gold-primary'], t['bg-primary'], opacity), t['bg-primary']);
+    const ratio = contrast(blend(t['accent'], t['bg-primary'], opacity), t['bg-primary']);
     assert.ok(
       ratio >= 3,
       `${name}: resting glyph at opacity ${opacity} is ${ratio.toFixed(2)}:1, under the 3:1 ` +
-      'that 1.4.11 requires. Raise the opacity or darken --gold-primary.',
+      'that 1.4.11 requires. Raise the opacity or darken --accent.',
     );
   }
 });
@@ -452,7 +454,7 @@ test('the stylesheet still handles forced colors and reduced motion', () => {
   assert.match(
     css, /@media\s*\(forced-colors:\s*active\)/,
     'forced-colors overrides `color` but NOT `fill` on an SVG. Without this\n' +
-    'block the gold nav glyphs stay gold on a white Canvas in Windows High\n' +
+    'block the saffron nav glyphs stay saffron on a white Canvas in Windows High\n' +
     'Contrast, which is under 2:1.',
   );
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/);
