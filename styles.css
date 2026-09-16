@@ -1,129 +1,180 @@
+/* ============ TOKENS — dark is the default ============
+   Charcoal + Ivory carry the interface. Slate is structure. Saffron is the
+   signal: it appears when something is happening (active, selected,
+   processing, the CTA) and nowhere else. Sage is the resolved state.
+
+   Two saffron tokens on purpose. --accent is the TEXT-grade saffron and
+   clears 4.5:1 on every surface in both themes, so it can paint links,
+   labels and small type. --signal is the raw brand saffron (#F28A3D in
+   both themes) and is never text: it paints dots, rings, rules and button
+   fills whose label is --bg-primary. In the light theme raw saffron is
+   2.2:1 on ivory, which is why the two are not the same value there.
+
+   Ratios against --bg-primary / --bg-secondary / --bg-card, computed with
+   the WCAG formula test/regressions.test.js uses:
+     text-primary    17.04 / 16.12 / 15.20
+     text-secondary  10.02 /  9.48 /  8.94
+     text-muted       6.25 /  5.91 /  5.57
+     accent           7.76 /  7.34 /  6.92
+     accent-dark      6.20 /  5.87 /  5.53
+     ok               8.47 /  8.02 /  7.56
+     error            6.56 /  6.21 /  5.85
+   Keep this block free of braces inside comments: the test slices it at
+   the first closing brace.
+   ============ */
 :root {
-  --bg-primary: #050505;
-  --bg-secondary: #0a0a0a;
-  --bg-card: #0f0f0f;
-  --bg-glass: rgba(15, 15, 15, 0.7);
+  --bg-primary: #0b0f14;
+  --bg-secondary: #10161d;
+  --bg-card: #151c25;
+  /* Channels of --bg-primary for scrims and washes that need their own alpha. */
+  --bg-rgb: 11, 15, 20;
+  --bg-glass: rgba(21, 28, 37, 0.72);
   /* The navbar surfaces are translucent, so they cannot reuse --bg-card:
      they need their own alpha. Kept as tokens rather than literals because
-     a hardcoded rgba(5,5,5,.8) here is invisible to the theme switch — it
-     shipped a black bar with near-black text at 1.32:1 in light mode. */
-  --bg-nav: rgba(5, 5, 5, 0.8);
-  --bg-nav-solid: rgba(5, 5, 5, 0.95);
-  --bg-nav-overlay: rgba(5, 5, 5, 0.55);
-  --gold-primary: #c9a84c;
+     a hardcoded rgba here is invisible to the theme switch. */
+  --bg-nav: rgba(16, 22, 29, 0.72);
+  --bg-nav-solid: rgba(16, 22, 29, 0.94);
+  --bg-nav-overlay: rgba(11, 15, 20, 0.97);
+  --accent: #f28a3d;
   /* The accent's channels on their own, for the places that need it at
-     some other alpha. A custom property cannot carry a colour and have
-     its opacity changed later, so without this every tint has to write
-     the literal out again — which is how a page full of gold washes
-     ended up staying dark-theme gold when the light theme arrived.
-     Anything written as rgba(var(--gold-rgb), …) follows the theme. */
-  --gold-rgb: 201, 168, 76;
-  --gold-light: #e8d48b;
-  /* 4.61:1 on --bg-card. The old #8a7232 was 4.14:1 there, which is fine
-     for the icons and scrollbars it mostly paints but not for the small
-     text it also paints — .course-index is 10.2px, far below the 18.66px
-     that would let bold text use the 3:1 threshold. Raising the token
-     rather than patching that one selector keeps every other small-text
-     use (the ◆ list markers, the blog divider label) from being the next
-     one to fail. */
-  --gold-dark: #94793a;
-  --gold-glow: rgba(201, 168, 76, 0.15);
-  --text-primary: #f0ece4;
-  --text-secondary: #9a9590;
-  /* 4.56:1 on --bg-card, the darkest surface it ever sits on, so it clears
-     WCAG 1.4.3 AA (4.5:1) everywhere rather than only over the page
-     background. The old #5a5550 measured 2.77:1 — below the 3:1 floor even
-     for large text — and it is used for real prose and input placeholders,
-     not just decoration. Kept warm (R>G>B) so the palette still reads as
-     one family. */
-  --text-muted: #807b72;
-  --border-subtle: rgba(201, 168, 76, 0.1);
-  --border-gold: rgba(201, 168, 76, 0.3);
-  --gradient-gold: linear-gradient(135deg, #c9a84c, #e8d48b, #c9a84c);
-  --gradient-dark: linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
-  --shadow-gold: 0 0 40px rgba(201, 168, 76, 0.08);
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-  --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+     some other alpha. Anything written as rgba(var(--accent-rgb), …)
+     follows the theme; a literal rgba does not. */
+  --accent-rgb: 242, 138, 61;
+  --accent-light: #f5a76b;
+  --accent-dark: #d97a2e;
+  --accent-glow: rgba(242, 138, 61, 0.12);
+  --signal: #f28a3d;
+  --signal-rgb: 242, 138, 61;
+  /* Slate: borders, rules, diagram lines, metadata chrome. 2.7:1 on the
+     page, so it is never body text — that is what --text-muted is for. */
+  --structure: #405a73;
+  --structure-rgb: 64, 90, 115;
+  --ok: #7fb89f;
+  --ok-rgb: 127, 184, 159;
+  --warn: #f2c14e;
+  --warn-rgb: 242, 193, 78;
+  --error: #e07a6b;
+  --error-rgb: 224, 122, 107;
+  --text-primary: #f4f1ea;
+  --text-secondary: #b4bcc6;
+  --text-muted: #8a94a0;
+  /* The three quiet petals of the lotus. Soft gray in dark, charcoal in
+     light; the fourth petal is always --signal. */
+  --logo-petal: #d7dee8;
+  --border-subtle: rgba(64, 90, 115, 0.28);
+  --border-strong: rgba(64, 90, 115, 0.55);
+  --border-accent: rgba(242, 138, 61, 0.45);
+  --gradient-accent: linear-gradient(135deg, #f28a3d, #f5a76b, #f28a3d);
+  --gradient-dark: linear-gradient(180deg, #0b0f14 0%, #10161d 100%);
+  --shadow-accent: 0 0 40px rgba(242, 138, 61, 0.08);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.35);
+  /* Tighter than before on purpose: cards read as technical records, not
+     app-store tiles. Pills and round controls use 999px directly. */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  /* ---- Motion ----
+     Instant: colour or opacity hint. Fast: hover. Normal: cards, nav,
+     borders. Panel: dropdowns and UI state. Section: scroll reveals.
+     Structural: large geometry. Reveal: hero/brand choreography.
+     Nothing in ordinary UI should exceed --motion-panel. */
+  --motion-instant: 100ms;
+  --motion-fast: 160ms;
+  --motion-normal: 240ms;
+  --motion-panel: 400ms;
+  --motion-section: 650ms;
+  --motion-structural: 800ms;
+  --motion-reveal: 1000ms;
+  --ease-standard: cubic-bezier(0.2, 0.8, 0.2, 1);
+  --ease-enter: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.7, 0, 0.84, 0);
+  --stagger-small: 40ms;
+  --stagger-medium: 70ms;
+  --stagger-large: 100ms;
+  /* Compat shorthand for the transition: declarations that predate the
+     motion tokens. New rules name a duration and an easing explicitly. */
+  --transition: var(--motion-normal) var(--ease-standard);
   --font-heading: 'Outfit', 'Outfit Fallback', sans-serif;
   --font-body: 'JetBrains Mono', 'JetBrains Mono Fallback', 'Courier New', monospace;
 }
 
-/* ============ LIGHT THEME — "Sand" ============
+/* ============ LIGHT THEME — Ivory ============
    Set by theme.js on <html> before first paint, so there is no flash of
    the wrong theme. Dark stays the default in :root above — a stylesheet
    that loads without its script still renders the site it always did.
 
-   The page is a warm sand, not the brand gold: the gold-as-page
-   inversion this replaced painted the accent colour onto the page, which
-   left the accent nowhere to go and every gold-tinted component reading
-   as a flat field. Sand keeps the brand warmth in the paper and lets the
-   gold stay gold — just the darker side of it, the side that can sit on
-   a light surface.
+   The page is ivory with sand as the second surface, the two warm
+   neutrals of the identity. Cards lift to a near-white so the layering
+   direction matches dark (page darkest of the three, cards lifted) and
+   every component that leans on --bg-card keeps working untouched.
 
-   Layering direction matches dark (page darkest of the three, cards
-   lifted), so every component that leans on --bg-card to separate itself
-   keeps working untouched, and only the token values change.
+   Saffron cannot simply carry over: #F28A3D is 2.2:1 on ivory. The text
+   accent is a burnt saffron that clears 4.5:1 everywhere; the raw signal
+   stays #F28A3D and is used only where its label is charcoal.
 
-   Every token is measured, not eyeballed. Ratios against
-   --bg-primary / --bg-secondary / --bg-card:
-     text-primary    13.08 / 14.20 / 15.78
-     text-secondary   7.47 /  8.11 /  9.01
-     text-muted       4.72 /  5.12 /  5.69
-     gold-primary     5.46 /  5.93 /  6.59
-     gold-light       7.16 /  7.77 /  8.64
-     gold-dark        4.67 /  5.07 /  5.63
+   Ratios against --bg-primary / --bg-secondary / --bg-card:
+     text-primary    15.66 / 14.24 / 16.80
+     text-secondary   8.03 /  7.30 /  8.61
+     text-muted       5.06 /  4.59 /  5.42
+     accent           5.74 /  5.22 /  6.16
+     accent-dark      6.77 /  6.15 /  7.26
+     ok               6.81 /  6.19 /  7.30
+     error            5.81 /  5.28 /  6.24
 
-   The accents sit lower on the gold ramp than a sand page alone would
-   ask for: --gold-dark paints 10.2px text in .course-index and the ◆
-   list markers, so it is held to the 4.5:1 body-text floor like the rest
-   rather than the 3:1 an icon-only token could use.
-
-   Unlike the gold page, this one does need a resting nav-glyph override
-   — see the bottom of this file. Fading a dark accent toward a light
-   page collapses its contrast, where fading it toward black barely moved
-   it.
+   The resting nav glyph needs its own opacity here — see the bottom of
+   this file. Fading a dark accent toward a light page collapses its
+   contrast, where fading it toward charcoal barely moves it.
    ============ */
 :root[data-theme="light"] {
-  --bg-primary: #e8dfcb;
-  --bg-secondary: #efe8d8;
-  --bg-card: #f8f4ea;
-  --bg-glass: rgba(248, 244, 234, 0.72);
+  --bg-primary: #f4f1ea;
+  --bg-secondary: #ede6d9;
+  --bg-card: #fbf9f5;
+  --bg-rgb: 244, 241, 234;
+  --bg-glass: rgba(251, 249, 245, 0.74);
   /* Higher alpha than dark's. A translucent bar over bright content leaves
      too little separation for the text sitting on it. */
-  --bg-nav: rgba(232, 223, 203, 0.86);
-  --bg-nav-solid: rgba(232, 223, 203, 0.97);
-  --bg-nav-overlay: rgba(232, 223, 203, 0.94);
-  /* The accent darkens rather than inverting to black — it is still gold,
-     just the side of it that can sit on a light page. */
-  --gold-primary: #6b5410;
-  --gold-rgb: 107, 84, 16;
-  --gold-light: #57430b;
-  --gold-dark: #775e12;
-  --gold-glow: rgba(107, 84, 16, 0.10);
-  --text-primary: #1f1a0d;
-  --text-secondary: #4b4230;
-  --text-muted: #68604a;
-  /* Borders invert too — a light hairline vanishes on sand. */
-  --border-subtle: rgba(31, 26, 13, 0.16);
-  --border-gold: rgba(107, 84, 16, 0.45);
-  /* The middle stop is a real value, not decoration: .nav-logo span is
-     painted with this gradient through background-clip, so the lightest
-     point of it is text. 4.52:1 on the page. */
-  --gradient-gold: linear-gradient(135deg, #6b5410, #7a6012, #6b5410);
-  --gradient-dark: linear-gradient(180deg, #e8dfcb 0%, #efe8d8 100%);
-  /* Shadows on a light page read as depth, not glow — warm and tighter. */
-  --shadow-gold: 0 12px 34px rgba(75, 60, 20, 0.18);
+  --bg-nav: rgba(244, 241, 234, 0.80);
+  --bg-nav-solid: rgba(244, 241, 234, 0.95);
+  --bg-nav-overlay: rgba(244, 241, 234, 0.98);
+  --accent: #9c4407;
+  --accent-rgb: 156, 68, 7;
+  --accent-light: #7a3505;
+  --accent-dark: #8a3d06;
+  --accent-glow: rgba(156, 68, 7, 0.10);
+  --signal: #f28a3d;
+  --signal-rgb: 242, 138, 61;
+  --structure: #405a73;
+  --structure-rgb: 64, 90, 115;
+  --ok: #2e5b52;
+  --ok-rgb: 46, 91, 82;
+  --warn: #6e5200;
+  --warn-rgb: 110, 82, 0;
+  --error: #a23b2f;
+  --error-rgb: 162, 59, 47;
+  --text-primary: #14191f;
+  --text-secondary: #3e4a56;
+  --text-muted: #5c6873;
+  --logo-petal: #14191f;
+  --border-subtle: rgba(64, 90, 115, 0.22);
+  --border-strong: rgba(64, 90, 115, 0.45);
+  --border-accent: rgba(156, 68, 7, 0.45);
+  /* The middle stop is a real value, not decoration: gradient text is
+     painted with this through background-clip, so the lightest point of
+     it is text. #a84d12 is 5.0:1 on the page. */
+  --gradient-accent: linear-gradient(135deg, #9c4407, #a84d12, #9c4407);
+  --gradient-dark: linear-gradient(180deg, #f4f1ea 0%, #ede6d9 100%);
+  /* Shadows on a light page read as depth, not glow — cool and tighter. */
+  --shadow-accent: 0 12px 34px rgba(20, 25, 31, 0.14);
+  --shadow-card: 0 12px 32px rgba(20, 25, 31, 0.10);
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--gold-dark) var(--bg-primary); }
+html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--accent-dark) var(--bg-primary); }
 html::-webkit-scrollbar { width: 6px; }
 html::-webkit-scrollbar-track { background: var(--bg-primary); }
-html::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 3px; }
+html::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 3px; }
 
 body {
   font-family: var(--font-body);
@@ -139,14 +190,14 @@ body {
 /* ============ SKIP LINK ============ */
 .skip-link {
   position: absolute; top: -100%; left: 50%; transform: translateX(-50%);
-  padding: 12px 24px; background: var(--gold-primary); color: var(--bg-primary);
+  padding: 12px 24px; background: var(--accent); color: var(--bg-primary);
   font-weight: 600; font-size: 0.9rem; border-radius: 0 0 var(--radius-sm) var(--radius-sm);
   text-decoration: none; z-index: 9999; transition: top 0.3s ease;
 }
 .skip-link:focus { top: 0; }
 
 /* ============ FOCUS STATES ============ */
-*:focus-visible { outline: 2px solid var(--gold-primary); outline-offset: 3px; }
+*:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 *:focus:not(:focus-visible) { outline: none; }
 
 /* ============ NAVBAR ============ */
@@ -166,7 +217,7 @@ body {
 .nav-logo img { height: 36px; width: 36px; border-radius: 50%; flex-shrink: 0; }
 .nav-logo span {
   font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem;
-  background: var(--gradient-gold); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background: var(--gradient-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
   letter-spacing: 0.5px;
   display: inline-block; overflow: hidden; white-space: nowrap;
   max-width: 0; opacity: 0; margin-left: 0;
@@ -178,12 +229,12 @@ body {
 @media (prefers-reduced-motion: reduce) { .nav-logo span { transition: none; } }
 .nav-links { display: flex; gap: 2rem; list-style: none; }
 .nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; transition: var(--transition); position: relative; }
-.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--gold-primary); transition: var(--transition); }
-.nav-links a:hover, .nav-links a.active { color: var(--gold-primary); }
+.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--accent); transition: var(--transition); }
+.nav-links a:hover, .nav-links a.active { color: var(--accent); }
 .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
 
 .nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
-.nav-hamburger span { width: 24px; height: 2px; background: var(--gold-primary); transition: var(--transition); transform-origin: center; }
+.nav-hamburger span { width: 24px; height: 2px; background: var(--accent); transition: var(--transition); transform-origin: center; }
 .nav-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 .nav-hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .nav-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -201,11 +252,11 @@ body {
   background: transparent;
   border: 1px solid var(--border-subtle);
   border-radius: 50%;
-  color: var(--gold-primary);
+  color: var(--accent);
   cursor: pointer;
   transition: var(--transition);
 }
-.theme-toggle:hover { border-color: var(--border-gold); background: var(--gold-glow); }
+.theme-toggle:hover { border-color: var(--border-accent); background: var(--accent-glow); }
 .theme-toggle svg { width: 18px; height: 18px; fill: currentColor; display: block; }
 /* Show the icon for the theme the click would move you TO, not the one
    you are in — the button is a destination, not a status light. */
@@ -231,18 +282,18 @@ body {
 .hero-gradient {
   position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
   width: 800px; height: 800px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(201, 168, 76, 0.06) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.06) 0%, transparent 70%);
   filter: blur(80px); pointer-events: none;
 }
 .hero-content { position: relative; z-index: 2; text-align: center; padding: 2rem; }
 .hero-badge {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 20px; border-radius: 50px;
-  background: rgba(201, 168, 76, 0.08); border: 1px solid var(--border-gold);
-  font-size: 0.8rem; color: var(--gold-primary); font-weight: 500;
+  background: rgba(var(--accent-rgb), 0.08); border: 1px solid var(--border-accent);
+  font-size: 0.8rem; color: var(--accent); font-weight: 500;
   margin-bottom: 2rem; letter-spacing: 1px; text-transform: uppercase;
 }
-.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold-primary); animation: pulse-dot 2s infinite; }
+.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2s infinite; }
 @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 .hero-title {
   font-family: var(--font-heading);
@@ -254,7 +305,7 @@ body {
      override would otherwise push text under #hero's overflow:hidden. */
   overflow-wrap: break-word;
   line-height: 1.05; margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 50%, var(--accent) 100%);
   -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 .hero-subtitle { font-size: clamp(0.9rem, 1.8vw, 1.1rem); color: var(--text-secondary); max-width: 600px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
@@ -262,9 +313,9 @@ body {
 /* ============ SECTIONS ============ */
 section { padding: 6rem 2rem; position: relative; }
 .section-header { text-align: center; margin-bottom: 4rem; }
-.section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold-primary); margin-bottom: 1rem; display: block; }
+.section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; display: block; }
 .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
-.section-line { width: 60px; height: 2px; background: var(--gradient-gold); margin: 0 auto; border-radius: 2px; }
+.section-line { width: 60px; height: 2px; background: var(--gradient-accent); margin: 0 auto; border-radius: 2px; }
 .container { max-width: 1200px; margin: 0 auto; }
 
 /* ============ ABOUT ============ */
@@ -279,13 +330,13 @@ section { padding: 6rem 2rem; position: relative; }
 }
 .member-card::before {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--gradient-gold); opacity: 0; transition: var(--transition);
+  background: var(--gradient-accent); opacity: 0; transition: var(--transition);
 }
-.member-card:hover { border-color: var(--border-gold); transform: translateY(-4px); box-shadow: var(--shadow-gold); }
+.member-card:hover { border-color: var(--border-accent); transform: translateY(-4px); box-shadow: var(--shadow-accent); }
 .member-card:hover::before { opacity: 1; }
-.member-avatar { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem; border: 2px solid var(--border-gold); object-fit: cover; }
+.member-avatar { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem; border: 2px solid var(--border-accent); object-fit: cover; }
 .member-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
-.member-handle { color: var(--gold-primary); font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; }
+.member-handle { color: var(--accent); font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; }
 .member-bio { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.5rem; }
 .member-links { display: flex; gap: 12px; justify-content: center; }
 
@@ -299,16 +350,16 @@ section { padding: 6rem 2rem; position: relative; }
   background: transparent;
 }
 .hover-btn:hover {
-  border-color: var(--gold-primary); color: var(--gold-primary);
-  background: var(--gold-glow);
+  border-color: var(--accent); color: var(--accent);
+  background: var(--accent-glow);
 }
 .hover-btn::after {
   content: attr(data-tooltip);
   position: absolute; bottom: calc(100% + 10px); left: 50%;
   transform: translateX(-50%) translateY(6px);
   padding: 6px 14px; border-radius: var(--radius-sm);
-  background: rgba(201, 168, 76, 0.12); border: 1px solid var(--border-gold);
-  color: var(--gold-light); font-size: 0.72rem; font-weight: 500;
+  background: rgba(var(--accent-rgb), 0.12); border: 1px solid var(--border-accent);
+  color: var(--accent-light); font-size: 0.72rem; font-weight: 500;
   font-family: var(--font-body);
   white-space: nowrap;
   opacity: 0; pointer-events: none;
@@ -324,7 +375,7 @@ section { padding: 6rem 2rem; position: relative; }
   position: absolute; bottom: calc(100% + 4px); left: 50%;
   transform: translateX(-50%);
   border: 5px solid transparent;
-  border-top-color: var(--border-gold);
+  border-top-color: var(--border-accent);
   opacity: 0; pointer-events: none;
   transition: opacity 0.25s ease;
 }
@@ -363,7 +414,7 @@ section { padding: 6rem 2rem; position: relative; }
   background: var(--bg-primary);
 }
 .footer-text { color: var(--text-muted); font-size: 0.8rem; }
-.footer-text a { color: var(--gold-primary); text-decoration: none; }
+.footer-text a { color: var(--accent); text-decoration: none; }
 
 /* The dev toggle's touch gesture lands on this element — three taps,
    see initDevTapToggle in script.js. Both declarations are here to stop
@@ -514,16 +565,16 @@ footer {
      the label is clipped, and a grey one reads as disabled. Depth comes
      from opacity instead, so the current section still stands out
      without the icon ever leaving the palette. */
-  fill: var(--gold-primary); stroke: none; opacity: 0.6;
+  fill: var(--accent); stroke: none; opacity: 0.6;
   transition: opacity var(--transition);
   /* Slight overshoot on the way up: the lift is what makes it feel like
      a control answering rather than a colour swap. */
   transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .nav-links.is-icons a.has-icon:hover {
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   border-color: var(--border-subtle);
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 .nav-links.is-icons a.has-icon:hover svg { transform: translateY(-2px) scale(1.08); }
 .nav-links.is-icons a.has-icon:active svg { transform: translateY(0) scale(0.96); }
@@ -531,10 +582,10 @@ footer {
 /* Open and current both read as "you are here", so they share a look. */
 .nav-links.is-icons li.is-open > a.has-icon,
 .nav-links.is-icons a.has-icon.active {
-  background: rgba(201, 168, 76, 0.10);
-  border-color: var(--border-gold);
-  color: var(--gold-primary);
-  box-shadow: 0 0 18px rgba(201, 168, 76, 0.10);
+  background: rgba(var(--accent-rgb), 0.10);
+  border-color: var(--border-accent);
+  color: var(--accent);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.10);
 }
 .nav-links.is-icons a.has-icon:hover svg,
 .nav-links.is-icons a.has-icon:focus-visible svg,
@@ -565,7 +616,7 @@ footer {
 }
 .nav-flyout-rule {
   width: 1px; height: 18px; flex-shrink: 0;
-  background: var(--border-gold); margin-right: 0.4rem;
+  background: var(--border-accent); margin-right: 0.4rem;
 }
 .nav-sub {
   font-size: 0.68rem; letter-spacing: 0.8px; text-transform: uppercase;
@@ -576,8 +627,8 @@ footer {
               background var(--transition), transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 .nav-sub:hover {
-  color: var(--gold-primary); border-color: var(--border-gold);
-  background: var(--gold-glow); transform: translateY(-1px);
+  color: var(--accent); border-color: var(--border-accent);
+  background: var(--accent-glow); transform: translateY(-1px);
 }
 .nav-sub::after { display: none; }
 
@@ -622,7 +673,7 @@ footer {
 
    The nav glyphs are the sharper one: forced-colors overrides `color`
    and `background-color`, but NOT `fill` on an SVG. A glyph filled
-   var(--gold-primary) stays gold while the surface behind it becomes
+   var(--accent) stays gold while the surface behind it becomes
    Canvas, which in the light HCM themes is white — gold on white is
    under 2:1. Handing fill back to CanvasText is what keeps 1.4.11 true
    in a mode the palette never sees.
@@ -663,7 +714,7 @@ footer {
 /* In dev mode unfinished work is marked, not just shown — the whole
    point is being able to tell at a glance what is real. */
 :root[data-mode="dev"] [data-status="dev"] {
-  outline: 1px dashed var(--dev-border, rgba(217, 140, 43, 0.45));
+  outline: 1px dashed rgba(var(--signal-rgb), 0.55);
   outline-offset: 4px;
   position: relative;
 }
@@ -673,8 +724,8 @@ footer {
   font-family: var(--font-body); font-size: 0.55rem; font-weight: 600;
   letter-spacing: 1.5px; line-height: 1;
   padding: 4px 7px; border-radius: 4px;
-  color: #d98c2b; background: #1a1206;
-  border: 1px solid rgba(217, 140, 43, 0.45);
+  color: var(--signal); background: var(--bg-primary);
+  border: 1px solid rgba(var(--signal-rgb), 0.55);
   pointer-events: none;
 }
 
@@ -696,14 +747,14 @@ footer {
   position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(8px);
   z-index: 9999; pointer-events: none;
   padding: 7px 16px; border-radius: 99px;
-  border: 1px solid var(--border-subtle); background: var(--bg-secondary, #14161a);
+  border: 1px solid var(--border-subtle); background: var(--bg-secondary);
   color: var(--text-muted);
   font-family: var(--font-body); font-size: 0.6rem;
   letter-spacing: 1.5px; text-transform: uppercase;
   opacity: 0; transition: opacity 0.18s ease, transform 0.18s ease;
 }
 .mode-toast.is-on { opacity: 1; transform: translateX(-50%) translateY(0); }
-.mode-toast.is-dev { border-color: #d98c2b; color: #d98c2b; }
+.mode-toast.is-dev { border-color: var(--signal); color: var(--accent); }
 
 @media (prefers-reduced-motion: reduce) {
   .mode-toast { transition: none; }
@@ -712,7 +763,7 @@ footer {
 /* A persistent reminder that the site is not showing its public face. */
 :root[data-mode="dev"] body::before {
   content: ''; position: fixed; inset: 0 0 auto 0; height: 2px; z-index: 2000;
-  background: linear-gradient(90deg, transparent, #d98c2b, transparent);
+  background: linear-gradient(90deg, transparent, var(--signal), transparent);
   pointer-events: none;
 }
 
@@ -720,50 +771,47 @@ footer {
    LIGHT THEME — the places the token swap cannot reach.
 
    Kept at the end of the file, together, rather than beside each rule:
-   these exist only because a literal rgba(201,168,76,…) is written
-   somewhere instead of a token, and collecting them makes the list of
-   outstanding hardcoded golds visible. Anything moved onto a token can
-   be deleted from here.
-
-   Left gold, each of these washes out on sand — a gold tint over a warm
-   light page is very nearly the page itself.
+   these exist where a wash needs a different alpha on a light page than
+   on a dark one, and collecting them makes the list visible. Anything
+   that can be expressed once with rgba(var(--accent-rgb), …) in the
+   base rule can be deleted from here.
    ============================================================ */
 
 /* Hero glow and badge fill (styles.css literals). */
 :root[data-theme="light"] .hero-gradient {
-  background: radial-gradient(circle, rgba(107, 84, 16, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.12) 0%, transparent 70%);
 }
-:root[data-theme="light"] .hero-badge { background: rgba(107, 84, 16, 0.08); }
+:root[data-theme="light"] .hero-badge { background: rgba(var(--accent-rgb), 0.08); }
 
 /* Tooltip bubble on the social/hover buttons. */
 :root[data-theme="light"] .hover-btn::after {
-  background: rgba(107, 84, 16, 0.12);
-  color: var(--gold-light);
+  background: rgba(var(--accent-rgb), 0.12);
+  color: var(--accent-light);
 }
 
 /* Open / current state in the icon nav bar. */
 :root[data-theme="light"] .nav-links.is-icons li.is-open > a.has-icon,
 :root[data-theme="light"] .nav-links.is-icons a.has-icon.active {
-  background: rgba(107, 84, 16, 0.10);
-  box-shadow: 0 0 18px rgba(107, 84, 16, 0.10);
+  background: rgba(var(--accent-rgb), 0.10);
+  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.10);
 }
 
-/* The resting nav glyph. 0.6 is tuned for gold fading toward black,
-   where contrast barely moves; fading a dark accent toward a light page
-   collapses it — 0.6 measures 2.51:1 here, under the 3:1 that 1.4.11
-   asks of a UI component. 0.85 measures 4.03:1, and the icon bar still
-   reads as depth rather than a row of equally loud glyphs because the
-   active pill carries its own background and border. */
-:root[data-theme="light"] .nav-links.is-icons a.has-icon svg { opacity: 0.85; }
+/* The resting nav glyph. 0.6 is tuned for saffron fading toward charcoal,
+   where contrast barely moves (3.44:1); fading the burnt accent toward
+   ivory collapses it — 0.6 measures well under the 3:1 that 1.4.11 asks
+   of a UI component. 0.9 measures 4.75:1, and the icon bar still reads
+   as depth rather than a row of equally loud glyphs because the active
+   pill carries its own background and border. */
+:root[data-theme="light"] .nav-links.is-icons a.has-icon svg { opacity: 0.9; }
 
 /* Primary hero button hover (pages.css literal). */
 :root[data-theme="light"] .hero-btn-primary:hover {
-  box-shadow: 0 8px 30px rgba(75, 60, 20, 0.18);
+  box-shadow: 0 8px 30px rgba(20, 25, 31, 0.18);
 }
 
 /* The dev badge is a dark chip built for a dark page. */
 :root[data-theme="light"][data-mode="dev"] [data-status="dev"]::after {
-  color: #6b4409; background: #f3e6c8;
+  color: var(--accent); background: var(--bg-secondary);
 }
 
 /* ---- Islands that stay dark in both themes ----
@@ -779,14 +827,14 @@ footer {
    of them inherits the right values without another patch here. */
 :root[data-theme="light"] .gateway-cover,
 :root[data-theme="light"] .blog-hero-content {
-  --gold-primary: #c9a84c;
-  --gold-rgb: 201, 168, 76;
-  --gold-light: #e8d48b;
-  --gold-dark: #94793a;
-  --gold-glow: rgba(201, 168, 76, 0.15);
-  --border-subtle: rgba(201, 168, 76, 0.1);
-  --border-gold: rgba(201, 168, 76, 0.3);
-  --text-primary: #f0ece4;
-  --text-secondary: #9a9590;
-  --text-muted: #807b72;
+  --accent: #f28a3d;
+  --accent-rgb: 242, 138, 61;
+  --accent-light: #f5a76b;
+  --accent-dark: #d97a2e;
+  --accent-glow: rgba(var(--accent-rgb), 0.12);
+  --border-subtle: rgba(64, 90, 115, 0.28);
+  --border-accent: rgba(var(--accent-rgb), 0.45);
+  --text-primary: #f4f1ea;
+  --text-secondary: #b4bcc6;
+  --text-muted: #8a94a0;
 }

@@ -34,17 +34,15 @@
   --border: var(--border-subtle);
   --text: var(--text-primary);
   --muted: var(--text-secondary);
-  --accent: var(--gold-primary);
-  --accent-2: var(--gold-light);
   --mono: var(--font-body);
 
   /* Status. Distinct hues because they mean distinct things — a reader
      scanning for the expensive cases is using colour as a filter — but
      pulled toward the site's warmth, and `--cx-hard` is the same
-     #e0785c the form errors already use. */
+     --error the form errors already use. */
   --cx-good: #6fbf94;
   --cx-warn: #d9a05b;
-  --cx-hard: #e0785c;
+  --cx-hard: var(--error);
 
   /* Syntax. One warm, one cool, one recessive. */
   --cx-kw: #d98cae;
@@ -195,7 +193,7 @@
   background: var(--panel-2);
   padding: 2px 6px;
   border-radius: 4px;
-  color: var(--accent-2);
+  color: var(--accent-light);
   border: 1px solid var(--border);
 }
 
@@ -220,7 +218,7 @@
 
 /* ============ CALLOUTS ============ */
 .complexity-page .callout {
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   border-left: 3px solid var(--accent);
   padding: 0.75rem 1rem;
   border-radius: var(--radius-sm);
@@ -315,7 +313,7 @@
   user-select: none;
 }
 
-.complexity-page .toggle:hover { border-color: var(--border-gold); }
+.complexity-page .toggle:hover { border-color: var(--border-accent); }
 
 /* An enabled toggle is painted in its own curve's colour by the script,
    so the label has to invert against it rather than against the page. */
@@ -344,7 +342,7 @@
 
 .complexity-page .slider-row input[type="range"] {
   flex: 1;
-  accent-color: var(--gold-primary);
+  accent-color: var(--accent);
 }
 
 .complexity-page .slider-row .val {
@@ -388,7 +386,7 @@
 }
 
 .complexity-page .example[open] summary::after { transform: rotate(90deg); }
-.complexity-page .example summary:hover { background: var(--gold-glow); }
+.complexity-page .example summary:hover { background: var(--accent-glow); }
 .complexity-page .example .body { padding: 0 1.1rem 1.1rem; border-top: 1px solid var(--border); }
 
 .complexity-page .badge {
@@ -405,10 +403,10 @@
 
 .complexity-page .badge.easy { background: rgba(111, 191, 148, 0.15); color: var(--cx-good); }
 .complexity-page .badge.med { background: rgba(217, 160, 91, 0.15); color: var(--cx-warn); }
-.complexity-page .badge.hard { background: rgba(224, 120, 92, 0.15); color: var(--cx-hard); }
+.complexity-page .badge.hard { background: rgba(var(--error-rgb), 0.15); color: var(--cx-hard); }
 
 .complexity-page .answer {
-  background: var(--gold-glow);
+  background: var(--accent-glow);
   padding: 0.65rem 0.9rem;
   border-radius: var(--radius-sm);
   margin-top: 0.75rem;
@@ -445,8 +443,8 @@
 
 .complexity-page .mt-calc input:focus {
   outline: none;
-  border-color: var(--border-gold);
-  box-shadow: 0 0 20px rgba(var(--gold-rgb), 0.08);
+  border-color: var(--border-accent);
+  box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.08);
 }
 
 .complexity-page .mt-result {
@@ -468,7 +466,7 @@
 }
 
 .complexity-page .mt-result .invalid { color: var(--cx-warn); }
-.complexity-page .mt-result .case { color: var(--accent-2); }
+.complexity-page .mt-result .case { color: var(--accent-light); }
 .complexity-page .mt-result .mt-note { margin-top: 8px; color: var(--muted); }
 
 /* ============ FORMULA SHEET ============ */

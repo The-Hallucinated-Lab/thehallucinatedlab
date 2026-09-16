@@ -286,7 +286,7 @@ function initColourPanel() {
       compute(picker.value);
     });
   }
-  compute(input.value || '#c9a84c');
+  compute(input.value || '#f28a3d');
 }
 
 /* ============ PANEL: TIME ============ */

@@ -24,7 +24,7 @@ main {
   width: 900px;
   height: 900px;
   transform: translateX(-50%);
-  background: radial-gradient(circle, rgba(201, 168, 76, 0.06) 0%, transparent 65%);
+  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.06) 0%, transparent 65%);
   filter: blur(80px);
   pointer-events: none;
 }
@@ -38,7 +38,7 @@ main {
   font-weight: 800;
   letter-spacing: -0.5px;
   margin: 0.9rem 0 0;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--gold-light) 50%, var(--gold-primary) 100%);
+  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 50%, var(--accent) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -92,15 +92,15 @@ main {
 }
 
 .search-bar:focus-within {
-  border-color: var(--border-gold);
-  box-shadow: var(--shadow-gold);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-accent);
 }
 
 .search-icon {
   flex: 0 0 auto;
   width: 18px;
   height: 18px;
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 
 #search-input {
@@ -138,15 +138,15 @@ main {
 }
 
 .search-clear:hover {
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 
 .search-submit {
   flex: 0 0 auto;
-  background: var(--gold-glow);
-  border: 1px solid var(--border-gold);
+  background: var(--accent-glow);
+  border: 1px solid var(--border-accent);
   border-radius: 50px;
-  color: var(--gold-light);
+  color: var(--accent-light);
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 0.78rem;
@@ -157,7 +157,7 @@ main {
 }
 
 .search-submit:hover {
-  background: rgba(201, 168, 76, 0.22);
+  background: rgba(var(--accent-rgb), 0.22);
   color: var(--text-primary);
 }
 
@@ -186,14 +186,14 @@ main {
 }
 
 .scope-btn:hover {
-  border-color: var(--border-gold);
-  color: var(--gold-light);
+  border-color: var(--border-accent);
+  color: var(--accent-light);
 }
 
 .scope-btn[aria-pressed="true"] {
-  background: var(--gold-glow);
-  border-color: var(--border-gold);
-  color: var(--gold-primary);
+  background: var(--accent-glow);
+  border-color: var(--border-accent);
+  color: var(--accent);
 }
 
 /* Suggestion dropdown */
@@ -207,9 +207,9 @@ main {
   max-height: 60vh;
   overflow-y: auto;
   background: var(--bg-card);
-  border: 1px solid var(--border-gold);
+  border: 1px solid var(--border-accent);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-gold);
+  box-shadow: var(--shadow-accent);
   list-style: none;
   margin: 0;
   padding: 0.4rem;
@@ -230,7 +230,7 @@ main {
 
 .suggest-item a:hover,
 .suggest-item.active a {
-  background: rgba(201, 168, 76, 0.08);
+  background: rgba(var(--accent-rgb), 0.08);
 }
 
 .suggest-term {
@@ -240,7 +240,7 @@ main {
 
 .suggest-term mark {
   background: none;
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 
 .suggest-meta {
@@ -301,7 +301,7 @@ main {
 }
 
 .did-you-mean {
-  background: rgba(201, 168, 76, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-secondary);
@@ -313,7 +313,7 @@ main {
 .did-you-mean button {
   background: none;
   border: 0;
-  color: var(--gold-primary);
+  color: var(--accent);
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 0.82rem;
@@ -364,8 +364,8 @@ main {
 }
 
 .alpha-nav a:hover {
-  background: var(--gold-glow);
-  border-color: var(--border-gold);
+  background: var(--accent-glow);
+  border-color: var(--border-accent);
 }
 
 .alpha-nav span {
@@ -389,14 +389,14 @@ main {
   position: absolute;
   inset: 0 0 auto 0;
   height: 3px;
-  background: var(--gradient-gold);
+  background: var(--gradient-accent);
   opacity: 0;
   transition: opacity var(--transition);
 }
 
 .entry-card:hover {
-  border-color: var(--border-gold);
-  box-shadow: var(--shadow-gold);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-accent);
   transform: translateY(-4px);
 }
 
@@ -413,7 +413,7 @@ main {
 }
 
 .entry-card-domain {
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.62rem;
   font-weight: 600;
   letter-spacing: 2px;
@@ -456,7 +456,7 @@ main {
 }
 
 .entry-card-score {
-  color: var(--gold-dark);
+  color: var(--accent-dark);
   font-size: 0.6rem;
   letter-spacing: 1px;
 }
@@ -495,7 +495,7 @@ main {
 }
 
 .term-ipa {
-  color: var(--gold-light);
+  color: var(--accent-light);
 }
 
 .term-pos {
@@ -521,7 +521,7 @@ main {
 }
 
 .term-section > h2 {
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 3px;
@@ -540,11 +540,11 @@ main {
 }
 
 .definition:hover {
-  border-left-color: var(--border-gold);
+  border-left-color: var(--border-accent);
 }
 
 .definition-number {
-  color: var(--gold-dark);
+  color: var(--accent-dark);
   font-family: var(--font-heading);
   font-size: 0.85rem;
   font-weight: 700;
@@ -552,7 +552,7 @@ main {
 }
 
 .definition-context {
-  color: var(--gold-light);
+  color: var(--accent-light);
   font-style: italic;
 }
 
@@ -571,12 +571,12 @@ main {
 
 .definition-example::before {
   content: "“";
-  color: var(--gold-dark);
+  color: var(--accent-dark);
 }
 
 .definition-example::after {
   content: "”";
-  color: var(--gold-dark);
+  color: var(--accent-dark);
 }
 
 .formula-block {
@@ -589,7 +589,7 @@ main {
 
 .formula-block code {
   background: none;
-  color: var(--gold-light);
+  color: var(--accent-light);
   font-size: 0.88rem;
   padding: 0;
   white-space: pre;
@@ -613,7 +613,7 @@ main {
 .relation-list a,
 .relation-chip {
   display: inline-block;
-  background: rgba(201, 168, 76, 0.06);
+  background: rgba(var(--accent-rgb), 0.06);
   border: 1px solid var(--border-subtle);
   border-radius: 50px;
   font-size: 0.75rem;
@@ -622,8 +622,8 @@ main {
 }
 
 .relation-list a:hover {
-  background: var(--gold-glow);
-  border-color: var(--border-gold);
+  background: var(--accent-glow);
+  border-color: var(--border-accent);
 }
 
 .relation-chip {
@@ -674,7 +674,7 @@ main {
 }
 
 .term-aside h2 {
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 2px;
@@ -823,16 +823,16 @@ main {
 .alpha-all:hover,
 .alpha-nav a:focus-visible,
 .alpha-all:focus-visible {
-  background: var(--gold-glow);
-  border-color: var(--border-gold);
+  background: var(--accent-glow);
+  border-color: var(--border-accent);
 }
 
 /* The chosen letter has to be obvious at a glance — it is the only thing
    telling the reader why the grid below shrank. */
 .alpha-nav a.is-active,
 .alpha-all.is-active {
-  background: var(--gold-primary);
-  border-color: var(--gold-primary);
+  background: var(--accent);
+  border-color: var(--accent);
   color: var(--bg-primary);
   font-weight: 600;
 }
@@ -882,13 +882,13 @@ main {
 .pager-num:hover:not(.is-current),
 .pager-step:focus-visible,
 .pager-num:focus-visible {
-  background: var(--gold-glow);
-  border-color: var(--border-gold);
+  background: var(--accent-glow);
+  border-color: var(--border-accent);
 }
 
 .pager-num.is-current {
-  background: var(--gold-primary);
-  border-color: var(--gold-primary);
+  background: var(--accent);
+  border-color: var(--accent);
   color: var(--bg-primary);
   font-weight: 600;
   cursor: default;
@@ -947,13 +947,13 @@ main {
 }
 
 .meta-category {
-  border-color: var(--border-gold);
-  color: var(--gold-primary);
+  border-color: var(--border-accent);
+  color: var(--accent);
 }
 
 .meta-difficulty[data-level="beginner"] { color: var(--text-secondary); }
-.meta-difficulty[data-level="intermediate"] { color: var(--gold-dark); }
-.meta-difficulty[data-level="advanced"] { color: var(--gold-primary); }
+.meta-difficulty[data-level="intermediate"] { color: var(--accent-dark); }
+.meta-difficulty[data-level="advanced"] { color: var(--accent); }
 
 .meta-status {
   border-style: dashed;
@@ -969,8 +969,8 @@ main {
   letter-spacing: 0.5px;
 }
 
-.card-difficulty[data-level="advanced"] { color: var(--gold-primary); }
-.card-difficulty[data-level="intermediate"] { color: var(--gold-dark); }
+.card-difficulty[data-level="advanced"] { color: var(--accent); }
+.card-difficulty[data-level="intermediate"] { color: var(--accent-dark); }
 
 .card-reading::before {
   content: "· ";
@@ -1009,13 +1009,13 @@ main {
 
 .topic-contents a:hover,
 .topic-contents a:focus-visible {
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 
 /* §1 Quick Take — the block most likely to be lifted verbatim, so it reads as
    the answer rather than as an introduction. */
 .quick-take {
-  border-left: 3px solid var(--gold-primary);
+  border-left: 3px solid var(--accent);
   padding-left: 1rem;
   color: var(--text-primary);
   font-size: 1.02rem;
@@ -1028,7 +1028,7 @@ main {
   padding: 1rem 1.2rem;
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-left: 3px solid var(--border-gold);
+  border-left: 3px solid var(--border-accent);
   border-radius: var(--radius-sm);
 }
 
@@ -1046,7 +1046,7 @@ main {
 }
 
 .ref-marker {
-  color: var(--gold-dark);
+  color: var(--accent-dark);
   font-size: 0.75rem;
   text-decoration: none;
 }
@@ -1055,7 +1055,7 @@ main {
 .formal-statement {
   padding: 1.1rem 1.3rem;
   background: var(--bg-card);
-  border: 1px solid var(--border-gold);
+  border: 1px solid var(--border-accent);
   border-radius: var(--radius-sm);
   font-size: 1rem;
   line-height: 1.7;
@@ -1084,7 +1084,7 @@ main {
 }
 
 .prerequisite-list a {
-  color: var(--gold-primary);
+  color: var(--accent);
   text-decoration: none;
 }
 
@@ -1159,7 +1159,7 @@ main {
 
 .variants-table th,
 .revision-table th {
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.68rem;
   letter-spacing: 1px;
   text-transform: uppercase;
@@ -1203,7 +1203,7 @@ main {
 .misconception-correction::before {
   content: "Actually: ";
   font-weight: 600;
-  color: var(--gold-primary);
+  color: var(--accent);
 }
 
 /* §11 Real-World Applications. */
@@ -1249,7 +1249,7 @@ main {
 
 .link-button:hover,
 .link-button:focus-visible {
-  border-color: var(--border-gold);
+  border-color: var(--border-accent);
   transform: translateX(3px);
 }
 
@@ -1293,7 +1293,7 @@ main {
 }
 
 .author-name {
-  color: var(--gold-primary);
+  color: var(--accent);
   font-weight: 600;
 }
 
@@ -1303,7 +1303,7 @@ main {
 }
 
 .author-bio-link a {
-  color: var(--gold-primary);
+  color: var(--accent);
   font-size: 0.85rem;
 }
 

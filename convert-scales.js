@@ -253,7 +253,7 @@ function parseColour(input) {
     return { ok: true, rgb: hslToRgb(parts[0], parts[1], parts[2]) };
   }
 
-  return { ok: false, error: 'Use a hex like #c9a84c, or rgb(201, 168, 76), or hsl(45, 45%, 54%).' };
+  return { ok: false, error: 'Use a hex like #f28a3d, or rgb(242, 138, 61), or hsl(26, 87%, 59%).' };
 }
 
 function hslToRgb(h, s, l) {

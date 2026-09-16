@@ -47,7 +47,7 @@ const funcs = [
   {name: 'O(2ⁿ)',       f: n => Math.pow(2,n),   slot: '--cx-c8', on: false},
 ];
 
-const curveColour = fn => token(fn.slot, '#c9a84c');
+const curveColour = fn => token(fn.slot, '#f28a3d');
 
 const chart = document.getElementById('chart');
 const controls = document.getElementById('controls');
@@ -104,8 +104,8 @@ function drawChart() {
   /* The surface, the grid and the ink all come from the theme. The grid
      is drawn from the border token rather than a mid-grey so it stays
      recessive on both a near-black and a sand page. */
-  const surface = token('--bg-secondary', '#0a0a0a');
-  const gridInk = token('--border-subtle', 'rgba(201,168,76,0.1)');
+  const surface = token('--bg-secondary', '#10161d');
+  const gridInk = token('--border-subtle', 'rgba(64,90,115,0.28)');
   const tickInk = token('--text-muted', '#807b72');
   const axisInk = token('--text-secondary', '#9a9590');
   const mono = token('--font-body', 'ui-monospace, monospace');

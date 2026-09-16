@@ -312,14 +312,14 @@
 
   /* Read from the stylesheet rather than hard-coded, because the site
      has a light theme in which every one of these roles inverts —
-     --gold-primary is gold on the dark page and near-black on the gold
+     --accent is gold on the dark page and near-black on the gold
      one. Hard-coding the dark values would paint a dark card onto a
      gold page, and the bars would come out the same colour as the
      background they sit on.
 
      Read per chart rather than once, so a theme switch mid-session
      produces correctly coloured figures on the next run. */
-  var FALLBACK = { panel: '#0f0f0f', ink: '#f0ece4', muted: '#807b72', accent: '#c9a84c' };
+  var FALLBACK = { panel: '#151c25', ink: '#f4f1ea', muted: '#8a94a0', accent: '#f28a3d' };
 
   function themeColours() {
     var css = window.getComputedStyle(document.documentElement);
@@ -331,7 +331,7 @@
       panel: pick('--bg-card', FALLBACK.panel),
       ink: pick('--text-primary', FALLBACK.ink),
       muted: pick('--text-muted', FALLBACK.muted),
-      accent: pick('--gold-primary', FALLBACK.accent)
+      accent: pick('--accent', FALLBACK.accent)
     };
   }
 
