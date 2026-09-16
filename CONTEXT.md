@@ -19,6 +19,8 @@
 | **Tool contract** | `spec/manifest.json` | — | Single source of truth for tool params; mirrored into `python/` via `npm run spec:sync` |
 | **Python package** | `thehallucinatedlab` (pip) | see `python/` | Bounded dependency ranges only (`>=x,<y`); lint with `ruff` |
 | **Dev tooling** | ESLint 9.39.5, `node --test` | Node ≥20 | `devDependencies` only, lockfile committed, `npm ci --ignore-scripts` in CI |
+| **Site chrome** | `scripts/sync-shell.js` | — | The header block on every navbar page is generated from one template; `--check` runs in `npm run check`. Edit the template, never a page |
+| **Local experts** | `.orchestrator/` (Ollama, CLAUDE.md §3–6) | Ollama 0.33 | Scripts and role files tracked; `logs/`, `tmp/`, `baseline/` ignored. Models return text only — nothing local writes to the tree |
 | **CI** | GitHub Actions (`ci.yml`, `release.yml`) | — | Actions pinned to commit SHAs, never mutable tags; least-privilege `permissions` |
 
 ## 3. ARCHITECTURAL BOUNDARIES & RULES
@@ -40,7 +42,7 @@
 - [GAP-01]: There is no staging environment. `main` is production; a bad merge is live immediately.
 - [GAP-02]: The CSP is delivered via `<meta>` rather than an HTTP header, because GitHub Pages does not allow custom headers. `frame-ancestors` and `report-uri` are therefore unenforceable.
 - [GAP-03]: `llms.txt` and `llms-full.txt` are maintained by hand. Tests confirm every link resolves and every indexable page is covered, but nothing verifies that the *prose* still describes what the page currently does — this has drifted twice before.
-- [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer, so a site-wide head change is a mechanical edit across every HTML file.
+- [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer. **Partially closed:** `scripts/sync-shell.js` now owns the `<header>` (navbar) block and regenerates it on every page; the footer, favicon links and font preloads are still hand-pasted until the shell redesign lands.
 - [GAP-05]: Solutions are documented on the site but their source repositories live outside it, so a version number here can silently fall behind the upstream release.
 - [GAP-06]: The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command. The `thehallucinatedlab` package implements no `solutions` subcommand, so both lines are aspirational and read as fact. Either implement the subcommand or replace the two lines.
 - [GAP-07]: NexusLink Engine has a one-line entry in `llms.txt` but no `## Page:`-level coverage in `llms-full.txt`, where ScoobyBench and AI Video Studio both have full sections. An answer engine reading the long-form file sees two of the three shipped products. The tests do not catch this — they check that every *page* is covered, not every product on a page.
@@ -465,3 +467,15 @@
 - **Bugs/Gaps Addressed:** The v3 adoption in #52 appended a 76-line §19/§20 addendum restoring this repository's non-negotiables and the `CONTEXT.md` mandate, on the reasoning that stack-agnostic v3 dropped them. That reasoning was wrong about where those rules live. Every one of them is already stated authoritatively in §3 of this file — RULE-01 through RULE-09 cover the browser/backend/discoverability/SEO/JSON-LD/budget/secret constraints, RULE-10 states that `CLAUDE.md` is the mandatory development protocol, and RULE-11 states that this file is read first and updated last and that `enforce-context-sync.yml` blocks any pull request that does not extend it. The addendum was therefore a second copy of rules that already had a single source of truth, which is precisely the duplication §3 exists to prevent.
 - **Context Modifications:** `CLAUDE.md` is now byte-identical to the supplied v3 document, 740 lines, no local sections. Nothing is lost by the removal: the constraints remain enforced by §3 of this file, by `test/site-invariants.test.js` and `test/seo-invariants.test.js`, and by the CI workflows. Verified before removing rather than assumed — all eleven rules were confirmed present in §3 on `main` first.
 - **Deliberate omission:** The dictionary repository's `CLAUDE.md` was not touched, because it is already byte-identical to the same v3 document and carries no addendum. No commit was manufactured there to match this one.
+
+---
+
+- **Timestamp:** 2026-09-14T15:30:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Claude Code (Master Orchestrator) for @06pratyush
+- **Target Subsystem:** `.orchestrator/` (new), `scripts/sync-shell.js` (new), `test/sync-shell.test.js` (new), `package.json`, `eslint.config.js`, `.gitignore`
+- **Intent:** First of a stacked series of pull requests for the visual redesign (lotus identity, floating pill navbar, Charcoal/Ivory/Slate/Saffron tokens, Manrope + IBM Plex Mono, homepage rebuild). This PR lays the two rails the rest run on: the local expert harness that `CLAUDE.md` prescribes, and a generator for the page chrome so that a 70-page navbar change is one template edit rather than 70 hand edits.
+- **Bugs/Gaps Addressed:** GAP-04 (partially) — the navbar `<header>` block is now generated. The generator's templates reproduce today's markup byte-for-byte (`node scripts/sync-shell.js --check` reports 70 pages in sync on the untouched tree), which is the proof that its anchors are right before any design change rides on them. It copies each page's `<ul class="nav-links">` verbatim, so the per-page hrefs, the active item and the `data-status="dev"` entries that `dev-mode.test.js` parses are untouched.
+- **Context Modifications:** `.orchestrator/expert.js` talks to Ollama over HTTP rather than `ollama run` — on Windows the CLI writes cursor-control sequences to a piped stdout, and one landed inside a generated test file. The HTTP path also makes the per-expert temperature in `experts.tsv` real. `gate.sh` gates `.js` (node --check + eslint), `.css` (brace balance + site invariants) and `.html` (site/seo/regression suites) since this repo has no pytest for the site. `eslint.config.js` treats `.orchestrator/**/*.js` as Node code.
+- **Deliberate omission:** The 7B `tester` expert's draft of `test/sync-shell.test.js` passed the mechanical gate but had 11 of 25 assertions wrong (it inverted the root prefix and its fixture helper did not work); the file was written by hand instead and the failure pattern was folded into `.orchestrator/experts/tester.md`. Recorded so nobody assumes the harness produced it.
+- **Verification:** `npm run check` — eslint clean, 423/423 tests, spec and shell in sync. Mutation check: stubbing `render()` fails 2 of the new tests. `./.orchestrator/verify.sh` → `VERIFY_PASS`.

@@ -14,9 +14,10 @@
     "sync": "git fetch origin main && git -c rebase.autoStash=true rebase origin/main",
     "test": "node --test \"test/**/*.test.js\"",
     "test:coverage": "node --test --experimental-test-coverage \"test/**/*.test.js\"",
-    "check": "npm run lint && npm test && node scripts/sync-spec.js --check",
+    "check": "npm run lint && npm test && node scripts/sync-spec.js --check && node scripts/sync-shell.js --check",
     "spec:sync": "node scripts/sync-spec.js",
-    "dictionary:sync": "node scripts/sync-dictionary.js"
+    "dictionary:sync": "node scripts/sync-dictionary.js",
+    "shell:sync": "node scripts/sync-shell.js"
   },
   "repository": {
     "type": "git",

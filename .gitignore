@@ -65,3 +65,10 @@ ai-ide/
 data/
 *.idx3-ubyte
 *.idx1-ubyte
+
+# --- Orchestrator harness (CLAUDE.md) --------------------------------
+# Scripts and expert role files are tracked; runtime state is not.
+.orchestrator/logs/
+.orchestrator/tmp/
+.orchestrator/baseline/
+.orchestrator/session.md

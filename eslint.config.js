@@ -128,7 +128,7 @@ module.exports = [
 
   // Node: tests, and the spec-sync script.
   {
-    files: ['test/**/*.js', 'scripts/**/*.js', 'eslint.config.js'],
+    files: ['test/**/*.js', 'scripts/**/*.js', '.orchestrator/**/*.js', 'eslint.config.js'],
     languageOptions: {
       ecmaVersion: 2023,
       sourceType: 'commonjs',
