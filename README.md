@@ -4,9 +4,9 @@
 
 ### *Your Machine. Your Power. No Limits.*
 
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fthehallucinatedlab.space&style=for-the-badge&label=LIVE&color=c9a84c)](https://thehallucinatedlab.space)
+[![Website](https://img.shields.io/website?url=https%3A%2F%2Fthehallucinatedlab.space&style=for-the-badge&label=LIVE&color=f28a3d)](https://thehallucinatedlab.space)
 [![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://pages.github.com/)
-[![License](https://img.shields.io/badge/License-MIT-e8d48b?style=for-the-badge)](LICENSE)
+[![License](https://img.shields.io/badge/License-MIT-405a73?style=for-the-badge)](LICENSE)
 
 **Open-source** AI tools that run **entirely on your machine** — free, and without any rate limits.
 
@@ -67,10 +67,12 @@ thehallucinatedlab/
 ├── livelab.html          # Redirect → tools.html (old LiveLab URL)
 ├── certificate.html      # Redirect → certification.html (old URL)
 ├── 404.html              # Custom not-found page (served by GitHub Pages)
-├── styles.css            # Core stylesheet — design tokens, navbar, hero, about
+├── styles.css            # Core stylesheet — design tokens, the shell (navbar, footer, lotus), shared primitives
 ├── pages.css             # Shared component styles for every sub-page
+├── home.css              # The homepage only (hero, signal path, selector, dossier, team, contact)
 ├── fonts.css             # Self-hosted @font-face + metric-matched fallbacks
-├── script.js             # Particles, navbar, scroll reveals, typing effect
+├── script.js             # Navbar, theme, dev mode, scroll reveals, lotus assembly
+├── home.js               # Homepage behaviour — hero mark, live diagrams, the Software/ML/AI selector
 ├── tools.js              # Prompt category filter + copy-to-clipboard
 ├── blogs.js           # Note data store, the tag filing rule, board search, note form
 ├── blogs/
@@ -145,17 +147,18 @@ thehallucinatedlab/
 ## ✨ Features
 
 ### Visual & UX
-- **Particle canvas** — animated gold particles with dynamic interconnecting lines in the hero background
-- **Typing effect** — cycling ideology phrases with typewriter animation
-- **Scroll-triggered fade-ins** — elements animate into view using `IntersectionObserver`
-- **Glassmorphic navbar** — backdrop-blur with scroll-aware styling
-- **Responsive design** — mobile hamburger menu, stacked layouts on small screens
+- **The lotus** — a hand-authored SVG mark (three soft-gray petals, one saffron) inlined on every page; it assembles once per session, fans on hover, and on the homepage leans toward the pointer and resolves into its own geometry as the reader scrolls
+- **Floating pill navbar** — a centred, blurred pill with stroked line glyphs; the current section is saffron; a panel hangs under it on small screens
+- **Signal diagrams** — the five-stage process track and the browser-only privacy diagram light in sequence when they enter the viewport
+- **Scroll-triggered reveals** — sections rise 20 px into view using `IntersectionObserver`; every animation honours `prefers-reduced-motion` and `shouldAnimate()`
+- **Responsive design** — the pill spans the viewport under 1024 px; layouts stack under 768 px
 
 ### Design System
-- **Dark theme** with a gold accent palette (`#c9a84c` primary), and a warm sand light theme (`#e8dfcb` page, `#6b5410` accent) chosen before first paint by `theme.js`
-- **CSS custom properties** for consistent theming across all components
+- **Charcoal `#0B0F14` and Ivory `#F4F1EA`** carry the interface (dark is the default; the light theme is chosen before first paint by `theme.js`). **Slate `#405A73`** is structure. **Saffron `#F28A3D`** is the signal — it appears when something is happening and nowhere else. **Sage `#2E5B52`** is the resolved state
+- **Two saffron tokens on purpose** — `--accent` is text-grade in both themes (burnt on ivory, where raw saffron is 2.2:1); `--signal` is the raw brand colour and is never text
+- **Motion tokens** — durations from 100 ms to 1 s, three easings, three stagger steps; nothing bounces, floats or glows
 - **Two font families, three roles** — Manrope for display, headings and prose; IBM Plex Mono for the system layer (labels, metadata, status, code)
-- **Smooth transitions** using a custom cubic-bezier easing curve
+- **The design source of truth** is `DESIGN-LANGUAGE.txt` (local, gitignored) — every value there was read out of `styles.css`, not written from memory
 
 ### Assistant
 - **Tools without a model** — an intent parser reads every message first; "convert this to png" runs in the page and returns a file, with nothing installed
@@ -184,7 +187,7 @@ thehallucinatedlab/
 - **`llms.txt` and `llms-full.txt`** — Markdown summaries written for LLM crawlers, including an accuracy section stating what is *not* yet available so answer engines don't overstate it
 - **`robots.txt`** explicitly allowing AI agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and others) plus an XML sitemap
 - **Pre-rendered note board** — both sections ship as static HTML so crawlers that don't execute JavaScript still see every published note; `blogs.js` re-renders the same markup and takes over the filing, search and filtering
-- Open Graph + Twitter Card meta with images, canonical URLs, and `preconnect` hints for the font origins
+- Open Graph + Twitter Card meta with images, canonical URLs, and same-origin `preload` hints for the three first-load font files
 - One `<h1>` per page and no skipped heading levels
 - Descriptive `alt` attributes and explicit `width`/`height` on all images (no layout shift)
 
@@ -396,7 +399,7 @@ Actions are pinned to commit SHAs rather than mutable tags.
 
 | Page | Description |
 |---|---|
-| **Home** | Hero with particle canvas and typing animation, an "Explore the Lab" guide to every tab, services & certification band, and the team/about section at the bottom |
+| **Home** | Hero with the positioning statement beside the lotus, the five-stage process track, the Software / ML / AI selector, six dossier rows (one per section), the private-by-design diagram, the team, and a contact call to action |
 | **Tools** | One card per tool — convert, extract, chunk, tokenize, embed, index — plus Prompts and LoRA adapters |
 | **Pipelines** | RAG and EDA: the tools chained, with every stage written to disk |
 | **Assistant** | AI chat powered by local Ollama — auto-detects installed model, streaming responses |
@@ -404,7 +407,7 @@ Actions are pinned to commit SHAs rather than mutable tags.
 | **Media** | Gateway to Blogs, Artifacts, and Notebooks |
 | **Certification** | Six project-graded course tracks and what the certificate actually attests to |
 | **Consultancy** | Engagements for individuals and businesses, plus how we scope and hand over work |
-| **Navbar** | Fixed top bar — Home, Tools, Assistant, Solutions, Media, Certification, Consultancy + mobile hamburger |
+| **Navbar** | Floating pill — Home, Tools, Pipelines, Assistant, Solutions, Dictionary, Media, Sitemap (icons above 1024 px, a panel under the pill below), the theme toggle, and the dev-only entries when dev mode is on |
 
 ---
 
