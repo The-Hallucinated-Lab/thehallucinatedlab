@@ -12,7 +12,7 @@ case "$T" in
   *.py)
     python -m py_compile "$T" || FAIL=1
     ruff check "$T" || FAIL=1
-    mypy "$T" --ignore-missing-imports --no-error-summary || FAIL=1
+    mypy "$T" --ignore-missing-imports --no-error-summary --cache-dir "${TEMP:-${TMP:-/tmp}}/thl-mypy-cache" || FAIL=1
     python .orchestrator/imports.py "$T" || FAIL=1
     ;;
   *.js)

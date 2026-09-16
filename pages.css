@@ -128,7 +128,7 @@
 .chat-bubble-ai code {
   display: inline; padding: 1px 6px; border-radius: 4px;
   background: rgba(var(--accent-rgb), 0.06);
-  font-family: var(--font-body); font-size: 0.82rem;
+  font-family: var(--font-mono); font-size: 0.82rem;
 }
 .chat-bubble-ai pre {
   margin: 0.8rem 0; padding: 1rem; border-radius: var(--radius-sm);
@@ -180,7 +180,7 @@
   flex: 1; padding: 10px 16px;
   border-radius: var(--radius-md); border: 1px solid var(--border-subtle);
   background: var(--bg-card); color: var(--text-primary);
-  font-family: var(--font-body); font-size: 0.88rem;
+  font-family: var(--font-mono); font-size: 0.88rem;
   outline: none; transition: var(--transition);
   resize: none; min-height: 42px; max-height: 120px;
 }
@@ -484,7 +484,7 @@
   border: none;
   outline: none;
   color: var(--text-primary);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.82rem;
   flex: 1;
   min-width: 0;
@@ -779,7 +779,7 @@
   border: 1px solid var(--border-subtle);
   background: var(--bg-secondary);
   color: var(--text-muted);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.58rem;
   cursor: pointer;
   opacity: 0;
@@ -817,7 +817,7 @@
   border: 1px solid var(--border-subtle);
   background: transparent;
   color: var(--text-secondary);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   font-weight: 500;
   cursor: pointer;
@@ -1005,7 +1005,7 @@
   border: 1px solid var(--border-subtle);
   background: var(--bg-card);
   color: var(--text-primary);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.85rem;
   transition: var(--transition);
   outline: none;
@@ -1091,7 +1091,7 @@
   background: transparent;
   border: 1px solid var(--border-accent);
   color: var(--accent);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
@@ -1291,7 +1291,7 @@
 }
 
 .spotlight-code {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.75rem;
   color: var(--accent-light);
   background: rgba(var(--accent-rgb), 0.08);
@@ -1351,7 +1351,7 @@
   border-radius: var(--radius-sm) var(--radius-sm) 0 0;
   background: transparent;
   color: var(--text-muted);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 600;
   letter-spacing: 0.5px;
@@ -1872,7 +1872,7 @@
 .prompt-body::-webkit-scrollbar { width: 4px; height: 4px; }
 .prompt-body::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
 .prompt-body code {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   line-height: 1.7;
   color: var(--text-secondary);
@@ -1889,7 +1889,7 @@
   background: transparent;
   border: 1px solid var(--border-accent);
   color: var(--accent);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.74rem;
   font-weight: 600;
   cursor: pointer;
@@ -1927,7 +1927,7 @@
   margin-bottom: 0.7rem;
 }
 .adapter-title {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 1rem;
   font-weight: 600;
   color: var(--accent-light);
@@ -2146,7 +2146,7 @@
   max-width: 720px;
 }
 .how-note code {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   color: var(--text-secondary);
   background: var(--bg-primary);
   border: 1px solid var(--border-subtle);
@@ -2174,7 +2174,7 @@
 .how-code::-webkit-scrollbar { height: 4px; }
 .how-code::-webkit-scrollbar-thumb { background: var(--accent-dark); border-radius: 2px; }
 .how-code code {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.73rem;
   line-height: 1.8;
   color: var(--text-secondary);
@@ -3113,7 +3113,7 @@
   padding: 0 1.5rem 10px;
 }
 .chat-chip {
-  font-family: var(--font-body); font-size: 0.72rem; letter-spacing: 0.5px;
+  font-family: var(--font-mono); font-size: 0.72rem; letter-spacing: 0.5px;
   padding: 6px 13px; border-radius: 99px; cursor: pointer;
   background: transparent; border: 1px solid var(--border-subtle);
   color: var(--text-secondary); transition: var(--transition);
@@ -3205,7 +3205,7 @@
   text-align: left;
 }
 .eda-schema thead th { color: var(--accent); font-weight: 600; white-space: nowrap; }
-.eda-schema tbody th { font-family: var(--font-body); font-weight: 500; color: var(--text-primary); }
+.eda-schema tbody th { font-family: var(--font-mono); font-weight: 500; color: var(--text-primary); }
 .eda-schema td { color: var(--text-secondary); }
 .eda-schema tr.is-flagged td, .eda-schema tr.is-flagged th { color: var(--warn); }
 
@@ -3263,7 +3263,7 @@
   background: rgba(var(--accent-rgb), 0.04);
 }
 .tb-title {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--accent);
@@ -3272,7 +3272,7 @@
 .tb-hint { font-size: 0.68rem; color: var(--text-muted); }
 
 .tb-body {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.82rem;
   line-height: 2.2;
   padding: 1.3rem 1.2rem 0.4rem;
@@ -3299,7 +3299,7 @@
 /* The [+] button is the one control that changes what the command is
    *about*, so it reads as a slot to fill rather than as a value. */
 .tb-file {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.8rem;
   padding: 2px 12px;
   border-radius: 50px;
@@ -3316,7 +3316,7 @@
 .tb-file:hover { background: rgba(var(--accent-rgb), 0.14); border-style: solid; }
 
 .tb-control {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   padding: 1px 8px;
   border-radius: var(--radius-sm);
@@ -3338,7 +3338,7 @@
   border: 1px solid var(--border-accent);
   background: transparent;
   color: var(--accent);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   font-weight: 600;
   cursor: pointer;
@@ -3423,7 +3423,7 @@
 /* Monospace both panes: these are data, and a proportional font hides
    the trailing space that is the whole reason someone is looking. */
 .conv-textarea {
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.76rem;
   line-height: 1.7;
   min-height: 260px;
@@ -3448,7 +3448,7 @@
   background: transparent;
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;

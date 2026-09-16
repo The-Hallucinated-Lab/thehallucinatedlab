@@ -72,3 +72,4 @@ data/
 .orchestrator/tmp/
 .orchestrator/baseline/
 .orchestrator/session.md
+.mypy_cache/

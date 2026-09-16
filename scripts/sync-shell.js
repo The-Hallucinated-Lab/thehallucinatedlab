@@ -90,13 +90,40 @@ function renderHeader(prefix, ul) {
 
 /* Apply every template to one page. Pure: (html, rel) -> html. Throws on a
    page whose anchors do not match, rather than guessing. */
+/* The fonts on the first-load path. Root-absolute on every page (fonts.css
+   itself resolves its src the same way), so the list never varies with
+   depth and test/site-invariants.test.js can name the same files. */
+const PRELOADS = [
+  '/assets/fonts/manrope-latin.woff2',
+  '/assets/fonts/ibm-plex-mono-latin-400.woff2',
+  '/assets/fonts/ibm-plex-mono-latin-500.woff2',
+];
+
+function renderPreloads(indent) {
+  return PRELOADS
+    .map((href) => `${indent}<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin>\n`)
+    .join('');
+}
+
+/* Drop every existing font preload and re-insert the canonical set just
+   before the fonts.css stylesheet link, matching that line's indentation. */
+function applyPreloads(html, prefix) {
+  const stripped = html.replace(/[ \t]*<link rel="preload" href="[^"]*\.woff2"[^>]*>\n/g, '');
+  const escaped = prefix.replace(/[./]/g, '\\$&');
+  const anchor = new RegExp(`([ \\t]*)<link rel="stylesheet" href="${escaped}fonts\\.css">`, 'g');
+  const hits = stripped.match(anchor) || [];
+  if (hits.length !== 1) throw new Error(`expected one fonts.css link, found ${hits.length}`);
+  return stripped.replace(anchor, (m, indent) => renderPreloads(indent) + m);
+}
+
 function render(html, rel) {
   const header = sliceHeader(html);
   if (!header) return html;
   const footers = html.match(/<footer class="footer">[\s\S]*?<\/footer>/g) || [];
   if (footers.length !== 1) throw new Error(`expected one <footer class="footer">, found ${footers.length}`);
   const prefix = prefixFor(rel);
-  return html.slice(0, header.start) + renderHeader(prefix, header.ul) + html.slice(header.end);
+  const withHeader = html.slice(0, header.start) + renderHeader(prefix, header.ul) + html.slice(header.end);
+  return applyPreloads(withHeader, prefix);
 }
 
 /* ---------------------------------------------------------------- io */
@@ -147,4 +174,4 @@ if (require.main === module) {
   main(process.argv.slice(2));
 }
 
-module.exports = { prefixFor, homeHref, sliceHeader, renderHeader, render };
+module.exports = { prefixFor, homeHref, sliceHeader, renderHeader, renderPreloads, applyPreloads, render, PRELOADS };

@@ -95,8 +95,12 @@
   /* Compat shorthand for the transition: declarations that predate the
      motion tokens. New rules name a duration and an easing explicitly. */
   --transition: var(--motion-normal) var(--ease-standard);
-  --font-heading: 'Outfit', 'Outfit Fallback', sans-serif;
-  --font-body: 'JetBrains Mono', 'JetBrains Mono Fallback', 'Courier New', monospace;
+  /* Manrope carries display, headings, body and navigation. IBM Plex Mono
+     is the system layer: labels, metadata, status, code, form controls.
+     Components that mean "monospace" say --font-mono; --font-body is prose. */
+  --font-heading: 'Manrope', 'Manrope Fallback', sans-serif;
+  --font-body: 'Manrope', 'Manrope Fallback', sans-serif;
+  --font-mono: 'IBM Plex Mono', 'IBM Plex Mono Fallback', 'Courier New', monospace;
 }
 
 /* ============ LIGHT THEME — Ivory ============
@@ -183,6 +187,17 @@ body {
   overflow-x: hidden;
   line-height: 1.6;
 }
+
+/* ============ TYPE ROLES ============
+   Prose is Manrope; the system layer is IBM Plex Mono. Anything that reads
+   as a label, a status, a coordinate or code takes the mono face here, so a
+   component does not have to remember which one it is. */
+code, pre, kbd, samp,
+.section-label, .hero-badge, .page-breadcrumb, .page-jump, .badge, .tag, .chip,
+.status-chip, .prompt-meta, .artifact-date, .footer-text {
+  font-family: var(--font-mono);
+}
+h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; }
 
 /* ============ SR-ONLY ============ */
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
@@ -360,7 +375,7 @@ section { padding: 6rem 2rem; position: relative; }
   padding: 6px 14px; border-radius: var(--radius-sm);
   background: rgba(var(--accent-rgb), 0.12); border: 1px solid var(--border-accent);
   color: var(--accent-light); font-size: 0.72rem; font-weight: 500;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   white-space: nowrap;
   opacity: 0; pointer-events: none;
   transition: opacity 0.25s ease, transform 0.25s ease;
@@ -721,7 +736,7 @@ footer {
 :root[data-mode="dev"] [data-status="dev"]::after {
   content: 'DEV';
   position: absolute; top: -9px; right: -9px; z-index: 5;
-  font-family: var(--font-body); font-size: 0.55rem; font-weight: 600;
+  font-family: var(--font-mono); font-size: 0.55rem; font-weight: 600;
   letter-spacing: 1.5px; line-height: 1;
   padding: 4px 7px; border-radius: 4px;
   color: var(--signal); background: var(--bg-primary);
@@ -749,7 +764,7 @@ footer {
   padding: 7px 16px; border-radius: 99px;
   border: 1px solid var(--border-subtle); background: var(--bg-secondary);
   color: var(--text-muted);
-  font-family: var(--font-body); font-size: 0.6rem;
+  font-family: var(--font-mono); font-size: 0.6rem;
   letter-spacing: 1.5px; text-transform: uppercase;
   opacity: 0; transition: opacity 0.18s ease, transform 0.18s ease;
 }
