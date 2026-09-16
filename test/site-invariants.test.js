@@ -196,7 +196,7 @@ test('the homepage stays within its transfer budget', () => {
   /* What GitHub Pages actually puts on the wire: text gets gzipped,
      WOFF2 is already compressed and is served as-is. The logo is inline
      SVG, so no image is on the first-load path. */
-  const text = ['index.html', 'styles.css', 'pages.css', 'fonts.css', 'script.js'];
+  const text = ['index.html', 'styles.css', 'home.css', 'fonts.css', 'script.js', 'home.js'];
   const binary = [
     'assets/fonts/manrope-latin.woff2',
     'assets/fonts/ibm-plex-mono-latin-400.woff2',

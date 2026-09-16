@@ -23,10 +23,8 @@ const SITE_GLOBALS = {
   // script.js
   CONFIG: 'readonly',
   shouldAnimate: 'readonly',
-  initParticles: 'readonly',
   initNavbar: 'readonly',
   initScrollAnimations: 'readonly',
-  initTypingEffect: 'readonly',
   startFeature: 'readonly',
   THL: 'writable',
   // toolkit.js

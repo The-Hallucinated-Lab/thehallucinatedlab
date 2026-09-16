@@ -1587,134 +1587,6 @@
 .page-breadcrumb a { color: var(--accent); text-decoration: none; transition: var(--transition); }
 .page-breadcrumb a:hover { color: var(--accent-light); }
 
-/* ============ HERO ACTIONS (home) ============ */
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: 2.5rem;
-}
-.hero-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 30px;
-  border-radius: 50px;
-  border: 1px solid var(--border-subtle);
-  color: var(--text-secondary);
-  text-decoration: none;
-  font-size: 0.82rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  transition: var(--transition);
-}
-.hero-btn:hover {
-  border-color: var(--border-accent);
-  color: var(--accent);
-  transform: translateY(-2px);
-}
-.hero-btn-primary {
-  border-color: var(--border-accent);
-  color: var(--accent);
-  background: var(--accent-glow);
-}
-.hero-btn-primary:hover { box-shadow: 0 8px 30px rgba(var(--accent-rgb), 0.15); }
-
-/* ============ EXPLORE GRID (home) ============ */
-.explore-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem;
-}
-.explore-card {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-  padding: 2rem 1.8rem;
-  background: var(--bg-card);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl);
-  text-decoration: none;
-  position: relative;
-  overflow: hidden;
-  transition: var(--transition);
-}
-.explore-card::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--gradient-accent);
-  opacity: 0;
-  transition: var(--transition);
-}
-.explore-card:hover {
-  border-color: var(--border-accent);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-accent);
-}
-.explore-card:hover::before { opacity: 1; }
-
-.explore-card-icon {
-  width: 46px; height: 46px;
-  display: flex; align-items: center; justify-content: center;
-  border-radius: 50%;
-  background: var(--accent-glow);
-  border: 1px solid var(--border-accent);
-  color: var(--accent);
-  margin-bottom: 0.3rem;
-}
-.explore-card-title {
-  font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  transition: var(--transition);
-}
-.explore-card:hover .explore-card-title { color: var(--accent-light); }
-.explore-card-desc {
-  color: var(--text-secondary);
-  font-size: 0.82rem;
-  line-height: 1.7;
-}
-.explore-card-desc em { color: var(--accent-light); font-style: normal; }
-.explore-card-list {
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 0.45rem;
-  margin: 0.3rem 0 0.6rem;
-  flex: 1;
-}
-.explore-card-list li {
-  position: relative;
-  padding-left: 1.1rem;
-  font-size: 0.76rem;
-  line-height: 1.6;
-  color: var(--text-muted);
-}
-.explore-card-list li::before {
-  content: '◆';
-  position: absolute;
-  left: 0; top: 0.1em;
-  color: var(--accent-dark);
-  font-size: 0.55rem;
-}
-.explore-card-cta {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  color: var(--accent);
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  text-transform: uppercase;
-  margin-top: auto;
-}
-.explore-card-cta svg { transition: var(--transition); }
-.explore-card:hover .explore-card-cta svg { transform: translateX(3px); }
-
 /* ============ OFFER PANELS (home + consultancy) ============ */
 .offer-grid {
   display: grid;
@@ -2797,7 +2669,6 @@
    above, which have equal specificity.
    ============================================================ */
 @media (max-width: 1024px) {
-  .explore-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .gateway-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .course-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .prompt-grid { grid-template-columns: minmax(0, 1fr); }
@@ -2807,7 +2678,6 @@
 }
 
 @media (max-width: 768px) {
-  .explore-grid { grid-template-columns: minmax(0, 1fr); }
   .gateway-grid { grid-template-columns: minmax(0, 1fr); }
   .course-grid { grid-template-columns: minmax(0, 1fr); }
   .offer-grid { grid-template-columns: minmax(0, 1fr); }
@@ -2818,8 +2688,6 @@
   .cert-steps { grid-template-columns: minmax(0, 1fr); }
   .contact-choices { grid-template-columns: 1fr; }
 
-  .hero-actions { flex-direction: column; align-items: stretch; }
-  .hero-btn { justify-content: center; }
 
   .offer-panel,
   .how-panel,

@@ -39,12 +39,16 @@ Three of these are gateways to deeper pages:
 
 ## Page: Home — https://thehallucinatedlab.space/
 
-Purpose: orient a first-time visitor and explain what lives behind every tab.
+Purpose: orient a first-time visitor, state how the lab works, and explain what lives behind every tab.
 
 Sections:
-- Hero. States the lab's position: open-source AI tools running entirely on the visitor's machine, free, and without any rate limits.
-- Explore the Lab. Six cards, one per navigation tab, each summarising what that section contains and who it is for.
-- About Us. Profiles of the two founders with links, followed by contact details.
+- Hero. The lab's position in one line: "We build AI where it makes sense." Software, ML and AI, one problem at a time; a problem is not assumed to be an AI problem until it has been diagnosed.
+- How the lab works. Five stages — Problem, Audit, Determine, Build, Verify — on one track.
+- What does your problem actually need? A three-way selector explaining when a problem calls for deterministic software, for machine learning, or for a language model, with examples of each.
+- What's here. Six rows, one per section of the site (Tools, Pipelines, Assistant, Solutions, Dictionary, Media), each with a one-line summary.
+- Private by design. Every tool runs in the visitor's browser; there is no server, no analytics and no third-party origin, and a test enforces it.
+- The lab. Profiles of the three founders with links.
+- Contact. An email address and the organisation's GitHub.
 
 ---
 
