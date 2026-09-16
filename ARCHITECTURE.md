@@ -149,5 +149,6 @@ not an incremental one. Worth doing deliberately.
 ## Performance budget
 
 In the README, enforced by `test/site-invariants.test.js` rather than
-left as an aspiration. Current homepage: ~96 KB transferred across 8
-requests from a single origin.
+left as an aspiration. Current homepage: ~90 KB transferred across 9
+requests from a single origin — six text files and three font subsets;
+the logo is inline SVG, so no image is on the first-load path.

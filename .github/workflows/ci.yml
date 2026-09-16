@@ -61,6 +61,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Site chrome is generated, not hand-edited
+        run: node scripts/sync-shell.js --check
+
       - name: Run tests
         run: node --test "test/**/*.test.js"
 
