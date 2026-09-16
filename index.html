@@ -31,7 +31,7 @@
   <link rel="preload" href="/assets/fonts/ibm-plex-mono-latin-500.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="fonts.css">
   <link rel="stylesheet" href="styles.css">
-  <link rel="stylesheet" href="pages.css">
+  <link rel="stylesheet" href="home.css">
   <script src="theme.js"></script>
   <script type="application/ld+json">
 {
@@ -216,112 +216,151 @@
   <main id="main-content">
 
     <!-- ====== HERO ====== -->
-    <section id="hero">
-      <div class="hero-bg">
-        <canvas id="particles-canvas" aria-hidden="true"></canvas>
-        <div class="hero-gradient"></div>
-      </div>
-      <div class="hero-content">
-        <div class="hero-badge"><span class="dot" aria-hidden="true"></span> Open for Collaboration</div>
-        <h1 class="hero-title">The Hallucinated Lab</h1>
-        <p class="hero-subtitle">Open-source AI tools that run entirely on your machine — free, and without any rate limits. <span id="typing-text" aria-live="polite" aria-atomic="true" style="color:var(--accent);font-weight:600;"></span><span aria-hidden="true" style="color:var(--accent);animation:pulse-dot 1s infinite;">|</span></p>
-        <div class="hero-actions">
-          <a href="#explore" class="hero-btn hero-btn-primary">Explore the Lab</a>
+    <section id="hero" class="hero">
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-copy">
+          <p class="hero-status"><span class="dot" aria-hidden="true"></span>OPEN FOR COLLABORATION</p>
+          <p class="hero-eyebrow">THE HALLUCINATED LAB</p>
+          <h1 class="hero-title"><span class="line"><span>We build AI</span></span><span class="line"><span>where it</span></span><span class="line"><span>makes sense.</span></span></h1>
+          <p class="hero-lede">Software. ML. AI. One problem at a time. <strong>Your problem isn't necessarily an AI problem</strong> — we determine what actually solves it, then build it to run on your machine.</p>
+          <div class="hero-actions">
+            <a href="mailto:thehallucinatedlab@gmail.com" class="btn btn-primary">Discuss a problem <span class="arrow" aria-hidden="true">→</span></a>
+            <a href="#work" class="btn btn-ghost">Explore the lab</a>
+          </div>
+        </div>
+        <div class="hero-mark" id="hero-mark">
+          <svg class="lotus lotus-hero" viewBox="0 0 256 256" aria-hidden="true" focusable="false">
+            <path class="petal petal-1" d="M132.2 209.8 C128.0 198.0 117.6 163.3 96.0 147.4 C70.8 137.6 38.3 144.8 28.0 148.0 C32.7 154.3 49.2 174.0 72.5 187.0 C95.1 201.2 122.8 206.7 132.2 209.8 Z"/>
+            <path class="petal petal-2" d="M142.5 198.7 C144.6 183.2 151.4 135.1 138.4 101.4 C118.6 70.9 85.2 55.6 74.0 50.0 C75.5 60.1 77.7 89.8 93.9 121.9 C108.7 154.8 134.8 187.7 142.5 198.7 Z"/>
+            <path class="petal petal-3" d="M155.1 195.0 C162.1 180.4 184.8 132.9 186.5 92.7 C183.2 52.4 162.1 23.0 156.0 12.0 C151.9 23.0 136.3 52.2 135.5 92.4 C135.9 132.7 150.9 180.3 155.1 195.0 Z"/>
+            <path class="petal petal-4 petal-signal" d="M169.9 193.1 C178.1 184.8 199.3 164.3 212.7 137.6 C221.0 109.0 222.3 77.6 220.0 68.0 C216.0 75.1 206.5 103.2 196.9 131.3 C184.2 158.2 174.6 183.4 169.9 193.1 Z"/>
+          </svg>
+          <!-- The geometry the mark resolves into as the page scrolls: its four
+               spines from the convergence point, the grid they imply, and the
+               signal at the origin. -->
+          <svg class="hero-geometry" viewBox="0 0 256 256" aria-hidden="true" focusable="false">
+            <path d="M152 216 L28 148 M152 216 L74 50 M152 216 L156 12 M152 216 L220 68"/>
+            <path d="M28 52 H228 M28 112 H228 M28 172 H228 M60 20 V236 M124 20 V236 M188 20 V236" opacity="0.45"/>
+            <path class="signal-line" d="M152 216 L220 68"/>
+            <circle cx="152" cy="216" r="4"/>
+          </svg>
         </div>
       </div>
     </section>
 
-    <!-- ====== EXPLORE: EVERY TAB, EXPLAINED ====== -->
-    <section id="explore">
+    <!-- ====== HOW THE LAB WORKS ====== -->
+    <section id="approach" class="section section-alt">
       <div class="container">
         <div class="section-header fade-in">
-          <span class="section-label">Start Here</span>
-          <h2 class="section-title">Explore the Lab</h2>
-          <div class="section-line" aria-hidden="true"></div>
-          <p class="section-intro">Six doors, one lab. Here's exactly what lives behind each tab in the menu above — so you know where to go before you click.</p>
+          <span class="section-label">01 / Approach</span>
+          <h2 class="section-title">How the lab works</h2>
+          <p class="section-intro">We don't jump to "AI". A problem is diagnosed before anything is built, and what gets built is measured against the problem before it ships.</p>
         </div>
+        <ol class="signal-path fade-in" id="signal-path" data-live>
+          <li class="signal-track" aria-hidden="true"><span class="signal-fill"></span></li>
+          <li class="signal-stage"><span class="signal-node" aria-hidden="true"></span><h3>Problem</h3><p>What isn't working, stated plainly, with the data and the constraints around it.</p></li>
+          <li class="signal-stage"><span class="signal-node" aria-hidden="true"></span><h3>Audit</h3><p>Where the time, the error or the cost actually comes from — measured, not assumed.</p></li>
+          <li class="signal-stage"><span class="signal-node" aria-hidden="true"></span><h3>Determine</h3><p>Software, ML or AI: whichever the problem needs. Often it is the first one.</p></li>
+          <li class="signal-stage"><span class="signal-node" aria-hidden="true"></span><h3>Build</h3><p>Small, local-first, and on your infrastructure wherever that is possible.</p></li>
+          <li class="signal-stage"><span class="signal-node" aria-hidden="true"></span><h3>Verify</h3><p>Checked against the problem statement, not against a demo.</p></li>
+        </ol>
+      </div>
+    </section>
 
-        <div class="explore-grid">
-
-          <!-- Tools -->
-          <a href="tools.html" class="explore-card fade-in fade-in-delay-1">
-            <div class="explore-card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+    <!-- ====== WHAT DOES YOUR PROBLEM NEED ====== -->
+    <section id="needs" class="section">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">02 / Determine</span>
+          <h2 class="section-title">What does your problem actually need?</h2>
+          <p class="section-intro">Three kinds of system, three kinds of answer. Picking the right one is most of the work.</p>
+        </div>
+        <div class="needs fade-in" id="needs-selector">
+          <div class="needs-tabs" role="tablist" aria-label="Kind of system">
+            <button type="button" class="needs-tab" role="tab" id="tab-software" aria-selected="true" aria-controls="needs-software">Software <span class="needs-tab-key">RULES</span></button>
+            <button type="button" class="needs-tab" role="tab" id="tab-ml" aria-selected="false" aria-controls="needs-ml" tabindex="-1">Machine learning <span class="needs-tab-key">PATTERNS</span></button>
+            <button type="button" class="needs-tab" role="tab" id="tab-ai" aria-selected="false" aria-controls="needs-ai" tabindex="-1">AI <span class="needs-tab-key">LANGUAGE</span></button>
+          </div>
+          <div class="needs-panels">
+            <div class="needs-panel is-active" role="tabpanel" id="needs-software" aria-labelledby="tab-software">
+              <p class="needs-kicker">Deterministic. Fast. Reliable.</p>
+              <p>When the rules are known, write the rules. A scheduler, a pipeline, a converter that runs in a browser tab — no model, no inference cost, and the same answer every time.</p>
+              <ul class="needs-examples">
+                <li>Timetabling and constraint solving</li>
+                <li>Data pipelines and format conversion</li>
+                <li>Tooling, dashboards, integrations</li>
+              </ul>
+              <div class="needs-diagram" aria-hidden="true"><span class="node on">RULES</span><span class="link"></span><span class="node">CODE</span><span class="link"></span><span class="node">RESULT</span></div>
             </div>
-            <h3 class="explore-card-title">Tools</h3>
-            <p class="explore-card-desc">The working end of the lab — things you can take away and use today on your own machine.</p>
-            <ul class="explore-card-list">
-              <li>Prompts tuned for real use cases</li>
-              <li>LoRA adapters for your local LLM</li>
-              <li>Convert, extract, chunk, tokenize, embed, index</li>
-            </ul>
-            <span class="explore-card-cta">Open Tools
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </span>
-          </a>
-
-          <!-- Assistant -->
-          <a href="interface.html" class="explore-card fade-in fade-in-delay-2">
-            <div class="explore-card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+            <div class="needs-panel" role="tabpanel" id="needs-ml" aria-labelledby="tab-ml" aria-hidden="true">
+              <p class="needs-kicker">Pattern-driven. Predictive. Data-dependent.</p>
+              <p>When nobody can write the rule but the data holds it. A model learns the pattern, and its answer is only as good as the data it saw — so the audit comes first.</p>
+              <ul class="needs-examples">
+                <li>Forecasting, scoring, anomaly detection</li>
+                <li>Classification of documents, images, events</li>
+                <li>Recommendation and ranking</li>
+              </ul>
+              <div class="needs-diagram" aria-hidden="true"><span class="node">DATA</span><span class="link"></span><span class="node on">MODEL</span><span class="link"></span><span class="node">PREDICTION</span><span class="link"></span><span class="node">VALIDATION</span></div>
             </div>
-            <h3 class="explore-card-title">Assistant</h3>
-            <p class="explore-card-desc">Say what you want in plain English and it runs the tool right here in the page. Nothing leaves the machine.</p>
-            <ul class="explore-card-list">
-              <li>Nothing to install — works on arrival</li>
-              <li>No API keys, no accounts, no logging</li>
-              <li>Understands plain requests like "convert this to webp"</li>
-            </ul>
-            <span class="explore-card-cta">Open Assistant
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </span>
-          </a>
-
-          <!-- Solutions -->
-          <a href="solutions.html" class="explore-card fade-in fade-in-delay-3">
-            <div class="explore-card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+            <div class="needs-panel" role="tabpanel" id="needs-ai" aria-labelledby="tab-ai" aria-hidden="true">
+              <p class="needs-kicker">Language. Reasoning. Generation.</p>
+              <p>When the input is language and the output has to be too. A language model, retrieval around it, and validation after it — running locally where the data is sensitive.</p>
+              <ul class="needs-examples">
+                <li>Question answering over your own documents</li>
+                <li>Drafting, summarising, extracting structure</li>
+                <li>Assistants that run a tool from a plain sentence</li>
+              </ul>
+              <div class="needs-diagram" aria-hidden="true"><span class="node">INPUT</span><span class="link"></span><span class="node">RETRIEVAL</span><span class="link"></span><span class="node on">MODEL</span><span class="link"></span><span class="node">VALIDATION</span><span class="link"></span><span class="node">OUTPUT</span></div>
             </div>
-            <h3 class="explore-card-title">Solutions</h3>
-            <p class="explore-card-desc">Finished products we've shipped — full applications, not snippets.</p>
-            <ul class="explore-card-list">
-              <li>ScoobyBench — AI hardware benchmarking</li>
-              <li>Local-first pipelines &amp; deployment tooling</li>
-              <li>Everything runs on your infrastructure</li>
-            </ul>
-            <span class="explore-card-cta">See Solutions
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </span>
-          </a>
-
-          <!-- Media -->
-          <a href="media.html" class="explore-card fade-in fade-in-delay-1">
-            <div class="explore-card-icon" aria-hidden="true">
-              <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
-            </div>
-            <h3 class="explore-card-title">Media</h3>
-            <p class="explore-card-desc">What we write, build to be played with, and think out loud about.</p>
-            <ul class="explore-card-list">
-              <li>Blogs — AI &amp; software engineering, filed by tag</li>
-              <li>Artifacts — interactive, playable explainers</li>
-              <li>Notebooks — runnable research, landing soon</li>
-            </ul>
-            <span class="explore-card-cta">Browse Media
-              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z"/></svg>
-            </span>
-          </a>
-
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- ====== ABOUT ====== -->
-    <section id="about">
+    <!-- ====== WHAT'S HERE ====== -->
+    <section id="work" class="section section-alt">
       <div class="container">
         <div class="section-header fade-in">
-          <span class="section-label">The Team</span>
-          <h2 class="section-title">About Us</h2>
-          <div class="section-line" aria-hidden="true"></div>
+          <span class="section-label">03 / The lab</span>
+          <h2 class="section-title">What's here</h2>
+          <p class="section-intro">Six doors. Everything behind them runs on your machine, free, without an account.</p>
+        </div>
+        <ol class="dossier fade-in">
+          <li class="dossier-row"><a href="tools.html"><span class="dossier-index">01</span><span class="dossier-body"><h3>Tools</h3><p>Convert, extract, chunk, tokenise, embed, index — in the page, with nothing uploaded.</p></span><span class="dossier-status"><span class="dot" aria-hidden="true"></span>LIVE</span><span class="dossier-arrow" aria-hidden="true">→</span></a></li>
+          <li class="dossier-row"><a href="pipelines.html"><span class="dossier-index">02</span><span class="dossier-body"><h3>Pipelines</h3><p>The same tools assembled into a retrieval pipeline you can run locally or install with pip.</p></span><span class="dossier-status"><span class="dot" aria-hidden="true"></span>LIVE</span><span class="dossier-arrow" aria-hidden="true">→</span></a></li>
+          <li class="dossier-row"><a href="interface.html"><span class="dossier-index">03</span><span class="dossier-body"><h3>Assistant</h3><p>Say what you want in plain English; it runs the matching tool right here in the page.</p></span><span class="dossier-status"><span class="dot" aria-hidden="true"></span>LIVE</span><span class="dossier-arrow" aria-hidden="true">→</span></a></li>
+          <li class="dossier-row"><a href="solutions.html"><span class="dossier-index">04</span><span class="dossier-body"><h3>Solutions</h3><p>Finished products, not snippets — benchmarking, pipelines and deployment tooling that run on your infrastructure.</p></span><span class="dossier-status"><span class="dot" aria-hidden="true"></span>LIVE</span><span class="dossier-arrow" aria-hidden="true">→</span></a></li>
+          <li class="dossier-row"><a href="dictionary/index.html"><span class="dossier-index">05</span><span class="dossier-body"><h3>Dictionary</h3><p>Two corpora, one search: the vocabulary of AI and mathematics, and the working language of software engineering.</p></span><span class="dossier-status"><span class="dot" aria-hidden="true"></span>LIVE</span><span class="dossier-arrow" aria-hidden="true">→</span></a></li>
+          <li class="dossier-row"><a href="media.html"><span class="dossier-index">06</span><span class="dossier-body"><h3>Media</h3><p>What we write, what we build to be played with, and the working notes behind both.</p></span><span class="dossier-status"><span class="dot" aria-hidden="true"></span>LIVE</span><span class="dossier-arrow" aria-hidden="true">→</span></a></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ====== PRIVATE BY DESIGN ====== -->
+    <section id="private" class="section">
+      <div class="container private-grid">
+        <div class="section-header fade-in">
+          <span class="section-label">04 / Privacy</span>
+          <h2 class="section-title">Your data doesn't need to leave your browser.</h2>
+          <p class="section-intro">Every tool on this site runs in the tab that opened it. There is no server we operate, no analytics and no third-party origin — the content-security policy on every page says so, and a test fails the build if it changes.</p>
+        </div>
+        <div class="arch fade-in" id="arch" data-live>
+          <div class="arch-frame">
+            <span class="arch-frame-label">YOUR BROWSER</span>
+            <span class="arch-node">YOUR FILE</span><span class="arch-link" aria-hidden="true"></span><span class="arch-node">THL TOOL</span><span class="arch-link" aria-hidden="true"></span><span class="arch-node">RESULT</span>
+          </div>
+          <p class="arch-note">NO SERVER · NO ANALYTICS · NO THIRD-PARTY ORIGIN · <span class="ok">VERIFIED BY TEST</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ====== THE LAB — TEAM ====== -->
+    <section id="about" class="section section-alt">
+      <div class="container">
+        <div class="section-header fade-in">
+          <span class="section-label">05 / The people</span>
+          <h2 class="section-title">The lab</h2>
           <p class="section-intro">Three engineering students who got tired of renting access to their own ideas — so we started building the alternative in the open.</p>
         </div>
         <div class="about-grid">
@@ -388,17 +427,18 @@
             </div>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div class="contact-inline fade-in">
-          <p class="contact-text">Collaborations, open source, or just a good conversation about AI and the future of tech — the door's open.</p>
-          <div class="contact-links-row">
-            <a href="mailto:thehallucinatedlab@gmail.com" class="hover-btn hover-btn-lg" id="contact-email" data-tooltip="thehallucinatedlab@gmail.com" aria-label="Email The Hallucinated Lab">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-            </a>
-            <a href="https://github.com/The-Hallucinated-Lab" target="_blank" rel="noopener noreferrer" class="hover-btn hover-btn-lg" id="contact-org-gh" data-tooltip="github.com/The-Hallucinated-Lab" aria-label="The Hallucinated Lab on GitHub">
-              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-            </a>
-          </div>
+    <!-- ====== CONTACT ====== -->
+    <section id="contact" class="section section-cta">
+      <div class="container cta fade-in">
+        <span class="section-label">06 / Contact</span>
+        <h2 class="section-title">Have a problem worth solving?</h2>
+        <p>Tell us what isn't working. We'll figure out what it actually needs.</p>
+        <div class="cta-actions">
+          <a href="mailto:thehallucinatedlab@gmail.com" class="btn btn-primary" id="contact-email">Start a conversation <span class="arrow" aria-hidden="true">→</span></a>
+          <a href="https://github.com/The-Hallucinated-Lab" target="_blank" rel="noopener noreferrer" class="btn btn-ghost" id="contact-org-gh">GitHub</a>
         </div>
       </div>
     </section>
@@ -427,5 +467,6 @@
   </footer>
 
   <script src="script.js" defer></script>
+  <script src="home.js" defer></script>
 </body>
 </html>

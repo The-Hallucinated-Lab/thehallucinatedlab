@@ -376,43 +376,10 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; }
   .lotus .petal-signal { fill: Highlight; }
 }
 
-/* ============ HERO ============ */
-#hero {
-  min-height: 100vh; display: flex; align-items: center; justify-content: center;
-  position: relative; overflow: hidden;
-}
-.hero-bg { position: absolute; inset: 0; }
-#particles-canvas { position: absolute; inset: 0; z-index: 1; }
-.hero-gradient {
-  position: absolute; top: -30%; left: 50%; transform: translateX(-50%);
-  width: 800px; height: 800px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(var(--accent-rgb), 0.06) 0%, transparent 70%);
-  filter: blur(80px); pointer-events: none;
-}
-.hero-content { position: relative; z-index: 2; text-align: center; padding: 2rem; }
-.hero-badge {
-  display: inline-flex; align-items: center; gap: 8px;
-  padding: 8px 20px; border-radius: 50px;
-  background: rgba(var(--accent-rgb), 0.08); border: 1px solid var(--border-accent);
-  font-size: 0.8rem; color: var(--accent); font-weight: 500;
-  margin-bottom: 2rem; letter-spacing: 1px; text-transform: uppercase;
-}
-.hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse-dot 2s infinite; }
+/* ============ STATUS PULSE ============
+   Shared by every status chip and dot on the site; the hero that first
+   carried it now lives in home.css. */
 @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-.hero-title {
-  font-family: var(--font-heading);
-  font-size: clamp(2.8rem, 7vw, 5.5rem); font-weight: 800;
-  /* "Hallucinated" is one unbreakable word at a 44.8px floor. It measures
-     inside the viewport today even under the 0.12em letter-spacing that
-     WCAG 1.4.12 requires a page to survive, so this is insurance rather
-     than a fix — it costs nothing until a longer word or a wider spacing
-     override would otherwise push text under #hero's overflow:hidden. */
-  overflow-wrap: break-word;
-  line-height: 1.05; margin-bottom: 1.5rem;
-  background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-light) 50%, var(--accent) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-}
-.hero-subtitle { font-size: clamp(0.9rem, 1.8vw, 1.1rem); color: var(--text-secondary); max-width: 600px; margin: 0 auto; font-weight: 400; line-height: 1.8; }
 
 /* ============ SECTIONS ============ */
 section { padding: 6rem 2rem; position: relative; }
@@ -421,28 +388,6 @@ section { padding: 6rem 2rem; position: relative; }
 .section-title { font-family: var(--font-heading); font-size: clamp(2rem, 4vw, 3rem); font-weight: 700; color: var(--text-primary); margin-bottom: 1rem; }
 .section-line { width: 60px; height: 2px; background: var(--gradient-accent); margin: 0 auto; border-radius: 2px; }
 .container { max-width: 1200px; margin: 0 auto; }
-
-/* ============ ABOUT ============ */
-#about { background: var(--bg-secondary); }
-/* Three founders, so three columns — and auto-fit rather than a fixed
-   count, so a fourth card lands in a row instead of alone underneath one. */
-.about-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2.5rem; }
-.member-card {
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-xl); padding: 2.5rem; text-align: center;
-  transition: var(--transition); position: relative; overflow: hidden;
-}
-.member-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--gradient-accent); opacity: 0; transition: var(--transition);
-}
-.member-card:hover { border-color: var(--border-accent); transform: translateY(-4px); box-shadow: var(--shadow-accent); }
-.member-card:hover::before { opacity: 1; }
-.member-avatar { width: 120px; height: 120px; border-radius: 50%; margin: 0 auto 1.5rem; border: 2px solid var(--border-accent); object-fit: cover; }
-.member-name { font-family: var(--font-heading); font-size: 1.5rem; font-weight: 700; margin-bottom: 0.3rem; }
-.member-handle { color: var(--accent); font-size: 0.85rem; font-weight: 500; margin-bottom: 1rem; }
-.member-bio { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.7; margin-bottom: 1.5rem; }
-.member-links { display: flex; gap: 12px; justify-content: center; }
 
 /* ============ HOVER BUTTONS ============ */
 .hover-btn {
@@ -499,17 +444,6 @@ section { padding: 6rem 2rem; position: relative; }
 .hover-btn:hover::before { opacity: 1; }
 
 .hover-btn-lg { width: 52px; height: 52px; }
-
-/* ============ CONTACT (merged into About) ============ */
-.contact-inline {
-  text-align: center;
-  max-width: 600px;
-  margin: 3rem auto 0;
-  padding-top: 3rem;
-  border-top: 1px solid var(--border-subtle);
-}
-.contact-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 2rem; }
-.contact-links-row { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
 
 /* ============ FOOTER ============
    Almost brutally simple: the mark, monochrome and large, the wordmark,
@@ -632,7 +566,6 @@ footer {
 
 
 @media (max-width: 768px) {
-  .about-grid { grid-template-columns: 1fr; }
   section { padding: 4rem 1.2rem; }
 }
 

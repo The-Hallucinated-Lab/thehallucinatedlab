@@ -1,44 +1,13 @@
 /* ============ CONFIG ============ */
 const CONFIG = {
-  particles: {
-    color: [201, 168, 76],      // RGB gold, on the dark page
-    /* The light page is sand, and gold on sand measures under 1.3:1 —
-       the field simply disappears. The canvas is decoration, so this is
-       cosmetic rather than an a11y failure, but an empty hero is not
-       what the light theme is meant to look like. */
-    colorLight: [107, 84, 16],
-    maxCount: 80,
-    densityFactor: 15000,
-    connectionDistance: 150,
-    connectionOpacity: 0.06,
-    /* The connecting lines are drawn at a fixed alpha, so on the lighter
-       page they need a little more of it to survive the same blur. */
-    connectionOpacityLight: 0.10,
-    sizeRange: [0.5, 2.0],
-    speedRange: 0.3,
-    opacityRange: [0.1, 0.5],
-  },
-  typing: {
-    texts: [
-      'No cloud lock-ins.',
-      'No paywalls. No ceilings.',
-      'Your data stays yours.',
-      'Fully local AI pipelines.',
-      'Open source. Always.',
-    ],
-    typeSpeed: 80,
-    deleteSpeed: 40,
-    pauseAfterType: 2000,
-    pauseAfterDelete: 500,
-  },
   navbar: {
     scrollThreshold: 50,
     sectionOffset: 100,
-  },
+  }
 };
 
 /* ============ DEVICE / CONNECTION BUDGET ============
-   The hero canvas and the typing loop are decoration. On a metered
+   The lotus choreography and the homepage diagrams are decoration. On a metered
    connection, a low-memory phone, or for someone who has asked the OS
    for less motion, they are pure cost — so we decide once, up front,
    how much of it to run. */
@@ -53,158 +22,6 @@ function shouldAnimate() {
   }
   if (typeof navigator.deviceMemory === 'number' && navigator.deviceMemory <= 2) return false;
   return true;
-}
-
-/* ============ PARTICLES ============ */
-function initParticles() {
-  const canvas = document.getElementById('particles-canvas');
-  if (!canvas) return;
-
-  // Nothing below this point should run at all if we're not animating.
-  if (!shouldAnimate()) {
-    canvas.remove();
-    return;
-  }
-
-  const ctx = canvas.getContext('2d', { alpha: true });
-  if (!ctx) return;
-
-  const particles = [];
-  const { color, colorLight, maxCount, densityFactor, connectionDistance, connectionOpacity, connectionOpacityLight, sizeRange, speedRange, opacityRange } = CONFIG.particles;
-  const connectionDistanceSq = connectionDistance * connectionDistance;
-
-  /* Read from the attribute rather than taken once at startup: the theme
-     toggle swaps themes live, without a reload, and a canvas still
-     painting the other page's gold is the one thing on the page that
-     would not follow. theme.js sets the attribute before first paint, so
-     this is already correct on the first frame. */
-  let rgb = '';
-  let lineOpacity = connectionOpacity;
-  function readTheme() {
-    const isLight = document.documentElement.getAttribute('data-theme') === 'light';
-    const c = isLight ? colorLight : color;
-    rgb = `${c[0]}, ${c[1]}, ${c[2]}`;
-    lineOpacity = isLight ? connectionOpacityLight : connectionOpacity;
-  }
-  readTheme();
-  new MutationObserver(readTheme).observe(document.documentElement, {
-    attributes: true,
-    attributeFilter: ['data-theme'],
-  });
-
-  let width = 0;
-  let height = 0;
-  let rafId = null;
-  let onScreen = true;
-
-  /* A full-viewport canvas at devicePixelRatio 3 costs ~4x the backing
-     store of one at DPR 1.5 for a field of soft dots nobody inspects. */
-  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-
-  function resize() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    if (w === width && h === height) return;   // orientation-bar jitter fires resize with no real change
-    width = w;
-    height = h;
-    canvas.width = Math.round(w * dpr);
-    canvas.height = Math.round(h * dpr);
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  resize();
-
-  let resizeTimer;
-  const onResize = () => {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(resize, 150);
-  };
-  window.addEventListener('resize', onResize, { passive: true });
-
-  class Particle {
-    constructor() { this.reset(); }
-    reset() {
-      this.x = Math.random() * width;
-      this.y = Math.random() * height;
-      this.size = Math.random() * (sizeRange[1] - sizeRange[0]) + sizeRange[0];
-      this.speedX = (Math.random() - 0.5) * speedRange;
-      this.speedY = (Math.random() - 0.5) * speedRange;
-      this.opacity = Math.random() * (opacityRange[1] - opacityRange[0]) + opacityRange[0];
-    }
-    update() {
-      this.x += this.speedX;
-      this.y += this.speedY;
-      if (this.x < 0 || this.x > width || this.y < 0 || this.y > height) this.reset();
-    }
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(${rgb}, ${this.opacity})`;
-      ctx.fill();
-    }
-  }
-
-  const count = Math.min(maxCount, Math.floor(width * height / densityFactor));
-  for (let i = 0; i < count; i++) particles.push(new Particle());
-
-  function connectParticles() {
-    /* O(n^2) over the particle field every frame. Comparing squared
-       distances keeps the ~3,000 Math.sqrt calls per frame out of it —
-       the threshold comparison is identical either way. */
-    for (let i = 0; i < particles.length; i++) {
-      const a = particles[i];
-      for (let j = i + 1; j < particles.length; j++) {
-        const b = particles[j];
-        const dx = a.x - b.x;
-        const dy = a.y - b.y;
-        const distSq = dx * dx + dy * dy;
-        if (distSq < connectionDistanceSq) {
-          const dist = Math.sqrt(distSq);
-          ctx.beginPath();
-          ctx.strokeStyle = `rgba(${rgb}, ${lineOpacity * (1 - dist / connectionDistance)})`;
-          ctx.lineWidth = 0.5;
-          ctx.moveTo(a.x, a.y);
-          ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-    }
-  }
-
-  function frame() {
-    ctx.clearRect(0, 0, width, height);
-    for (const p of particles) { p.update(); p.draw(); }
-    connectParticles();
-    rafId = requestAnimationFrame(frame);
-  }
-
-  function start() {
-    if (rafId === null) rafId = requestAnimationFrame(frame);
-  }
-  function stop() {
-    if (rafId !== null) { cancelAnimationFrame(rafId); rafId = null; }
-  }
-
-  /* Stop the loop outright once the hero scrolls away, and whenever the
-     tab is backgrounded — a canvas nobody can see should not be burning
-     frames or battery. */
-  const visibilityObserver = new IntersectionObserver(([entry]) => {
-    onScreen = entry.isIntersecting;
-    if (onScreen && document.visibilityState === 'visible') start(); else stop();
-  }, { threshold: 0 });
-  visibilityObserver.observe(canvas);
-
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible' && onScreen) start(); else stop();
-  });
-
-  /* If motion preference flips mid-session, honour it without a reload. */
-  prefersReducedMotion.addEventListener('change', (e) => {
-    if (e.matches) { stop(); visibilityObserver.disconnect(); canvas.remove(); }
-  });
-
-  start();
 }
 
 /* ============ NAVBAR ============ */
@@ -659,71 +476,10 @@ function initScrollAnimations() {
   targets.forEach(el => observer.observe(el));
 }
 
-/* ============ TYPING EFFECT ============ */
-function initTypingEffect() {
-  const el = document.getElementById('typing-text');
-  if (!el) return;
-
-  const { texts, typeSpeed, deleteSpeed, pauseAfterType, pauseAfterDelete } = CONFIG.typing;
-
-  const srOnly = document.createElement('span');
-  srOnly.className = 'sr-only';
-  srOnly.setAttribute('aria-live', 'polite');
-  srOnly.setAttribute('aria-atomic', 'true');
-  el.parentNode.appendChild(srOnly);
-  el.removeAttribute('aria-live');
-  el.removeAttribute('aria-atomic');
-
-  /* Reduced motion still wants the content, just not the animation:
-     show the first line, announce it, and leave it alone. */
-  if (!shouldAnimate()) {
-    el.textContent = texts[0];
-    srOnly.textContent = texts[0];
-    return;
-  }
-
-  let textIdx = 0;
-  let charIdx = 0;
-  let deleting = false;
-  let timer = null;
-
-  function type() {
-    const current = texts[textIdx];
-    el.textContent = current.substring(0, charIdx);
-
-    if (!deleting && charIdx < current.length) {
-      charIdx++;
-      timer = setTimeout(type, typeSpeed);
-    } else if (!deleting && charIdx === current.length) {
-      srOnly.textContent = current;
-      timer = setTimeout(() => { deleting = true; type(); }, pauseAfterType);
-    } else if (deleting && charIdx > 0) {
-      charIdx--;
-      timer = setTimeout(type, deleteSpeed);
-    } else {
-      deleting = false;
-      textIdx = (textIdx + 1) % texts.length;
-      timer = setTimeout(type, pauseAfterDelete);
-    }
-  }
-
-  /* A backgrounded tab does not need a timer waking it up every 40ms. */
-  document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') {
-      clearTimeout(timer);
-      timer = null;
-    } else if (timer === null) {
-      type();
-    }
-  });
-
-  type();
-}
-
 /* ============ INIT ============
    These four run on every page of the site and are independent of each
    other, but they used to run as one uninterrupted sequence — so a
-   throw inside initParticles (a canvas the page can live without) took
+   throw inside a decorative feature (a canvas the page could live without) took
    initNavbar with it, and the mobile menu, the Escape-to-close handler
    and the section highlighting never got wired up. Losing decoration
    should not cost anyone navigation.
@@ -808,11 +564,9 @@ document.addEventListener('DOMContentLoaded', () => {
   /* First: it decides what the rest of the page is allowed to show. */
   startFeature('dev-mode', initDevMode);
   startFeature('theme-toggle', initThemeToggle);
-  startFeature('particles', initParticles);
   startFeature('navbar', initNavbar);
   startFeature('lotus', initLotusAssembly);
   startFeature('scroll-animations', initScrollAnimations);
-  startFeature('typing', initTypingEffect);
 });
 
 /* A rejected promise with no handler is otherwise invisible outside
