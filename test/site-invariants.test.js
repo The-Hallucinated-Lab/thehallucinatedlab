@@ -198,8 +198,9 @@ test('the homepage stays within its transfer budget', () => {
   const text = ['index.html', 'styles.css', 'pages.css', 'fonts.css', 'script.js'];
   const binary = [
     'assets/images/logo-72.avif',
-    'assets/fonts/outfit-latin.woff2',
-    'assets/fonts/jetbrains-mono-latin.woff2',
+    'assets/fonts/manrope-latin.woff2',
+    'assets/fonts/ibm-plex-mono-latin-400.woff2',
+    'assets/fonts/ibm-plex-mono-latin-500.woff2',
   ];
   const total = text.reduce((n, f) => n + gzipKB(f), 0) + binary.reduce((n, f) => n + sizeKB(f), 0);
   const requests = text.length + binary.length;

@@ -109,7 +109,7 @@ main {
   background: none;
   border: 0;
   color: var(--text-primary);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.95rem;
   padding: 0.5rem 0;
 }
@@ -148,7 +148,7 @@ main {
   border-radius: 50px;
   color: var(--accent-light);
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   letter-spacing: 1px;
   padding: 0.6rem 1.4rem;
@@ -177,7 +177,7 @@ main {
   border-radius: 50px;
   color: var(--text-secondary);
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   letter-spacing: 1px;
   padding: 0.35rem 0.95rem;
@@ -261,6 +261,7 @@ main {
 }
 
 .search-hint {
+  font-family: var(--font-mono);
   color: var(--text-muted);
   font-size: 0.68rem;
   margin: 0.85rem 0 0;
@@ -315,7 +316,7 @@ main {
   border: 0;
   color: var(--accent);
   cursor: pointer;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   font-size: 0.82rem;
   text-decoration: underline;
 }

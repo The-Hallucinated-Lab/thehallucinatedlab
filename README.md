@@ -42,7 +42,7 @@ The **site** is zero-dependency — no frameworks, no build step, no bundler. No
 | **Structure** | HTML5 with semantic elements |
 | **Styling** | Vanilla CSS with CSS custom properties (design tokens) |
 | **Interactivity** | Vanilla JavaScript (ES6+) |
-| **Fonts** | [Outfit](https://fonts.google.com/specimen/Outfit) (headings), [JetBrains Mono](https://fonts.google.com/specimen/JetBrains+Mono) (body) — self-hosted variable WOFF2, Latin subsets |
+| **Fonts** | [Manrope](https://fonts.google.com/specimen/Manrope) (display, headings, body), [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono) (labels, metadata, code) — self-hosted WOFF2, Latin subsets |
 | **Hosting** | GitHub Pages |
 | **Domain** | [thehallucinatedlab.space](https://thehallucinatedlab.space) (custom domain via CNAME) |
 
@@ -154,7 +154,7 @@ thehallucinatedlab/
 ### Design System
 - **Dark theme** with a gold accent palette (`#c9a84c` primary), and a warm sand light theme (`#e8dfcb` page, `#6b5410` accent) chosen before first paint by `theme.js`
 - **CSS custom properties** for consistent theming across all components
-- **Two font families** — Outfit (headings), JetBrains Mono (body/code)
+- **Two font families, three roles** — Manrope for display, headings and prose; IBM Plex Mono for the system layer (labels, metadata, status, code)
 - **Smooth transitions** using a custom cubic-bezier easing curve
 
 ### Assistant

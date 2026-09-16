@@ -95,7 +95,7 @@
     border: 1px solid var(--border-subtle);
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     cursor: pointer;
     transition: var(--transition);
   }
@@ -113,7 +113,7 @@
   }
   .orch-layer-sub {
     display: block;
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-weight: 400;
     font-size: 0.65rem;
     letter-spacing: 1px;
@@ -157,7 +157,7 @@
     border: 1px solid var(--border-subtle);
     background: transparent;
     color: var(--text-secondary);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
@@ -275,7 +275,7 @@
     border: 1px solid var(--border-subtle);
     background: transparent;
     color: var(--text-secondary);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     cursor: pointer;
     transition: var(--transition);
@@ -297,7 +297,7 @@
     border: 1px solid var(--border-accent);
     background: transparent;
     color: var(--accent);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-size: 0.72rem;
     font-weight: 600;
     cursor: pointer;
@@ -317,7 +317,7 @@
     border: 1px solid var(--border-accent);
     background: rgba(var(--accent-rgb), 0.1);
     color: var(--accent);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-size: 0.8rem;
     font-weight: 700;
     cursor: pointer;
@@ -467,7 +467,7 @@
     border: 1px solid var(--border-subtle);
     background: var(--bg-secondary);
     color: var(--text-secondary);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-size: 0.78rem;
     font-weight: 600;
     cursor: pointer;
@@ -514,7 +514,7 @@
     border: 1px solid var(--border-subtle);
     background: transparent;
     color: var(--text-muted);
-    font-family: var(--font-body);
+    font-family: var(--font-mono);
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;

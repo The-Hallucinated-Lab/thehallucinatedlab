@@ -334,7 +334,7 @@
   color: var(--accent-light);
   font-size: 0.72rem;
   font-weight: 400;
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
   line-height: 1.5;
   white-space: normal;
   width: max-content;
@@ -432,7 +432,7 @@
   border-radius: 4px;
   font-size: 0.85em;
   color: var(--accent-light);
-  font-family: var(--font-body);
+  font-family: var(--font-mono);
 }
 
 .blog-content pre {

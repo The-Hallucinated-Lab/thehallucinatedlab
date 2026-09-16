@@ -8,7 +8,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { prefixFor, homeHref, sliceHeader, renderHeader, render } = require('../scripts/sync-shell.js');
+const { prefixFor, homeHref, sliceHeader, renderHeader, render, applyPreloads, PRELOADS } = require('../scripts/sync-shell.js');
 
 const UL = `<ul class="nav-links" id="nav-links">
         <li><a href="/" class="active">Home</a></li>
@@ -28,8 +28,12 @@ const MAIN = '<main id="main-content"><header class="term-hero"><h1>T</h1></head
 const FOOTER = '<footer class="footer"><p class="footer-text">© 2026</p></footer>';
 
 /* Assemble a page from named parts so a test can swap exactly one of them. */
-function page({ header = HEADER, main = MAIN, footer = FOOTER, before = '' } = {}) {
-  return `<!doctype html><html><head><title>t</title></head><body>
+const FONTS_LINK = '  <link rel="stylesheet" href="fonts.css">\n';
+const BLOG_FONTS_LINK = '  <link rel="stylesheet" href="../fonts.css">\n';
+
+function page({ header = HEADER, main = MAIN, footer = FOOTER, before = '', fontsLink = FONTS_LINK } = {}) {
+  return `<!doctype html><html><head><title>t</title>
+${fontsLink}</head><body>
 <a class="skip-link" href="#main">Skip</a>
 ${before}  ${header}
   ${main}
@@ -144,27 +148,56 @@ test('render refuses a page with zero or two site footers', () => {
 });
 
 test('render ignores a blog-footer when counting site footers', () => {
-  const html = page({ main: `${MAIN}<footer class="blog-footer"><p>tags</p></footer>` });
+  const html = page({ main: `${MAIN}<footer class="blog-footer"><p>tags</p></footer>`, fontsLink: BLOG_FONTS_LINK });
   assert.doesNotThrow(() => render(html, 'blogs/x.html'));
 });
 
-test('render changes nothing outside the header block', () => {
-  const html = page();
+test('render touches only the header block and the preload lines', () => {
+  const html = page({ fontsLink: BLOG_FONTS_LINK });
   const out = render(html, 'blogs/x.html');
   const h = sliceHeader(html);
-  assert.equal(out.slice(0, h.start), html.slice(0, h.start));
-  assert.ok(out.endsWith(html.slice(h.end)));
+  const outHead = sliceHeader(out);
+  // Before the header: identical once the inserted preload lines are removed.
+  const beforeOut = out.slice(0, outHead.start).replace(/[ \t]*<link rel="preload"[^>]*>\n/g, '');
+  assert.equal(beforeOut, html.slice(0, h.start));
+  // After the header: byte-identical.
+  assert.equal(out.slice(outHead.end), html.slice(h.end));
   assert.ok(out.includes('href="../" class="nav-logo"'));
 });
 
 test('render is a fixed point', () => {
-  const once = render(page(), 'dictionary/terms/acid.html');
+  const html = page({ fontsLink: '<link rel="stylesheet" href="../../fonts.css">\n' });
+  const once = render(html, 'dictionary/terms/acid.html');
   assert.equal(render(once, 'dictionary/terms/acid.html'), once);
 });
 
 test('render preserves the dev-only <li> bytes that dev-mode.test.js parses', () => {
   const out = render(page(), 'index.html');
   assert.ok(out.includes('<li data-status="dev"><a href="slm.html">SLM</a></li>'));
+});
+
+/* ---- preloads ---- */
+
+test('applyPreloads inserts the canonical set before fonts.css, root-absolute at every depth', () => {
+  const out = applyPreloads(page(), '');
+  const at = out.indexOf('<link rel="stylesheet" href="fonts.css">');
+  const block = out.slice(0, at);
+  for (const href of PRELOADS) assert.ok(block.includes(`href="${href}"`), href);
+  assert.equal((out.match(/rel="preload"/g) || []).length, PRELOADS.length);
+  const deep = applyPreloads(page({ fontsLink: '<link rel="stylesheet" href="../../fonts.css">\n' }), '../../');
+  assert.ok(deep.includes('href="/assets/fonts/manrope-latin.woff2"'));
+});
+
+test('applyPreloads replaces stale preloads instead of stacking them', () => {
+  const stale = page({ fontsLink: `  <link rel="preload" href="/assets/fonts/outfit-latin.woff2" as="font" type="font/woff2" crossorigin>\n${FONTS_LINK}` });
+  const out = applyPreloads(stale, '');
+  assert.ok(!out.includes('outfit-latin'));
+  assert.equal((out.match(/rel="preload"/g) || []).length, PRELOADS.length);
+  assert.equal(applyPreloads(out, ''), out);
+});
+
+test('applyPreloads refuses a page without exactly one fonts.css link', () => {
+  assert.throws(() => applyPreloads(page({ fontsLink: '' }), ''), /found 0/);
 });
 
 test('render on the real homepage is a no-op today', () => {
