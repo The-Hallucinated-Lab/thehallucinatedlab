@@ -4,7 +4,7 @@
    ============================================================ */
 
 main {
-  padding-top: 68px;
+  padding-top: 80px;
 }
 
 /* ---------- Hero ---------- */
@@ -61,7 +61,7 @@ main {
 
 .search-block {
   position: sticky;
-  top: 68px;
+  top: 80px;
   z-index: 50;
   /* Opaque behind the content, fading only across the bottom padding.
      At 72% the fade started level with the hint line, so scrolled content

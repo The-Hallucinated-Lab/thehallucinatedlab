@@ -3358,8 +3358,8 @@
 .nav-controls {
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
-  margin-left: 1.4rem;
+  gap: 2px;
+  margin-left: 4px;
   flex-shrink: 0;
 }
 /* Inside the wrapper the gap does the spacing, so the margin the theme
@@ -3368,17 +3368,17 @@
 
 .codeview-toggle {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px;
+  width: 40px; height: 40px;
   margin-left: 0;
   flex-shrink: 0;
   background: transparent;
-  border: 1px solid var(--border-subtle);
-  border-radius: 50%;
-  color: var(--accent);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: var(--transition);
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
 }
-.codeview-toggle:hover { border-color: var(--border-accent); background: var(--accent-glow); }
+.codeview-toggle:hover { background: rgba(var(--structure-rgb), 0.16); color: var(--text-primary); }
 .codeview-toggle svg { width: 18px; height: 18px; fill: currentColor; display: block; }
 @media (prefers-reduced-motion: reduce) { .codeview-toggle { transition: none; } }
 @media (forced-colors: active) {

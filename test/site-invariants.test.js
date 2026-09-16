@@ -194,10 +194,10 @@ test('no page references anything from node_modules', () => {
 
 test('the homepage stays within its transfer budget', () => {
   /* What GitHub Pages actually puts on the wire: text gets gzipped,
-     WOFF2 and AVIF are already compressed and are served as-is. */
+     WOFF2 is already compressed and is served as-is. The logo is inline
+     SVG, so no image is on the first-load path. */
   const text = ['index.html', 'styles.css', 'pages.css', 'fonts.css', 'script.js'];
   const binary = [
-    'assets/images/logo-72.avif',
     'assets/fonts/manrope-latin.woff2',
     'assets/fonts/ibm-plex-mono-latin-400.woff2',
     'assets/fonts/ibm-plex-mono-latin-500.woff2',

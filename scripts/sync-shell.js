@@ -64,32 +64,99 @@ function sliceHeader(html) {
 const SUN = 'M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z';
 const MOON = 'M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z';
 
+/* The lotus is inline on every page so its petals can be styled and animated
+   by the page's CSS (a <use> of an external file cannot be). The geometry is
+   read from logo.svg at run time, so the nav, the footer and the rasters
+   scripts/render-logo.py produces all come from one file. */
+function lotusPaths() {
+  const svg = fs.readFileSync(path.join(ROOT, 'assets', 'images', 'logo.svg'), 'utf8');
+  const paths = svg.match(/<path class="petal[^"]*" d="[^"]+"\/>/g) || [];
+  if (paths.length !== 4) throw new Error(`logo.svg should have four petals, found ${paths.length}`);
+  return paths;
+}
+
+function renderLotus(className, indent) {
+  const inner = lotusPaths().map((p) => `${indent}  ${p}`).join('\n');
+  return `<svg class="${className}" viewBox="0 0 256 256" aria-hidden="true" focusable="false">\n${inner}\n${indent}</svg>`;
+}
+
 function renderHeader(prefix, ul) {
   const p = prefix;
   return `<header>
     <nav class="navbar" id="navbar" role="navigation" aria-label="Main navigation">
-      <a href="${homeHref(p)}" class="nav-logo">
-        <picture>
-          <source srcset="${p}assets/images/logo-72.avif" type="image/avif">
-          <source srcset="${p}assets/images/logo-72.webp" type="image/webp">
-          <img src="${p}assets/images/logo-72.jpg" alt="The Hallucinated Lab logo" width="36" height="36" fetchpriority="high" decoding="async">
-        </picture>
-        <span>THE HALLUCINATED LAB</span>
-      </a>
-      ${ul}
-      <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
-        <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="${SUN}"/></svg>
-        <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="${MOON}"/></svg>
-      </button>
-      <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
-        <span></span><span></span><span></span>
-      </button>
+      <div class="nav-pill">
+        <a href="${homeHref(p)}" class="nav-logo" aria-label="The Hallucinated Lab — home">
+          ${renderLotus('lotus', '          ')}
+          <span class="nav-wordmark">THE HALLUCINATED LAB</span>
+        </a>
+        ${ul}
+        <button class="theme-toggle" id="theme-toggle" aria-label="Switch to light theme" title="Switch to light theme">
+          <svg class="icon-sun" viewBox="0 0 24 24" aria-hidden="true"><path d="${SUN}"/></svg>
+          <svg class="icon-moon" viewBox="0 0 24 24" aria-hidden="true"><path d="${MOON}"/></svg>
+        </button>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="nav-links">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
     </nav>
   </header>`;
 }
 
-/* Apply every template to one page. Pure: (html, rel) -> html. Throws on a
-   page whose anchors do not match, rather than guessing. */
+/* The footer is the same on every page. Links use the page's prefix; the
+   About and Contact anchors live on the homepage. The wording is the
+   identity's, not marketing: what the lab is, where to go, who owns it. */
+function renderFooter(prefix) {
+  const p = prefix;
+  const home = homeHref(p);
+  return `<footer class="footer">
+    <div class="footer-inner">
+      ${renderLotus('lotus lotus-mono', '      ')}
+      <p class="footer-wordmark">THE HALLUCINATED LAB</p>
+      <p class="footer-tag">AI. ML. SOFTWARE. ENGINEERED WITH PURPOSE.</p>
+      <ul class="footer-links">
+        <li><a href="${p}tools.html">Tools</a></li>
+        <li><a href="${p}media.html">Media</a></li>
+        <li><a href="${home}#about">About</a></li>
+        <li><a href="${home}#contact">Contact</a></li>
+        <li><a href="${p}sitemap.html">Sitemap</a></li>
+      </ul>
+      <p class="footer-text">PRIVATE BY DESIGN · © 2026 <a href="https://thehallucinatedlab.space">The Hallucinated Lab</a></p>
+    </div>
+  </footer>`;
+}
+
+/* SVG first so browsers that understand it take the vector; the PNGs are
+   the fallback and the Apple touch icon. */
+function renderIcons(prefix, indent) {
+  const p = prefix;
+  return [
+    `<link rel="icon" type="image/svg+xml" href="${p}assets/images/logo.svg">`,
+    `<link rel="icon" type="image/png" sizes="32x32" href="${p}assets/images/favicon-32.png">`,
+    `<link rel="apple-touch-icon" href="${p}assets/images/favicon-180.png">`,
+  ].map((l) => `${indent}${l}\n`).join('');
+}
+
+/* Replace every favicon link with the canonical triple at the position of
+   the first one. A page with no favicon link at all is left alone rather
+   than guessed at. */
+function applyIcons(html, prefix) {
+  const re = /([ \t]*)<link rel="(?:icon|apple-touch-icon)"[^>]*>\n/g;
+  const first = re.exec(html);
+  if (!first) return html;
+  const indent = first[1];
+  const stripped = html.replace(re, '');
+  const at = first.index;
+  return stripped.slice(0, at) + renderIcons(prefix, indent) + stripped.slice(at);
+}
+
+/* logo.jpeg is 1024x1024; the dictionary pages claimed 1200x630 for it. */
+function applyOgImageSize(html) {
+  if (!/property="og:image" content="[^"]*\/logo\.jpeg"/.test(html)) return html;
+  return html
+    .replace(/(<meta property="og:image:width" content=")\d+(")/, '$11024$2')
+    .replace(/(<meta property="og:image:height" content=")\d+(")/, '$11024$2');
+}
+
 /* The fonts on the first-load path. Root-absolute on every page (fonts.css
    itself resolves its src the same way), so the list never varies with
    depth and test/site-invariants.test.js can name the same files. */
@@ -122,8 +189,11 @@ function render(html, rel) {
   const footers = html.match(/<footer class="footer">[\s\S]*?<\/footer>/g) || [];
   if (footers.length !== 1) throw new Error(`expected one <footer class="footer">, found ${footers.length}`);
   const prefix = prefixFor(rel);
-  const withHeader = html.slice(0, header.start) + renderHeader(prefix, header.ul) + html.slice(header.end);
-  return applyPreloads(withHeader, prefix);
+  let out = html.slice(0, header.start) + renderHeader(prefix, header.ul) + html.slice(header.end);
+  out = out.replace(footers[0], renderFooter(prefix));
+  out = applyPreloads(out, prefix);
+  out = applyIcons(out, prefix);
+  return applyOgImageSize(out);
 }
 
 /* ---------------------------------------------------------------- io */
@@ -174,4 +244,7 @@ if (require.main === module) {
   main(process.argv.slice(2));
 }
 
-module.exports = { prefixFor, homeHref, sliceHeader, renderHeader, renderPreloads, applyPreloads, render, PRELOADS };
+module.exports = {
+  prefixFor, homeHref, sliceHeader, renderHeader, renderFooter, renderPreloads, applyPreloads,
+  renderIcons, applyIcons, applyOgImageSize, render, PRELOADS,
+};

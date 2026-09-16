@@ -290,15 +290,16 @@
       setMode(readMode() === 'terminal' ? 'python' : 'terminal');
     });
 
-    /* Both controls go into one wrapper rather than straight into the
-       navbar. The bar is justify-content: space-between, so a fifth
-       child would redistribute every gap in it and drift the two
-       toggles apart -- they belong together at the right-hand end.
-       One wrapper keeps the bar at the four items it was laid out for. */
-    if (themeToggle && themeToggle.parentNode === navbar) {
+    /* Both controls go into one wrapper, placed where the theme toggle
+       already sits -- inside the pill, at its right-hand end -- so the
+       two toggles stay together. The host is whatever holds the toggle
+       (the pill), not .navbar itself, which is only the fixed strip that
+       positions the pill. */
+    if (themeToggle && themeToggle.parentNode) {
+      var host = themeToggle.parentNode;
       var group = document.createElement('div');
       group.className = 'nav-controls';
-      navbar.insertBefore(group, themeToggle);
+      host.insertBefore(group, themeToggle);
       group.appendChild(button);
       group.appendChild(themeToggle);
     } else {
