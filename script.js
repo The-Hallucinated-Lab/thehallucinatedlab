@@ -438,58 +438,32 @@ const NAV_CHILDREN = {};
    owns section status. */
 const navVisible = item => navEntryVisible(item, readMode());
 
-/* 20px solid glyphs on the 24-grid, filled rather than stroked so they
-   match every other icon on the site — the inline SVGs in the page bodies
-   are all filled Material paths, and outlined nav glyphs beside them read
-   as a different icon set rather than the same one at a smaller size.
-   These must stay closed paths: an open subpath fills into a wedge. */
+/* 20px line glyphs on the 24-grid: 1.8px stroke, round caps and joins,
+   drawn in the same hand as the lotus. They are stroked, not filled, so
+   initNavFlyout sets fill="none" on the <svg> and the CSS strokes
+   currentColor — which is what lets the active one turn saffron with a
+   colour change rather than a second path. Keep every subpath open or
+   closed on purpose; nothing here relies on fill. */
 /* Hoisted out of the table because several keys share them — see below. */
-const MEDIA_GLYPH = 'M21 5c-1.11-.35-2.33-.5-3.5-.5-1.95 0-4.05.4-5.5 1.5-1.45-1.1-3.55-1.5-5.5-1.5S2.45 4.9 1 6v14.65c0 .25.25.5.5.5.1 0 .15-.05.25-.05C3.1 20.45 5.05 20 6.5 20c1.95 0 4.05.4 5.5 1.5 1.35-.85 3.8-1.5 5.5-1.5 1.65 0 3.35.3 4.75 1.05.1.05.15.05.25.05.25 0 .5-.25.5-.5V6c-.6-.45-1.25-.75-2-1zm0 13.5c-1.1-.35-2.3-.5-3.5-.5-1.7 0-4.15.65-5.5 1.5V8c1.35-.85 3.8-1.5 5.5-1.5 1.2 0 2.4.15 3.5.5v11.5z';
-const DICTIONARY_GLYPH = 'M4 3.5h3v17H4zM8.5 3.5H20v17H8.5zm2 4v2h7v-2zm0 4v2h7v-2zm0 4v2h4v-2z';
+const MEDIA_GLYPH = 'M4 5.5h16v13H4zM8 5.5v13M16 5.5v13M4 10h4M4 14h4M16 10h4M16 14h4';
+const DICTIONARY_GLYPH = 'M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 5v16M8.5 7.5h6';
 
 const NAV_ICONS = {
-  '/':'M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z',
-  'tools.html': 'M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z',
-  /* Two chevrons: a pipeline is one stage feeding the next, and the
-     glyph should say "through" rather than "a place". Two closed
-     subpaths, so it fills correctly at 20px like the rest. */
-  'pipelines.html': 'M15.5 5H11l5 7-5 7h4.5l5-7zM8.5 5H4l5 7-5 7h4.5l5-7z',
-  'interface.html': 'M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5zM19 15l-1.25 2.75L15 19l2.75 1.25L19 23l1.25-2.75L23 19l-2.75-1.25L19 15z',
-  'solutions.html': 'M11.99 18.54l-7.37-5.73L3 14.07l9 7 9-7-1.63-1.27-7.38 5.74zM12 16l7.36-5.73L21 9l-9-7-9 7 1.63 1.27L12 16z',
-  /* Media, and the two pages the blog templates point their Media tab
-     at instead. Same destination in the reader's mind, three spellings in
-     the markup — without the aliases the tab lost its glyph and rendered
-     as a bare word on the five blog pages, which is the one place the bar
-     is meant to look exactly like it does everywhere else. */
+  '/': 'M4 11l8-7 8 7v8.5a.5.5 0 0 1-.5.5H14v-6h-4v6H4.5a.5.5 0 0 1-.5-.5z',
+  'tools.html': 'M20.5 6.8l-3.2 3.2-3.3-3.3 3.2-3.2a5 5 0 0 0-6.5 6.5L4 16.7 7.3 20l6.7-6.7a5 5 0 0 0 6.5-6.5z',
+  'pipelines.html': 'M3 12h5.5M15.5 12H21M9 8l4 4-4 4M15.5 8l4 4-4 4',
+  'interface.html': 'M4 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-5 4zM8 9h8M8 12.5h5',
+  'solutions.html': 'M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12L4 7.5M12 12v9',
   'media.html': MEDIA_GLYPH,
   'artifacts.html': MEDIA_GLYPH,
   'blogs.html': MEDIA_GLYPH,
-  /* A closed volume seen spine-on, with three ruled lines cut out of the
-     cover. Media already owns the open book, and two books in one bar
-     read as one section split in half. The inner rectangles wind against
-     the outer one on purpose — same trick the SLM chip uses, and the
-     only way to get a hole out of a single filled path.
-
-     Two keys for one destination: the hub is "dictionary/index.html"
-     from the site root and "index.html" from inside /dictionary once
-     key() has flattened the "../". */
   'dictionary/index.html': DICTIONARY_GLYPH,
   'index.html': DICTIONARY_GLYPH,
-  /* A node-and-branch glyph rather than a map pin: this points at the
-     structure of the site, not a place on it. */
-  'sitemap.html': 'M22 11V3h-7v3H9V3H2v8h7V8h2v10h4v3h7v-8h-7v3h-2V8h2v3z',
-  /* Dev-only sections. They need glyphs for the same reason the live ones
-     do: in dev mode the bar is icons, and an entry without one falls back
-     to a bare word sitting between two icons. */
-  /* The same chip the gateway card on tools.html uses. A nav glyph that
-     disagrees with the card it leads to reads as two destinations. */
-  'slm.html': 'M9 3v2H7a2 2 0 0 0-2 2v2H3v2h2v2H3v2h2v2a2 2 0 0 0 2 2h2v2h2v-2h2v2h2v-2h2a2 2 0 0 0 2-2v-2h2v-2h-2v-2h2V9h-2V7a2 2 0 0 0-2-2h-2V3h-2v2h-2V3H9zm0 6h6v6H9V9z',
-  'certification.html': 'M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z',
-  'consultancy.html': 'M20 6h-4V4c0-1.11-.89-2-2-2h-4c-1.11 0-2 .89-2 2v2H4c-1.11 0-1.99.89-1.99 2L2 19c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V8c0-1.11-.89-2-2-2zm-6 0h-4V4h4v2z',
-  /* Three stacked discs. The page is a catalogue of published sets, not
-     a chart or a tool, so the glyph says "stored records" rather than
-     borrowing the analysis icon eda.html already owns. */
-  'data.html': 'M12 3C7.58 3 4 4.79 4 7s3.58 4 8 4 8-1.79 8-4-3.58-4-8-4zM4 9.5V12c0 2.21 3.58 4 8 4s8-1.79 8-4V9.5c0 2.21-3.58 4-8 4s-8-1.79-8-4zm0 5V17c0 2.21 3.58 4 8 4s8-1.79 8-4v-2.5c0 2.21-3.58 4-8 4s-8-1.79-8-4z',
+  'sitemap.html': 'M9 3.5h6v5H9zM3 15.5h6v5H3zM9 15.5h6v5H9zM15 15.5h6v5h-6zM12 8.5v3.5M6 15.5V12h12v3.5M12 12v3.5',
+  'slm.html': 'M8 8h8v8H8zM5 10h3M5 14h3M16 10h3M16 14h3M10 5v3M14 5v3M10 16v3M14 16v3',
+  'certification.html': 'M12 3a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM8.8 12.2L7.5 21l4.5-2.6 4.5 2.6-1.3-8.8',
+  'consultancy.html': 'M4 8h16v11H4zM9 8V5.5h6V8M4 13h16M12 12v2',
+  'data.html': 'M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3zM4 6v12c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3',
 };
 
 /* Collapse each top-level link to its icon and reveal the label on hover,
@@ -543,6 +517,7 @@ function initNavFlyout() {
       const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
       svg.setAttribute('viewBox', '0 0 24 24');
       svg.setAttribute('aria-hidden', 'true');
+      svg.setAttribute('fill', 'none');
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
       path.setAttribute('d', icon);
       svg.appendChild(path);
@@ -809,12 +784,33 @@ function startFeature(name, init) {
   }
 }
 
+/* The lotus assembles from its convergence point once per session — on
+   the first page, not every page, and never for readers who asked for
+   less motion. sessionStorage is the right memory: it forgets when the
+   tab closes, so a return visit gets the choreography again. */
+function initLotusAssembly() {
+  if (!shouldAnimate()) return;
+  const KEY = 'thl_lotus_seen';
+  let seen = false;
+  try {
+    seen = sessionStorage.getItem(KEY) === '1';
+    sessionStorage.setItem(KEY, '1');
+  } catch (err) {
+    // Storage can be denied (private mode, quota). Then it animates once
+    // per page, which is the harmless direction to fail in.
+    seen = false;
+  }
+  if (seen) return;
+  document.querySelectorAll('.nav-logo .lotus').forEach((el) => el.classList.add('is-assembling'));
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   /* First: it decides what the rest of the page is allowed to show. */
   startFeature('dev-mode', initDevMode);
   startFeature('theme-toggle', initThemeToggle);
   startFeature('particles', initParticles);
   startFeature('navbar', initNavbar);
+  startFeature('lotus', initLotusAssembly);
   startFeature('scroll-animations', initScrollAnimations);
   startFeature('typing', initTypingEffect);
 });

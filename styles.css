@@ -215,41 +215,125 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; }
 *:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 *:focus:not(:focus-visible) { outline: none; }
 
-/* ============ NAVBAR ============ */
+/* ============ NAVBAR — the floating pill ============
+   .navbar is a fixed, full-width, transparent strip that only positions
+   the pill; it takes no pointer events so the hero underneath stays
+   clickable. The pill is the control. Its blur lives on a pseudo-element,
+   not on the pill: backdrop-filter makes an element the containing block
+   for absolutely positioned descendants, and the mobile panel below is
+   one of those — on the pill itself the panel would be clipped to it. */
 .navbar {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  padding: 1rem 2rem;
-  display: flex; align-items: center; justify-content: space-between;
-  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  display: flex; justify-content: center;
+  padding: 14px 16px 0;
+  pointer-events: none;
+}
+.nav-pill {
+  pointer-events: auto;
+  position: relative;
+  display: flex; align-items: center; gap: 0.25rem;
+  padding: 6px 8px 6px 8px;
+  max-width: 100%;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: var(--shadow-card);
+  transition: border-color var(--motion-normal) var(--ease-standard),
+              box-shadow var(--motion-normal) var(--ease-standard);
+}
+.nav-pill::before {
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  border-radius: inherit;
   background: var(--bg-nav);
-  border-bottom: 1px solid transparent;
-  transition: var(--transition);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  transition: background var(--motion-normal) var(--ease-standard);
 }
-.navbar.scrolled { border-bottom-color: var(--border-subtle); background: var(--bg-nav-solid); }
-/* Gap is 0 by design: a collapsed wordmark must not reserve gap space, or
-   the mark sits with a phantom indent. Spacing animates via margin-left. */
-.nav-logo { display: flex; align-items: center; gap: 0; text-decoration: none; }
-.nav-logo img { height: 36px; width: 36px; border-radius: 50%; flex-shrink: 0; }
-.nav-logo span {
-  font-family: var(--font-heading); font-weight: 700; font-size: 1.1rem;
-  background: var(--gradient-accent); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  letter-spacing: 0.5px;
-  display: inline-block; overflow: hidden; white-space: nowrap;
-  max-width: 0; opacity: 0; margin-left: 0;
-  transition: max-width var(--transition), opacity 0.3s ease, margin-left var(--transition);
-}
-/* Clipped, not removed — the text stays in the DOM so screen readers and
-   search crawlers still get the site name. */
-.nav-logo:hover span, .nav-logo:focus-visible span { max-width: 340px; opacity: 1; margin-left: 12px; }
-@media (prefers-reduced-motion: reduce) { .nav-logo span { transition: none; } }
-.nav-links { display: flex; gap: 2rem; list-style: none; }
-.nav-links a { color: var(--text-secondary); text-decoration: none; font-size: 0.85rem; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; transition: var(--transition); position: relative; }
-.nav-links a::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1.5px; background: var(--accent); transition: var(--transition); }
-.nav-links a:hover, .nav-links a.active { color: var(--accent); }
-.nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+.navbar.scrolled .nav-pill { border-color: var(--border-strong); }
+.navbar.scrolled .nav-pill::before { background: var(--bg-nav-solid); }
 
-.nav-hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 5px; }
-.nav-hamburger span { width: 24px; height: 2px; background: var(--accent); transition: var(--transition); transform-origin: center; }
+/* ---- Logo: the lotus and its wordmark ---- */
+.nav-logo {
+  display: inline-flex; align-items: center; gap: 10px;
+  padding: 4px 10px 4px 5px; border-radius: 999px;
+  text-decoration: none; color: var(--text-primary);
+  transition: background var(--motion-fast) var(--ease-standard);
+}
+.nav-logo:hover, .nav-logo:focus-visible { background: rgba(var(--structure-rgb), 0.16); }
+.nav-logo .lotus { width: 30px; height: 30px; flex-shrink: 0; }
+.nav-wordmark {
+  font-family: var(--font-mono); font-size: 0.66rem; font-weight: 500;
+  letter-spacing: 0.14em; color: var(--text-secondary); white-space: nowrap;
+}
+/* Below 1200px the wordmark is clipped visually but stays in the DOM: it
+   is the link's name for readers and crawlers. */
+@media (max-width: 1199px) {
+  .nav-wordmark {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+  }
+}
+
+/* ---- The lotus ----
+   Four petals from one convergence point. transform-box: view-box puts the
+   origin in the SVG's own units, so every instance — 30px in the nav,
+   56px in the footer, 256px in the hero — rotates about the same point. */
+.lotus { display: block; overflow: visible; }
+.lotus .petal {
+  fill: var(--logo-petal);
+  transform-box: view-box; transform-origin: 152px 216px;
+  transition: transform var(--motion-normal) var(--ease-standard);
+}
+.lotus .petal-signal { fill: var(--signal); }
+.lotus-mono .petal, .lotus-mono .petal-signal { fill: currentColor; }
+/* Hover: the petals fan by a few degrees, which at nav size is 2–4px of
+   movement at the tips — a control answering, not a logo performing. */
+.nav-logo:hover .petal-1, .nav-logo:focus-visible .petal-1 { transform: rotate(-4deg); }
+.nav-logo:hover .petal-2, .nav-logo:focus-visible .petal-2 { transform: rotate(-2deg); }
+.nav-logo:hover .petal-3, .nav-logo:focus-visible .petal-3 { transform: rotate(1deg); }
+.nav-logo:hover .petal-4, .nav-logo:focus-visible .petal-4 { transform: rotate(4deg); }
+/* Assembly: petals emerge from the convergence point once, staggered.
+   script.js adds .is-assembling only when shouldAnimate() allows and only
+   on the first page of a session; reduced-motion collapses it to instant. */
+@keyframes petal-emerge {
+  from { opacity: 0; transform: rotate(-10deg) scale(0.6); }
+  to   { opacity: 1; transform: none; }
+}
+.lotus.is-assembling .petal { animation: petal-emerge var(--motion-section) var(--ease-enter) both; }
+.lotus.is-assembling .petal-2 { animation-delay: var(--stagger-medium); }
+.lotus.is-assembling .petal-3 { animation-delay: calc(var(--stagger-medium) * 2); }
+.lotus.is-assembling .petal-4 { animation-delay: calc(var(--stagger-medium) * 3); }
+
+/* ---- Links (the plain text form: no-JS and the mobile panel) ---- */
+.nav-links { display: flex; align-items: center; gap: 2px; list-style: none; margin: 0 4px; padding: 0; }
+.nav-links a {
+  display: inline-flex; align-items: center;
+  padding: 0 12px; height: 40px; border-radius: 999px;
+  color: var(--text-secondary); text-decoration: none;
+  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase;
+  position: relative;
+  transition: color var(--motion-fast) var(--ease-standard), background var(--motion-fast) var(--ease-standard);
+}
+/* The underline grows from the left, 180ms, as the motion system asks. */
+.nav-links a::after {
+  content: ''; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 1.5px;
+  background: var(--signal); transform: scaleX(0); transform-origin: left;
+  transition: transform 180ms var(--ease-standard);
+}
+.nav-links a:hover, .nav-links a.active { color: var(--text-primary); }
+.nav-links a:hover::after, .nav-links a.active::after { transform: scaleX(1); }
+
+/* ---- Hamburger ---- */
+.nav-hamburger {
+  display: none; align-items: center; justify-content: center; flex-direction: column; gap: 5px;
+  width: 40px; height: 40px; border-radius: 999px;
+  cursor: pointer; background: none; border: 1px solid transparent; padding: 0;
+  transition: background var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard);
+}
+.nav-hamburger:hover { background: rgba(var(--structure-rgb), 0.16); }
+.nav-hamburger span {
+  width: 18px; height: 2px; border-radius: 2px; background: var(--text-secondary);
+  transition: transform var(--motion-normal) var(--ease-standard), opacity var(--motion-fast) var(--ease-standard);
+  transform-origin: center;
+}
 .nav-hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
 .nav-hamburger.active span:nth-child(2) { opacity: 0; transform: scaleX(0); }
 .nav-hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
@@ -258,20 +342,20 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; }
    Sits between the links and the hamburger, outside .nav-links, so it
    survives the mobile breakpoint: the list collapses behind the burger,
    and a theme control that vanishes into a closed menu is one people
-   cannot find. 38px square clears 2.5.8's 24x24 floor with room. */
+   cannot find. 40px square clears 2.5.8's 24x24 floor with room. */
 .theme-toggle {
   display: inline-flex; align-items: center; justify-content: center;
-  width: 38px; height: 38px;
-  margin-left: 1.4rem;
+  width: 40px; height: 40px;
+  margin-left: 4px;
   flex-shrink: 0;
   background: transparent;
-  border: 1px solid var(--border-subtle);
-  border-radius: 50%;
-  color: var(--accent);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--text-secondary);
   cursor: pointer;
-  transition: var(--transition);
+  transition: background var(--motion-fast) var(--ease-standard), color var(--motion-fast) var(--ease-standard);
 }
-.theme-toggle:hover { border-color: var(--border-accent); background: var(--accent-glow); }
+.theme-toggle:hover { background: rgba(var(--structure-rgb), 0.16); color: var(--text-primary); }
 .theme-toggle svg { width: 18px; height: 18px; fill: currentColor; display: block; }
 /* Show the icon for the theme the click would move you TO, not the one
    you are in — the button is a destination, not a status light. */
@@ -279,12 +363,17 @@ h1, h2, h3, h4 { font-family: var(--font-heading); letter-spacing: -0.01em; }
 .theme-toggle .icon-sun { display: block; }
 :root[data-theme="light"] .theme-toggle .icon-sun { display: none; }
 :root[data-theme="light"] .theme-toggle .icon-moon { display: block; }
-@media (prefers-reduced-motion: reduce) { .theme-toggle { transition: none; } }
-/* Forced colors flattens the tinted border and the gold glyph alike. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle, .nav-logo, .lotus .petal, .nav-hamburger span { transition: none; }
+  .nav-logo:hover .petal { transform: none; }
+}
+/* Forced colors flattens the tinted border and the glyph alike. */
 @media (forced-colors: active) {
   .theme-toggle { border-color: CanvasText; }
   .theme-toggle svg { fill: CanvasText; }
   .theme-toggle:hover svg, .theme-toggle:focus-visible svg { fill: Highlight; }
+  .lotus .petal { fill: CanvasText; }
+  .lotus .petal-signal { fill: Highlight; }
 }
 
 /* ============ HERO ============ */
@@ -422,14 +511,50 @@ section { padding: 6rem 2rem; position: relative; }
 .contact-text { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.8; margin-bottom: 2rem; }
 .contact-links-row { display: flex; gap: 1.2rem; justify-content: center; flex-wrap: wrap; }
 
-/* ============ FOOTER ============ */
+/* ============ FOOTER ============
+   Almost brutally simple: the mark, monochrome and large, the wordmark,
+   what the lab is, where to go, who owns it. */
 .footer {
-  padding: 2rem; text-align: center;
+  padding: 4.5rem 1.5rem 2.5rem; text-align: center;
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-primary);
 }
-.footer-text { color: var(--text-muted); font-size: 0.8rem; }
-.footer-text a { color: var(--accent); text-decoration: none; }
+.footer-inner {
+  max-width: 760px; margin: 0 auto;
+  display: flex; flex-direction: column; align-items: center; gap: 0.9rem;
+}
+.footer .lotus { width: 56px; height: 56px; color: var(--text-secondary); margin-bottom: 0.4rem; }
+.footer-wordmark {
+  font-family: var(--font-mono); font-size: 0.74rem; font-weight: 500;
+  letter-spacing: 0.22em; color: var(--text-primary); margin: 0;
+}
+.footer-tag {
+  font-family: var(--font-mono); font-size: 0.62rem; font-weight: 400;
+  letter-spacing: 0.14em; color: var(--text-muted); margin: 0;
+}
+.footer-links {
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem 1.75rem;
+  list-style: none; padding: 0; margin: 0.6rem 0 0;
+}
+.footer-links a {
+  font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); text-decoration: none;
+  position: relative; padding-bottom: 2px;
+  transition: color var(--motion-fast) var(--ease-standard);
+}
+.footer-links a::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 1.5px;
+  background: var(--signal); transform: scaleX(0); transform-origin: left;
+  transition: transform 180ms var(--ease-standard);
+}
+.footer-links a:hover, .footer-links a:focus-visible { color: var(--text-primary); }
+.footer-links a:hover::after, .footer-links a:focus-visible::after { transform: scaleX(1); }
+.footer-text {
+  width: 100%; margin: 1.25rem 0 0; padding-top: 1.25rem;
+  border-top: 1px solid var(--border-subtle);
+  color: var(--text-muted); font-size: 0.66rem; letter-spacing: 0.1em;
+}
+.footer-text a { color: var(--text-secondary); text-decoration: none; }
+.footer-text a:hover { color: var(--accent); }
 
 /* The dev toggle's touch gesture lands on this element — three taps,
    see initDevTapToggle in script.js. Both declarations are here to stop
@@ -465,49 +590,50 @@ footer {
 /* Nav collapses at 1024px: with 7 items the inline links overflow on
    tablet widths well before the 768px phone breakpoint. */
 @media (max-width: 1024px) {
-  /* The navbar's backdrop-filter makes it the containing block for the
-     fixed menu, trapping the overlay inside the ~68px navbar strip and
-     cutting off menu items. Drop it while the menu is open so the
-     overlay can span the real viewport. */
-  .navbar:has(.nav-links.open) {
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
-  }
+  .nav-hamburger { display: flex; }
+  /* The pill spans the viewport so the panel that hangs from it does too.
+     The logo takes the slack, so the toggle stays beside the burger. */
+  .nav-pill { width: 100%; }
+  .nav-logo { margin-right: auto; }
+  /* A controlled panel under the pill, not a full-screen takeover. It is
+     absolutely positioned inside the pill (position: relative), which is
+     safe because the blur is on the pill's pseudo-element, not the pill. */
   .nav-links {
     display: none;
-    position: fixed;
-    top: 0; left: 0; right: 0; bottom: 0;
-    height: 100dvh;
-    background: var(--bg-nav-overlay);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    justify-content: safe center;
-    gap: 1.8rem;
+    position: absolute; top: calc(100% + 10px); left: 0; right: 0; z-index: 2;
+    flex-direction: column; align-items: stretch; gap: 2px;
+    padding: 10px;
+    border-radius: 22px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-card);
+    box-shadow: var(--shadow-card);
+    max-height: calc(100dvh - 96px);
     overflow-y: auto;
-    padding: 4.5rem 2rem 3rem;
-    z-index: 999;
   }
-  .nav-links.open { display: flex; }
-  .nav-links a { font-size: 1rem; }
-  .nav-hamburger { display: flex; z-index: 1001; }
+  .nav-links.open { display: flex; animation: panel-in var(--motion-panel) var(--ease-enter) both; }
+  .nav-links.open > li { animation: link-in var(--motion-panel) var(--ease-enter) both; }
+  .nav-links.open > li:nth-child(2) { animation-delay: var(--stagger-small); }
+  .nav-links.open > li:nth-child(3) { animation-delay: calc(var(--stagger-small) * 2); }
+  .nav-links.open > li:nth-child(4) { animation-delay: calc(var(--stagger-small) * 3); }
+  .nav-links.open > li:nth-child(5) { animation-delay: calc(var(--stagger-small) * 4); }
+  .nav-links.open > li:nth-child(6) { animation-delay: calc(var(--stagger-small) * 5); }
+  .nav-links.open > li:nth-child(7) { animation-delay: calc(var(--stagger-small) * 6); }
+  .nav-links.open > li:nth-child(n+8) { animation-delay: calc(var(--stagger-small) * 7); }
+  .nav-links a {
+    display: flex; height: auto; padding: 12px 14px; border-radius: 12px;
+    font-size: 0.95rem; letter-spacing: 0.02em; text-transform: none;
+  }
+  .nav-links a::after { display: none; }
+  .nav-links a:hover { background: rgba(var(--structure-rgb), 0.16); }
+  .nav-links a.active { background: rgba(var(--signal-rgb), 0.12); color: var(--accent); }
 }
+@keyframes panel-in { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: none; } }
+@keyframes link-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
 
 @media (max-width: 768px) {
   .about-grid { grid-template-columns: 1fr; }
   section { padding: 4rem 1.2rem; }
-  /* Touch devices have no hover, so a hover-only wordmark would be
-     permanently invisible. Show it unconditionally below this breakpoint. */
-  /* nowrap exists for the desktop hover-expand, where the wordmark slides
-     out of a clipped box and must stay on one line. Here it is shown
-     unconditionally, and nowrap becomes a liability: at the 200% text
-     WCAG 1.4.4 asks for, "THE HALLUCINATED LAB" measures 371px on a 375px
-     screen and drags the whole navbar off the side. Allowed to wrap it
-     just gets taller, which is what a page at 200% should do. */
-  .nav-logo span { max-width: none; opacity: 1; margin-left: 12px; font-size: 0.95rem;
-                   white-space: normal; min-width: 0; }
 }
 
 /* ============================================================
@@ -556,74 +682,72 @@ footer {
 }
 
 /* ============ NAV: ICON BAR + INLINE FLYOUT ============
-   Labels collapse to icons so the bar has room to expand a subsection
-   inline. Measured on the prototype: text labels needed 1115px of bar in
-   a 783px window; icons fit. Everything here is scoped to .is-icons,
-   which script.js only adds above 769px — so mobile and no-JS keep the
-   plain text list untouched. */
-.nav-links.is-icons { gap: 0.35rem; }
+   Labels collapse to icons so the bar fits in the pill. Everything here
+   is scoped to .is-icons, which script.js only adds above 1024px — so
+   mobile and no-JS keep the plain text list untouched.
+
+   The glyphs are stroked, not filled: 24-grid line icons with round caps
+   and joins, drawn in the same hand as the lotus. */
+.nav-links.is-icons { gap: 2px; }
 .nav-links.is-icons > li { display: inline-flex; align-items: center; }
 
-/* A bare glyph on a dark field reads as a hairline with nothing holding
-   it. The pill gives each icon a hit area and somewhere for hover to
-   land — without it the bar has no sense of being touchable. */
+/* A round hit area. Resting glyphs are muted ink; the current section is
+   saffron — colour as state, per the identity. */
 .nav-links.is-icons a.has-icon {
-  display: inline-flex; align-items: center;
-  padding: 9px 11px; border-radius: 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 40px; height: 40px; padding: 0 10px; border-radius: 999px;
   border: 1px solid transparent;
+  color: var(--text-muted);
   position: relative; isolation: isolate;
-  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  transition: background var(--motion-fast) var(--ease-standard),
+              border-color var(--motion-fast) var(--ease-standard),
+              color var(--motion-fast) var(--ease-standard);
 }
 .nav-links.is-icons a.has-icon svg {
   width: 20px; height: 20px; flex-shrink: 0;
-  /* Gold at rest, not currentColor: the glyph is the whole control once
-     the label is clipped, and a grey one reads as disabled. Depth comes
-     from opacity instead, so the current section still stands out
-     without the icon ever leaving the palette. */
-  fill: var(--accent); stroke: none; opacity: 0.6;
-  transition: opacity var(--transition);
-  /* Slight overshoot on the way up: the lift is what makes it feel like
-     a control answering rather than a colour swap. */
-  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  fill: none; stroke: currentColor; stroke-width: 1.8;
+  stroke-linecap: round; stroke-linejoin: round;
+  /* Depth comes from opacity so the resting glyph is quieter than the
+     active one without leaving the ink family. */
+  opacity: 0.85;
+  transition: opacity var(--motion-fast) var(--ease-standard), transform var(--motion-fast) var(--ease-standard);
 }
 .nav-links.is-icons a.has-icon:hover {
-  background: var(--accent-glow);
-  border-color: var(--border-subtle);
-  color: var(--accent);
+  background: rgba(var(--structure-rgb), 0.16);
+  color: var(--text-primary);
 }
-.nav-links.is-icons a.has-icon:hover svg { transform: translateY(-2px) scale(1.08); }
-.nav-links.is-icons a.has-icon:active svg { transform: translateY(0) scale(0.96); }
+.nav-links.is-icons a.has-icon:hover svg { transform: translateY(-1px); }
+.nav-links.is-icons a.has-icon:active svg { transform: translateY(0); }
 
 /* Open and current both read as "you are here", so they share a look. */
 .nav-links.is-icons li.is-open > a.has-icon,
 .nav-links.is-icons a.has-icon.active {
-  background: rgba(var(--accent-rgb), 0.10);
+  background: rgba(var(--signal-rgb), 0.14);
   border-color: var(--border-accent);
   color: var(--accent);
-  box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.10);
 }
 .nav-links.is-icons a.has-icon:hover svg,
 .nav-links.is-icons a.has-icon:focus-visible svg,
 .nav-links.is-icons a.has-icon.active svg { opacity: 1; }
-/* No dot under the active icon. The tinted background, gold border and
-   gold glyph already mark the current section three times over; a fourth
-   marker floating under the icon read as a smudge rather than a state. */
 /* Clipped rather than hidden: the label is the accessible name. */
 .nav-links.is-icons a.has-icon .nav-label {
   display: inline-block; overflow: hidden; white-space: nowrap;
   max-width: 0; opacity: 0; margin-left: 0;
-  transition: max-width var(--transition), opacity 0.3s ease, margin-left var(--transition);
+  font-size: 0.72rem;
+  transition: max-width var(--motion-normal) var(--ease-standard),
+              opacity var(--motion-fast) var(--ease-standard),
+              margin-left var(--motion-normal) var(--ease-standard);
 }
 .nav-links.is-icons a.has-icon:hover .nav-label,
 .nav-links.is-icons a.has-icon:focus-visible .nav-label,
 .nav-links.is-icons li.is-open > a.has-icon .nav-label,
 .nav-links.is-icons a.has-icon.active .nav-label { max-width: 160px; opacity: 1; margin-left: 8px; }
-/* The underline is sized to the icon, so suppress it once pilled. */
+/* The underline is sized to the text form, so suppress it once pilled. */
 .nav-links.is-icons a.has-icon::after { display: none; }
 
 .nav-flyout {
   display: inline-flex; overflow: hidden; width: 0;
-  transition: width 340ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: width var(--motion-panel) var(--ease-standard);
 }
 .nav-flyout-inner {
   display: inline-flex; align-items: center; gap: 8px;
@@ -634,42 +758,42 @@ footer {
   background: var(--border-accent); margin-right: 0.4rem;
 }
 .nav-sub {
-  font-size: 0.68rem; letter-spacing: 0.8px; text-transform: uppercase;
-  padding: 7px 14px; border-radius: 99px;
+  font-family: var(--font-mono);
+  font-size: 0.66rem; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 7px 14px; border-radius: 999px;
   border: 1px solid var(--border-subtle); color: var(--text-secondary);
   text-decoration: none;
-  transition: color var(--transition), border-color var(--transition),
-              background var(--transition), transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: color var(--motion-fast) var(--ease-standard), border-color var(--motion-fast) var(--ease-standard),
+              background var(--motion-fast) var(--ease-standard);
 }
 .nav-sub:hover {
   color: var(--accent); border-color: var(--border-accent);
-  background: var(--accent-glow); transform: translateY(-1px);
+  background: var(--accent-glow);
 }
 .nav-sub::after { display: none; }
 
-/* ---- The icon bar has no business inside the hamburger overlay ----
+/* ---- The icon bar has no business inside the mobile panel ----
    script.js decides once, at load, whether to add .is-icons. Its
-   breakpoint now matches this one, but a window resized (or a tablet
+   breakpoint matches this one, but a window resized (or a tablet
    rotated) from wide into this range keeps the class, and the rules
-   above then clip every label to max-width:0 — the overlay renders as
-   a column of unlabelled glyphs, which is exactly the "half the items
-   are hidden" report this fixes.
+   above then clip every label to max-width:0 — the panel would render
+   as a column of unlabelled glyphs.
 
    This block has to sit AFTER the .is-icons rules, not up in the
    RESPONSIVE section: the selectors match theirs on specificity, so
    source order is the only thing deciding the winner. */
 @media (max-width: 1024px) {
-  .nav-links.is-icons { gap: 1.8rem; }
-  .nav-links.is-icons > li { display: list-item; }
+  .nav-links.is-icons { gap: 2px; }
+  .nav-links.is-icons > li { display: block; }
   .nav-links.is-icons a.has-icon {
-    padding: 0; border: none; background: none; box-shadow: none;
+    justify-content: flex-start; min-width: 0; height: auto; padding: 12px 14px;
+    border-radius: 12px; border: none; box-shadow: none;
   }
-  /* The label is the control here, so the glyph is redundant weight. */
   .nav-links.is-icons a.has-icon svg { display: none; }
   .nav-links.is-icons a.has-icon .nav-label,
   .nav-links.is-icons a.has-icon.active .nav-label,
   .nav-links.is-icons li.is-open > a.has-icon .nav-label {
-    max-width: none; opacity: 1; margin-left: 0; overflow: visible;
+    max-width: none; opacity: 1; margin-left: 0; overflow: visible; font-size: 0.95rem;
   }
   /* Built to expand sideways in the bar; meaningless stacked vertically. */
   .nav-flyout { display: none; }
@@ -687,20 +811,20 @@ footer {
    site do, and have to be restated in system colours.
 
    The nav glyphs are the sharper one: forced-colors overrides `color`
-   and `background-color`, but NOT `fill` on an SVG. A glyph filled
-   var(--accent) stays gold while the surface behind it becomes
-   Canvas, which in the light HCM themes is white — gold on white is
-   under 2:1. Handing fill back to CanvasText is what keeps 1.4.11 true
-   in a mode the palette never sees.
+   and `background-color`, but NOT `fill` or `stroke` on an SVG. The
+   glyphs stroke currentColor, which does follow, but the lotus petals
+   are filled from a token and would stay saffron and gray on a Canvas
+   that may be white. Handing fill and stroke to CanvasText is what
+   keeps 1.4.11 true in a mode the palette never sees.
 
    The active state is the other: it is a tinted background plus a
    translucent border, and both flatten to nothing. Highlight restores
    the distinction. */
 @media (forced-colors: active) {
-  .nav-links.is-icons a.has-icon svg { fill: CanvasText; opacity: 1; }
+  .nav-links.is-icons a.has-icon svg { stroke: CanvasText; fill: none; opacity: 1; }
   .nav-links.is-icons a.has-icon:hover svg,
   .nav-links.is-icons a.has-icon:focus-visible svg,
-  .nav-links.is-icons a.has-icon.active svg { fill: Highlight; }
+  .nav-links.is-icons a.has-icon.active svg { stroke: Highlight; }
   .nav-links.is-icons a.has-icon.active { border-color: Highlight; }
   /* Custom rings are dropped in this mode; this is the replacement. */
   a:focus-visible, button:focus-visible,

@@ -8,7 +8,10 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
-const { prefixFor, homeHref, sliceHeader, renderHeader, render, applyPreloads, PRELOADS } = require('../scripts/sync-shell.js');
+const {
+  prefixFor, homeHref, sliceHeader, renderHeader, renderFooter, render,
+  applyPreloads, applyIcons, applyOgImageSize, PRELOADS,
+} = require('../scripts/sync-shell.js');
 
 const UL = `<ul class="nav-links" id="nav-links">
         <li><a href="/" class="active">Home</a></li>
@@ -112,15 +115,65 @@ test('renderHeader embeds the <ul> byte for byte', () => {
   assert.ok(out.includes(UL));
 });
 
-test('renderHeader prefixes the logo assets and links home for the depth', () => {
+test('renderHeader links home for the depth and inlines the four-petal lotus', () => {
   const blog = renderHeader('../', UL);
   assert.ok(blog.includes('href="../" class="nav-logo"'));
-  assert.ok(blog.includes('../assets/images/logo-72.jpg'));
   const root = renderHeader('', UL);
   assert.ok(root.includes('href="/" class="nav-logo"'));
-  assert.ok(root.includes('src="assets/images/logo-72.jpg'));
-  const notFound = renderHeader('/', UL);
-  assert.ok(notFound.includes('src="/assets/images/logo-72.jpg'));
+  assert.ok(root.includes('<div class="nav-pill">'));
+  assert.equal((root.match(/<path class="petal /g) || []).length, 4);
+  assert.ok(root.includes('class="petal petal-4 petal-signal"'));
+  // The link's name: aria-label plus the wordmark text, so a text-less SVG link is never nameless.
+  assert.ok(root.includes('aria-label="The Hallucinated Lab'));
+  assert.ok(root.includes('<span class="nav-wordmark">THE HALLUCINATED LAB</span>'));
+  assert.ok(!root.includes('<img'), 'the logo is vector now; no raster in the header');
+});
+
+test('renderFooter carries the monochrome lotus, prefixed links and the sitemap', () => {
+  const deep = renderFooter('../../');
+  assert.ok(deep.startsWith('<footer class="footer">'));
+  assert.ok(deep.includes('class="lotus lotus-mono"'));
+  assert.ok(deep.includes('href="../../sitemap.html"'));
+  assert.ok(deep.includes('href="../../tools.html"'));
+  assert.ok(deep.includes('href="../../#about"'));
+  const root = renderFooter('');
+  assert.ok(root.includes('href="/#about"'));
+  assert.ok(root.includes('href="sitemap.html"'));
+  assert.ok(root.includes('PRIVATE BY DESIGN'));
+});
+
+test('applyIcons replaces every favicon link with the canonical triple, in place', () => {
+  const html = [
+    '<head>',
+    '  <meta name="x">',
+    '  <link rel="icon" href="../assets/images/logo.jpeg">',
+    '  <link rel="stylesheet" href="../fonts.css">',
+    '</head>',
+  ].join('\n');
+  const out = applyIcons(html, '../');
+  assert.ok(!out.includes('logo.jpeg'));
+  assert.ok(out.includes('  <link rel="icon" type="image/svg+xml" href="../assets/images/logo.svg">\n'));
+  assert.ok(out.includes('href="../assets/images/favicon-32.png"'));
+  assert.ok(out.includes('href="../assets/images/favicon-180.png"'));
+  assert.ok(out.indexOf('logo.svg') < out.indexOf('fonts.css'), 'inserted where the old link was');
+  assert.equal(applyIcons(out, '../'), out, 'idempotent');
+  assert.equal(applyIcons('<head></head>', ''), '<head></head>', 'no favicon link: left alone');
+});
+
+test('applyOgImageSize corrects the square logo declared size and nothing else', () => {
+  const dict = [
+    '<meta property="og:image" content="https://thehallucinatedlab.space/assets/images/logo.jpeg">',
+    '<meta property="og:image:width" content="1200">',
+    '<meta property="og:image:height" content="630">',
+  ].join('\n');
+  const out = applyOgImageSize(dict);
+  assert.ok(out.includes('og:image:width" content="1024"'));
+  assert.ok(out.includes('og:image:height" content="1024"'));
+  const other = [
+    '<meta property="og:image" content="https://thehallucinatedlab.space/assets/images/cover.png">',
+    '<meta property="og:image:width" content="1200">',
+  ].join('\n');
+  assert.equal(applyOgImageSize(other), other);
 });
 
 test('renderHeader keeps the controls the tests and script.js key off', () => {
@@ -152,7 +205,7 @@ test('render ignores a blog-footer when counting site footers', () => {
   assert.doesNotThrow(() => render(html, 'blogs/x.html'));
 });
 
-test('render touches only the header block and the preload lines', () => {
+test('render touches only the shell blocks: header, footer, preloads', () => {
   const html = page({ fontsLink: BLOG_FONTS_LINK });
   const out = render(html, 'blogs/x.html');
   const h = sliceHeader(html);
@@ -160,8 +213,9 @@ test('render touches only the header block and the preload lines', () => {
   // Before the header: identical once the inserted preload lines are removed.
   const beforeOut = out.slice(0, outHead.start).replace(/[ \t]*<link rel="preload"[^>]*>\n/g, '');
   assert.equal(beforeOut, html.slice(0, h.start));
-  // After the header: byte-identical.
-  assert.equal(out.slice(outHead.end), html.slice(h.end));
+  // Between the header and the footer: byte-identical.
+  const bodyOf = (doc, from) => doc.slice(from, doc.indexOf('<footer class="footer">'));
+  assert.equal(bodyOf(out, outHead.end), bodyOf(html, h.end));
   assert.ok(out.includes('href="../" class="nav-logo"'));
 });
 

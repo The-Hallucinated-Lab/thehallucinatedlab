@@ -131,9 +131,9 @@ thehallucinatedlab/
     ├── fonts/                # Variable WOFF2, latin + latin-ext subsets
     ├── vendor/               # GSAP 3.12.2 (self-hosted, was cdnjs)
     └── images/
-        ├── logo.jpeg         # 1024px master — social card only
-        ├── logo-72.{avif,webp,jpg}      # Navbar, 36px @2x
-        ├── favicon-32.png / favicon-180.png
+        ├── logo.svg          # The lotus — source of the mark; inlined on every page
+        ├── logo.jpeg         # 1024px raster of it — social card only
+        ├── favicon-32.png / favicon-180.png   # Rasters of it too
         ├── pratyush.jpeg / divyansh.jpeg  # Masters for the variants below
         ├── pratyush-240.{avif,webp,jpg}   # About-page avatar, 120px @2x
         ├── pratyush-80.{avif,webp,jpg}    # Blog byline, 40px @2x
@@ -267,9 +267,9 @@ change's problem to justify — not a number to raise.**
 Rules of thumb behind those numbers:
 
 - **Never point an `<img>` at a master image.** `logo.jpeg` is 1024×1024
-  and exists only for the social card. The navbar uses `logo-72.*`.
-  A 1024px image in a 36px box costs ~4 MB of decoded RAM to display
-  3 KB worth of pixels.
+  and exists only for the social card. The navbar and footer inline the
+  SVG. A 1024px image in a 36px box costs ~4 MB of decoded RAM to
+  display 3 KB worth of pixels.
 - **Every `<img>` needs `width` and `height`** so nothing shifts while
   it loads.
 - **No inline `<script>`.** The CSP on every page is `script-src 'self'`
@@ -284,16 +284,19 @@ Rules of thumb behind those numbers:
 
 ### Regenerating assets
 
-Image variants (needs Pillow):
+Logo rasters (needs Pillow). `assets/images/logo.svg` is the source of
+the mark; the social card and the favicons are rendered from it:
 
 ```bash
-python -c "
-from PIL import Image
-im = Image.open('assets/images/logo.jpeg').convert('RGB').resize((72,72), Image.LANCZOS)
-im.save('assets/images/logo-72.webp', quality=80, method=6)
-im.save('assets/images/logo-72.avif', quality=58)
-im.save('assets/images/logo-72.jpg', quality=80, optimize=True)
-"
+python scripts/render-logo.py
+```
+
+The site chrome — navbar, footer, favicon links, font preloads — is
+generated on every page from `scripts/sync-shell.js`. Edit the
+templates there, never a page, then:
+
+```bash
+npm run shell:sync
 ```
 
 Fonts: request the variable ranges from Google Fonts with a browser

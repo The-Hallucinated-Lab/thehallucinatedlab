@@ -37,10 +37,17 @@ done
 # ---------- PHASE 2: dual adversarial audit (GPU + CPU, in parallel) ----------
 { echo "Audit this file. Output defects only, in the required format."; echo
   cat -n "$TARGET"; } > .orchestrator/tmp/audit.txt
-./.orchestrator/expert.sh adversary .orchestrator/tmp/audit.txt 25 > .orchestrator/tmp/audit_b.out 2>/dev/null &
+./.orchestrator/expert.sh adversary .orchestrator/tmp/audit.txt 25 > .orchestrator/tmp/audit_b.out 2>.orchestrator/tmp/audit_b.err &
 CPU_PID=$!
-./.orchestrator/expert.sh auditor .orchestrator/tmp/audit.txt 25 > .orchestrator/tmp/audit_a.out 2>/dev/null
+./.orchestrator/expert.sh auditor .orchestrator/tmp/audit.txt 25 > .orchestrator/tmp/audit_a.out 2>.orchestrator/tmp/audit_a.err
 wait $CPU_PID
+# An auditor that said nothing did not audit. Refuse to call that CLEAN.
+for side in a b; do
+  if [ ! -s ".orchestrator/tmp/audit_${side}.out" ]; then
+    echo "AUDIT_FAILED side=$side: $(head -c 200 ".orchestrator/tmp/audit_${side}.err" 2>/dev/null)" >&2
+    AUDIT_BROKEN=1
+  fi
+done
 DEFECTS=$(cat .orchestrator/tmp/audit_a.out .orchestrator/tmp/audit_b.out \
   | grep -E '^(CRITICAL|MAJOR)\|' | sort -u)
 echo "=== AUDIT ===" >> "$LOG"; echo "$DEFECTS" >> "$LOG"
@@ -62,4 +69,5 @@ if [ -n "$DEFECTS" ]; then
   rm -f "$TARGET.prerepair"
 fi
 
+if [ "${AUDIT_BROKEN:-0}" = "1" ]; then echo "PASS_UNAUDITED file=$TARGET"; exit 1; fi
 echo "PASS file=$TARGET defects_fixed=$(echo "$DEFECTS" | grep -c .)"

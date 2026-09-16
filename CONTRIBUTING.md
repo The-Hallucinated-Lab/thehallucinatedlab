@@ -46,8 +46,8 @@ Put it in a `.js` file and bind the handler there.
 ### Never point an `<img>` at a master image
 
 `assets/images/logo.jpeg` is 1024×1024 and exists **only** for the
-social card. The navbar uses `logo-72.*`. A master image in a 36px box
-costs ~4 MB of decoded memory to display 3 KB worth of pixels.
+social card. The navbar and footer inline `logo.svg`. A master image in
+a 36px box costs ~4 MB of decoded memory to display 3 KB worth of pixels.
 
 Use a sized variant, and always set `width` and `height` so nothing
 shifts while it loads.
