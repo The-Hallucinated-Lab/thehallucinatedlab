@@ -15,7 +15,7 @@ No cloud lock-ins. No paywalls. No ceilings. Your data stays yours.
 ---
 
 [**Visit the Website →**](https://thehallucinatedlab.space)
-
+ 
 </div>
 
 ---
