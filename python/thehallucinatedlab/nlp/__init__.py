@@ -1,8 +1,8 @@
 """Intent parsing for THL tools.
 
-A port of ``nlp.js`` from the website, rule for rule. Both sides run the
-shared cases in ``spec/nlp-fixtures.json``, so if one learns a phrasing
-the other does not, both test suites fail.
+Reads its vocabulary from the shared manifest and is checked against the
+cases in ``spec/nlp-fixtures.json``, so the parser and the tool registry
+cannot drift apart.
 
 Not a language model, on purpose. Turning "make it a jpg at 80 quality"
 into a call is intent classification plus slot filling: bounded, solved,

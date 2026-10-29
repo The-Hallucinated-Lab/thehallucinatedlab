@@ -1,12 +1,8 @@
-.claude/worktrees/
-DESIGN-LANGUAGE.txt
-ARTICLE-FORMAT.txt
-
 # --- Secrets -------------------------------------------------------
-# This site is static and ships no credentials, but git history is
-# permanent: anything that lands here has to be rotated, not just
-# deleted. These patterns exist so a stray local file never becomes a
-# commit in the first place.
+# Nothing here should hold a credential, but git history is permanent:
+# anything that lands here has to be rotated, not just deleted. These
+# patterns exist so a stray local file never becomes a commit in the
+# first place.
 .env
 .env.*
 !.env.example
@@ -30,7 +26,6 @@ desktop.ini
 *~
 
 # --- Python package (python/) --------------------------------------
-# The site has no build step; the pip package does.
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -39,32 +34,17 @@ build/
 dist/
 .pytest_cache/
 .ruff_cache/
+.mypy_cache/
 .venv/
 venv/
 
 # --- Local tooling -------------------------------------------------
-node_modules/
 .cache/
 *.log
 
 # Local Claude Code config
 .claude/
-
-# Nested scratch repo. Committing this as a gitlink (mode 160000) breaks
-# clones and the Pages build - the same failure f7c3200 fixed for worktrees.
-ai-ide/
-
-# Founder dev-mode keys. The hashes are committed in script.js; the keys
-# behind them must never be.
-.founder-keys.local.txt
-
-# Downloaded datasets. torchvision and friends default to ./data, and the
-# MNIST download alone is 63.5MB of binaries that git can never compress
-# and never forget -- it was committed once and had to be taken back out.
-# The data is reproducible from a one-line download; the repo is not.
-data/
-*.idx3-ubyte
-*.idx1-ubyte
+.claude/worktrees/
 
 # --- Orchestrator harness (CLAUDE.md) --------------------------------
 # Scripts and expert role files are tracked; runtime state is not.
@@ -72,4 +52,23 @@ data/
 .orchestrator/tmp/
 .orchestrator/baseline/
 .orchestrator/session.md
-.mypy_cache/
+
+# --- Downloaded datasets --------------------------------------------
+# torchvision and friends default to ./data, and the MNIST download alone
+# is 63.5MB of binaries that git can never compress and never forget -- it
+# was committed once and had to be taken back out. The data is
+# reproducible from a one-line download; the repo is not.
+#
+# Anchored to the root on purpose. An unanchored `data/` also matches
+# python/thehallucinatedlab/data/, which is where the packaged tool spec
+# lives -- it silently dropped that file from a commit once, and CI caught
+# the drift only because a test compares the two copies.
+/data/
+*.idx3-ubyte
+*.idx1-ubyte
+
+# --- Pipeline artefacts ----------------------------------------------
+# `thl pipeline eda x.csv` writes x.eda/ and `thl pipeline rag doc.pdf`
+# writes doc.rag/ beside their input. Real output, not source.
+*.eda/
+*.rag/

@@ -21,7 +21,6 @@
         "browser",
         "python"
       ],
-      "page": "convert.html",
       "input": {
         "kind": "image",
         "accept": [
@@ -180,7 +179,6 @@
         "browser",
         "python"
       ],
-      "page": "extract.html",
       "input": {
         "kind": "document",
         "accept": [
@@ -347,7 +345,6 @@
         "browser",
         "python"
       ],
-      "page": "chunk.html",
       "input": {
         "kind": "document",
         "accept": [
@@ -482,7 +479,6 @@
         "browser",
         "python"
       ],
-      "page": "tokenize.html",
       "input": {
         "kind": "text",
         "accept": [
@@ -565,7 +561,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "embed.html",
       "input": {
         "kind": "jsonl",
         "accept": [
@@ -672,7 +667,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "vector-index.html",
       "input": {
         "kind": "jsonl",
         "accept": [
@@ -763,7 +757,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "eda.html",
       "input": {
         "kind": "tabular",
         "accept": [
@@ -897,7 +890,6 @@
         }
       ],
       "inPageRunner": {
-        "page": "eda.html",
         "formats": [
           "csv",
           "tsv",
@@ -918,7 +910,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "eda.html",
       "input": {
         "kind": "tabular",
         "accept": [
@@ -1016,7 +1007,6 @@
         }
       ],
       "inPageRunner": {
-        "page": "eda.html",
         "formats": [
           "csv",
           "tsv",
@@ -1037,7 +1027,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "eda.html",
       "input": {
         "kind": "tabular",
         "accept": [
@@ -1172,7 +1161,6 @@
         }
       ],
       "inPageRunner": {
-        "page": "eda.html",
         "formats": [
           "csv",
           "tsv",
@@ -1193,7 +1181,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "eda.html",
       "input": {
         "kind": "tabular",
         "accept": [
@@ -1291,7 +1278,6 @@
         }
       ],
       "inPageRunner": {
-        "page": "eda.html",
         "formats": [
           "csv",
           "tsv",
@@ -1312,7 +1298,6 @@
       "runtimes": [
         "python"
       ],
-      "page": "eda.html",
       "input": {
         "kind": "tabular",
         "accept": [
@@ -1408,7 +1393,6 @@
         }
       ],
       "inPageRunner": {
-        "page": "eda.html",
         "formats": [
           "csv",
           "tsv",

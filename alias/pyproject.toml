@@ -56,8 +56,8 @@ eda-excel = ["thehallucinatedlab[eda-excel]==1.0.0"]
 eda-parquet = ["thehallucinatedlab[eda-parquet]==1.0.0"]
 
 [project.urls]
-Homepage = "https://thehallucinatedlab.space"
-Documentation = "https://thehallucinatedlab.space/library.html"
+Homepage = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
+Documentation = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/blob/main/python/README.md"
 Source = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
 Issues = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/issues"
 

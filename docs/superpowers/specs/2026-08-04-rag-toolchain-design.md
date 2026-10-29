@@ -1,9 +1,15 @@
 # RAG toolchain — design
 
 **Date:** 2026-08-04
-**Status:** approved, in implementation
+**Status:** implemented — historical record, partly superseded
 **Scope:** five tools — `extract`, `chunk`, `tokenize`, `embed`, `index` — plus the shared
 foundations they force into the manifest, the registry and the browser runtime.
+
+> **Read this as history, not as a description of the current tree.** It was written when
+> this repository also shipped a static website that ran the same tools in the browser. That
+> site has since been removed, and with it the browser runtime, the loopback `thl serve`
+> bridge and the Node-based spec sync that this document describes. The tool designs below
+> are accurate; anything about pages, `toolkit.js`, CORS origins or `test/*.test.js` is not.
 
 ---
 

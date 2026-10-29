@@ -1,440 +1,151 @@
-<div align="center">
-
 # The Hallucinated Lab
 
 ### *Your Machine. Your Power. No Limits.*
 
-[![Website](https://img.shields.io/website?url=https%3A%2F%2Fthehallucinatedlab.space&style=for-the-badge&label=LIVE&color=f28a3d)](https://thehallucinatedlab.space)
-[![GitHub Pages](https://img.shields.io/badge/Hosted%20on-GitHub%20Pages-181717?style=for-the-badge&logo=github)](https://pages.github.com/)
-[![License](https://img.shields.io/badge/License-MIT-405a73?style=for-the-badge)](LICENSE)
+A local-first toolkit you call as ordinary Python methods, and from a shell as `thl`.
+Every tool runs on your machine. There is no API key, no account, no service to be up,
+and nothing is uploaded anywhere.
 
-**Open-source** AI tools that run **entirely on your machine** — free, and without any rate limits.
+```bash
+pip install thehallucinatedlab
+thl tool
+```
 
-No cloud lock-ins. No paywalls. No ceilings. Your data stays yours.
+Requires **Python 3.10 or newer**.
 
----
+## What is here
 
-[**Visit the Website →**](https://thehallucinatedlab.space)
+This repository ships one thing: the `thl` command and the `thehallucinatedlab` library
+under [`python/`](python/). There is no website, no build step, and no bundler in the loop.
 
-</div>
-
----
-
-## 🧠 Our Ideology
-
-We believe that every powerful tool — from AI models and video generators to quantum simulators and code analyzers — should run right on your own hardware, with zero restrictions.
-
-| Principle | What It Means |
+| | |
 |---|---|
-| **Open Source, Always** | Every tool we build is open source and runs entirely on your local machine. What you can run is bounded by your hardware, not by a plan. |
-| **Privacy by Default** | When everything runs locally, your data never leaves your hands. No telemetry, no cloud dependency — full sovereignty over your workflow. |
-| **No Paywalls, No Ceilings** | If it can run on your hardware, you should have unrestricted access to use it — always. |
+| **Package** | [`thehallucinatedlab`](https://pypi.org/project/thehallucinatedlab/) — the toolkit |
+| **Alias** | [`thl.lab`](https://pypi.org/project/thl.lab/) — the same install under a shorter name |
+| **Command** | `thl` |
+| **Contract** | [`spec/manifest.json`](spec/manifest.json) — every tool, its arguments, bounds and defaults |
 
----
+## Use it
 
-## 🏗️ Tech Stack
+```python
+from thehallucinatedlab import convert
 
-The **site** is zero-dependency — no frameworks, no build step, no bundler. Nothing in
-`node_modules` is served, bundled, or referenced by any page. ESLint is dev tooling only.
+result = convert("photo.jpg", format="png")
+print(result.path, result.bytes)
+```
 
-| Layer | Technology |
+From a shell:
+
+```bash
+thl tool                                    # every tool and its arguments
+thl tool convert photo.jpg --format webp -q 80
+thl tool extract report.pdf                 # documents to markdown
+thl tool chunk report.md --max-tokens 512   # markdown to jsonl chunks
+thl tool tokenize report.jsonl              # what it costs to embed
+thl tool embed chunks.jsonl                 # chunks to vectors
+thl tool index chunks.npy chunks.jsonl mydb # vectors to a database
+```
+
+Plain English works too, because the intent parser ships in the package:
+
+```bash
+thl "convert photo.jpg to webp at 80"
+thl assistant "extract report.pdf"
+```
+
+## Pipelines
+
+A tool does one thing. A pipeline chains tools, and each stage writes its artefact so you
+can inspect the middle or resume from it.
+
+```bash
+thl pipeline rag report.pdf     # extract -> chunk -> embed -> index
+thl pipeline eda sales.csv      # a table to a profile report
+```
+
+`thl pipeline eda sales.csv` produces `sales.eda/` containing `report.md`, `recipe.json`,
+`analysis.py` (which regenerates everything above, and is meant to be edited), `summary.json`
+and `figures/`.
+
+## The tools
+
+| Tool | What it does |
 |---|---|
-| **Structure** | HTML5 with semantic elements |
-| **Styling** | Vanilla CSS with CSS custom properties (design tokens) |
-| **Interactivity** | Vanilla JavaScript (ES6+) |
-| **Fonts** | [Manrope](https://fonts.google.com/specimen/Manrope) (display, headings, body), [IBM Plex Mono](https://fonts.google.com/specimen/IBM+Plex+Mono) (labels, metadata, code) — self-hosted WOFF2, Latin subsets |
-| **Hosting** | GitHub Pages |
-| **Domain** | [thehallucinatedlab.space](https://thehallucinatedlab.space) (custom domain via CNAME) |
+| `convert` | Convert an image between PNG, JPEG, WebP and AVIF |
+| `extract` | Turn PDF, Word, slides, spreadsheets, e-books and HTML into markdown |
+| `chunk` | Split markdown into jsonl chunks with heading context |
+| `tokenize` | Count tokens and report the distribution against a context window |
+| `embed` | Turn chunks into vectors |
+| `index` | Build a portable vector database, with a `query.py` beside it |
+| `eda` | Profile a table: types with confidence, figures, a replayable recipe |
 
----
+The base install depends on Pillow and nothing else. Everything heavier is an optional
+extra — `[extract]`, `[chunk]`, `[embed]`, `[index]`, `[rag]`, `[eda]`, `[eda-excel]`,
+`[eda-parquet]` — imported inside the function that needs it, so `pip install
+thehallucinatedlab` stays a few megabytes. Ask for a tool whose extra is missing and you get
+one line naming the exact install command, not a traceback.
 
-## 📁 Project Structure
+## Repository layout
 
 ```
-thehallucinatedlab/
-├── index.html            # Home — hero, "Explore the Lab" tab guide, services, about
-├── tools.html            # Tools — one card per tool, plus Prompts and LoRA Adapters
-├── pipelines.html        # Pipelines — RAG and EDA, the tools chained
-├── interface.html        # Assistant — local Ollama chat integration
-├── solutions.html        # Solutions — shipped products (ScoobyBench)
-├── media.html            # Media — gateway to Blogs / Artifacts / Notebooks
-├── blogs.html         # Blogs — note board: AI / Software Engineering, filed by tag
-├── artifacts.html        # Artifacts — interactive, playable explainers
-├── certification.html    # Certification — course tracks and the certificate
-├── consultancy.html      # Consultancy — individual & business engagements
-├── slm.html              # Small language models — document, tools and personal first
-├── data.html             # Data (dev only) — empty shell, the project is not built yet
-├── livelab.html          # Redirect → tools.html (old LiveLab URL)
-├── certificate.html      # Redirect → certification.html (old URL)
-├── 404.html              # Custom not-found page (served by GitHub Pages)
-├── styles.css            # Core stylesheet — design tokens, the shell (navbar, footer, lotus), shared primitives
-├── pages.css             # Shared component styles for every sub-page
-├── home.css              # The homepage only (hero, signal path, selector, dossier, team, contact)
-├── fonts.css             # Self-hosted @font-face + metric-matched fallbacks
-├── script.js             # Navbar, theme, dev mode, scroll reveals, lotus assembly
-├── home.js               # Homepage behaviour — hero mark, live diagrams, the Software/ML/AI selector
-├── tools.js              # Prompt category filter + copy-to-clipboard
-├── blogs.js           # Note data store, the tag filing rule, board search, note form
-├── blogs/
-│   ├── blog.css              # Shared article layout — hero, TOC, prose, callouts
-│   ├── complexity.css        # The complexity session's widgets, on site tokens
-│   └── ai-orchestration.css  # That article's widgets, on site tokens
-├── interface.js          # Assistant chat engine (intent parser + Ollama)
-├── convert.html  # Convert — the first THL tool
-├── converters.html       # Converters — ~40 format conversions, all client-side
-├── genai.html            # Gen AI bench (dev only) — video→image, image→HTML
-├── eda.html              # Exploratory data analysis — the command-line profiler
-├── convert.js    # Its drop zone, controls, and result panel
-├── converters.js         # Text/table conversion registry (pure, unit tested)
-├── convert-scales.js     # Units, number bases, colour and time (pure, unit tested)
-├── converters-ui.js      # The Converters panels — DOM only
-├── genai.js              # Frame timing, palette sampling, HTML scaffold
-├── toolkit.js            # Shared tool runtime + argument-table renderer
-├── nlp.js                # Intent parser (classification + slot filling)
-├── solutions.js          # ScoobyBench screenshot tab switcher
-├── redirect.js           # Shared redirect for the renamed-page stubs
-├── CLAUDE.md             # Mandatory development protocol — how work gets done here
-├── CONTEXT.md            # Project memory: stack, rules, gaps, append-only change log
-├── SECURITY.md           # Disclosure policy + known header limitations
-├── robots.txt            # Crawl permissions — AI/LLM agents explicitly allowed
-├── sitemap.xml           # every indexable URL, asserted against the shipped pages
-├── llms.txt              # Concise Markdown site summary for LLM crawlers
-├── llms-full.txt         # Full machine-readable site directory
-├── RELEASING.md          # How the pip package gets published
-├── LICENSE               # MIT
-├── spec/
-│   ├── manifest.json         # THE tool spec — every consumer reads this
-│   └── nlp-fixtures.json     # Shared parser cases, run by both test suites
-├── scripts/
-│   └── sync-spec.js          # Copies the spec into the Python package
-├── python/                   # The `thehallucinatedlab` pip package
-│   ├── pyproject.toml
-│   ├── README.md             # PyPI long description
-│   ├── thehallucinatedlab/
-│   │   ├── registry.py           # Reads the manifest, validates arguments
-│   │   ├── nlp/__init__.py       # Python port of nlp.js
-│   │   ├── tools/convert.py# Pillow implementation
-│   │   ├── nexuslink.py          # Lazy door onto the NexusLink binding
-│   │   ├── cli.py                # The `thl` command
-│   │   └── data/manifest.json    # Synced copy of spec/manifest.json
-│   └── tests/                # pytest
-├── .nojekyll             # Disables Jekyll on GitHub Pages
-├── CNAME                 # Custom domain configuration
-├── .gitattributes        # Git config
-├── blogs/
-│   ├── blog.css           # Blog/artifact reading styles
-│   ├── blog.js            # Reading progress, TOC, scroll animations
-│   ├── ai-orchestration.html # Artifact — RAG pipeline + iteration game
-│   ├── ai-orchestration.js   # Its interactive figures
-│   ├── complexity.html       # Artifact — complexity explorer
-│   ├── complexity.js         # Its interactive figures
-│   └── sample-blog.html   # Blog — local-first AI
-└── assets/
-    ├── fonts/                # Variable WOFF2, latin + latin-ext subsets
-    ├── vendor/               # GSAP 3.12.2 (self-hosted, was cdnjs)
-    └── images/
-        ├── logo.svg          # The lotus — source of the mark; inlined on every page
-        ├── logo.jpeg         # 1024px raster of it — social card only
-        ├── favicon-32.png / favicon-180.png   # Rasters of it too
-        ├── pratyush.jpeg / divyansh.jpeg  # Masters for the variants below
-        ├── pratyush-240.{avif,webp,jpg}   # About-page avatar, 120px @2x
-        ├── pratyush-80.{avif,webp,jpg}    # Blog byline, 40px @2x
-        └── divyansh-240.{avif,webp,jpg}
+spec/manifest.json              the contract — the only place bounds are written down
+scripts/sync_spec.py            copies it into the wheel, and --check verifies the copy
+python/thehallucinatedlab/      the package: cli, registry, nlp, tools/, pipelines/
+python/tests/                   pytest, including the shared fixture contracts
+alias/                          thl.lab — metadata and one pinned dependency, no code
+docs/                           design notes
+.orchestrator/                  local development harness (see CLAUDE.md)
+.github/workflows/              CI, release to PyPI, CONTEXT.md sync gate
 ```
 
----
-
-## ✨ Features
-
-### Visual & UX
-- **The lotus** — a hand-authored SVG mark (three soft-gray petals, one saffron) inlined on every page; it assembles once per session, fans on hover, and on the homepage leans toward the pointer and resolves into its own geometry as the reader scrolls
-- **Floating pill navbar** — a centred, blurred pill with stroked line glyphs; the current section is saffron; a panel hangs under it on small screens
-- **Signal diagrams** — the five-stage process track and the browser-only privacy diagram light in sequence when they enter the viewport
-- **Scroll-triggered reveals** — sections rise 20 px into view using `IntersectionObserver`; every animation honours `prefers-reduced-motion` and `shouldAnimate()`
-- **Responsive design** — the pill spans the viewport under 1024 px; layouts stack under 768 px
-
-### Design System
-- **Charcoal `#0B0F14` and Ivory `#F4F1EA`** carry the interface (dark is the default; the light theme is chosen before first paint by `theme.js`). **Slate `#405A73`** is structure. **Saffron `#F28A3D`** is the signal — it appears when something is happening and nowhere else. **Sage `#2E5B52`** is the resolved state
-- **Two saffron tokens on purpose** — `--accent` is text-grade in both themes (burnt on ivory, where raw saffron is 2.2:1); `--signal` is the raw brand colour and is never text
-- **Motion tokens** — durations from 100 ms to 1 s, three easings, three stagger steps; nothing bounces, floats or glows
-- **Two font families, three roles** — Manrope for display, headings and prose; IBM Plex Mono for the system layer (labels, metadata, status, code)
-- **The design source of truth** is `DESIGN-LANGUAGE.txt` (local, gitignored) — every value there was read out of `styles.css`, not written from memory
-
-### Assistant
-- **Tools without a model** — an intent parser reads every message first; "convert this to png" runs in the page and returns a file, with nothing installed
-- **Asks rather than guesses** — a request missing a required argument gets one question, and the answer is merged into the pending call
-- **Local-only chat** — anything the parser doesn't recognise goes to Ollama running on your machine; no API keys, no cloud, no data leaves your device
-- **Auto-detects installed model** (recommended: `gemma4:e4b`); falls back through `gemma4:e2b → gemma3:4b → gemma2:2b → llama3.2:*` and finally any installed model
-- **Streaming responses** rendered token-by-token, with a setup panel that surfaces install/CORS instructions when Ollama isn't reachable
-
-### Tools
-- **Convert** — PNG / JPEG / WebP / AVIF conversion on a canvas; nothing uploaded, works offline, and it probes the browser's real encoder support instead of handing back a mislabelled file
-- **Exploratory data analysis** — `thl pipeline eda sales.csv` profiles a data file and returns a Markdown report, the figures, a replayable recipe, and a runnable `analysis.py` that reproduces the report exactly. Every column gets an inferred type *and* a confidence, and sampling is never silent
-- **One spec, four consumers** — `spec/manifest.json` drives the convert UI, the argument tables, the parser's vocabulary and the Python package, so the docs cannot describe arguments the code rejects
-- **Tools declare where they run** — the `runtimes` field is respected, so the Assistant names the command for a Python-only tool rather than offering to run something it cannot
-- **Converters** — around forty conversions in one page, every one running in the tab: CSV/TSV/JSON/JSONL/Markdown/HTML tables, Base64, URL, HTML entity, hex and binary encoding, eleven case styles and slugs, nine categories of physical unit, number bases 2–36 via BigInt, HEX/RGB/HSL/HSV/CMYK with WCAG contrast ratios, Unix/ISO 8601/RFC 1123 timestamps, and canvas image scaling. Video, audio, PDF and Office formats are deliberately absent, with the reason stated on the page
-- **Prompt library** — eight production-ready prompts with category filters and one-click copy
-- **LoRA adapters** — fine-tuned adapters for locally running models, with Ollama and PEFT usage guides
-- **Gen AI bench** (dev mode) — video→image pulls real frames with the browser's own codecs and is finished; image→HTML computes dimensions and a sampled palette into an HTML scaffold and says on the page that it does *not* infer layout, because that needs a model the site does not ship
-
-### Media
-- **Blogs** — a note board in two sections, Artificial Intelligence and Software Engineering. Every note carries tags, and a tag carried by five notes in a section is promoted to a subsection of it. Readers can add their own notes, stored in `localStorage`
-- **Artifacts** — interactive explainers you operate rather than read
-- **Notebooks** — runnable research, landing soon
-
-### SEO & AI discoverability
-- **JSON-LD on every page** — an `Organization` / `Person` / `WebSite` identity graph on the home page, with `BreadcrumbList`, `CollectionPage`, `SoftwareApplication`, `WebApplication`, `ProfessionalService`, `Course`, and `Blog` / `LearningResource` on the pages they describe
-- **`llms.txt` and `llms-full.txt`** — Markdown summaries written for LLM crawlers, including an accuracy section stating what is *not* yet available so answer engines don't overstate it
-- **`robots.txt`** explicitly allowing AI agents (GPTBot, ClaudeBot, PerplexityBot, Google-Extended, Applebot-Extended and others) plus an XML sitemap
-- **Pre-rendered note board** — both sections ship as static HTML so crawlers that don't execute JavaScript still see every published note; `blogs.js` re-renders the same markup and takes over the filing, search and filtering
-- Open Graph + Twitter Card meta with images, canonical URLs, and same-origin `preload` hints for the three first-load font files
-- One `<h1>` per page and no skipped heading levels
-- Descriptive `alt` attributes and explicit `width`/`height` on all images (no layout shift)
-
----
-
-## 🚀 Getting Started
-
-### View Locally
-
-No build step required. Just open the file:
+## Working on it
 
 ```bash
-# Clone the repo
-git clone https://github.com/06pratyush/thehallucinatedlab.git
-cd thehallucinatedlab
+python -m pip install -e "python[dev,eda,eda-excel]"
 
-# Open in your browser
-open index.html        # macOS
-start index.html       # Windows
-xdg-open index.html    # Linux
+pytest python/ -q                 # the suite
+ruff check python/                # lint
+python scripts/sync_spec.py --check   # spec and wheel copy agree
 ```
 
-Or use any local server:
+The EDA suite draws several hundred figures and takes a while; CI allows it twenty minutes.
+
+### The manifest is the contract
+
+`spec/manifest.json` defines every tool, its arguments, their types, bounds and defaults.
+The CLI, the intent parser and the library all read it, and the package carries a copy at
+`python/thehallucinatedlab/data/manifest.json` because a wheel cannot reach outside its own
+root. Edit the spec, then run:
 
 ```bash
-# Python
-python -m http.server 8000
-
-# Node.js (npx, no install)
-npx -y serve .
+python scripts/sync_spec.py
 ```
 
-> **The tool pages need a server, not `file://`.** `convert.html` and the
-> Assistant fetch `spec/manifest.json`, which the browser blocks over `file://`.
-> Every other page opens fine either way.
+A test asserts the two copies are identical, so skipping that step turns the build red rather
+than shipping a package whose `thl tool` output disagrees with what it accepts. **If you
+change one thing, change it in the manifest.**
 
-### Working on the pip package
+### Releasing
 
-The site stays dependency-free; `python/` does not, because encoding images is not
-something to hand-roll.
+See [RELEASING.md](RELEASING.md). Pushing a `v*` tag builds both packages, verifies the tag
+against `pyproject.toml`, and publishes over PyPI Trusted Publishing — there is no token in
+this repository.
 
-```bash
-python -m venv .venv && source .venv/bin/activate
-pip install -e "python[dev]"
+## The standards
 
-pytest python/ -q
-ruff check python/
-```
+[STANDARDS.md](STANDARDS.md) holds the invariants a change has to satisfy.
+[ARCHITECTURE.md](ARCHITECTURE.md) explains the decisions behind them.
+[CONTEXT.md](CONTEXT.md) is the project's memory and its change log.
 
-Editing `spec/manifest.json` means re-syncing the copy the wheel carries:
+## The team
 
-```bash
-node scripts/sync-spec.js
-```
+Built by [@06pratyush](https://github.com/06pratyush), [@shashwat-deep](https://github.com/shashwat-deep)
+and [@TheQMLGuy](https://github.com/TheQMLGuy).
 
-Publishing is documented in [RELEASING.md](RELEASING.md).
+## Contact
 
-### Deploy
+**thehallucinatedlab@gmail.com** — or open an issue.
 
-The site is deployed automatically via **GitHub Pages** from the `main` branch. Any push to `main` triggers a deployment to [thehallucinatedlab.space](https://thehallucinatedlab.space).
+## License
 
----
-
-## 📊 Performance Budget
-
-There is no bundler here to enforce this, so it lives in the README
-instead. **If a change pushes a page over these numbers, that is the
-change's problem to justify — not a number to raise.**
-
-| Budget | Limit | Why |
-|---|---|---|
-| Requests, first load | **≤ 10** | Every page today is 8 or fewer. |
-| Transferred bytes, first load | **≤ 150 KB** | Homepage is well under this after compression. |
-| JavaScript, per page | **≤ 40 KB** uncompressed | Blog pages are the exception: GSAP is ~115 KB on top. |
-| Third-party origins | **0** | Fonts and GSAP are self-hosted. Adding an origin needs a real reason. |
-| Any single image | **≤ 20 KB** | Serve a variant sized for its container, never the master. |
-| DOM nodes, per page | **≤ 1,500** | Homepage sits around 250. |
-| Fonts | **2 families, variable, Latin only** | Two files cover every weight the CSS uses. |
-
-Rules of thumb behind those numbers:
-
-- **Never point an `<img>` at a master image.** `logo.jpeg` is 1024×1024
-  and exists only for the social card. The navbar and footer inline the
-  SVG. A 1024px image in a 36px box costs ~4 MB of decoded RAM to
-  display 3 KB worth of pixels.
-- **Every `<img>` needs `width` and `height`** so nothing shifts while
-  it loads.
-- **No inline `<script>`.** The CSP on every page is `script-src 'self'`
-  with no `unsafe-inline`; an inline block will silently not run. Put it
-  in a `.js` file and load it with `defer`.
-- **Decoration checks `shouldAnimate()` first.** `script.js` skips the
-  particle canvas and the typing loop on reduced-motion, Save-Data,
-  2G, and ≤2 GB devices. New animation should do the same.
-- **Anything that observes or subscribes must also stop.** Observers get
-  `unobserve`d on reveal; the particle loop stops when the tab is hidden
-  or the hero scrolls away.
-
-### Regenerating assets
-
-Logo rasters (needs Pillow). `assets/images/logo.svg` is the source of
-the mark; the social card and the favicons are rendered from it:
-
-```bash
-python scripts/render-logo.py
-```
-
-The site chrome — navbar, footer, favicon links, font preloads — is
-generated on every page from `scripts/sync-shell.js`. Edit the
-templates there, never a page, then:
-
-```bash
-npm run shell:sync
-```
-
-Fonts: request the variable ranges from Google Fonts with a browser
-User-Agent, then save the `latin` and `latin-ext` WOFF2 files into
-`assets/fonts/` and update `fonts.css`. The URL that produced the
-current set:
-
-```bash
-curl -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0 Safari/537.36" \
-  "https://fonts.googleapis.com/css2?family=Outfit:wght@400..800&family=JetBrains+Mono:wght@400..600&display=swap"
-```
-
-The `size-adjust` / `ascent-override` numbers on the fallback faces in
-`fonts.css` were measured in-browser against Arial and Courier New. If
-you change a font, re-measure them — stale values reintroduce the
-layout shift they exist to prevent.
-
-Security policy and the headers GitHub Pages cannot set are documented
-in [SECURITY.md](SECURITY.md).
-
-The project's standing engineering constraints — what CI enforces, what
-review enforces, and what we have deliberately rejected — are in
-[STANDARDS.md](STANDARDS.md). Start there before adding a page, a tool,
-or a dependency.
-
----
-
-## 🧪 Tests
-
-The **shipped site** has no dependencies and no build step. The test
-suite keeps it that way — it uses `node:test` and `node:assert`, both
-built into Node, so no test framework is installed.
-
-There is a `package.json`, but it holds **devDependencies only** (ESLint
-and its globals list). Nothing it installs reaches a page.
-`test/site-invariants.test.js` asserts that no page references
-`node_modules`, so the boundary is enforced rather than remembered.
-
-```bash
-npm install        # dev tooling only
-npm run check      # lint + tests + spec sync
-npm test           # tests alone — needs no install
-```
-
-Browser scripts are plain `<script>` files, not modules, so each one
-marks the block that is genuinely free of DOM, storage and network
-access with sentinel comments:
-
-```js
-/* @pure-start */
-function escapeHtml(str) { ... }
-/* @pure-end */
-```
-
-`test/helpers/load-pure.js` reads that block and evaluates it under
-Node. If someone reaches for `document` inside the markers, the tests
-fail with a `ReferenceError` — which is the point.
-
-What is covered:
-
-| File | Covers |
-|---|---|
-| `test/markdown.test.js` | `formatMarkdown()` — the only place text we did not author reaches `innerHTML`. Rendering, plus a payload battery asserting no input can emit a tag outside `<pre> <code> <strong> <em> <br>`. |
-| `test/submission.test.js` | The community form validator: bounds, normalization, the category allowlist, and coercion of whatever is already in `localStorage`. |
-| `test/site-invariants.test.js` | Properties of the site itself — no inline `<script>`, no third-party origin, no widened CSP, no `<img>` at a master image, no broken asset reference, and the budget above. |
-| `test/nlp.test.js` | The intent parser, driven by `spec/nlp-fixtures.json`. |
-| `test/toolkit.test.js` | Argument validation against the manifest, output filenames, and the argument-table model. |
-| `test/manifest.test.js` | That the spec and the copy inside the wheel are byte-identical, that every tool declares what its consumers read, and that the examples shown on the site really parse the way they claim. |
-
-The intent parser exists twice — `nlp.js` and `thehallucinatedlab.nlp` — because the
-website and the package both need it and neither can import the other. That is a real
-drift risk, so both suites run the same `spec/nlp-fixtures.json`. Teach one parser a
-phrasing without the other and the build goes red.
-
-```bash
-pytest python/ -q      # 70 tests, including the shared parser fixtures
-ruff check python/
-```
-
-That last file is the one that matters most for a site with no build
-step. A future inline `<script>` will not throw — the CSP silently
-blocks it and the feature just stops working. The test catches it
-before it ships.
-
-### CI
-
-[`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs the Node suite
-plus a `node --check` over every script, the Python suite on 3.10 and 3.13,
-and a credential tripwire, on pull requests and pushes to `main`.
-[`release.yml`](.github/workflows/release.yml) publishes the pip package on a
-`v*` tag using PyPI Trusted Publishing, so no API token is stored here.
-Actions are pinned to commit SHAs rather than mutable tags.
-
----
-
-## 🧩 Page Sections
-
-| Page | Description |
-|---|---|
-| **Home** | Hero with the positioning statement beside the lotus, the five-stage process track, the Software / ML / AI selector, six dossier rows (one per section), the private-by-design diagram, the team, and a contact call to action |
-| **Tools** | One card per tool — convert, extract, chunk, tokenize, embed, index — plus Prompts and LoRA adapters |
-| **Pipelines** | RAG and EDA: the tools chained, with every stage written to disk |
-| **Assistant** | AI chat powered by local Ollama — auto-detects installed model, streaming responses |
-| **Solutions** | Shipped products, led by ScoobyBench (AI hardware benchmarking) |
-| **Media** | Gateway to Blogs, Artifacts, and Notebooks |
-| **Certification** | Six project-graded course tracks and what the certificate actually attests to |
-| **Consultancy** | Engagements for individuals and businesses, plus how we scope and hand over work |
-| **Navbar** | Floating pill — Home, Tools, Pipelines, Assistant, Solutions, Dictionary, Media, Sitemap (icons above 1024 px, a panel under the pill below), the theme toggle, and the dev-only entries when dev mode is on |
-
----
-
-## 👥 The Team
-
-| | Name | Handle | Focus |
-|---|---|---|---|
-| 🧑‍💻 | **Pratyush** | [@06pratyush](https://github.com/06pratyush) | AI, Machine Learning, Data Science |
-| 🧑‍💻 | **Divyansh Tripathi** | [@TheQMLGuy](https://github.com/TheQMLGuy) | Quantum Computing, ML, Developer Experience |
-
----
-
-## 📬 Contact
-
-| Channel | Link |
-|---|---|
-| ✉️ Email | [thehallucinatedlab@gmail.com](mailto:thehallucinatedlab@gmail.com) |
-| 🐙 GitHub (Pratyush) | [github.com/06pratyush](https://github.com/06pratyush) |
-| 🐙 GitHub (Divyansh) | [github.com/TheQMLGuy](https://github.com/TheQMLGuy) |
-| 💼 LinkedIn | [linkedin.com/in/pratyush-p-1226b532b](https://www.linkedin.com/in/pratyush-p-1226b532b) |
-
----
-
-<div align="center">
-
-*Built with curiosity and caffeine.*
-
-© 2026 [The Hallucinated Lab](https://thehallucinatedlab.space)
-
-</div>
+MIT. See [LICENSE](LICENSE).

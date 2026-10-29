@@ -553,11 +553,8 @@ def extensions() -> list[str]:
 def readable_extensions() -> list[str]:
     """Every extension this install can read *right now*, sorted.
 
-    Filtered by whether the parser is importable, because this is what
-    ``thl serve`` reports to the website. A page told it can send a PDF
-    that then fails on arrival is worse than a page that was never
-    offered the option -- the visitor has already picked the file by
-    then.
+    Filtered by whether the parser is importable, so a caller is only
+    told it can hand over a PDF if that is actually true right now.
     """
     from ..deps import have
 

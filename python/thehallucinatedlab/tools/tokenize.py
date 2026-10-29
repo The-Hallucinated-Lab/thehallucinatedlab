@@ -68,10 +68,8 @@ _cache: dict[str, Callable[[str], int]] = {}
 def estimate_tokens(text: str) -> int:
     """Count tokens without a tokenizer, erring high.
 
-    Mirrors estimateTokens() in toolkit.js exactly. The browser has no
-    way to run BGE-M3's tokenizer without a 17MB download, so it chunks
-    against this and records that it did -- and ``embed`` re-checks with
-    the real thing rather than trusting it.
+    The fallback for when no real tokenizer is installed. It errs high,
+    and ``embed`` re-checks with the real thing rather than trusting it.
     """
     body = str(text or "")
     if not body.strip():

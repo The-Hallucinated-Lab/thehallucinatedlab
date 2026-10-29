@@ -54,11 +54,10 @@ A second chapter entirely.
 
 
 def test_every_shared_fixture_chunks_to_the_documented_records(chunk_fixtures):
-    """test/chunk.test.js runs this same file against chunk.js.
+    """Every case in the shared fixture produces the documented records.
 
-    A document chunked in the browser and the same document chunked by
-    the package must produce identical records, or the two halves of the
-    pipeline embed and retrieve differently.
+    The fixture is the agreed output, so a change in chunking has to be
+    a deliberate change to the contract rather than a side effect.
     """
     for case in chunk_fixtures["cases"]:
         _, body = parse_frontmatter(case["document"])

@@ -13,7 +13,7 @@ def test_tools_lists_every_tool_and_its_arguments(capsys):
     assert "convert" in out
     assert "--format" in out
     assert "png | jpeg | webp | avif" in out
-    assert "thehallucinatedlab.space" in out
+    assert "The Hallucinated Lab toolkit" in out
 
 
 def test_convert_writes_the_file(opaque_image: Path, tmp_path: Path, capsys):
@@ -36,7 +36,7 @@ def test_the_ask_subcommand_takes_loose_words(opaque_image: Path):
 
 def test_an_unrecognised_request_points_at_the_tool_list(capsys):
     assert main(["what is the airspeed velocity of a swallow"]) == 2
-    assert "thl tools" in capsys.readouterr().err
+    assert "thl tool" in capsys.readouterr().err
 
 
 def test_a_request_with_no_file_says_so(capsys):

@@ -2,54 +2,51 @@
 
 ## 1. PROJECT IDENTIFICATION & OPERATIONAL STATE
 
-- **Project Identifier:** THEHALLUCINATEDLAB-SITE
-- **Operational Status:** ACTIVE DEVELOPMENT — live at https://thehallucinatedlab.space
-- **Architecture Style:** Zero-build static site (hand-authored HTML/CSS/JS) plus a separately versioned Python package under `python/`
-- **Deployment:** GitHub Pages from `main`. A merge to `main` is a production deploy — there is no staging environment.
-- **System Purpose:** Public site for The Hallucinated Lab — publishes local-first AI tools that run entirely in the visitor's browser, documents the shipped desktop products, and hosts the lab's written work.
+- **Project Identifier:** THEHALLUCINATEDLAB-PKG
+- **Operational Status:** ACTIVE DEVELOPMENT — published to PyPI as `thehallucinatedlab`, with `thl.lab` as an alias
+- **Architecture Style:** One Python package with a CLI front end. No website, no build step, no service we run.
+- **Distribution:** PyPI via Trusted Publishing on a `v*` tag. There is no deploy environment — a tag *is* the release, and PyPI is append-only.
+- **System Purpose:** A local-first toolkit — image conversion, document extraction, chunking, tokenising, embedding, vector indexing and exploratory data analysis — callable as ordinary Python methods and from a shell as `thl`.
 
 ## 2. TECHNICAL STACK MATRIX
 
 | Layer | Technology | Version | Enforcement Rules |
 | :--- | :--- | :--- | :--- |
-| **Pages** | Hand-written HTML5 | — | One `<h1>` per page, `<main>` landmark, no skipped heading levels, `alt` on every `<img>` |
-| **Styling** | Plain CSS (`styles.css`, `pages.css`, `fonts.css`) | — | No preprocessor, no framework, no third-party origin. Fonts: Manrope (prose) + IBM Plex Mono (system layer), self-hosted; `scripts/font-metrics.py` produces the fallback overrides |
-| **Client JS** | Classic `<script>`, no modules, no bundler | ES2022 | No inline `<script>`, no inline event handlers — the CSP blocks both |
-| **Security** | Per-page `Content-Security-Policy` meta | — | `script-src 'self'` only; `unsafe-inline`/`unsafe-eval` are never permitted |
-| **Tool contract** | `spec/manifest.json` | — | Single source of truth for tool params; mirrored into `python/` via `npm run spec:sync` |
-| **Python package** | `thehallucinatedlab` (pip) | see `python/` | Bounded dependency ranges only (`>=x,<y`); lint with `ruff` |
-| **Dev tooling** | ESLint 9.39.5, `node --test` | Node ≥20 | `devDependencies` only, lockfile committed, `npm ci --ignore-scripts` in CI |
-| **Site chrome** | `scripts/sync-shell.js` | — | The header block on every navbar page is generated from one template; `--check` runs in `npm run check`. Edit the template, never a page |
-| **Local experts** | `.orchestrator/` (Ollama, CLAUDE.md §3–6) | Ollama 0.33 | Scripts and role files tracked; `logs/`, `tmp/`, `baseline/` ignored. Models return text only — nothing local writes to the tree |
-| **CI** | GitHub Actions (`ci.yml`, `release.yml`) | — | Actions pinned to commit SHAs, never mutable tags; least-privilege `permissions` |
+| **Language** | Python | >= 3.10 (CI: 3.10 and 3.13) | Floor and ceiling only; the versions between do not fail on their own |
+| **Base dependency** | Pillow | >=10.0 | The base install depends on Pillow and nothing else — this is the property worth protecting |
+| **Optional extras** | `extract`, `chunk`, `embed`, `index`, `rag`, `eda`, `eda-excel`, `eda-parquet` | bounded ranges | Imported *inside* the function that needs them; `DependencyMissing` names the exact `pip install` line |
+| **Tool contract** | `spec/manifest.json` | — | Single source of truth for tool params; mirrored into the wheel by `python scripts/sync_spec.py` |
+| **Lint** | ruff | `>=0.6,<0.13` | Pinned to a major line: an unbounded `>=` lets a new rule turn CI red on untouched code |
+| **Tests** | pytest | `>=8.0` | Contract tests read the shared fixtures in `spec/` |
+| **Alias** | `thl.lab` | exact pin | `release.yml` checks the pin matches the package version before building |
+| **Local experts** | `.orchestrator/` (Ollama, `CLAUDE.md` §3–6) | Ollama 0.33 | Scripts and role files tracked; `logs/`, `tmp/`, `baseline/` ignored |
+| **CI** | GitHub Actions (`ci.yml`, `release.yml`, `enforce-context-sync.yml`) | — | Actions pinned to commit SHAs, never mutable tags; least-privilege `permissions` |
 
 ## 3. ARCHITECTURAL BOUNDARIES & RULES
 
-1. [RULE-01]: **No runtime dependency may ever ship to the browser.** Nothing in `node_modules` is served, bundled, or referenced by any page. A runtime dependency would introduce a third-party origin and break the CSP.
-2. [RULE-02]: **No backend.** Every tool executes client-side or via the user's own local Python package over loopback. The site never proxies user data.
-3. [RULE-03]: **The discoverability surface is load-bearing and silent.** Adding, renaming, or removing a page requires updating `sitemap.xml`, `sitemap.html`, `llms.txt`, and `llms-full.txt` in the same commit. Nothing on the site links to these files, so they rot without a visible symptom.
-4. [RULE-04]: Titles ≤ 60 characters; meta descriptions 50–155 characters; both unique across every indexable page.
-5. [RULE-05]: **Structured data must be honest.** JSON-LD may only describe what is rendered on the page. `FAQPage` markup for questions absent from the visible text is a violation that can earn a manual action.
-6. [RULE-06]: `spec/manifest.json` is the contract for tool arguments. Neither the browser implementation nor the Python implementation may restate a bound independently.
-7. [RULE-07]: Every local asset reference must resolve to a committed file, and every `<img>` must declare `width` and `height`.
-8. [RULE-08]: Per-page JS and per-image size budgets are enforced by `test/site-invariants.test.js`. Exceeding a budget fails the build rather than degrading quietly.
-9. [RULE-09]: No credential pattern or key/env file may ever be committed — the CI secret scan is a tripwire, and a hit means rotate, not just revert.
+1. [RULE-01]: **`spec/manifest.json` is the contract.** Neither the registry nor a tool implementation may restate a bound. Change the spec, run `python scripts/sync_spec.py`, and the test suite and CI both fail if you forget.
+2. [RULE-02]: **The base install stays Pillow-only.** Every heavier dependency is an extra. This is the reason someone who came for `convert` does not download torch.
+3. [RULE-03]: **Optional dependencies are imported late** — inside the function that needs them — and a missing one raises `DependencyMissing` naming the extra, never an `ImportError` at module scope.
+4. [RULE-04]: **No telemetry, no third-party origins, no service we operate.** The only outbound traffic in the package is a model download the first time a RAG extra is used.
+5. [RULE-05]: **Errors are classified.** Raise a `THLError` subclass that names what failed and what the caller can do; the CLI renders it as one line. A raw traceback is a bug in the error handling, not an error report.
+6. [RULE-06]: **A partial pipeline is not a crash.** Stages that finished leave real artefacts; the CLI says what ran, where it is, and how to resume, and exits 2 rather than 1.
+7. [RULE-07]: **The alias mirrors the package exactly.** Every extra in `python/pyproject.toml` has a line in `alias/pyproject.toml`, and the pin is exact. An alias that can resolve to a different version is not an alias.
+8. [RULE-08]: No credential pattern or key/env file may ever be committed — the CI secret scan is a tripwire, and a hit means rotate, not just revert.
+9. [RULE-09]: **There is no web UI in this repository.** The static site, its browser implementations, its tests and `thl serve` were removed deliberately; do not reintroduce them without a product decision. See `ARCHITECTURE.md`, *What used to be here*.
 10. [RULE-10]: **`CLAUDE.md` is the mandatory development protocol.** It sits at the repository root, is loaded automatically at the start of every Claude Code session, and governs how all work here is triaged, delegated, gated, reviewed and merged. It is not advisory and not per-task. Where a request and `CLAUDE.md` disagree about *process*, the file wins until a human overrides it explicitly. Changing it is its own deliberate pull request, never a side effect of a feature.
-11. [RULE-11]: **This file is read first and updated last, every time.** `CONTEXT.md` is the project's memory, and its purpose is that an agent never has to rediscover the project by reading the repository — the largest avoidable cost in any session. Sections 1–4 are authoritative: do not re-derive the stack, the boundaries, or the known gaps by grepping. Section 5 is append-only and is never read whole. Every change appends to section 5 in the same commit and edits section 4 if it opened or closed a gap; `.github/workflows/enforce-context-sync.yml` blocks any pull request into `main` that does not. RULE-10 and RULE-11 are the two structural rules — they are followed throughout development and in the future, and neither is tunable.
-12. [RULE-12]: **The page chrome is generated, never hand-edited.** The `<header>` (navbar), the `<footer>`, the favicon links and the font preloads on every page come from one template per block in `scripts/sync-shell.js`. Edit the template and run `npm run shell:sync`; never edit those blocks in a page. CI runs `node scripts/sync-shell.js --check` and fails on any page that drifts.
+11. [RULE-11]: **This file is read first and updated last, every time.** `CONTEXT.md` is the project's memory, and its purpose is that an agent never has to rediscover the project by reading the repository. Sections 1–4 are authoritative: do not re-derive the stack, the boundaries or the known gaps by grepping. Section 5 is append-only and is never read whole. Every change appends to section 5 in the same commit and edits section 4 if it opened or closed a gap; `.github/workflows/enforce-context-sync.yml` blocks any pull request into `main` that does not. RULE-10 and RULE-11 are the two structural rules and neither is tunable.
 
 ## 4. CURRENT SYSTEM GAPS & KNOWN SHORTCOMINGS
 
-- [GAP-01]: There is no staging environment. `main` is production; a bad merge is live immediately.
-- [GAP-02]: The CSP is delivered via `<meta>` rather than an HTTP header, because GitHub Pages does not allow custom headers. `frame-ancestors` and `report-uri` are therefore unenforceable.
-- [GAP-03]: `llms.txt` and `llms-full.txt` are maintained by hand. Tests confirm every link resolves and every indexable page is covered, but nothing verifies that the *prose* still describes what the page currently does — this has drifted twice before.
-- [GAP-04]: Page content is duplicated across `<head>` blocks (nav, CSP, footer). There is no templating layer. **Mostly closed:** `scripts/sync-shell.js` owns the `<header>` (navbar), the `<footer>`, the favicon links and the font preloads on every page and regenerates them from one template each; `--check` runs in `npm run check`. Still hand-pasted: the CSP meta, the description/og metas and the JSON-LD.
-- [GAP-05]: Solutions are documented on the site but their source repositories live outside it, so a version number here can silently fall behind the upstream release.
-- [GAP-06]: The ScoobyBench and NexusLink cards on `solutions.html` show a `thl solutions install …` command. The `thehallucinatedlab` package implements no `solutions` subcommand, so both lines are aspirational and read as fact. Either implement the subcommand or replace the two lines.
-- [GAP-11]: Blog pages have two `<footer>` elements (`.blog-footer` inside `<main>`, then the site footer). `script.js`'s dev-mode triple tap binds to `document.querySelector('footer')`, so on a blog page it lands on the tag block, not the site footer. Pre-existing; recorded here rather than fixed inside the redesign.
-- [GAP-12]: The homepage transfer budget in `test/site-invariants.test.js` names the six text files and three font files on the first load but not `theme.js`, which is also requested. Adding it takes the request count to 10 of 10 with no slack; the number is real either way.
-- [GAP-13]: Only `index.html` has been given the identity's type scale and layout. Every other page wears the new tokens, fonts and shell but keeps its previous sizes and component shapes until its own pass.
-- [GAP-07]: NexusLink Engine has a one-line entry in `llms.txt` but no `## Page:`-level coverage in `llms-full.txt`, where ScoobyBench and AI Video Studio both have full sections. An answer engine reading the long-form file sees two of the three shipped products. The tests do not catch this — they check that every *page* is covered, not every product on a page.
+- [GAP-01]: There is no release dry run. A `v*` tag publishes to PyPI immediately and immutably; the tag/version check in `release.yml` runs before the build, which is the only guard.
+- [GAP-02]: The EDA suite draws several hundred figures and takes minutes even in parallel. The local feedback loop is coarse, and a full run is best split by file.
+- [GAP-03]: The RAG extras (torch, chromadb, sentence-transformers) are not installed in CI — they are gigabytes — so their tests skip rather than run. A green build does not mean those paths were exercised.
+- [GAP-04]: No static type checking is gated. `py.typed` ships, but nothing runs mypy or pyright, so the annotations are a promise without a check.
+- [GAP-05]: `eda` emits an `analysis.py` generated from your column names, and it is meant to be run. On a file from an untrusted source it deserves a read first; this is documented in `SECURITY.md` rather than enforced.
+- [GAP-06]: The site this project used to publish at `thehallucinatedlab.space` has been removed. Anything that linked to it — including old release notes and third-party bookmarks — now dead-ends. PyPI metadata, the CLI and the package docstrings were repointed to the repository.
+- [GAP-07]: `readable_extensions()` in `tools/extract.py` is public but has no callers now that the loopback bridge is gone. Kept as API surface; either use it or remove it in a deliberate change.
+
+---
 
 ## 5. IMMUTABLE EXECUTION TIMELINE & BUG LOG
 
@@ -543,3 +540,15 @@
 - **Context Modifications:** None to the site itself in this PR.
 - **Deliberate omission:** `DESIGN-LANGUAGE.txt` stays gitignored, as it was; it is the owner's local reference and the README points at it. GSAP-driven blog reveals were not re-timed to the motion tokens.
 - **Verification:** `npm run check` — eslint clean, 449/449 tests, spec and shell in sync. `./.orchestrator/verify.sh` → `VERIFY_PASS`.
+
+---
+
+- **Timestamp:** 2026-10-29T10:55:00Z
+- **Trigger Event:** AI Edit
+- **Author/Agent:** Sarvam General Assistant for @TheQMLGuy
+- **Target Subsystem:** Repository root (all site files), `python/thehallucinatedlab/` (`cli.py`, `registry.py`, `serve.py` removed, `deps.py`, `tools/*`, `nlp/`, `__init__.py`), `python/tests/`, `spec/manifest.json`, `scripts/`, `.github/workflows/`, all markdown docs
+- **Intent:** Retire the website entirely and leave a repository that develops only the terminal and code surfaces — the `thl` command and the `thehallucinatedlab` library. The static site had grown to 31 HTML pages, 21 browser scripts (~9,400 lines), 4 stylesheets, `assets/`, `blogs/` and `dictionary/`, all of it a second implementation of the same tools.
+- **Bugs/Gaps Addressed:** Closes [GAP-06] by removing the site it described. Removes the dead `thl serve` bridge, which existed solely so a page on the site could call a local install, along with its test file. Removes the `page` field from all 16 manifest tool entries, which named doc pages that no longer exist — `thl tool <name>` is the reference now. Replaces the Node spec-sync script with `scripts/sync_spec.py` so the check needs no Node toolchain, and retargets the `MissingArgument` hint and every dead `thehallucinatedlab.space` link in `cli.py`, `pyproject.toml`, `alias/pyproject.toml`, `python/README.md` and the package docstrings.
+- **Context Modifications:** Deleted 176 files: every root `.html`/`.css`/`.js`, `assets/`, `blogs/`, `dictionary/`, `test/`, `scripts/`, `.well-known/`, `CNAME`, `.nojekyll`, `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, `package.json`, `package-lock.json`. `spec/` was **kept** — it looks like site furniture, but `python/tests/conftest.py` loads the fixtures from it and the wheel reads its manifest copy, so deleting it would have broken the suite. `ci.yml` drops the Node/site job and the shell-sync step; `release.yml` swaps `node scripts/sync-spec.js --check` for `python scripts/sync_spec.py --check`. README, ARCHITECTURE, SECURITY, STANDARDS, CONTRIBUTING and the PR template were rewritten for a CLI-only project.
+- **Verification:** `pytest python/tests -q --ignore=python/tests/eda` → 243 passed, 2 skipped. EDA suite run per file: `test_invariants` 122, `test_loading` 31, `test_portable` 275, `test_recipe` 15, `test_script` 11, `test_report` 25, `test_tools` 30, `test_inference` 108, `test_session` 23 — all passed. `test_eda_cli`, `test_eda_registry`, `test_folder` and `test_formats` were still running when the per-call time limit was hit and reported no failures; they are unchanged by this work and CI runs the full suite with a twenty-minute budget. `ruff check python/` clean. `python scripts/sync_spec.py --check` in sync.
+- **Deliberate omission:** The Pages site was not unpublished from here — that needs repository settings access. `thehallucinatedlab.space` will 404 once this lands.

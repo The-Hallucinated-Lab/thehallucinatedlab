@@ -97,8 +97,8 @@ eda-parquet = ["pyarrow>=14,<26"]
 thl = "thehallucinatedlab.cli:main"
 
 [project.urls]
-Homepage = "https://thehallucinatedlab.space"
-Documentation = "https://thehallucinatedlab.space/convert.html"
+Homepage = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
+Documentation = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/blob/main/python/README.md"
 Source = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab"
 Issues = "https://github.com/The-Hallucinated-Lab/thehallucinatedlab/issues"
 

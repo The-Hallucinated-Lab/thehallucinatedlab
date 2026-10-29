@@ -33,11 +33,11 @@ def test_defaults_come_from_the_manifest():
     assert cleaned == {"format": "png", "quality": 92, "background": "#ffffff"}
 
 
-def test_a_missing_required_argument_points_at_the_docs():
+def test_a_missing_required_argument_names_the_command_that_explains_it():
     with pytest.raises(MissingArgument) as err:
         registry.validate("convert", quality=80)
     assert "format" in str(err.value)
-    assert "thehallucinatedlab.space" in str(err.value)
+    assert "thl tool convert" in str(err.value)
 
 
 @pytest.mark.parametrize(
@@ -129,7 +129,7 @@ def test_running_an_unimplemented_tool_says_so():
 
 
 def test_the_packaged_spec_matches_the_repository_spec(repo_manifest):
-    """Same assertion as test/manifest.test.js, from the other side."""
+    """The packaged copy and the repository copy are the same file."""
     assert registry.manifest == repo_manifest
 
 
@@ -141,16 +141,15 @@ def test_the_version_is_declared_once(repo_manifest):
 
 
 def test_every_manifest_tool_documents_itself():
-    """Guard for tool #2: the website renders these fields verbatim."""
+    """Guard for tool #2: ``thl tool`` renders these fields verbatim."""
     for name in registry.names():
         tool = registry.describe(name)
-        for field in ("title", "summary", "description", "page", "aliases", "keywords"):
+        for field in ("title", "summary", "description", "aliases", "keywords"):
             assert tool.get(field), f"{name} is missing {field}"
         for param in tool["params"]:
             assert param.get("description"), f"{name}.{param['name']} has no description"
-            # Mirrors the same gate in test/manifest.test.js. A type only
-            # belongs here once toolkit.js and registry.py both enforce
-            # it, or the website accepts an argument the package rejects.
+            # A type only belongs here once registry.py enforces it, so
+            # the spec cannot accept an argument the package rejects.
             assert param.get("type") in {
                 "enum",
                 "integer",

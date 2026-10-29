@@ -46,7 +46,7 @@ __all__ = [
 ]
 
 #: The names this module registers with the parent package's tool spec.
-#: ``thl tools`` reads it to list the EDA primitives once the extra is
+#: ``thl tool`` reads it to list the EDA primitives once the extra is
 #: installed, and to list them as available-with-install when it is not.
 TOOLS = (
     "describe_dataset",

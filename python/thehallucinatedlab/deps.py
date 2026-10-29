@@ -16,8 +16,7 @@ error can name the exact extra rather than pointing at a repository:
         pip install "thehallucinatedlab[embed]"
 
 Checking availability without triggering the error is :func:`have`, which
-is what the CLI uses to print a capability table and what ``thl serve``
-uses to answer /capabilities honestly.
+is what the toolkit uses to report what an install can do right now.
 """
 
 from __future__ import annotations

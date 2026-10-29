@@ -67,8 +67,7 @@ Versions live in **four** places and CI refuses to publish if any of them disagr
 
 The alias pins an exact version deliberately. An alias that can resolve to a different
 version than the package it aliases is not an alias — it is a second package that will
-surprise somebody. `test/regressions.test.js` checks the pin on every CI run, and the
-release workflow checks it again against the tag before building anything.
+surprise somebody. `release.yml` checks the pin against the tag before building anything.
 
 `spec/manifest.json` also carries a `version`, which is the *spec* version — bump it when the
 shape of a tool's arguments changes, not on every release. A test asserts it matches the
@@ -77,12 +76,12 @@ package version, so for now they move together.
 ```bash
 # 1. bump the version in both files, and the spec if arguments changed
 # 2. make sure the packaged spec copy is current
-node scripts/sync-spec.js
+python scripts/sync_spec.py
 
 # 3. verify locally exactly what CI will verify
-node --test "test/**/*.test.js"
 pytest python/ -q
 ruff check python/
+python scripts/sync_spec.py --check
 
 # 4. commit, then tag and push
 git tag v0.1.0
