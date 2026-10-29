@@ -433,7 +433,6 @@ command -v ruff >/dev/null && ruff check . >> "$RUN" 2>&1
 
 echo "--- tests ---" >> "$RUN"
 [ -d tests ] && pytest -q >> "$RUN" 2>&1
-[ -f package.json ] && npm test --silent -- --run >> "$RUN" 2>&1
 
 pytest -q 2>/dev/null | grep -oE '^[A-Za-z0-9_/.:]+::[A-Za-z0-9_]+' \
   | sort > .orchestrator/tmp/now_failing.txt || true

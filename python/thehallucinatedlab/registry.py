@@ -3,10 +3,10 @@
 Everything the toolkit knows about its own tools -- names, arguments,
 bounds, defaults, the vocabulary the parser matches on -- comes from
 ``data/manifest.json``. That file is a copy of ``spec/manifest.json`` at
-the repository root, which is also what the website reads to build the
-convert UI and the argument reference table. A Node test asserts the
-two copies are byte-identical, so the documentation on the site cannot
-describe arguments this package does not accept.
+the repository root, which is the source of truth for the CLI, the
+intent parser and this package alike. ``scripts/sync_spec.py --check``
+and a test assert the two copies are byte-identical, so ``thl tool``
+cannot describe arguments this package does not accept.
 
 Practically: to add a tool, add a manifest entry and an implementation.
 Nothing here needs editing.
@@ -106,7 +106,7 @@ class Registry:
         return [tool["name"] for tool in self._manifest.get("tools", [])]
 
     def describe(self, name: str) -> dict[str, Any]:
-        """The raw spec for one tool -- the same object the website renders."""
+        """The raw spec for one tool -- the same object ``thl tool`` renders."""
         for tool in self._manifest.get("tools", []):
             if tool["name"] == name:
                 return tool
@@ -273,8 +273,8 @@ class Registry:
             raise InvalidArgument(" ".join(errors))
         if missing:
             raise MissingArgument(
-                f"{name} needs {', '.join(missing)}. See "
-                f"https://thehallucinatedlab.space/{tool.get('page', '')}"
+                f"{name} needs {', '.join(missing)}. "
+                f"Run `thl tool {name}` to see what it takes."
             )
 
         return cleaned

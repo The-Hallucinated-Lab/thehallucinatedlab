@@ -44,10 +44,10 @@ jobs:
       - name: Run tests
         run: pytest python/ -q
 
-      # A wheel whose bundled spec differs from the site's would ship a
-      # package documented by a page that describes something else.
+      # A wheel whose bundled spec differs from the repository's would ship
+      # a package that documents arguments it does not accept.
       - name: Check the tool spec is in sync
-        run: node scripts/sync-spec.js --check
+        run: python scripts/sync_spec.py --check
 
       # PyPI is append-only: 0.1.0 can never be re-uploaded. Catching a
       # tag/version mismatch here is the difference between fixing a typo

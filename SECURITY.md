@@ -4,83 +4,53 @@
 
 Email **thehallucinatedlab@gmail.com** with `SECURITY` in the subject line.
 
-Please include what you found, the page or file it affects, and the steps
-to reproduce it. If you have a proof of concept, a short description beats
-a screenshot.
+Please include what you found, the file or tool it affects, and the steps to
+reproduce it. If you have a proof of concept, a short description beats a
+screenshot.
 
-We will acknowledge your report within **7 days** and tell you what we
-intend to do about it. Please give us a reasonable window to ship a fix
-before disclosing publicly — this is a two-person project, so that window
-may be longer than you are used to.
+We will acknowledge your report within **7 days** and tell you what we intend
+to do about it. Please give us a reasonable window to ship a fix before
+disclosing publicly — this is a two-person project, so that window may be
+longer than you are used to.
 
 Do not open a public GitHub issue for a security problem.
 
 ## Scope
 
-This repository is a **static website** plus a **pip package** (`python/`).
+This repository is a **pip package** (`python/`) and a **command-line tool**
+(`thl`). There is no server we run, no database, no user accounts and no
+session handling. That rules out most of the classes of bug people usually
+look for. What is genuinely in scope:
 
-There is still no server we run, no database, no user accounts, and no
-session handling. The tools added to the site do not change that: image
-conversion happens on a canvas in the visitor's own tab, so there is no
-endpoint to attack and no upload to intercept. That rules out most of
-the classes of bug people usually look for. What is genuinely in scope:
-
-- Cross-site scripting in any page or in the JavaScript that renders into
-  it — `blogs.js`, `interface.js`, `tools.js`, `toolkit.js`, `nlp.js`,
-  `convert.js`, `blogs/blog.js`
-- A Content-Security-Policy bypass on any page
-- Anything that causes the Assistant page or a tool page to send data off
-  the visitor's machine (see below)
-- Secrets or credentials committed anywhere in this repository or its
-  history
-- Subresource or supply-chain problems in `assets/vendor/`
-- In the `thehallucinatedlab` package: path traversal through a
-  destination argument, or anything that executes attacker-controlled
-  input rather than treating it as data
-- Anything that lets a tool write outside the destination the caller
-  asked for
-
-Out of scope: findings against `thehallucinatedlab.space` that are
-properties of GitHub Pages itself, missing response headers we cannot set
-(see *Known limitations*), and automated-scanner output with no
-demonstrated impact.
-
-## The Assistant page
-
-`interface.html` connects to an [Ollama](https://ollama.com) runtime on
-the visitor's **own machine** at `http://localhost:11434`. No prompt,
-response, or attachment is sent to any server we operate — there is no
-such server. `connect-src` in that page's CSP is restricted to `'self'`
-plus loopback, so the page cannot reach anywhere else even if its
-JavaScript were compromised.
-
-Model output is rendered through `formatMarkdown()` in
-[`interface.js`](interface.js), which escapes the text first and then
-re-introduces a fixed set of tags. It never emits an attribute, so there
-is no place for injected markup to attach an event handler. If you find a
-string that escapes that, we want to hear about it.
-
-## Known limitations
-
-GitHub Pages serves static files and does not let us set response
-headers. Everything expressible in a `<meta>` tag is set on every page —
-the CSP and `Referrer-Policy` — but the following can only be delivered
-as real headers and are therefore **not** in force:
-
-| Header | Status |
-|---|---|
-| `Content-Security-Policy: frame-ancestors` | Not set — `<meta>` CSP ignores this directive. Clickjacking is not currently blocked. |
-| `X-Frame-Options` | Not set — header-only. |
-| `X-Content-Type-Options: nosniff` | Not set — header-only. GitHub Pages does send correct `Content-Type` values. |
-| `Permissions-Policy` | Not set — header-only. |
-| `Strict-Transport-Security` | Managed by GitHub Pages when *Enforce HTTPS* is enabled. |
-
-Putting the site behind a CDN or proxy that can set headers would close
-all of these. Until then they are documented here rather than assumed.
+- Path traversal through a destination argument — a tool writing outside the
+  path the caller asked for
+- A tool executing attacker-controlled input rather than treating it as data
+- In `extract`: a malicious document that causes arbitrary code execution
+  rather than a parse failure
+- In `index`: anything that makes the generated `query.py` run something the
+  caller did not ask for
+- Dependency confusion or a typosquatted name in the published metadata
+- Secrets or credentials committed anywhere in this repository or its history
 
 ## What this project does not do
 
-No cookies. No localStorage beyond community post drafts, which stay in
-the visitor's browser and are never transmitted. No analytics, no
-tracking pixels, no third-party scripts — every subresource on every page
-is served same-origin from this repository.
+No network calls at all in the base tools. No telemetry, no analytics, no
+phone-home. The RAG extras download model weights the first time you use them,
+from the model's own distribution channel, and that is the only outbound
+traffic in the package.
+
+No credential is stored, and nothing is uploaded. A document you `extract` or
+a table you `eda` stays on your disk.
+
+## Trust boundary worth naming
+
+`thl tool extract` parses untrusted documents with third-party parsers
+(`pypdf`, `python-docx`, `python-pptx`, `openpyxl`, `ebooklib`, `striprtf`,
+`odfpy`, `beautifulsoup4`). We treat those libraries as the boundary: a
+malformed file should produce a `THLError` naming the file, and a crash
+inside a parser is a bug we want to hear about.
+
+The EDA pipeline emits an `analysis.py` you are meant to edit and run. It is
+generated from your data's column names, so it is worth reading before
+executing on a file from an untrusted source — the same caution you would
+apply to any generated code.

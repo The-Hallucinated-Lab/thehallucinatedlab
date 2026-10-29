@@ -1,9 +1,8 @@
-"""The Python half of the shared parser contract.
+"""The parser contract, checked against the shared fixture file.
 
-test/nlp.test.js runs this same fixture file against nlp.js. That is the
-only thing stopping the two implementations from drifting, so if you are
-tempted to special-case a fixture here instead of fixing the parser,
-don't -- the website would then behave differently from the package.
+The cases in ``spec/nlp-fixtures.json`` are the agreed behaviour, so if
+you are tempted to special-case a fixture here instead of fixing the
+parser, don't -- the fixture is the specification, not a suggestion.
 """
 
 from __future__ import annotations

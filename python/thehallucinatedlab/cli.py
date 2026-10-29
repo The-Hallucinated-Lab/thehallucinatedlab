@@ -2,18 +2,18 @@
 
 Three ways in, all over the same registry::
 
-    thl tools                                   what exists, and what it takes
-    thl convert photo.jpg --format webp -q 80   explicit
-    thl extract report.pdf                      documents to markdown
-    thl chunk report.md --max-tokens 512        markdown to jsonl chunks
-    thl tokenize report.jsonl                   what it costs to embed
-    thl embed chunks.jsonl                      chunks to vectors
-    thl index chunks.npy chunks.jsonl mydb      vectors to a database
-    thl serve                                   let the website use this install
+    thl tool                                    what exists, and what it takes
+    thl tool convert photo.jpg -f webp -q 80    explicit
+    thl tool extract report.pdf                 documents to markdown
+    thl tool chunk report.md --max-tokens 512   markdown to jsonl chunks
+    thl tool tokenize report.jsonl              what it costs to embed
+    thl tool embed chunks.jsonl                 chunks to vectors
+    thl tool index chunks.npy chunks.jsonl mydb vectors to a database
+    thl pipeline rag report.pdf                 the four stages above, in order
     thl "convert photo.jpg to webp at 80"       plain english
 
 The natural-language form exists because the parser is already there for
-the website's assistant; wiring it to argv was nearly free.
+the ``assistant`` command; wiring it to argv was nearly free.
 """
 
 from __future__ import annotations
@@ -35,8 +35,8 @@ from .tools.extract import extract
 from .tools.index import index
 from .tools.tokenize import tokenize
 
-# The tool is called "convert" on the website, in the spec, and in the
-# Python API, so the subcommand matches it exactly — one name everywhere.
+# The tool is called "convert" in the spec and in the Python API, so the
+# subcommand matches it exactly — one name everywhere.
 # "converter" stays as a hidden alias: it was the name for one release and
 # silently breaking a CLI someone already scripted against is worse than
 # carrying one extra word.
@@ -52,7 +52,7 @@ from .tools.tokenize import tokenize
 #: Bare `thl tool` lists them, which is what the old `thl tools` did.
 _TOOL_NAMES = ("convert", "extract", "chunk", "tokenize", "embed", "index")
 _PIPELINE_NAMES = ("eda", "rag")
-_FLAT_COMMANDS = ("tool", "pipeline", "assistant", "serve")
+_FLAT_COMMANDS = ("tool", "pipeline", "assistant")
 
 _SUBCOMMANDS = _FLAT_COMMANDS
 _ALIASES: dict[str, str] = {}
@@ -65,8 +65,8 @@ def _print_tools() -> int:
         print(f"  {name}  -  {tool.get('summary', '')}")
         for param in tool.get("params", []):
             flag = "required" if param.get("required") else f"default {param.get('default', '-')}"
-            # Same wording the website's argument table uses, so the two
-            # references read alike.
+            # Rendered from the same spec the registry validates against,
+            # so --help cannot describe an argument the tool rejects.
             if param.get("type") == "enum":
                 accepts = " | ".join(param.get("values", []))
             elif param.get("type") == "integer":
@@ -82,9 +82,6 @@ def _print_tools() -> int:
             else:
                 accepts = param.get("type", "")
             print(f"      --{param['name']:<12} {accepts:<24} ({flag})")
-        page = tool.get("page")
-        if page:
-            print(f"      docs: https://thehallucinatedlab.space/{page}")
         print()
     return 0
 
@@ -242,7 +239,7 @@ def _run_ask(text: str) -> int:
     intent = parse_intent(text)
     if not intent["tool"]:
         print(f"I could not tell which tool {text!r} means.", file=sys.stderr)
-        print("Try `thl tools` to see what exists.", file=sys.stderr)
+        print("Try `thl tool` to see what exists.", file=sys.stderr)
         return 2
 
     if intent["missing"]:
@@ -384,12 +381,6 @@ def _build_parser() -> argparse.ArgumentParser:
 
     # -- everything that is neither a tool nor a pipeline ------------
 
-    srv = top.add_parser("serve", help="let the website use this install")
-    srv.add_argument("-p", "--port", type=int, default=None, help="default 8787")
-    srv.add_argument("--allow-origin", action="append", default=[],
-                     help="an extra origin to answer, repeatable")
-    srv.add_argument("--verbose", action="store_true", help="log every request")
-
     assistant = top.add_parser(
         "assistant", help="describe what you want in plain english"
     )
@@ -475,13 +466,6 @@ def main(argv: Sequence[str] | None = None) -> int:
             return _guard(lambda: run_parsed(parsed))
         return _guard(_print_pipelines)
 
-    if command == "serve":
-        from .serve import DEFAULT_PORT, serve
-        return _guard(lambda: serve(
-            parsed.port or DEFAULT_PORT,
-            tuple(parsed.allow_origin),
-            quiet=not parsed.verbose,
-        ))
     if command == "assistant":
         return _guard(lambda: _run_ask(" ".join(parsed.text)))
 

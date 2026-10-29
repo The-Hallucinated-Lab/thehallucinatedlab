@@ -1,7 +1,6 @@
 # thehallucinatedlab
 
-The [Hallucinated Lab](https://thehallucinatedlab.space) toolkit — local-first tools you can
-call as ordinary Python methods.
+The Hallucinated Lab toolkit — local-first tools you can call as ordinary Python methods.
 
 Every tool runs on your machine. There is no API key, no account, no service to be up, and
 nothing is uploaded anywhere.
@@ -27,15 +26,18 @@ result = convert("photo.jpg", format="png")
 print(result.path, result.bytes)
 ```
 
-Forgot what a tool takes? The argument reference lives on the website, generated from the
-same spec this package validates against — so the docs cannot describe an argument the code
+Forgot what a tool takes? `thl tool` prints every tool and its arguments, rendered from the
+same spec this package validates against — so the help cannot describe an argument the code
 does not accept:
 
-**<https://thehallucinatedlab.space/convert.html>**
+```bash
+thl tool
+thl tool convert
+```
 
 ## Plain english works too
 
-The same intent parser that powers the website's assistant ships in the package:
+The intent parser ships in the package:
 
 ```python
 from thehallucinatedlab import parse
@@ -125,8 +127,7 @@ relate_columns("sales.csv", kind="target", target="churn")
 ```
 
 `thl pipeline eda sales.csv -i` opens a nine-screen session, and every screen prints the flag that
-would have produced the same choice. Full reference:
-**<https://thehallucinatedlab.space/eda.html>**
+would have produced the same choice. `thl pipeline eda --help` lists every flag.
 
 Optional extras within the extra: `[eda-excel]` for `.xlsx`, `[eda-parquet]` for `.parquet`.
 

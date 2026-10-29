@@ -1,15 +1,13 @@
 """Convert an image between formats.
 
-The Python twin of the canvas implementation the website runs. Same
-argument names, same bounds, same alias handling -- all of it read from
-the shared manifest rather than restated here.
+Argument names, bounds and alias handling are all read from the shared
+manifest rather than restated here.
 
-One deliberate difference: the manifest's ``input.maxPixels`` is a
-browser constraint (the canvas encodes on the main thread and a huge
-image locks the tab). Nothing here enforces it, because refusing a 60
-megapixel scan in a batch script for a reason that only applies to a
-browser tab would be silly. Pillow's own decompression-bomb guard still
-applies.
+The manifest's ``input.maxPixels`` is deliberately not enforced. It
+described a constraint that belonged to the browser front end this
+package used to ship alongside, and refusing a 60 megapixel scan in a
+batch script for that reason would be silly. Pillow's own
+decompression-bomb guard still applies.
 """
 
 from __future__ import annotations

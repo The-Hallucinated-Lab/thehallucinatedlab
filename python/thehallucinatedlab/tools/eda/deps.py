@@ -41,7 +41,7 @@ def available() -> bool:
 
     Branch on this when EDA is an optional part of your own program.
     Catching the exception works too, but this reads better in an ``if``
-    and is what ``thl tools`` uses to say whether the extra is present.
+    and is what ``thl tool`` uses to say whether the extra is present.
     """
     return all(house.have(module) for module in _REQUIRED)
 

@@ -5,11 +5,9 @@ Every tool in the lab is a method on this package:
     >>> from thehallucinatedlab import convert
     >>> result = convert("photo.jpg", format="png")
 
-If you cannot remember what a tool takes, the argument reference is on
-the website -- and it is generated from the very same spec this package
-validates against, so the two cannot disagree:
-
-    https://thehallucinatedlab.space/convert.html
+If you cannot remember what a tool takes, ``thl tool`` prints every tool
+and its arguments, rendered from the very same spec this package
+validates against, so the two cannot disagree.
 
 You can also ask in plain english:
 
@@ -19,10 +17,10 @@ You can also ask in plain english:
 
 Or from a shell::
 
-    thl tools
-    thl convert photo.jpg --format png
+    thl tool
+    thl tool convert photo.jpg --format png
     thl "convert photo.jpg to webp at 80"
-    thl eda sales.csv
+    thl pipeline eda sales.csv
 
 Some tools need an optional extra. Importing them is always cheap; the
 first call raises ``DependencyMissing`` naming the line to install::
@@ -61,7 +59,7 @@ from .tools.tokenize import TokenReport, tokenize
 
 __version__ = "1.0.0"
 
-# Deprecated alias. The tool is "convert" everywhere now — website, spec,
+# Deprecated alias. The tool is "convert" everywhere now — spec,
 # CLI and API — but `image_convert` shipped in 0.1.0, so it keeps working
 # rather than breaking installs that already import it.
 image_convert = convert

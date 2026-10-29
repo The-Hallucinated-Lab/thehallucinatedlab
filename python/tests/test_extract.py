@@ -1,10 +1,9 @@
-"""The Python half of the shared extract contract.
+"""The extract contract, checked against the shared fixture file.
 
-test/extract.test.js runs the same fixture file against extract.js. That
-is the only thing stopping the two implementations from drifting, and
-drift here is expensive: a document that assembles differently depending
-on which runtime read it chunks differently, embeds differently and
-retrieves differently.
+The cases in ``spec/extract-fixtures.json`` describe what a document
+must assemble to. Drift here is expensive: a document that assembles
+differently chunks differently, embeds differently and retrieves
+differently.
 
 Formats needing an optional dependency are skipped rather than failed
 when it is absent, so the suite stays fast and green on a bare install.

@@ -32,16 +32,13 @@
 
 # ---- Generated files ----
 #
-# Never hand-resolve a conflict in either of these. Take one side and
-# regenerate:
+# Never hand-resolve a conflict in this one. Take either side and regenerate:
 #
-#   package-lock.json                  git checkout --theirs -- package-lock.json && npm install
-#   python/.../data/manifest.json      npm run spec:sync
+#   python/.../data/manifest.json      python scripts/sync_spec.py
 #
-# The manifest copy inside the package is written by scripts/sync-spec.js
+# The manifest copy inside the package is written by scripts/sync_spec.py
 # from spec/manifest.json, which is the only one to edit by hand. CI
 # fails if the two have drifted, so regenerating is always correct.
-package-lock.json                          -diff linguist-generated
 python/thehallucinatedlab/data/manifest.json -diff linguist-generated
 
 # ---- Vendored ----

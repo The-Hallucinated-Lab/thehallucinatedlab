@@ -1,9 +1,8 @@
 """The param types the RAG toolchain added.
 
-The Python twin of test/param-types.test.js. Both files assert the same
-behaviours against the same synthetic tool, because the manifest is one
-file: a type the browser accepts and Python rejects is a tool that works
-on the website and fails in a script.
+Every behaviour here is asserted against one synthetic tool, because the
+manifest is one file: a type the registry accepts but a tool rejects is
+an argument that validates and then fails at the call site.
 
 Synthetic rather than the real manifest on purpose -- the subject is the
 type system, not whichever tool currently happens to declare a boolean.
@@ -21,7 +20,6 @@ MANIFEST = {
         {
             "name": "synthetic",
             "title": "Synthetic",
-            "page": "tools.html",
             "params": [
                 {"name": "title", "type": "string", "required": True},
                 {
@@ -163,7 +161,6 @@ def test_an_unrecognised_type_is_an_error_not_an_unchecked_passthrough():
                 {
                     "name": "typo",
                     "title": "Typo",
-                    "page": "tools.html",
                     "params": [{"name": "n", "type": "boolena", "required": True}],
                 }
             ],
@@ -209,8 +206,6 @@ def test_the_json_schema_carries_the_new_types_and_their_constraints():
 # neither should force the caller to split a string before calling the
 # Python API with a real list or dict.
 #
-# The twin cases are in test/param-types.test.js. What one accepts, the
-# other must accept identically.
 
 COLLECTIONS = Registry(
     {
@@ -219,7 +214,6 @@ COLLECTIONS = Registry(
             {
                 "name": "collections",
                 "title": "Collections",
-                "page": "tools.html",
                 "params": [
                     {"name": "columns", "type": "list", "required": False,
                      "default": None, "description": "a list"},

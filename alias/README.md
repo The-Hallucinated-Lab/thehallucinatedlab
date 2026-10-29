@@ -15,7 +15,7 @@ from thehallucinatedlab import convert
 ```
 
 ```bash
-thl serve
+thl tool
 ```
 
 Requires **Python 3.10 or newer**. On an older interpreter pip says

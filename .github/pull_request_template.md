@@ -11,13 +11,16 @@ you did to convince yourself it works.
 
 <!--
 Paste what you actually ran, not what you intended to run.
-`npm run check` covers lint + JS tests + spec sync.
-Python changes also need: ruff check python/ && pytest python/ -q
+The full check is:
+  ruff check python/ && pytest python/ -q && python scripts/sync_spec.py --check
 -->
 
-- [ ] `npm run check` passes
-- [ ] Visual change? Checked in **both** themes (the toggle is in the navbar)
+- [ ] `ruff check python/` passes
+- [ ] `pytest python/ -q` passes
+- [ ] `python scripts/sync_spec.py --check` passes
+- [ ] Changed the spec? Ran `python scripts/sync_spec.py`
 - [ ] New behaviour has a test that fails without the fix
+- [ ] Appended an entry to section 5 of `CONTEXT.md`
 
 ## Anything reviewers should look at twice
 
