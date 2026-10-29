@@ -58,7 +58,12 @@ venv/
 # is 63.5MB of binaries that git can never compress and never forget -- it
 # was committed once and had to be taken back out. The data is
 # reproducible from a one-line download; the repo is not.
-data/
+#
+# Anchored to the root on purpose. An unanchored `data/` also matches
+# python/thehallucinatedlab/data/, which is where the packaged tool spec
+# lives -- it silently dropped that file from a commit once, and CI caught
+# the drift only because a test compares the two copies.
+/data/
 *.idx3-ubyte
 *.idx1-ubyte
 
